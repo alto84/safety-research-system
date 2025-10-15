@@ -98,6 +98,23 @@ The incidence of drug-related interstitial lung disease varies dramatically acro
 
 **Ado-Trastuzumab Emtansine (Kadcyla):** This first-generation HER2-directed ADC demonstrates minimal pulmonary toxicity, with ILD reported in less than 1% of patients in pivotal trials.43 The contrast with trastuzumab deruxtecan, which targets the same antigen but uses different linker and payload, underscores the critical importance of ADC structural components in determining toxicity profiles.
 
+**Table 1: ADC-Associated ILD Incidence - Risk Stratification**
+
+| ADC Name | Target | Payload | Linker Type | ILD Incidence Any Grade (%) | Grade 3-4 (%) | Grade 5 (%) | Risk Category |
+|----------|--------|---------|-------------|----------------------------|---------------|-------------|---------------|
+| Trastuzumab deruxtecan (T-DXd, Enhertu) | HER2 | Deruxtecan (Topo I) | Cleavable tetrapeptide | 10.8-28.1 | 3.7 | 0.8-2.7 | High |
+| Mirvetuximab soravtansine (Elahere) | FRα | DM4 (Maytansinoid) | Cleavable disulfide | 10.0 | 1.1 | 0.1 | High |
+| Enfortumab vedotin + pembrolizumab (Padcev) | Nectin-4 | MMAE (Auristatin) | Cleavable protease | 10.0 | 4.0 | Not specified | Moderate-High |
+| Datopotamab deruxtecan (Dato-DXd) | TROP2 | Deruxtecan (Topo I) | Cleavable tetrapeptide | 8.8 | 3.4 | 2.4 | High |
+| Enfortumab vedotin monotherapy (Padcev) | Nectin-4 | MMAE (Auristatin) | Cleavable protease | 3.0 | 0.8 | Not specified | Moderate |
+| Tisotumab vedotin (Tivdak) | Tissue Factor | MMAE (Auristatin) | Cleavable protease | 3.0 | 0.8 | 0.14 | Moderate |
+| Brentuximab vedotin (Adcetris) | CD30 | MMAE (Auristatin) | Cleavable protease | <1.0 | <0.5 | <0.1 | Low |
+| Sacituzumab govitecan (Trodelvy) | TROP2 | SN-38 (Topo I) | Cleavable CL2A | <1.0 | <0.5 | 0.0 | Low |
+| Ado-trastuzumab emtansine (T-DM1, Kadcyla) | HER2 | DM1 (Maytansinoid) | Non-cleavable thioether | <1.0 | <0.5 | <0.1 | Low |
+| Gemtuzumab ozogamicin (Mylotarg) | CD33 | Calicheamicin | Cleavable hydrazone | <1.0 | Not specified | 57.1 CFR* | Low incidence, High mortality |
+
+*CFR = Case Fatality Rate when ILD occurs
+
 ### 2.2 Payload Class Correlations
 
 Accumulating evidence suggests that cytotoxic payload type is a primary determinant of ILD risk, with topoisomerase I inhibitors demonstrating the highest pulmonary toxicity.44,45
@@ -172,6 +189,25 @@ Sacituzumab govitecan has similar DAR (~7.6) but dramatically lower ILD incidenc
 ### 2.5 Patient Risk Factors
 
 Identifying patients at elevated ILD risk could enable personalized monitoring strategies and inform treatment selection. However, robust, prospectively validated risk factors remain elusive.68,69
+
+**Table 4: Patient Risk Factors for ADC-Associated ILD**
+
+| Risk Factor | Evidence Level | Magnitude of Association | Key Considerations | Recommendation |
+|-------------|---------------|-------------------------|-------------------|----------------|
+| Pre-existing ILD or pulmonary fibrosis | Expert consensus | Absolute or relative contraindication | Active ILD excludes patients from trials; Limited real-world data | Absolute contraindication if active/progressive; Relative if stable with enhanced monitoring |
+| Prior thoracic radiation (<3 months) | Case series, biologic plausibility | Likely increased risk, magnitude uncertain | Radiation pneumonitis overlaps temporally and clinically with ADC-ILD | Consider delaying ADC or choosing lower-risk agent; Enhanced monitoring if proceed |
+| COPD or chronic lung disease | Inconsistent trial data | Unclear; Some studies positive, others negative | Most trials excluded severe respiratory disease | Not definitive contraindication; May warrant enhanced surveillance |
+| Smoking history (current or former) | Inconsistent associations | Conflicting data; Some analyses suggest elevated risk | Chronic airway inflammation, macrophage activation theoretical mechanisms | Encourage smoking cessation; Consider more frequent monitoring |
+| Age ≥75 years | Early analyses suggested risk, not validated | No consistent association in larger cohorts | Chronologic age less important than physiologic status | Age alone not contraindication; Consider comorbidities and functional status |
+| Asian/Japanese ethnicity | Initial concern from Japan trials | No true biologic difference; Detection bias from enhanced surveillance | Higher ILD rates in Japanese trials due to more intensive monitoring protocols | Not a risk factor; Reflects surveillance intensity, not susceptibility |
+| Baseline lung abnormalities on CT | Expert opinion | Likely increases risk or complicates diagnosis | Ground-glass opacities, fibrosis, emphysema may predispose or confound | Pulmonology consultation; Risk-benefit discussion; Enhanced monitoring |
+| Concurrent immune checkpoint inhibitor | Clinical trial evidence (EV+pembrolizumab) | Strong association: 10% vs 3% ILD with EV alone | Synergistic immune-mediated mechanisms | Enhanced monitoring mandatory; Higher clinical suspicion |
+| Renal insufficiency (mild-moderate) | Pharmacokinetic analyses | Minimal impact on drug exposure or ILD rates | Severe renal impairment (CrCl <30) understudied | Mild-moderate renal dysfunction not contraindication; Severe insufficiency: limited data |
+| Prior COVID-19 pneumonia | Theoretical concern, no systematic data | Unknown; Post-COVID lung injury could predispose | Anecdotal associations reported by clinicians | Unknown; Consider baseline CT and enhanced monitoring in recent COVID cases |
+| Multiple prior lines of therapy | Retrospective analyses | No consistent correlation | Heavily pretreated patients in most ADC trials | Not a validated risk factor |
+| Pulmonary metastases | Clinical observation | Complicates diagnosis, unclear if increases incidence | Difficult to distinguish ILD from progression, lymphangitic spread | Not contraindication; Requires careful radiographic interpretation |
+
+**EVIDENCE LIMITATIONS:** Most data derive from clinical trial populations that systematically excluded high-risk respiratory patients. No validated risk prediction model exists. Patient-level risk stratification remains largely based on clinical judgment and expert consensus rather than empirical evidence.
 
 #### 2.5.1 Pre-Existing Respiratory Disease
 
@@ -795,6 +831,25 @@ Temporally uniform interstitial inflammation and/or fibrosis, preserved lung arc
 
 Many cases demonstrate overlapping features of multiple patterns. For example, organizing pneumonia with hypersensitivity components, or NSIP with organizing pneumonia features. Mixed patterns complicate prognostication but generally follow the prognosis of the most severe component present.
 
+**Table 6: Radiologic Patterns of ADC-Associated ILD - Clinical Correlation and Prognosis**
+
+| Pattern | Radiographic Features | Frequency (% of cases) | Clinical Characteristics | Median Time to Onset | Steroid Responsiveness | Mortality Rate | Histopathologic Correlate |
+|---------|----------------------|----------------------|-------------------------|---------------------|----------------------|---------------|--------------------------|
+| **Organizing Pneumonia (OP)** | • Bilateral patchy consolidations<br>• Ground-glass opacities<br>• Peripheral/peribronchovascular distribution<br>• "Reversed halo sign" or "atoll sign"<br>• Subpleural sparing may occur | 40-50% | • Most common pattern<br>• Generally good prognosis<br>• Symptomatic or asymptomatic | 4-6 months (median 32.7 weeks) | Good steroid response | <5% | Granulation tissue plugs (Masson bodies) in alveolar ducts, preserved architecture, variable inflammation |
+| **Hypersensitivity Pneumonitis (HP)** | • Bilateral ground-glass opacities<br>• Poorly defined centrilobular nodules<br>• Mosaic attenuation (air trapping)<br>• Relatively symmetric | 20-30% | • Suggests type IV hypersensitivity<br>• May recur upon rechallenge (immunologic memory)<br>• Moderate prognosis | 4-6 months (median 32.7 weeks) | Generally steroid-responsive | ~5% | Lymphocytic bronchiolitis, peribronchiolar metaplasia, interstitial inflammation, poorly formed granulomas |
+| **Diffuse Alveolar Damage (DAD)** | • Diffuse bilateral ground-glass opacities<br>• Diffuse consolidation<br>• Symmetric distribution<br>• Rapid progression over days | 15-20% | • **WORST PROGNOSIS**<br>• Often steroid-refractory<br>• Requires ICU management<br>• 72.7% of fatal T-DXd cases | Earlier onset (median 17.9 weeks) | Often steroid-refractory | **42.1%** | Acute: Hyaline membranes, pneumocyte necrosis, interstitial edema<br>Organizing: Type II hyperplasia, fibroblast proliferation |
+| **Acute Interstitial Pneumonia (AIP)** / **ARDS** | • Similar to DAD (diffuse ground-glass, consolidation)<br>• Bilateral symmetric involvement<br>• Rapid onset and progression<br>• May show traction bronchiectasis | ~5% | • Rare but severe<br>• Analogous to Hamman-Rich syndrome<br>• Very poor prognosis<br>• ICU management required | Early, rapid onset | Poor steroid response | **65%** (ARDS presentation) | Similar to DAD with more extensive damage |
+| **Nonspecific Interstitial Pneumonia (NSIP)** | • Bilateral ground-glass opacities<br>• Reticular interstitial thickening<br>• Lower lobe predominance<br>• Subpleural sparing<br>• Relatively symmetric | 10-15% | • Less common in acute ADC-ILD<br>• May represent subacute/chronic presentation<br>• Risk of fibrotic progression | Later, subacute course | Variable steroid responsiveness | Variable (10-20%) | Temporally uniform interstitial inflammation/fibrosis, preserved architecture, cellular vs fibrosing subtypes |
+| **Mixed Patterns** | Overlapping features of multiple patterns | Variable | Follow prognosis of most severe component | Variable | Variable | Variable | Multiple pathologic processes |
+
+**PROGNOSTIC IMPLICATIONS:**
+- **Best prognosis:** Organizing pneumonia pattern (steroid-responsive, <5% mortality)
+- **Worst prognosis:** Diffuse alveolar damage (42% mortality) and ARDS (65% mortality)
+- **Early onset (<18 weeks)** correlates with DAD/AIP patterns and higher mortality
+- **Late onset (>32 weeks)** more often OP/HP patterns with better outcomes
+- **Rapid radiographic progression** indicates poor prognosis regardless of pattern
+- **Pattern recognition** guides prognosis counseling and treatment intensity decisions
+
 ### 4.3 Differential Diagnosis
 
 ADC-associated ILD is a diagnosis of exclusion requiring careful evaluation to rule out alternative etiologies that can mimic drug-induced pneumonitis.154,155
@@ -1035,6 +1090,16 @@ Standardized severity grading guides treatment decisions and clinical trial repo
 
 **Grade 5 (Fatal):**
 - Death attributable to pneumonitis
+
+**Table 2: NCI CTCAE v5.0 Pneumonitis/ILD Grading System**
+
+| Grade | Clinical Findings | Imaging Findings | Intervention Required | ADC Management | Rechallenge Eligible |
+|-------|-------------------|------------------|-----------------------|----------------|---------------------|
+| 1 (Mild) | Asymptomatic; SpO2 ≥95% on room air; Normal exercise tolerance | Radiographic findings only (ground-glass opacities, interstitial changes) | Diagnostic observation only; Intervention not indicated | Hold ADC; Consider corticosteroids (0.5-1 mg/kg/day); Close monitoring | Yes (after complete resolution) |
+| 2 (Moderate) | Symptomatic (dyspnea, cough); SpO2 <90% may require O2; Limiting instrumental ADLs | Bilateral ground-glass opacities or consolidation | Medical intervention indicated; Oxygen therapy; Corticosteroids 1 mg/kg/day | Permanent discontinuation per current guidelines | Controversial (generally avoid) |
+| 3 (Severe) | Severe symptoms at rest; Limiting self-care ADLs; Oxygen required | Extensive bilateral infiltrates; Progressive on imaging | Hospitalization required; High-dose corticosteroids; Oxygen therapy | Permanent discontinuation; Pulse steroids 500-1000 mg IV | No (absolute contraindication) |
+| 4 (Life-Threatening) | Life-threatening respiratory compromise; Unable to speak in sentences; Altered mental status | Diffuse alveolar damage; ARDS pattern | ICU admission; Mechanical ventilation; Pulse-dose steroids; Consider second-line agents | Permanent discontinuation; ICU management | No (absolute contraindication) |
+| 5 (Fatal) | Death | Autopsy or clinical diagnosis | N/A | N/A | N/A |
 
 **Clinical Application:** Grading drives treatment algorithms:
 - Grade 1: ADC hold, consider corticosteroids, close monitoring
@@ -1465,6 +1530,23 @@ As discussed in Section 4.7, proactive surveillance represents the most effectiv
 - Use professional interpreters, not family members
 - Consider health literacy levels in educational materials
 
+**Table 5: Surveillance Monitoring by ADC Risk Category**
+
+| Risk Category | ADC Examples | Baseline Assessment | Clinical Monitoring Frequency | Imaging Frequency | PFT Surveillance | Biomarkers (if available) | Post-Treatment Surveillance | Special Considerations |
+|--------------|--------------|--------------------|-----------------------------|------------------|-----------------|--------------------------|---------------------------|----------------------|
+| **High Risk** (ILD >10%) | • T-DXd (Enhertu)<br>• Dato-DXd<br>• Mirvetuximab soravtansine | **Mandatory:**<br>• Chest HRCT ≤4 weeks before start<br>• Baseline PFTs (spirometry, DLCO)<br>• Comprehensive respiratory history<br>• SpO2 at rest and with ambulation | **Before each cycle:**<br>• Systematic symptom assessment<br>• Respiratory rate, SpO2<br>• 6-minute walk test if feasible | **Every 6-12 weeks** (or before every 2-4 cycles)<br>• Some institutions: Every 3 weeks<br>• Immediate CT for any respiratory symptoms | Consider serial DLCO every 3-6 months<br>≥10% decline from baseline → trigger CT | • Serum KL-6 baseline and serial (if available)<br>• Lung-derived cfDNA (investigational) | • Clinical follow-up at 1, 2, 3 months post-treatment<br>• CT at 1-2 months after last dose<br>• Extended if abnormalities present | • Low threshold for imaging<br>• Patient education before each cycle<br>• Multidisciplinary team involvement<br>• Avoid concurrent checkpoint inhibitors |
+| **Moderate Risk** (ILD 3-10%) | • Enfortumab vedotin<br>• Tisotumab vedotin<br>• Enfortumab vedotin + pembrolizumab (combo) | **Recommended:**<br>• Chest CT (HRCT preferred)<br>• Respiratory history<br>• Baseline PFTs<br>• SpO2 assessment | **Before each cycle:**<br>• Symptom assessment<br>• Vital signs, SpO2<br>• Focused respiratory exam | **Every 12-24 weeks**<br>• More frequent if risk factors<br>• More frequent if combined with checkpoint inhibitor (10% ILD rate)<br>• Immediate CT for symptoms | Optional: Serial PFTs every 6 months in high-risk patients | Baseline KL-6 if available (not routinely required) | • Clinical follow-up at 1-2 months<br>• CT at 1-2 months if symptoms or baseline abnormalities | • Enhanced monitoring for combination therapy<br>• Consider more intensive protocol if patient risk factors |
+| **Low Risk** (ILD <3%) | • Sacituzumab govitecan<br>• T-DM1 (Kadcyla)<br>• Brentuximab vedotin | **Standard:**<br>• Staging CT chest<br>• Respiratory history<br>• PFTs as clinically indicated | **Before each cycle:**<br>• Standard symptom review<br>• Vital signs | **Standard restaging intervals**<br>• Symptom-driven imaging<br>• Immediate CT if respiratory symptoms develop | Not routinely indicated | Not routinely indicated | Standard oncologic follow-up | • May be option for sequential use after ILD from other ADCs<br>• Routine ILD-specific surveillance less critical |
+| **Low Incidence, High Mortality** | • Gemtuzumab ozogamicin<br>• Inotuzumab ozogamicin | **Baseline:**<br>• Chest CT<br>• Respiratory history<br>• PFTs | **Before each cycle:**<br>• Symptom assessment<br>• Vital signs | **Every 12-24 weeks or as clinically indicated** | As indicated | Not established | Standard follow-up with high vigilance for respiratory symptoms | • ILD rare but 50-57% case fatality when occurs<br>• Very high clinical suspicion needed<br>• Immediate aggressive intervention |
+
+**KEY PRINCIPLES:**
+- **Baseline imaging mandatory** for high-risk ADCs to establish comparator
+- **Side-by-side CT comparison** essential to detect subtle progression
+- **Radiologist awareness** of ADC treatment improves detection sensitivity
+- **Patient education** before each cycle about ILD symptoms critical
+- **Low threshold** for additional imaging if any respiratory concern
+- **No randomized trials** validate these protocols; based on expert consensus and institutional experience
+
 #### 5.7.2 Provider Education
 
 **Oncology Teams:**
@@ -1636,6 +1718,15 @@ ADC-associated ILD management centers on three fundamental principles:
 - Second-line immunosuppression if steroid-refractory (3-5 days without improvement)
 - 30-day mortality: 78% if mechanical ventilation required
 
+**Table 3: Grade-Specific Treatment Protocols for ADC-Associated ILD**
+
+| Grade | ADC Action | Corticosteroid Regimen | Total Duration | Taper Schedule | Adjunctive Therapy | Rechallenge Eligible | Expected Outcomes |
+|-------|-----------|------------------------|----------------|----------------|-------------------|---------------------|------------------|
+| 1 (Asymptomatic) | Hold ADC temporarily | Prednisone 0.5-1.0 mg/kg/day PO | 6-8 weeks total | Initial dose 2-4 weeks, then taper over ≥4 weeks | • Monitor with repeat CT at 28 days<br>• PJP prophylaxis if indicated<br>• Patient education | Yes (after complete resolution)<br>• Same dose if resolution ≤28 days<br>• Reduced dose if >28 days | • Median resolution: 29 days with steroids<br>• 83.1% treatment response<br>• 6.4% recurrence if rechallenged |
+| 2 (Moderate) | Permanent discontinuation | Prednisone 1.0 mg/kg/day PO | 8-12 weeks total | Continue until complete resolution (≥14 days), then taper over ≥4 weeks | • Repeat CT every 2-4 weeks<br>• PJP prophylaxis (TMP-SMX)<br>• Infection surveillance<br>• Pulmonology consultation | Controversial (current guidelines recommend no)<br>Off-label rechallenge in exceptional cases only | • Recovery rate: 76.9%<br>• Median time: 83.5 days<br>• Permanent discontinuation standard |
+| 3 (Severe) | Permanent discontinuation | Methylprednisolone 500-1000 mg IV daily × 3 days, then prednisone 1-2 mg/kg/day | 12+ weeks | Continue high-dose until improvement, slow taper over months | • Hospitalization required<br>• Oxygen therapy<br>• Consider second-line agents if no improvement in 3-5 days<br>• Serial imaging<br>• Multidisciplinary team | No (absolute contraindication) | • Mortality: 10-15%<br>• Prolonged recovery<br>• Risk of chronic fibrosis |
+| 4 (Life-Threatening) | Permanent discontinuation | Methylprednisolone 1000 mg IV daily × 3-5 days, then prednisone 2 mg/kg/day | Months (if survive) | Very slow taper after stabilization | • ICU admission<br>• Mechanical ventilation<br>• Second-line: Infliximab 5 mg/kg, MMF, cyclophosphamide, IVIG<br>• Goals of care discussion<br>• Infection prophylaxis | No (absolute contraindication) | • 30-day mortality: 78% if ventilated<br>• 6-month mortality: 96%<br>• DAD pattern: 42% mortality<br>• ARDS: 65% mortality |
+
 ### 6.3 Second-Line Agents for Steroid-Refractory Disease
 
 When corticosteroids fail to produce improvement within 3-5 days:
@@ -1715,6 +1806,32 @@ When corticosteroids fail to produce improvement within 3-5 days:
 6. Intensive monitoring capability (CT every 1-2 cycles initially)
 7. Alternative treatments considered and deemed inferior
 
+**Table 7: Sequential ADC Therapy Decision Framework After ILD**
+
+| Scenario | Prior ILD Grade | Current Status | Sequential ADC Option | Safety Level | Evidence Quality | Prerequisites | Monitoring Intensity | Clinical Recommendation |
+|----------|----------------|----------------|---------------------|--------------|-----------------|---------------|---------------------|------------------------|
+| **Rechallenge - Same ADC** | Grade 1 (asymptomatic) | Complete resolution | Same ADC, same or reduced dose | SAFE | Good (47 patients, Modi 2025) | • Resolution confirmed on CT<br>• ≥4 weeks since resolution<br>• Patient counseled | • CT every 1-2 cycles initially<br>• Clinical assessment each cycle<br>• Very low threshold for intervention | **RECOMMENDED**<br>• 6.4% recurrence rate<br>• No fatal recurrences<br>• Same dose if resolution ≤28 days<br>• Reduced dose if >28 days |
+| **Rechallenge - Same ADC** | Grade 2 (symptomatic) | Complete resolution | Same ADC | CONTROVERSIAL | Poor (19 patients, case series) | • Complete resolution required<br>• Exceptional circumstances<br>• Multidisciplinary consensus<br>• No alternative options | • CT every cycle<br>• Intensive clinical monitoring<br>• Immediate intervention protocol | **GENERALLY AVOID**<br>• Current guidelines: permanent discontinuation<br>• 3/19 developed recurrent higher-grade ILD<br>• Consider only in exceptional cases |
+| **Rechallenge - Same ADC** | Grade 3-4 (severe) | Any | Same ADC | UNSAFE | Universal consensus | N/A - Absolute contraindication | N/A | **NEVER RECHALLENGE**<br>• Risk of fatal recurrence unacceptably high<br>• Absolute contraindication |
+| **Sequential - Different Payload** | Any grade (resolved) | Complete resolution | High-risk (deruxtecan) → Low-risk (SN-38, MMAE) | MAY CONSIDER | Very limited (4 patients, case series) | • Complete ILD resolution<br>• ≥4-8 weeks since resolution<br>• Pulmonology clearance<br>• MDT consensus<br>• Patient informed consent | • Baseline CT<br>• CT every 2-3 cycles initially<br>• Clinical vigilance each cycle<br>• Rapid escalation protocol | **MAY CONSIDER**<br>• Example: T-DXd → sacituzumab govitecan<br>• 4/4 patients tolerated without recurrence<br>• Different payload class key<br>• Intensive monitoring mandatory |
+| **Sequential - Same Payload Class** | Grade 2+ | Complete resolution | Deruxtecan → Deruxtecan (T-DXd → Dato-DXd) | HIGH RISK | No published data | Not recommended | N/A | **GENERALLY AVOID**<br>• Shared payload likely shares toxicity<br>• No published experience<br>• Consider only if no alternatives |
+| **Sequential - Same Target, Different Linker** | Grade 2+ | Complete resolution | HER2: T-DXd → T-DM1 | THEORETICAL LOWER RISK | No systematic data | • Complete resolution<br>• MDT discussion<br>• Different linker/payload critical | • Standard high-risk monitoring<br>• Enhanced surveillance initially | **MAY CONSIDER**<br>• Different linker (cleavable vs non-cleavable)<br>• Different payload (deruxtecan vs DM1)<br>• T-DM1 has <1% ILD rate<br>• Limited published experience |
+| **Sequential - With Checkpoint Inhibitor** | Any prior ILD | Resolved | ADC + anti-PD-1/PD-L1 combination | VERY HIGH RISK | Trial data (EV+pembro: 10% ILD) | Requires exceptional justification | • Maximum intensity monitoring<br>• CT every 1-2 cycles<br>• Pulmonology co-management | **GENERALLY AVOID**<br>• Synergistic toxicity demonstrated<br>• 10% vs 3% ILD (enfortumab)<br>• Consider only if critical clinical benefit |
+
+**KEY DECISION PRINCIPLES:**
+
+**Payload Class Hierarchy (Risk Level):**
+1. **Highest Risk:** Deruxtecan (topoisomerase I, cleavable, high membrane permeability)
+2. **Moderate Risk:** Maytansinoids (DM1, DM4), MMAE (auristatins)
+3. **Lower Risk:** SN-38 (different topo I kinetics), non-cleavable linkers (T-DM1)
+
+**Evidence-Based Sequential Patterns:**
+- **Documented Safe:** T-DXd (deruxtecan) → Sacituzumab govitecan (SN-38) [4/4 success]
+- **Theoretical Safe:** High-risk payload → Low-risk payload with different mechanism
+- **Avoid:** Same payload class (deruxtecan → deruxtecan)
+
+**CRITICAL EVIDENCE GAP:** Sequential ADC use after ILD represents urgent unmet clinical need with minimal published data. Current recommendations based on mechanistic reasoning, small case series, and expert opinion. **Prospective registry or clinical trial urgently needed.**
+
 **EVIDENCE GAP:** Sequential ADC use represents a critical need with minimal published data. Current recommendations based on small case series, mechanistic extrapolation, and expert opinion. Prospective registries and clinical trials urgently needed.
 
 ---
@@ -1787,6 +1904,32 @@ When corticosteroids fail to produce improvement within 3-5 days:
 - Pneumocyte injury biomarkers
 - Elevated in some ADC-ILD cases
 - Require prospective validation for clinical use
+
+**Table 8: Emerging Biomarkers for ADC-Associated ILD Detection**
+
+| Biomarker | Source/Mechanism | Detection Method | Timing of Elevation | Sensitivity | Specificity | Clinical Utility | Development Stage | Limitations |
+|-----------|-----------------|------------------|---------------------|-------------|-------------|------------------|------------------|-------------|
+| **Lung-derived cfDNA with tissue-specific methylation** | Dying pneumocytes release cell-free DNA with lung-specific methylation patterns | Plasma cfDNA analysis with methylation sequencing | May precede radiographic changes by days to weeks | Potentially high (pending validation) | High (tissue-specific methylation) | • Pre-radiographic detection<br>• Serial monitoring<br>• Risk stratification | Investigational (Nakamura 2024 study) | • Requires specialized lab<br>• Cost<br>• Thresholds undefined<br>• Multicenter validation needed |
+| **Serum KL-6 (Krebs von den Lungen-6)** | Type II pneumocyte membrane glycoprotein; Elevated with pneumocyte injury/proliferation | ELISA assay | Elevated during active ILD, may normalize with treatment | Moderate (60-80% in ILD) | Moderate (elevated in many lung diseases) | • Supports ILD diagnosis<br>• Monitor treatment response<br>• Trend more useful than single value | Available in some countries (Japan, Europe); Not FDA-approved in US | • Not specific to ADC-ILD<br>• Elevated in many ILDs, sarcoidosis, pneumonia<br>• Threshold varies by assay<br>• Limited US availability |
+| **Serum SP-D (Surfactant Protein-D)** | Type II pneumocyte surfactant protein; Released with alveolar injury | ELISA assay | Elevated with active alveolar damage | Moderate (similar to KL-6) | Moderate (non-specific) | • Pneumocyte injury marker<br>• Correlates with disease activity<br>• Serial monitoring | Research use; Not validated for clinical decisions | • Not specific to ADC-ILD<br>• Elevated in ARDS, pneumonia, COPD<br>• Smoking affects levels<br>• No established cutoffs |
+| **Serum SP-A (Surfactant Protein-A)** | Type II pneumocyte surfactant protein | ELISA assay | Acute alveolar injury | Low-moderate | Low-moderate | Limited; Less studied than SP-D | Research only | Same limitations as SP-D |
+| **LDH (Lactate Dehydrogenase)** | Nonspecific marker of cell death | Standard chemistry panel | Elevated in severe cases (especially DAD pattern) | Low (nonspecific) | Very low (elevated in many conditions) | • Severity marker<br>• Very high LDH (>500) may suggest PJP or severe ILD | Widely available but nonspecific | • Cannot differentiate ILD from infection, malignancy, hemolysis<br>• Too nonspecific for screening |
+| **C-reactive protein (CRP) / ESR** | Inflammatory markers | Standard lab tests | Elevated in inflammatory ILD patterns | Low (nonspecific) | Low (nonspecific) | Minimal; Cannot distinguish ILD from infection | Widely available but limited utility | • Nonspecific<br>• Cannot differentiate causes<br>• Not useful for screening |
+| **BAL cell differential (Lymphocyte %)** | Reflects alveolar inflammation type | Bronchoalveolar lavage with cell count/differential | During active ILD | Variable (depends on pattern) | Moderate | • Supports HP pattern (>50% lymphocytes)<br>• Helps exclude infection | Invasive; Requires bronchoscopy | • Requires invasive procedure<br>• Pattern overlap with other ILDs<br>• Not specific to ADC-ILD |
+| **Circulating cytokines (IL-6, IL-1β, TNF-α)** | Inflammatory mediators from macrophages, injured tissue | Multiplex cytokine assays | Acute inflammatory phase | Unknown (not validated) | Unknown | Investigational; Mechanistic interest | Preclinical/research only | • Not validated<br>• No established thresholds<br>• Nonspecific to lung injury |
+
+**CLINICAL IMPLICATIONS:**
+- **No biomarker currently validated** for routine clinical use in ADC-ILD
+- **Lung-derived cfDNA** shows most promise for early detection but requires multicenter validation
+- **KL-6 and SP-D** available in some regions; May support diagnosis but cannot replace CT imaging
+- **Serial measurements** more useful than single timepoints for biomarkers
+- **Biomarker development** remains critical unmet need for pre-radiographic detection
+
+**RESEARCH PRIORITIES:**
+1. Prospective validation of lung-derived cfDNA in multicenter cohorts
+2. Establishment of biomarker thresholds for clinical decision-making
+3. Integration of biomarkers with clinical and radiographic data into risk models
+4. Cost-effectiveness analysis of biomarker-guided surveillance vs. CT-based protocols
 
 ### 9.2 Novel ADC Technologies
 
