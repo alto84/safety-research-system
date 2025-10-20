@@ -1,0 +1,168 @@
+name: source_authenticity_verification
+version: 1.0.0
+category: audit
+type: deterministic
+description: Validates source authenticity, detects fabricated PMIDs/URLs, and identifies placeholder patterns
+
+author: Safety Research System
+created_at: 2025-10-20
+updated_at: 2025-10-20
+
+inputs:
+  sources:
+    type: List[Dict[str, Any]]
+    description: List of source dictionaries with optional fields (pmid, url, doi, title, authors)
+    required: true
+    schema:
+      pmid: "str (optional) - PubMed ID"
+      url: "str (optional) - Source URL"
+      doi: "str (optional) - Digital Object Identifier"
+      title: "str (optional) - Source title"
+      authors: "str or List[str] (optional) - Author names"
+
+outputs:
+  authentic_sources:
+    type: List[Dict[str, Any]]
+    description: Sources that passed all authenticity checks
+
+  fabricated_sources:
+    type: List[Dict[str, Any]]
+    description: Sources flagged as potentially fabricated
+    note: Includes _verification_issues field with detected issues
+
+  issues:
+    type: List[Dict[str, Any]]
+    description: Detailed validation issues found
+    schema:
+      category: "str - Issue category (fabricated_source, invalid_pmid_format, fabricated_pmid, invalid_url_format, fabricated_url, inaccessible_url, invalid_doi_format)"
+      severity: "str - critical or warning"
+      description: "str - Human-readable description"
+      location: "str - Field path (e.g., sources[0].pmid)"
+      suggested_fix: "str - Actionable correction guidance"
+      guideline_reference: "str - CLAUDE.md compliance reference"
+
+  summary:
+    type: Dict[str, int]
+    description: Summary statistics
+    schema:
+      total_sources: "int - Total sources checked"
+      authentic_count: "int - Sources that passed checks"
+      fabricated_count: "int - Sources flagged as fabricated"
+      total_issues: "int - Total issues found"
+
+dependencies:
+  - requests>=2.28.0
+
+configuration:
+  patterns:
+    placeholder_titles:
+      - "example study"
+      - "sample research"
+      - "test paper"
+      - "placeholder"
+      - "lorem ipsum"
+      - "to be determined"
+      - "tbd"
+
+    placeholder_authors:
+      - "Smith et al."
+      - "Jones et al."
+      - "Doe et al."
+      - "Author Name"
+      - "et al."
+
+    placeholder_urls:
+      - "example.com"
+      - "example.org"
+      - "test.com"
+      - "placeholder"
+      - "fake"
+      - "dummy"
+      - "localhost"
+      - "127.0.0.1"
+
+    fake_pmids:
+      - "12345678"
+      - "87654321"
+      - "11111111"
+      - "22222222"
+      - "33333333"
+      - "44444444"
+      - "55555555"
+      - "66666666"
+      - "77777777"
+      - "88888888"
+      - "99999999"
+      - "00000000"
+
+validation_rules:
+  pmid_format: "1-8 digits"
+  url_format: "Must include scheme (http/https) and valid domain"
+  doi_format: "10.xxxx/yyyy (standard DOI format)"
+  url_timeout_seconds: 5
+  sequential_pattern_length: 4
+
+performance:
+  avg_execution_time_ms: 150
+  deterministic: true
+  cacheable: true
+  parallel_safe: true
+
+safety:
+  immutable_checks: true
+  hard_coded_patterns: true
+  claude_md_compliant: true
+  fabrication_detection: true
+
+use_cases:
+  - "Validate literature review sources before accepting worker output"
+  - "Detect fabricated PMIDs in audit phase"
+  - "Verify URL accessibility for sources"
+  - "Identify placeholder text in automated source generation"
+  - "CLAUDE.md compliance enforcement for evidence chains"
+
+examples:
+  - name: "Verify real sources"
+    input:
+      sources:
+        - pmid: "34567890"
+          url: "https://pubmed.ncbi.nlm.nih.gov/34567890/"
+          title: "Real Study Title"
+          authors: "Johnson A, Smith B"
+    expected_output:
+      authentic_sources: [source with no issues]
+      fabricated_sources: []
+      issues: []
+
+  - name: "Detect fabricated PMID"
+    input:
+      sources:
+        - pmid: "12345678"
+          title: "Example Study"
+    expected_output:
+      authentic_sources: []
+      fabricated_sources: [source with issues]
+      issues:
+        - category: "fabricated_pmid"
+          severity: "critical"
+
+  - name: "Detect placeholder URL"
+    input:
+      sources:
+        - url: "https://example.com/fake"
+    expected_output:
+      authentic_sources: []
+      fabricated_sources: [source with issues]
+      issues:
+        - category: "fabricated_url"
+          severity: "critical"
+
+changelog:
+  - version: "1.0.0"
+    date: "2025-10-20"
+    changes:
+      - "Initial extraction from LiteratureAuditor"
+      - "Standalone deterministic skill"
+      - "Comprehensive PMID, URL, DOI validation"
+      - "Placeholder pattern detection"
+      - "URL accessibility checking"
