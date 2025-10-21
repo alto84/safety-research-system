@@ -9,7 +9,7 @@ import sys
 # Add parent directories to path
 sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
 
-from skills.audit.source_authenticity_verification.main import (
+from skills.audit.source_authenticity_verification.scripts.verify import (
     SourceAuthenticityVerification,
     verify_source_authenticity
 )
