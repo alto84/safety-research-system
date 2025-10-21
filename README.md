@@ -1,6 +1,6 @@
 # Safety Research System
 
-A multi-agent research system with audit validation for pharmaceutical safety assessment. This system implements a novel **Agent→Audit→Resolve** pattern to ensure quality and compliance while preventing orchestrator context overload.
+A modular, skills-based research system for pharmaceutical safety assessment. This system implements a novel **Agent→Audit→Resolve** pattern with composable, independently-testable skills that ensure quality and compliance while preventing orchestrator context overload.
 
 ## Overview
 
@@ -88,38 +88,106 @@ Multiple validation layers:
       └──────────> Compressed Summary to Orchestrator
 ```
 
+## Skills Architecture
+
+**Phase 1 Status: 4 of 26 planned skills implemented (141 tests passing)**
+
+The system has been refactored into a skills-based architecture where each skill is a focused, composable unit that can be independently tested and versioned. This enables better modularity, reusability, and maintainability.
+
+### Implemented Skills
+
+#### Literature Skills
+- **literature-search** (37 tests) - PubMed API integration for source retrieval
+- **evidence-level-classification** (36 tests) - Classify evidence hierarchy (Level I-V)
+
+#### Audit Skills
+- **source-authenticity-verification** (32 tests) - Validate PMIDs/URLs, detect fabrication
+
+#### Statistics Skills
+- **statistical-evidence-extraction** (36 tests) - Extract numerical claims via regex
+
+### Skill Composition
+
+Skills can be chained together to form complete workflows. Example from `examples/skills_composition_demo.py`:
+
+```python
+# End-to-end literature review workflow
+from skills.literature.literature_search.scripts.search import search_pubmed
+from skills.audit.source_authenticity_verification.scripts.verify import verify_source_authenticity
+from skills.literature.evidence_level_classification.scripts.classify import classify_evidence_level
+from skills.statistics.statistical_evidence_extraction.scripts.extract import extract_statistics
+
+# Step 1: Search PubMed
+sources = search_pubmed("antibody drug conjugate interstitial lung disease", max_results=10)
+
+# Step 2: Validate sources
+verification = verify_source_authenticity(sources)
+authentic_sources = verification['authentic_sources']
+
+# Step 3: Classify evidence levels
+classified_sources = []
+for source in authentic_sources:
+    classification = classify_evidence_level(source)
+    source['evidence_level'] = classification['level']
+    classified_sources.append(source)
+
+# Step 4: Extract statistical evidence
+for source in classified_sources:
+    stats = extract_statistics(source.get('abstract', ''))
+    source['statistics'] = stats
+```
+
+Each skill:
+- Is 100% deterministic (Phase 1) or hybrid code+LLM (Phase 2+)
+- Has comprehensive unit tests
+- Loads only when needed (minimal context overhead)
+- Can be cached for performance
+- Follows semantic versioning
+
+See `skills/README.md` for detailed skill documentation.
+
 ## Directory Structure
 
 ```
 safety-research-system/
-├── agents/
-│   ├── base_worker.py          # Abstract base for worker agents
-│   ├── base_auditor.py         # Abstract base for auditor agents
-│   ├── orchestrator.py         # Main orchestration logic
-│   ├── workers/
-│   │   ├── literature_agent.py
-│   │   └── statistics_agent.py
-│   └── auditors/
-│       ├── literature_auditor.py
-│       └── statistics_auditor.py
+├── skills/                     # Skills-based architecture (NEW)
+│   ├── README.md              # Skills documentation
+│   ├── base.py                # Base skill class
+│   ├── audit/                 # Audit & validation skills
+│   │   └── source_authenticity_verification/
+│   │       ├── SKILL.md
+│   │       ├── main.py
+│   │       ├── scripts/verify.py
+│   │       └── tests/test_source_authenticity.py (32 tests)
+│   ├── literature/            # Literature review skills
+│   │   ├── literature-search/
+│   │   │   └── tests/test_literature_search.py (37 tests)
+│   │   └── evidence-level-classification/
+│   │       └── tests/test_evidence_classification.py (36 tests)
+│   └── statistics/            # Statistical analysis skills
+│       └── statistical-evidence-extraction/
+│           └── tests/test_statistical_extraction.py (36 tests)
+├── examples/
+│   └── skills_composition_demo.py  # Full workflow demonstration
+├── agents/                    # Legacy agent-based architecture
+│   ├── base_worker.py
+│   ├── base_auditor.py
+│   ├── orchestrator.py
+│   └── workers/
 ├── core/
-│   ├── task_executor.py        # Manages worker execution
-│   ├── audit_engine.py         # Manages audit validation
-│   ├── resolution_engine.py    # Worker→Audit→Retry loop
-│   └── context_compressor.py   # Result compression
+│   ├── task_executor.py
+│   ├── audit_engine.py
+│   ├── resolution_engine.py
+│   └── context_compressor.py
 ├── models/
-│   ├── task.py                 # Task data model
-│   ├── audit_result.py         # Audit result model
-│   └── case.py                 # Case data model
+│   ├── task.py
+│   ├── audit_result.py
+│   └── case.py
 ├── guidelines/
-│   └── audit_checklists/       # Validation criteria
-│       ├── literature_review_checklist.md
-│       └── statistics_checklist.md
-├── config/                     # Configuration files
-├── tests/                      # Unit tests
-├── example_usage.py            # Example script
+│   └── audit_checklists/
+├── config/
+├── tests/
 ├── requirements.txt
-├── setup.py
 └── README.md
 ```
 
@@ -143,62 +211,53 @@ pip install -e .
 
 ## Quick Start
 
-```python
-from models.case import Case, CasePriority
-from core.task_executor import TaskExecutor
-from core.audit_engine import AuditEngine
-from core.resolution_engine import ResolutionEngine
-from core.context_compressor import ContextCompressor
-from agents.orchestrator import Orchestrator
-from agents.workers.literature_agent import LiteratureAgent
-from agents.auditors.literature_auditor import LiteratureAuditor
+Run the skills composition demo to see the complete workflow in action:
 
-# Setup system
-task_executor = TaskExecutor()
-audit_engine = AuditEngine()
-
-# Register agents
-task_executor.register_worker(TaskType.LITERATURE_REVIEW, LiteratureAgent())
-audit_engine.register_auditor(TaskType.LITERATURE_REVIEW, LiteratureAuditor())
-
-# Create engines
-resolution_engine = ResolutionEngine(task_executor, audit_engine)
-context_compressor = ContextCompressor()
-
-# Create orchestrator
-orchestrator = Orchestrator(
-    task_executor, audit_engine, resolution_engine, context_compressor
-)
-
-# Create and process a case
-case = Case(
-    title="Adverse Event Assessment",
-    question="Is there a causal relationship between Drug X and hepatotoxicity?",
-    priority=CasePriority.HIGH,
-    context={"drug_name": "Drug X", "adverse_event": "Hepatotoxicity"},
-    data_sources=["pubmed", "clinical_trials_db"]
-)
-
-# Process case
-report = orchestrator.process_case(case)
-print(report)
+```bash
+# Run the skills composition demo
+python examples/skills_composition_demo.py
 ```
 
-See `example_usage.py` for a complete working example.
+This demonstrates a complete literature review workflow:
+1. Search PubMed for "antibody drug conjugate interstitial lung disease"
+2. Validate sources for authenticity (detect fabricated PMIDs)
+3. Classify evidence hierarchy (Level I-V)
+4. Extract statistical evidence (hazard ratios, p-values, sample sizes, etc.)
+
+The demo outputs detailed progress and shows how skills compose together.
+
+### Quick Python Usage
+
+```python
+from skills.literature.literature_search.scripts.search import search_pubmed
+from skills.audit.source_authenticity_verification.scripts.verify import verify_source_authenticity
+
+# Search PubMed
+sources = search_pubmed("drug safety", max_results=5)
+
+# Validate sources
+verification = verify_source_authenticity(sources)
+print(f"Authentic: {len(verification['authentic_sources'])}")
+print(f"Fabricated: {len(verification['fabricated_sources'])}")
+```
+
+See `examples/skills_composition_demo.py` for the complete workflow example.
 
 ## Usage
 
-### Running the Example
+### Running the Skills Composition Demo
 
 ```bash
-python example_usage.py
+python examples/skills_composition_demo.py
 ```
 
-This will:
-1. Initialize the system with literature and statistics agents
-2. Create an example safety assessment case
-3. Process the case through the full workflow
-4. Display the final report with findings and recommendations
+This demonstrates:
+1. PubMed literature search
+2. Source authenticity verification (fabrication detection)
+3. Evidence level classification (Level I-V hierarchy)
+4. Statistical evidence extraction (HR, CI, p-values, sample sizes)
+
+The output shows each skill executing in sequence with detailed progress.
 
 ### Creating Custom Worker Agents
 
@@ -305,6 +364,16 @@ resolution_engine = ResolutionEngine(
 ### Running Tests
 
 ```bash
+# Test all skills
+pytest skills/ -v
+
+# Test specific skill
+pytest skills/audit/source_authenticity_verification/tests/ -v
+
+# Test with coverage
+pytest skills/ -v --cov=skills --cov-report=html
+
+# Test legacy agent system
 pytest tests/ -v --cov=. --cov-report=html
 ```
 
@@ -327,31 +396,60 @@ mypy .
 
 ## Roadmap
 
-### Phase 1: Core System (Current)
-- [x] Agent-Audit-Resolve pattern
-- [x] Context compression
-- [x] CLAUDE.md compliance
-- [x] Literature and statistics agents
-- [x] Example usage
+### Phase 1: Skills Foundation (COMPLETE)
+- [x] Skills-based architecture implementation
+- [x] Base skill class and framework
+- [x] Source authenticity verification skill (32 tests)
+- [x] Literature search skill (37 tests)
+- [x] Evidence level classification skill (36 tests)
+- [x] Statistical evidence extraction skill (36 tests)
+- [x] Skills composition demo
+- [x] 141 passing tests across all skills
 
-### Phase 2: Integration
+**Status: 4 of 26 planned skills implemented**
+
+### Phase 2: Remaining Skills (In Progress)
+Literature Skills:
+- [ ] Evidence quality assessment
+- [ ] Literature synthesis
+
+Statistics Skills:
+- [ ] Statistical synthesis
+- [ ] Heterogeneity assessment
+- [ ] Statistical interpretation
+
+Audit Skills:
+- [ ] Citation completeness audit
+- [ ] Evidence grading audit
+- [ ] Audit issue compilation
+- [ ] Statistical methodology audit
+- [ ] Assumption audit
+- [ ] Uncertainty quantification audit
+- [ ] Result validity audit
+
+Resolution Skills:
+- [ ] Audit result evaluation
+- [ ] Correction extraction
+- [ ] Retry orchestration
+
+Compression Skills:
+- [ ] Key finding extraction
+- [ ] Summary generation
+- [ ] Fabrication detection in compression
+- [ ] Metadata compression
+
+### Phase 3: LLM Integration
+- [ ] Hybrid skills (code + LLM)
 - [ ] Real LLM integration (OpenAI, Anthropic, etc.)
-- [ ] PubMed and clinical trials API integration
+- [ ] Prompt templates for hybrid skills
+- [ ] LLM response validation
+
+### Phase 4: Integration & Production
 - [ ] Database persistence layer
-- [ ] REST API for case submission
-
-### Phase 3: Advanced Features
-- [ ] Risk modeling agents
-- [ ] Mechanistic inference agents
-- [ ] Causality assessment framework
-- [ ] Interactive dashboard
-- [ ] Regulatory report generation
-
-### Phase 4: Scale & Production
-- [ ] Parallel task execution
+- [ ] REST API for skill composition
 - [ ] Caching and performance optimization
 - [ ] Human-in-the-loop interface
-- [ ] Feedback loop implementation
+- [ ] Interactive dashboard
 - [ ] Multi-tenant support
 
 ## License
@@ -376,4 +474,4 @@ Inspired by the need for rigorous, evidence-based safety assessment in pharmaceu
 
 ---
 
-**Note**: This is a prototype system. For production use, integrate with actual LLM providers, databases, and implement appropriate security measures.
+**Note**: Phase 1 (Skills Foundation) is complete with 4 deterministic skills and 141 passing tests. The system demonstrates the skills-based architecture pattern. Phase 2+ will add the remaining 22 skills and LLM integration for hybrid skills.

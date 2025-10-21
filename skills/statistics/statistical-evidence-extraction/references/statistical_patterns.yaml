@@ -1,0 +1,188 @@
+# Statistical Pattern Reference
+# This file documents the regex patterns used for extracting statistical evidence from text
+
+patterns:
+  hazard_ratio:
+    regex: "\\bHR[\\s:=]+(\\d+\\.?\\d*)"
+    alternatives:
+      - "hazard ratio"
+      - "HR"
+      - "HR("
+    description: "Measures the effect of an intervention on survival time or time to event"
+    example: "HR = 0.75 indicates 25% reduction in hazard"
+    interpretation:
+      - "HR < 1: Reduced hazard (protective effect)"
+      - "HR = 1: No effect"
+      - "HR > 1: Increased hazard (harmful effect)"
+
+  odds_ratio:
+    regex: "\\bOR[\\s:=]+(\\d+\\.?\\d*)"
+    alternatives:
+      - "odds ratio"
+      - "OR"
+      - "OR("
+    description: "Measures the odds of an outcome given a particular exposure"
+    example: "OR = 2.5 indicates 2.5 times higher odds"
+    interpretation:
+      - "OR < 1: Reduced odds (protective effect)"
+      - "OR = 1: No association"
+      - "OR > 1: Increased odds (risk factor)"
+
+  risk_ratio:
+    regex: "\\bRR[\\s:=]+(\\d+\\.?\\d*)"
+    alternatives:
+      - "risk ratio"
+      - "RR"
+      - "relative risk"
+      - "RR("
+    description: "Measures the ratio of probability of an outcome in exposed vs unexposed groups"
+    example: "RR = 1.5 indicates 50% higher risk"
+    interpretation:
+      - "RR < 1: Reduced risk (protective effect)"
+      - "RR = 1: No difference in risk"
+      - "RR > 1: Increased risk (risk factor)"
+
+  confidence_interval:
+    regex: "95%?\\s*CI[\\s:=]*\\(?(\\d+\\.?\\d*)[-–—](\\d+\\.?\\d*)\\)?"
+    alternatives:
+      - "95% CI"
+      - "CI"
+      - "confidence interval"
+      - "(lower-upper)"
+    description: "Range of values that likely contains the true population parameter"
+    example: "95% CI 0.6-0.9 provides precision estimate"
+    interpretation:
+      - "Wider CI: Less precise estimate"
+      - "Narrower CI: More precise estimate"
+      - "CI excluding 1.0 (for ratios): Statistically significant"
+
+  p_value:
+    regex: "\\bp[\\s<>=]+(\\d+\\.?\\d*)"
+    alternatives:
+      - "p value"
+      - "p-value"
+      - "p ="
+      - "p <"
+      - "(p="
+    description: "Probability of observing results as extreme if null hypothesis is true"
+    example: "p < 0.05 indicates statistical significance"
+    interpretation:
+      - "p < 0.001: Highly significant"
+      - "p < 0.01: Very significant"
+      - "p < 0.05: Significant (conventional threshold)"
+      - "p >= 0.05: Not statistically significant"
+
+  sample_size:
+    regex: "\\bn[\\s=]+(\\d+)"
+    alternatives:
+      - "n ="
+      - "N ="
+      - "sample size"
+      - "(n="
+      - "(N="
+    description: "Number of participants or observations in a study or subgroup"
+    example: "n = 500 indicates 500 participants"
+    interpretation:
+      - "Larger sample: More statistical power"
+      - "Smaller sample: Less power, wider confidence intervals"
+
+  percentage:
+    regex: "(\\d+\\.?\\d*)%"
+    alternatives:
+      - "%"
+      - "percent"
+    description: "Proportion expressed as a value out of 100"
+    example: "45% indicates 45 out of 100"
+    interpretation:
+      - "Context-dependent (e.g., response rate, prevalence, change)"
+
+# Common statistical reporting formats in medical literature
+common_formats:
+  - format: "HR 0.75 (95% CI 0.65-0.85, p < 0.001)"
+    description: "Complete effect size with confidence interval and significance"
+    components:
+      - hazard_ratio: 0.75
+      - confidence_interval: [0.65, 0.85]
+      - p_value: 0.001
+
+  - format: "OR 2.3 (1.5-3.2)"
+    description: "Odds ratio with confidence interval (p-value implied)"
+    components:
+      - odds_ratio: 2.3
+      - confidence_interval: [1.5, 3.2]
+
+  - format: "n = 1,234"
+    description: "Sample size (may include comma separators)"
+    components:
+      - sample_size: 1234
+
+  - format: "45.3% (95% CI 40.2%-50.4%)"
+    description: "Percentage with confidence interval"
+    components:
+      - percentage: 45.3
+      - confidence_interval: [40.2, 50.4]
+
+# Edge cases and special considerations
+edge_cases:
+  scientific_notation:
+    description: "P-values often reported in scientific notation"
+    examples:
+      - "p = 1.2e-5"
+      - "p < 0.001"
+    note: "Current patterns handle decimal notation; scientific notation requires special handling"
+
+  comma_separators:
+    description: "Large numbers may include comma separators"
+    examples:
+      - "n = 1,234"
+      - "N = 10,000"
+    note: "Patterns should strip commas before parsing"
+
+  ranges:
+    description: "Different dash types used in ranges"
+    examples:
+      - "0.5-0.9" # hyphen
+      - "0.5–0.9" # en dash
+      - "0.5—0.9" # em dash
+    note: "Patterns should match all dash types"
+
+  implicit_confidence_intervals:
+    description: "CIs sometimes reported without 'CI' label"
+    examples:
+      - "HR 0.75 (0.65-0.85)"
+      - "OR 2.3 [1.5-3.2]"
+    note: "Parenthesized ranges near effect sizes likely CIs"
+
+# Validation rules
+validation:
+  hazard_ratio:
+    typical_range: [0.01, 100]
+    common_range: [0.1, 10]
+    note: "Values > 100 or < 0.01 are rare and should be verified"
+
+  odds_ratio:
+    typical_range: [0.01, 100]
+    common_range: [0.1, 10]
+    note: "Values > 100 or < 0.01 are rare and should be verified"
+
+  risk_ratio:
+    typical_range: [0.01, 100]
+    common_range: [0.1, 10]
+    note: "Values > 100 or < 0.01 are rare and should be verified"
+
+  p_value:
+    valid_range: [0, 1]
+    common_thresholds: [0.001, 0.01, 0.05]
+    note: "Values outside [0, 1] are invalid"
+
+  confidence_interval:
+    rule: "lower_bound < upper_bound"
+    note: "If lower > upper, bounds may be reversed or extraction error"
+
+  sample_size:
+    minimum: 1
+    note: "Sample size must be positive integer"
+
+  percentage:
+    valid_range: [0, 100]
+    note: "Values > 100 may indicate per-capita rates or errors"

@@ -13,38 +13,40 @@ Skills are small, focused units that:
 
 ## Skill Categories
 
-### Literature (4 skills)
-- `literature_search` - PubMed API integration for source retrieval
-- `evidence_level_classification` - Classify evidence hierarchy
-- `evidence_quality_assessment` - Multidimensional quality evaluation
-- `literature_synthesis` - Aggregate findings across sources
+### Literature (2 implemented, 2 planned)
+- **literature-search** (37 tests) - PubMed API integration for source retrieval
+- **evidence-level-classification** (36 tests) - Classify evidence hierarchy (Level I-V)
+- `evidence_quality_assessment` (planned) - Multidimensional quality evaluation
+- `literature_synthesis` (planned) - Aggregate findings across sources
 
-### Statistics (4 skills)
-- `statistical_evidence_extraction` - Extract numerical claims via regex
-- `statistical_synthesis` - Calculate aggregate statistics
-- `heterogeneity_assessment` - Analyze cross-study variability
-- `statistical_interpretation` - Clinical interpretation of findings
+### Statistics (1 implemented, 3 planned)
+- **statistical-evidence-extraction** (36 tests) - Extract numerical claims via regex
+- `statistical_synthesis` (planned) - Calculate aggregate statistics
+- `heterogeneity_assessment` (planned) - Analyze cross-study variability
+- `statistical_interpretation` (planned) - Clinical interpretation of findings
 
-### Audit (8 skills)
-- `source_authenticity_verification` - Validate PMIDs/URLs, detect fabrication
-- `citation_completeness_audit` - Check required citation fields
-- `evidence_grading_audit` - Validate evidence-confidence alignment
-- `audit_issue_compilation` - Aggregate validation issues
-- `statistical_methodology_audit` - Validate methodology documentation
-- `assumption_audit` - Verify statistical assumptions
-- `uncertainty_quantification_audit` - Check confidence intervals
-- `result_validity_audit` - Verify data source alignment
+### Audit (1 implemented, 7 planned)
+- **source-authenticity-verification** (32 tests) - Validate PMIDs/URLs, detect fabrication
+- `citation_completeness_audit` (planned) - Check required citation fields
+- `evidence_grading_audit` (planned) - Validate evidence-confidence alignment
+- `audit_issue_compilation` (planned) - Aggregate validation issues
+- `statistical_methodology_audit` (planned) - Validate methodology documentation
+- `assumption_audit` (planned) - Verify statistical assumptions
+- `uncertainty_quantification_audit` (planned) - Check confidence intervals
+- `result_validity_audit` (planned) - Verify data source alignment
 
-### Resolution (3 skills)
-- `audit_result_evaluation` - Decide RETRY/ESCALATE/ABORT
-- `correction_extraction` - Transform issues to actionable corrections
-- `retry_orchestration` - Manage retry loop workflow
+### Resolution (0 implemented, 3 planned)
+- `audit_result_evaluation` (planned) - Decide RETRY/ESCALATE/ABORT
+- `correction_extraction` (planned) - Transform issues to actionable corrections
+- `retry_orchestration` (planned) - Manage retry loop workflow
 
-### Compression (4 skills)
-- `key_finding_extraction` - Extract numerical claims
-- `summary_generation` - Generate concise summaries
-- `fabrication_detection_in_compression` - Validate summary accuracy
-- `metadata_compression` - Simplify metadata
+### Compression (0 implemented, 4 planned)
+- `key_finding_extraction` (planned) - Extract numerical claims
+- `summary_generation` (planned) - Generate concise summaries
+- `fabrication_detection_in_compression` (planned) - Validate summary accuracy
+- `metadata_compression` (planned) - Simplify metadata
+
+**Current Status: 4 of 26 skills implemented (141 tests passing)**
 
 ### Config (Shared Resources)
 - `evidence_hierarchy.yaml` - Evidence level definitions
@@ -266,5 +268,5 @@ Typical execution times:
 
 ---
 
-**Status:** Phase 1 - Foundation (17 deterministic skills extracted)
-**Next:** Phase 2 - LLM integration and hybrid skills
+**Status:** Phase 1 Complete - 4 deterministic skills with 141 passing tests
+**Next:** Phase 2 - Implement remaining 22 skills, then LLM integration for hybrid skills
