@@ -14,7 +14,7 @@ Skills are small, focused units that:
 ## Skill Categories
 
 ### Literature (2 implemented, 2 planned)
-- **literature-search** (37 tests) - PubMed API integration for source retrieval
+- **literature_search** (37 tests) - PubMed API integration for source retrieval
 - **evidence-level-classification** (36 tests) - Classify evidence hierarchy (Level I-V)
 - `evidence_quality_assessment` (planned) - Multidimensional quality evaluation
 - `literature_synthesis` (planned) - Aggregate findings across sources

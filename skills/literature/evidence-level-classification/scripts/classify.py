@@ -77,6 +77,7 @@ def classify_evidence_level(source: Dict[str, Any]) -> str:
         "systematic review",
         "meta-analysis",
         "meta analysis",
+        "meta-analyses",
         "cochrane review",
         "systematic literature review",
         "umbrella review"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive tests for literature-search skill.
+Comprehensive tests for literature_search skill.
 
 Tests cover:
 - Query parsing and construction

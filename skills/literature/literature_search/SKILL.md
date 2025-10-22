@@ -1,5 +1,5 @@
 ---
-name: literature-search
+name: literature_search
 description: Use when you need to search PubMed for scientific literature, retrieve article metadata (titles, abstracts, authors, DOIs), or gather evidence for research questions. Provides access to NCBI's PubMed database through E-utilities API.
 license: MIT
 allowed-tools:
@@ -12,7 +12,7 @@ allowed-tools:
 
 ## Overview
 
-The literature-search skill provides programmatic access to PubMed's database of biomedical literature. It enables searching for scientific articles, retrieving detailed metadata (titles, abstracts, authors, publication dates, DOIs), and filtering results by date ranges and article types. Built on NCBI's E-utilities API, this skill handles rate limiting, error recovery, and structured data extraction automatically.
+The literature_search skill provides programmatic access to PubMed's database of biomedical literature. It enables searching for scientific articles, retrieving detailed metadata (titles, abstracts, authors, publication dates, DOIs), and filtering results by date ranges and article types. Built on NCBI's E-utilities API, this skill handles rate limiting, error recovery, and structured data extraction automatically.
 
 ## When to Use This Skill
 

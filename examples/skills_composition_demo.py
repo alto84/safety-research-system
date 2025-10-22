@@ -5,7 +5,7 @@ This example demonstrates how to chain multiple skills together to perform
 a complete literature review with validation, classification, and extraction.
 
 Skills used:
-1. literature-search - Search PubMed for sources
+1. literature_search - Search PubMed for sources
 2. source-authenticity-verification - Validate sources for fabrication
 3. evidence-level-classification - Classify evidence hierarchy
 4. statistical-evidence-extraction - Extract statistical findings
@@ -22,7 +22,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 # Import skills directly from scripts
-sys.path.insert(0, str(project_root / "skills/literature/literature-search/scripts"))
+sys.path.insert(0, str(project_root / "skills/literature/literature_search/scripts"))
 sys.path.insert(0, str(project_root / "skills/audit/source_authenticity_verification/scripts"))
 sys.path.insert(0, str(project_root / "skills/literature/evidence-level-classification/scripts"))
 sys.path.insert(0, str(project_root / "skills/statistics/statistical-evidence-extraction/scripts"))

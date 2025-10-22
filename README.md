@@ -97,7 +97,7 @@ The system has been refactored into a skills-based architecture where each skill
 ### Implemented Skills
 
 #### Literature Skills
-- **literature-search** (37 tests) - PubMed API integration for source retrieval
+- **literature_search** (37 tests) - PubMed API integration for source retrieval
 - **evidence-level-classification** (36 tests) - Classify evidence hierarchy (Level I-V)
 
 #### Audit Skills
@@ -160,7 +160,7 @@ safety-research-system/
 │   │       ├── scripts/verify.py
 │   │       └── tests/test_source_authenticity.py (32 tests)
 │   ├── literature/            # Literature review skills
-│   │   ├── literature-search/
+│   │   ├── literature_search/
 │   │   │   └── tests/test_literature_search.py (37 tests)
 │   │   └── evidence-level-classification/
 │   │       └── tests/test_evidence_classification.py (36 tests)

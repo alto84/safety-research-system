@@ -307,20 +307,17 @@ The test suite includes 30+ tests covering:
 
 ## Reference Materials
 
-### Evidence Hierarchy YAML
+### Evidence Hierarchy
 
-The `references/evidence_hierarchy.yaml` file contains the complete evidence hierarchy definition:
+The evidence hierarchy is defined directly in the classification code (`scripts/classify.py`) with comprehensive keyword lists for each level:
 
-```yaml
-levels:
-  I:
-    name: "Systematic reviews and meta-analyses"
-    description: "Evidence from systematic reviews of RCTs"
-    keywords: ["systematic review", "meta-analysis", "cochrane"]
-  # ... (see file for complete hierarchy)
-```
+- **Level I**: Systematic reviews, meta-analyses, Cochrane reviews
+- **Level II-1**: Randomized controlled trials
+- **Level II-2**: Cohort studies, prospective studies
+- **Level II-3**: Case-control studies
+- **Level III**: Case reports, case series, expert opinion
 
-This reference file documents the classification system and can be loaded programmatically if needed.
+All classification logic is deterministic and based on keyword matching against study metadata.
 
 ## Limitations and Considerations
 
@@ -347,9 +344,6 @@ This reference file documents the classification system and can be loaded progra
   - `classify_evidence_level(source)`: Returns evidence level string
   - `get_level_description(level)`: Returns human-readable description
   - `classify_with_details(source)`: Returns level + full details
-
-### references/
-- `evidence_hierarchy.yaml`: Complete evidence hierarchy definition with keywords
 
 ### tests/
 - `test_evidence_classification.py`: Comprehensive test suite (30+ tests)

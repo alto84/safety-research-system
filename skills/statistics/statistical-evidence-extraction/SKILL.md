@@ -182,20 +182,20 @@ python scripts/extract.py --file abstract.txt
 
 ### Regex Patterns
 
-All patterns are defined in `references/statistical_patterns.yaml`. Key patterns:
+All patterns are defined directly in the extraction code (`scripts/extract.py`). Key patterns:
 
-```yaml
-hazard_ratio:
-  regex: "\\bHR[\\s:=]+(\\d+\\.?\\d*)"
+```python
+# Hazard Ratio
+HR_PATTERN = r'\bHR[\s:=]+(\d+\.?\d*)'
 
-odds_ratio:
-  regex: "\\bOR[\\s:=]+(\\d+\\.?\\d*)"
+# Odds Ratio
+OR_PATTERN = r'\bOR[\s:=]+(\d+\.?\d*)'
 
-confidence_interval:
-  regex: "95%?\\s*CI[\\s:=]*\\(?(\\d+\\.?\\d*)[-–—](\\d+\\.?\\d*)\\)?"
+# Confidence Interval
+CI_PATTERN = r'95%?\s*CI[\s:=]*\(?(\d+\.?\d*)[-–—](\d+\.?\d*)\)?'
 
-p_value:
-  regex: "\\bp[\\s<>=]+(\\d+\\.?\\d*)"
+# P-value
+P_VALUE_PATTERN = r'\bp[\s<>=]+(\d+\.?\d*)'
 ```
 
 ### Common Reporting Formats
@@ -215,7 +215,7 @@ The extraction handles:
 
 ### Validation Rules
 
-See `references/statistical_patterns.yaml` for complete validation rules:
+All validation rules are implemented in the extraction code:
 
 - **Effect sizes (HR, OR, RR)**: Typical range [0.1, 10], valid range [0.01, 100]
 - **P-values**: Valid range [0, 1]
@@ -444,9 +444,6 @@ Potential improvements for this skill:
 
 ### Scripts
 - `scripts/extract.py`: Main extraction script with `extract_statistics()` function
-
-### References
-- `references/statistical_patterns.yaml`: Complete pattern documentation with examples and validation rules
 
 ### Assets
 This skill does not include asset files.

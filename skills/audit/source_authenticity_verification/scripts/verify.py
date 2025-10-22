@@ -223,7 +223,7 @@ class SourceAuthenticityVerification(DeterministicSkill):
         issues = []
 
         # Check 1: Placeholder patterns in title
-        title = source.get('title', '')
+        title = source.get('title', '') or ''
         for pattern, field, description in self.PLACEHOLDER_PATTERNS:
             if field == 'title' and re.search(pattern, title):
                 issues.append({
@@ -239,7 +239,7 @@ class SourceAuthenticityVerification(DeterministicSkill):
                 })
 
         # Check 2: Placeholder patterns in authors
-        authors = source.get('authors', '')
+        authors = source.get('authors', '') or ''
         if isinstance(authors, list):
             authors = ', '.join(authors)
 
