@@ -1,39 +1,52 @@
-# Safety Research System Requirements
-# Python 3.9+
+# Safety Research System - Requirements
+# Only packages that are actually imported and used in the codebase
+# Python >=3.9 required
 
-# Core dependencies (minimal for prototype)
-# Note: Add specific AI/ML frameworks as needed (e.g., langchain, openai, anthropic)
+# ============================================================================
+# CORE DEPENDENCIES (Required for runtime)
+# ============================================================================
 
-# For future integration with actual LLM providers:
-# openai>=1.0.0
-# anthropic>=0.7.0
-# langchain>=0.1.0
-# langchain-community>=0.1.0
-
-# Database (if needed for persistence)
-# sqlalchemy>=2.0.0
-# psycopg2-binary>=2.9.0
-
-# API framework (if building REST API)
-# fastapi>=0.100.0
-# uvicorn>=0.23.0
-# pydantic>=2.0.0
-
-# Testing
-pytest>=7.4.0
-pytest-cov>=4.1.0
-pytest-asyncio>=0.21.0
-
-# Code quality
-black>=23.7.0
-flake8>=6.1.0
-mypy>=1.5.0
-isort>=5.12.0
-
-# Utilities
-python-dotenv>=1.0.0
+# HTTP requests - Used by PubMed connector and literature auditor for API calls
 requests>=2.31.0
 
-# Documentation (optional)
-# sphinx>=7.0.0
-# sphinx-rtd-theme>=1.3.0
+# ============================================================================
+# TESTING DEPENDENCIES (Required for running tests)
+# ============================================================================
+
+# Testing framework and plugins
+pytest>=7.4.0              # Main testing framework
+pytest-cov>=4.1.0          # Coverage reporting
+pytest-asyncio>=0.21.0     # Async test support
+
+# ============================================================================
+# DEVELOPMENT DEPENDENCIES (Optional - for code quality)
+# ============================================================================
+
+# Code formatting and linting
+black>=23.7.0              # Code formatter (PEP 8)
+flake8>=6.1.0              # Linter for style guide enforcement
+mypy>=1.5.0                # Static type checker
+isort>=5.12.0              # Import statement organizer
+
+# ============================================================================
+# NOTES
+# ============================================================================
+#
+# This requirements file contains ONLY packages that are actually imported
+# in the codebase. The following previously listed packages are NOT used:
+#
+# - openai, anthropic, langchain: No LLM integration implemented yet
+# - sqlalchemy, psycopg2-binary: Using dict-based storage, not database
+# - fastapi, uvicorn, pydantic: No web API implemented yet
+# - python-dotenv: Not imported anywhere in the code
+#
+# To install core dependencies only:
+#   pip install requests
+#
+# To install with testing:
+#   pip install requests pytest pytest-cov pytest-asyncio
+#
+# To install everything (including dev tools):
+#   pip install -r requirements.txt
+#
+# ============================================================================
