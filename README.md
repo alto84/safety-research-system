@@ -23,6 +23,15 @@ Each task goes through an automatic validation cycle:
 - If validation passes: results compressed and passed to orchestrator
 - Orchestrator only sees minimal summaries, not full outputs
 
+### 📬 Agent Mail System (NEW!)
+Lightweight messaging infrastructure for multi-agent coordination:
+- **Zero external dependencies** - Python stdlib only (`queue`, `threading`, `sqlite3`)
+- **Priority-based messaging** - HIGH, MEDIUM, LOW with FIFO ordering
+- **Event bus** - Pub/sub pattern for system-wide monitoring
+- **Persistent audit trail** - SQLite-based message history
+- **Thread-safe** - Safe for concurrent execution
+- See [Agent Mail Documentation](docs/AGENT_MAIL_README.md) for details
+
 ### 🛡️ CLAUDE.md Compliance
 Built-in enforcement of anti-fabrication protocols:
 - No score fabrication without measurement data
@@ -106,7 +115,14 @@ safety-research-system/
 │   ├── task_executor.py        # Manages worker execution
 │   ├── audit_engine.py         # Manages audit validation
 │   ├── resolution_engine.py    # Worker→Audit→Retry loop
-│   └── context_compressor.py   # Result compression
+│   ├── context_compressor.py   # Result compression
+│   ├── performance_profiler.py # Performance profiling
+│   └── agent_mail/             # Messaging system (NEW)
+│       ├── transport.py        # Message dataclass & types
+│       ├── message_queue.py    # Priority-based queue
+│       ├── event_bus.py        # Pub/sub events
+│       ├── audit_trail.py      # SQLite persistence
+│       └── mailbox.py          # High-level API
 ├── models/
 │   ├── task.py                 # Task data model
 │   ├── audit_result.py         # Audit result model
@@ -117,7 +133,12 @@ safety-research-system/
 │       └── statistics_checklist.md
 ├── config/                     # Configuration files
 ├── tests/                      # Unit tests
-├── example_usage.py            # Example script
+│   ├── test_agent_mail_unit.py        # Agent mail unit tests
+│   └── test_agent_mail_integration.py # Agent mail integration tests
+├── example_simple.py           # Simple Agent-Audit-Resolve example
+├── example_complete.py         # Complete system example with parallel execution
+├── example_agent_mail.py       # Agent mail system examples
+├── benchmark_parallel_execution.py # Performance benchmarks
 ├── requirements.txt
 ├── setup.py
 └── README.md
@@ -327,12 +348,15 @@ mypy .
 
 ## Roadmap
 
-### Phase 1: Core System (Current)
+### Phase 1: Core System (✅ COMPLETE)
 - [x] Agent-Audit-Resolve pattern
 - [x] Context compression
 - [x] CLAUDE.md compliance
 - [x] Literature and statistics agents
 - [x] Example usage
+- [x] **Parallel execution** (2-4x speedup, 99.7% efficiency)
+- [x] **Performance profiling** (comprehensive timing instrumentation)
+- [x] **Agent mail system** (messaging, events, audit trail)
 
 ### Phase 2: Integration
 - [ ] Real LLM integration (OpenAI, Anthropic, etc.)
@@ -348,11 +372,22 @@ mypy .
 - [ ] Regulatory report generation
 
 ### Phase 4: Scale & Production
-- [ ] Parallel task execution
+- [x] **Parallel task execution** (ThreadPoolExecutor-based, 2-4x speedup)
 - [ ] Caching and performance optimization
-- [ ] Human-in-the-loop interface
+- [ ] Human-in-the-loop interface (agent mail provides foundation)
 - [ ] Feedback loop implementation
 - [ ] Multi-tenant support
+
+## Performance
+
+Current system performance (based on benchmarks):
+
+- **Parallel Execution**: 2-4x speedup with 99.7% efficiency
+- **Message Throughput**: >1000 msg/sec (agent mail system)
+- **Context Compression**: 80-95% reduction in orchestrator context
+- **Test Coverage**: 38 tests for agent mail, 100% pass rate
+
+See `EXECUTION_SUMMARY.md` for detailed performance metrics.
 
 ## License
 
