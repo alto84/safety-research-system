@@ -1,0 +1,304 @@
+name: CI - Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop, 'feature/*' ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  POETRY_VERSION: '1.7.0'
+
+jobs:
+  # Job 1: Linting and Code Quality
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black flake8 isort mypy pylint bandit safety
+
+      - name: Run Black (Code Formatting)
+        run: black --check --diff .
+
+      - name: Run isort (Import Sorting)
+        run: isort --check-only --diff .
+
+      - name: Run Flake8 (Style Guide)
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Run Flake8 (Complexity)
+        run: flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Run MyPy (Type Checking)
+        run: mypy . --ignore-missing-imports || true
+
+      - name: Run Pylint
+        run: pylint **/*.py --exit-zero --rcfile=.pylintrc || true
+
+  # Job 2: Security Scanning
+  security:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit safety pip-audit
+
+      - name: Run Bandit (Security Linter)
+        run: bandit -r . -f json -o bandit-report.json || true
+
+      - name: Upload Bandit Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+      - name: Run Safety (Dependency Vulnerability Check)
+        run: safety check --json || true
+
+      - name: Run pip-audit (Python Package Auditing)
+        run: pip-audit || true
+
+      - name: Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Job 3: Unit Tests
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: test_safety_research
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-asyncio pytest-mock
+
+      - name: Run Tests with Coverage
+        env:
+          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/test_safety_research
+          REDIS_URL: redis://localhost:6379/0
+          ENVIRONMENT: test
+        run: |
+          pytest tests/ -v --cov=. --cov-report=xml --cov-report=html --cov-report=term
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.python-version }}
+          path: htmlcov/
+
+  # Job 4: Integration Tests
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [test]
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: test_safety_research
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio
+
+      - name: Run Integration Tests
+        env:
+          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/test_safety_research
+          REDIS_URL: redis://localhost:6379/0
+          ENVIRONMENT: test
+        run: |
+          pytest test_full_integration.py test_hybrid_audit.py -v
+
+  # Job 5: Docker Build Test
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: safety-research-system:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker Image
+        run: |
+          docker run --rm safety-research-system:test python --version
+
+  # Job 6: Documentation Build
+  docs:
+    name: Documentation Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check Markdown Links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+
+      - name: Validate README
+        run: |
+          test -f README.md
+          test -f README_REPOSITORY.md
+          test -f QUICK_START_GUIDE.md
+
+  # Job 7: Dependency Review
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+
+  # Job 8: Results Summary
+  results:
+    name: CI Results Summary
+    runs-on: ubuntu-latest
+    needs: [lint, security, test, integration-test, docker-build, docs]
+    if: always()
+    steps:
+      - name: Check Job Results
+        run: |
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Security: ${{ needs.security.result }}"
+          echo "Test: ${{ needs.test.result }}"
+          echo "Integration Test: ${{ needs.integration-test.result }}"
+          echo "Docker Build: ${{ needs.docker-build.result }}"
+          echo "Docs: ${{ needs.docs.result }}"
+
+      - name: Fail if any job failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

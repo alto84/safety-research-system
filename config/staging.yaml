@@ -1,0 +1,95 @@
+# Staging environment configuration
+
+# Inherit from base configuration
+_extends: base.yaml
+
+app:
+  debug: false
+  reload: false
+
+# Database settings
+database:
+  url: "${DATABASE_URL}"  # From environment variable
+  pool_size: 10
+  max_overflow: 5
+  echo: false
+
+# Redis settings
+redis:
+  url: "${REDIS_URL}"  # From environment variable
+
+# API settings
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 2
+  reload: false
+  log_level: "info"
+
+# CORS settings
+cors:
+  allow_origins:
+    - "https://staging.safety-research.example.com"
+    - "https://staging-app.safety-research.example.com"
+
+# Logging settings
+logging:
+  root:
+    level: "INFO"
+  formatters:
+    default:
+      class: "pythonjsonlogger.jsonlogger.JsonFormatter"
+  loggers:
+    uvicorn:
+      level: "INFO"
+    sqlalchemy:
+      level: "WARNING"
+
+# LLM settings
+llm:
+  mock_responses: false
+  enable_logging: true
+  timeout: 90  # More lenient timeout for staging
+
+# Caching settings
+cache:
+  enabled: true
+  ttl: 1800  # 30 minutes
+
+# Security settings
+security:
+  access_token_expire_minutes: 1440  # 24 hours
+  password_min_length: 12
+  enable_api_key_auth: true
+
+# Monitoring settings
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  collect_system_metrics: true
+
+# Rate limiting
+rate_limiting:
+  enabled: true
+  default_limit: "200/minute"
+
+# Backup settings
+backup:
+  enabled: true
+  schedule: "0 3 * * *"  # Daily at 3 AM
+  retention_days: 14
+  path: "/backups/staging"
+
+# Feature flags
+features:
+  enable_real_llm_calls: true
+  enable_rate_limiting: true
+  enable_metrics: true
+  enable_webhooks: false
+  enable_distributed_tasks: false
+
+# Storage settings
+storage:
+  type: "s3"  # Use S3 in staging
+  s3_bucket: "safety-research-staging"
+  s3_region: "us-east-1"

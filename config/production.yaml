@@ -1,0 +1,174 @@
+# Production environment configuration
+
+# Inherit from base configuration
+_extends: base.yaml
+
+app:
+  debug: false
+  reload: false
+
+# Database settings
+database:
+  url: "${DATABASE_URL}"  # From environment variable (must be set)
+  pool_size: 20
+  max_overflow: 10
+  echo: false
+  pool_pre_ping: true
+  pool_recycle: 3600
+
+# Redis settings
+redis:
+  url: "${REDIS_URL}"  # From environment variable (must be set)
+  max_connections: 50
+  socket_timeout: 10
+
+# API settings
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4  # Adjust based on CPU cores
+  reload: false
+  log_level: "warning"
+  access_log: true
+
+# CORS settings (strict)
+cors:
+  allow_origins:
+    - "https://safety-research.example.com"
+    - "https://app.safety-research.example.com"
+  allow_credentials: true
+  allow_methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+  allow_headers: ["Content-Type", "Authorization", "X-API-Key"]
+
+# Logging settings
+logging:
+  root:
+    level: "WARNING"
+  formatters:
+    json:
+      class: "pythonjsonlogger.jsonlogger.JsonFormatter"
+      format: "%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d"
+  handlers:
+    console:
+      class: "logging.StreamHandler"
+      level: "WARNING"
+      formatter: "json"
+    file:
+      class: "logging.handlers.RotatingFileHandler"
+      level: "INFO"
+      formatter: "json"
+      filename: "/var/log/safety-research/app.log"
+      maxBytes: 104857600  # 100MB
+      backupCount: 30
+    error_file:
+      class: "logging.handlers.RotatingFileHandler"
+      level: "ERROR"
+      formatter: "json"
+      filename: "/var/log/safety-research/error.log"
+      maxBytes: 104857600  # 100MB
+      backupCount: 60
+  root:
+    level: "INFO"
+    handlers: ["console", "file", "error_file"]
+  loggers:
+    uvicorn:
+      level: "WARNING"
+    sqlalchemy:
+      level: "ERROR"
+
+# LLM settings
+llm:
+  mock_responses: false
+  enable_logging: true
+  timeout: 60
+  max_retries: 3
+  retry_delay: 5
+
+# Caching settings
+cache:
+  enabled: true
+  ttl: 3600  # 1 hour
+  result_cache_enabled: true
+  api_cache_ttl: 7200  # 2 hours
+
+# Security settings (strict)
+security:
+  access_token_expire_minutes: 720  # 12 hours
+  password_min_length: 16
+  enable_api_key_auth: true
+  require_https: true
+  trusted_hosts: ["safety-research.example.com", "app.safety-research.example.com"]
+
+# Monitoring settings
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  health_check_interval: 30
+  collect_system_metrics: true
+  collect_application_metrics: true
+  export_to_prometheus: true
+
+# Rate limiting (strict)
+rate_limiting:
+  enabled: true
+  default_limit: "100/minute"
+  burst_limit: "200/minute"
+  pubmed_rate_limit: 9.0  # With API key
+  clinical_trials_rate_limit: 1.0
+
+# Backup settings
+backup:
+  enabled: true
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention_days: 90
+  path: "s3://safety-research-backups/production"
+  compression: true
+  encryption: true
+  verify_backups: true
+
+# Feature flags
+features:
+  enable_real_llm_calls: true
+  enable_rate_limiting: true
+  enable_metrics: true
+  enable_webhooks: true
+  enable_distributed_tasks: true
+  enable_audit_logging: true
+
+# Storage settings
+storage:
+  type: "s3"
+  s3_bucket: "safety-research-production"
+  s3_region: "us-east-1"
+  s3_encryption: "AES256"
+  max_file_size: 104857600  # 100MB
+
+# Task execution settings
+task_execution:
+  max_retries: 3
+  retry_delay: 10
+  task_timeout: 600  # 10 minutes
+  max_concurrent_tasks: 50
+  enable_async_processing: true
+  enable_distributed_processing: true
+
+# Alert settings
+alerts:
+  enabled: true
+  channels: ["slack", "email", "pagerduty"]
+  error_threshold: 10  # Alert if > 10 errors per minute
+  latency_threshold: 5000  # Alert if P95 latency > 5 seconds
+
+# Performance settings
+performance:
+  statement_timeout: 30000  # 30 seconds
+  connection_timeout: 10000  # 10 seconds
+  request_timeout: 60000  # 60 seconds
+  max_request_size: 10485760  # 10MB
+
+# Data retention settings
+data_retention:
+  cases_retention_days: 2555  # 7 years (regulatory requirement)
+  logs_retention_days: 90
+  metrics_retention_days: 365
+  audit_logs_retention_days: 2555  # 7 years

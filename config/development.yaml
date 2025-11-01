@@ -1,0 +1,75 @@
+# Development environment configuration
+
+# Inherit from base configuration
+_extends: base.yaml
+
+app:
+  debug: true
+  reload: true
+
+# Database settings
+database:
+  url: "postgresql://safetyuser:devpassword@localhost:5432/safety_research_dev"
+  echo: true  # Log all SQL queries in development
+  pool_size: 5
+
+# Redis settings
+redis:
+  url: "redis://localhost:6379/0"
+
+# API settings
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 1  # Single worker for development
+  reload: true
+  log_level: "debug"
+
+# CORS settings (permissive for development)
+cors:
+  allow_origins: ["http://localhost:3000", "http://localhost:8000", "http://127.0.0.1:3000"]
+
+# Logging settings
+logging:
+  root:
+    level: "DEBUG"
+  loggers:
+    uvicorn:
+      level: "DEBUG"
+    sqlalchemy:
+      level: "INFO"
+
+# LLM settings
+llm:
+  # Use mock/dummy responses in development to save API costs
+  mock_responses: false
+  enable_logging: true
+
+# Caching settings
+cache:
+  enabled: true
+  ttl: 300  # Shorter TTL for development
+
+# Security settings (less strict for development)
+security:
+  access_token_expire_minutes: 4320  # 3 days
+  password_min_length: 8
+
+# Monitoring settings
+monitoring:
+  enabled: false  # Disable in development
+
+# Rate limiting (more permissive)
+rate_limiting:
+  enabled: false
+
+# Backup settings
+backup:
+  enabled: false
+
+# Feature flags
+features:
+  enable_real_llm_calls: true
+  enable_rate_limiting: false
+  enable_metrics: false
+  enable_webhooks: false

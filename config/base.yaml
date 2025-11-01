@@ -1,0 +1,161 @@
+# Base configuration - shared across all environments
+# Environment-specific configs will override these settings
+
+app:
+  name: "Safety Research System"
+  version: "0.1.0"
+  description: "Multi-agent research system with audit validation for pharmaceutical safety"
+
+# Database settings (base configuration)
+database:
+  pool_size: 20
+  max_overflow: 10
+  pool_timeout: 30
+  pool_recycle: 3600
+  echo: false
+  pool_pre_ping: true
+  connect_timeout: 10
+
+# Redis settings (base configuration)
+redis:
+  max_connections: 10
+  socket_timeout: 5
+  socket_connect_timeout: 5
+  retry_on_timeout: true
+  decode_responses: true
+
+# API settings
+api:
+  title: "Safety Research System API"
+  description: "Multi-agent research system with audit validation for pharmaceutical safety"
+  version: "0.1.0"
+  prefix: "/api/v1"
+  docs_url: "/docs"
+  redoc_url: "/redoc"
+  openapi_url: "/openapi.json"
+
+# CORS settings
+cors:
+  allow_credentials: true
+  allow_methods: ["*"]
+  allow_headers: ["*"]
+
+# Task execution settings
+task_execution:
+  max_retries: 3
+  retry_delay: 5  # seconds
+  task_timeout: 300  # seconds
+  max_concurrent_tasks: 10
+  enable_async_processing: true
+
+# Audit settings
+audit:
+  enable_auto_audit: true
+  strictness: "medium"  # low, medium, high
+  require_evidence_chain: true
+  max_score_without_validation: 80
+  enforce_claudemd_compliance: true
+  require_limitations_disclosure: true
+
+# LLM settings
+llm:
+  default_provider: "anthropic"  # anthropic, openai
+  max_tokens: 4096
+  temperature: 0.0
+  timeout: 60  # seconds
+  max_retries: 3
+  retry_delay: 2  # seconds
+
+# Caching settings
+cache:
+  enabled: true
+  ttl: 3600  # seconds
+  result_cache_enabled: true
+  api_cache_ttl: 3600  # seconds
+
+# Logging settings
+logging:
+  version: 1
+  disable_existing_loggers: false
+  formatters:
+    standard:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+      datefmt: "%Y-%m-%d %H:%M:%S"
+    json:
+      class: "pythonjsonlogger.jsonlogger.JsonFormatter"
+      format: "%(asctime)s %(name)s %(levelname)s %(message)s"
+  handlers:
+    console:
+      class: "logging.StreamHandler"
+      level: "INFO"
+      formatter: "standard"
+      stream: "ext://sys.stdout"
+    file:
+      class: "logging.handlers.RotatingFileHandler"
+      level: "INFO"
+      formatter: "json"
+      filename: "logs/safety_research.log"
+      maxBytes: 104857600  # 100MB
+      backupCount: 10
+  root:
+    level: "INFO"
+    handlers: ["console", "file"]
+  loggers:
+    uvicorn:
+      level: "INFO"
+      handlers: ["console"]
+      propagate: false
+    sqlalchemy:
+      level: "WARNING"
+      handlers: ["console", "file"]
+      propagate: false
+
+# Monitoring settings
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  health_check_interval: 30  # seconds
+  collect_system_metrics: true
+  collect_application_metrics: true
+
+# Security settings
+security:
+  jwt_algorithm: "HS256"
+  access_token_expire_minutes: 1440  # 24 hours
+  bcrypt_rounds: 12
+  password_min_length: 12
+  enable_api_key_auth: true
+
+# Rate limiting
+rate_limiting:
+  enabled: true
+  default_limit: "100/minute"
+  pubmed_rate_limit: 2.5  # requests per second
+  clinical_trials_rate_limit: 1.0  # requests per second
+
+# Data sources
+data_sources:
+  pubmed:
+    base_url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+    rate_limit: 2.5
+    timeout: 30
+    max_retries: 3
+  clinical_trials:
+    base_url: "https://clinicaltrials.gov/api/v2"
+    rate_limit: 1.0
+    timeout: 30
+    max_retries: 3
+
+# File storage settings
+storage:
+  type: "local"  # local, s3, gcs
+  base_path: "./data"
+  max_file_size: 104857600  # 100MB
+  allowed_extensions: [".pdf", ".txt", ".csv", ".json", ".xml"]
+
+# Backup settings
+backup:
+  enabled: false  # Override per environment
+  retention_days: 30
+  compression: true
+  encryption: false
