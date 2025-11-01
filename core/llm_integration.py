@@ -10,11 +10,68 @@ or specialized sub-agents through the Claude API.
 import json
 import logging
 import re
+import os
 from typing import Dict, Any, List, Tuple, Optional
 from enum import Enum
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 
 logger = logging.getLogger(__name__)
+
+
+class LLMProvider(Enum):
+    """Supported LLM providers."""
+    ANTHROPIC = "anthropic"
+    OPENAI = "openai"
+    MOCK = "mock"  # For testing
+
+
+class LLMProviderFactory:
+    """Factory for creating LLM provider clients."""
+
+    @staticmethod
+    def create_anthropic_client():
+        """Create Anthropic client if API key is available."""
+        try:
+            import anthropic
+            api_key = os.getenv("ANTHROPIC_API_KEY")
+            if not api_key:
+                logger.warning("ANTHROPIC_API_KEY not found in environment")
+                return None
+            return anthropic.Anthropic(api_key=api_key)
+        except ImportError:
+            logger.warning("Anthropic package not installed")
+            return None
+
+    @staticmethod
+    def create_openai_client():
+        """Create OpenAI client if API key is available."""
+        try:
+            import openai
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                logger.warning("OPENAI_API_KEY not found in environment")
+                return None
+            return openai.OpenAI(api_key=api_key)
+        except ImportError:
+            logger.warning("OpenAI package not installed")
+            return None
+
+    @staticmethod
+    def get_available_providers() -> List[LLMProvider]:
+        """Get list of available providers based on environment configuration."""
+        available = []
+
+        if os.getenv("ANTHROPIC_API_KEY"):
+            available.append(LLMProvider.ANTHROPIC)
+
+        if os.getenv("OPENAI_API_KEY"):
+            available.append(LLMProvider.OPENAI)
+
+        # Always have mock as fallback
+        available.append(LLMProvider.MOCK)
+
+        return available
 
 
 class CLAUDEMDComplianceChecker:
@@ -217,16 +274,40 @@ class ThoughtPipeExecutor:
     - Include constraints (CLAUDE.md compliance, validation requirements)
     """
 
-    def __init__(self, claude_api_client: Optional[Any] = None):
+    def __init__(
+        self,
+        claude_api_client: Optional[Any] = None,
+        provider_preference: Optional[List[LLMProvider]] = None
+    ):
         """
         Initialize thought pipe executor.
 
         Args:
             claude_api_client: Optional Claude API client for sub-agent invocation
-                              If None, assumes Claude Code itself is executing
+                              If None, will auto-create based on environment
+            provider_preference: Ordered list of preferred providers (for failover)
         """
-        self.claude_api_client = claude_api_client
         self.compliance_checker = CLAUDEMDComplianceChecker()
+
+        # Set up provider preference order
+        if provider_preference:
+            self.provider_preference = provider_preference
+        else:
+            # Default: Anthropic first, then OpenAI, then mock
+            self.provider_preference = LLMProviderFactory.get_available_providers()
+
+        # Initialize clients
+        if claude_api_client:
+            self.anthropic_client = claude_api_client
+        else:
+            self.anthropic_client = LLMProviderFactory.create_anthropic_client()
+
+        self.openai_client = LLMProviderFactory.create_openai_client()
+
+        logger.info(
+            f"ThoughtPipeExecutor initialized with providers: "
+            f"{[p.value for p in self.provider_preference]}"
+        )
 
     def execute_thought_pipe(
         self,
@@ -312,10 +393,7 @@ class ThoughtPipeExecutor:
 
     def _call_llm(self, prompt: str, context: Dict[str, Any]) -> str:
         """
-        Call Claude LLM with prompt and context.
-
-        If claude_api_client is provided, uses that.
-        Otherwise, assumes Claude Code is executing and returns a structured response.
+        Call LLM with prompt and context, with automatic failover between providers.
 
         Args:
             prompt: Reasoning task
@@ -323,26 +401,94 @@ class ThoughtPipeExecutor:
 
         Returns:
             LLM response as string
+
+        Raises:
+            RuntimeError: If all providers fail
         """
-        if self.claude_api_client:
-            # Use actual Claude API
-            response = self.claude_api_client.messages.create(
-                model="claude-sonnet-4-5",
-                max_tokens=4096,
-                temperature=0.0,  # Deterministic for consistency
-                messages=[
-                    {
-                        "role": "user",
-                        "content": self._format_prompt_with_context(prompt, context)
-                    }
-                ]
-            )
-            return response.content[0].text
-        else:
-            # Claude Code executing inline - perform intelligent reasoning
-            # This is a production-ready mock that demonstrates the thought pipe concept
-            logger.info("Thought pipe: Claude Code inline execution with intelligent reasoning")
-            return self._execute_inline_reasoning(prompt, context)
+        formatted_prompt = self._format_prompt_with_context(prompt, context)
+        last_error = None
+
+        for provider in self.provider_preference:
+            try:
+                if provider == LLMProvider.ANTHROPIC and self.anthropic_client:
+                    logger.info("Calling Anthropic Claude API")
+                    return self._call_anthropic(formatted_prompt)
+
+                elif provider == LLMProvider.OPENAI and self.openai_client:
+                    logger.info("Calling OpenAI API")
+                    return self._call_openai(formatted_prompt)
+
+                elif provider == LLMProvider.MOCK:
+                    logger.info("Using mock LLM (inline reasoning)")
+                    return self._execute_inline_reasoning(prompt, context)
+
+            except Exception as e:
+                logger.warning(f"Provider {provider.value} failed: {e}")
+                last_error = e
+                continue
+
+        # All providers failed
+        error_msg = f"All LLM providers failed. Last error: {last_error}"
+        logger.error(error_msg)
+        raise RuntimeError(error_msg)
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((Exception,)),
+        reraise=True
+    )
+    def _call_anthropic(self, formatted_prompt: str) -> str:
+        """
+        Call Anthropic Claude API with retry logic.
+
+        Args:
+            formatted_prompt: Formatted prompt with context
+
+        Returns:
+            LLM response text
+        """
+        response = self.anthropic_client.messages.create(
+            model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514"),
+            max_tokens=int(os.getenv("MAX_TOKENS", "4096")),
+            temperature=float(os.getenv("TEMPERATURE", "0.0")),
+            messages=[
+                {
+                    "role": "user",
+                    "content": formatted_prompt
+                }
+            ]
+        )
+        return response.content[0].text
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        retry=retry_if_exception_type((Exception,)),
+        reraise=True
+    )
+    def _call_openai(self, formatted_prompt: str) -> str:
+        """
+        Call OpenAI API with retry logic.
+
+        Args:
+            formatted_prompt: Formatted prompt with context
+
+        Returns:
+            LLM response text
+        """
+        response = self.openai_client.chat.completions.create(
+            model=os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview"),
+            max_tokens=int(os.getenv("MAX_TOKENS", "4096")),
+            temperature=float(os.getenv("TEMPERATURE", "0.0")),
+            messages=[
+                {
+                    "role": "user",
+                    "content": formatted_prompt
+                }
+            ]
+        )
+        return response.choices[0].message.content
 
     def _execute_inline_reasoning(self, prompt: str, context: Dict[str, Any]) -> str:
         """

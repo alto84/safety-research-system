@@ -1,28 +1,31 @@
 # Safety Research System Requirements
 # Python 3.9+
 
-# Core dependencies (minimal for prototype)
-# Note: Add specific AI/ML frameworks as needed (e.g., langchain, openai, anthropic)
+# LLM Integration
+anthropic>=0.18.0
+openai>=1.12.0
 
-# For future integration with actual LLM providers:
-# openai>=1.0.0
-# anthropic>=0.7.0
-# langchain>=0.1.0
-# langchain-community>=0.1.0
+# Database Persistence
+sqlalchemy>=2.0.25
+psycopg2-binary>=2.9.9
+alembic>=1.13.1
 
-# Database (if needed for persistence)
-# sqlalchemy>=2.0.0
-# psycopg2-binary>=2.9.0
+# API Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
 
-# API framework (if building REST API)
-# fastapi>=0.100.0
-# uvicorn>=0.23.0
-# pydantic>=2.0.0
+# Authentication & Security
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-multipart>=0.0.6
 
 # Testing
 pytest>=7.4.0
 pytest-cov>=4.1.0
 pytest-asyncio>=0.21.0
+httpx>=0.26.0  # For FastAPI testing
 
 # Code quality
 black>=23.7.0
@@ -33,6 +36,8 @@ isort>=5.12.0
 # Utilities
 python-dotenv>=1.0.0
 requests>=2.31.0
+tenacity>=8.2.3  # For retry logic
+redis>=5.0.1  # For caching and rate limiting
 
 # Documentation (optional)
 # sphinx>=7.0.0
