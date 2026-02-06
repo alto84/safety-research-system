@@ -1,0 +1,189 @@
+# PSP Model Endpoint Configuration
+# Classification: AstraZeneca Confidential
+# Last Updated: 2026-02-06
+#
+# All endpoints are AZ-managed private deployments.
+# No patient data is sent to public API endpoints.
+
+defaults:
+  timeout_seconds: 60
+  max_retries: 3
+  retry_backoff_seconds: 2
+  circuit_breaker_threshold: 5  # consecutive failures before circuit opens
+  circuit_breaker_reset_seconds: 300
+
+models:
+  claude_opus_4_5:
+    provider: anthropic
+    model_id: claude-opus-4-5-20260115
+    display_name: "Claude Opus 4.5"
+    endpoint:
+      type: azure_private_endpoint
+      url: "${AZURE_CLAUDE_ENDPOINT}"  # resolved from secrets manager
+      region: uksouth
+      api_version: "2026-01-01"
+    authentication:
+      type: managed_identity
+      identity_client_id: "${AZURE_MI_CLIENT_ID}"
+    capabilities:
+      - mechanistic_reasoning
+      - safety_narrative_generation
+      - regulatory_document_drafting
+      - causal_chain_analysis
+      - uncertainty_quantification
+    parameters:
+      max_tokens: 8192
+      temperature: 0.1  # low temperature for safety-critical reasoning
+    limits:
+      requests_per_minute: 100
+      tokens_per_minute: 500000
+    eval_scores:
+      psp_composite: 0.87
+      mechanistic_reasoning: 0.91
+      calibrated_uncertainty: 0.84
+      temporal_interpretation: 0.83
+      safety_narrative_quality: 0.92
+      latency_p95_ms: 4200
+    cost:
+      input_per_1k_tokens: 0.015
+      output_per_1k_tokens: 0.075
+
+  gpt_5_2:
+    provider: openai
+    model_id: gpt-5.2-20260120
+    display_name: "GPT 5.2"
+    endpoint:
+      type: azure_openai_service
+      url: "${AZURE_OPENAI_ENDPOINT}"
+      region: uksouth
+      deployment_name: psp-gpt-5-2
+      api_version: "2026-01-01"
+    authentication:
+      type: managed_identity
+      identity_client_id: "${AZURE_MI_CLIENT_ID}"
+    capabilities:
+      - structured_data_extraction
+      - literature_nlp
+      - multimodal_analysis
+      - clinical_coding
+      - batch_processing
+    parameters:
+      max_tokens: 8192
+      temperature: 0.0  # deterministic for structured extraction
+    limits:
+      requests_per_minute: 200
+      tokens_per_minute: 800000
+    eval_scores:
+      psp_composite: 0.85
+      mechanistic_reasoning: 0.82
+      calibrated_uncertainty: 0.80
+      temporal_interpretation: 0.86
+      structured_extraction_accuracy: 0.94
+      latency_p95_ms: 2800
+    cost:
+      input_per_1k_tokens: 0.012
+      output_per_1k_tokens: 0.060
+
+  gemini_3_ultra:
+    provider: google
+    model_id: gemini-3-ultra-20260201
+    display_name: "Gemini 3 Ultra"
+    endpoint:
+      type: gcp_vertex_ai
+      url: "${GCP_VERTEX_ENDPOINT}"
+      region: europe-west2
+      project_id: "${GCP_PROJECT_ID}"
+    authentication:
+      type: workload_identity_federation
+      provider_id: "${GCP_WIF_PROVIDER}"
+    capabilities:
+      - long_context_analysis
+      - genomics_interpretation
+      - cross_document_synthesis
+      - image_analysis
+      - large_batch_reasoning
+    parameters:
+      max_tokens: 8192
+      temperature: 0.1
+    limits:
+      requests_per_minute: 150
+      tokens_per_minute: 1000000
+    eval_scores:
+      psp_composite: 0.84
+      mechanistic_reasoning: 0.80
+      calibrated_uncertainty: 0.82
+      temporal_interpretation: 0.81
+      long_context_accuracy: 0.93
+      genomics_interpretation: 0.88
+      latency_p95_ms: 3500
+    cost:
+      input_per_1k_tokens: 0.010
+      output_per_1k_tokens: 0.050
+
+# Task-to-model routing configuration
+routing:
+  strategy: eval_score_based  # route to highest-scoring model per task type
+
+  task_types:
+    mechanistic_reasoning:
+      primary: claude_opus_4_5
+      fallback: gpt_5_2
+      confidence_threshold: 0.75  # below this, route to secondary for verification
+      max_latency_ms: 10000
+
+    structured_data_extraction:
+      primary: gpt_5_2
+      fallback: gemini_3_ultra
+      confidence_threshold: 0.90  # high threshold for data extraction accuracy
+      max_latency_ms: 5000
+
+    safety_narrative_generation:
+      primary: claude_opus_4_5
+      fallback: gpt_5_2
+      confidence_threshold: 0.80
+      max_latency_ms: 15000
+
+    literature_analysis:
+      primary: gemini_3_ultra
+      fallback: claude_opus_4_5
+      confidence_threshold: 0.70
+      max_latency_ms: 20000
+
+    clinical_alert_generation:
+      primary: claude_opus_4_5
+      fallback: gpt_5_2
+      confidence_threshold: 0.85  # high threshold for safety alerts
+      max_latency_ms: 5000  # strict latency for clinical alerts
+
+    genomics_interpretation:
+      primary: gemini_3_ultra
+      fallback: claude_opus_4_5
+      confidence_threshold: 0.80
+      max_latency_ms: 15000
+
+    regulatory_document_drafting:
+      primary: claude_opus_4_5
+      fallback: gpt_5_2
+      confidence_threshold: 0.80
+      max_latency_ms: 30000
+
+  # Disagreement handling
+  disagreement_policy:
+    high_stakes_tasks:
+      - clinical_alert_generation
+      - safety_narrative_generation
+    action: escalate_to_human  # when primary and fallback disagree on high-stakes
+    log_all_disagreements: true
+
+# Evaluation configuration
+evaluation:
+  schedule: monthly_automated
+  manual_review: quarterly
+  eval_suite_version: "2.0"
+  eval_dataset_path: "s3://psp-eval-data/held-out/v2/"
+  promotion_criteria:
+    # New model version must meet ALL of these to auto-promote
+    psp_composite_minimum: 0.80
+    no_metric_regression: true  # no single metric can decrease vs. current production
+    calibration_ece_maximum: 0.06
+  results_store: "s3://psp-model-registry/eval-results/"

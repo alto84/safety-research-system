@@ -1,0 +1,306 @@
+# PSP Data Source Registry
+# Classification: AstraZeneca Confidential
+# Last Updated: 2026-02-06
+#
+# Defines all data sources integrated into the PSP platform.
+# Each source includes connection details, schema, refresh cadence, and quality thresholds.
+
+defaults:
+  data_lake_bucket: "s3://psp-data-lake"
+  bronze_prefix: "bronze/"
+  silver_prefix: "silver/"
+  gold_prefix: "gold/"
+  encryption: AES-256-GCM
+  audit_logging: true
+
+sources:
+  # ─── Clinical Trial Databases ───────────────────────────────────────
+
+  rave_edc:
+    display_name: "Medidata Rave EDC"
+    type: clinical_trial_database
+    description: "Electronic data capture - primary clinical trial data"
+    connection:
+      method: api
+      base_url: "${RAVE_API_URL}"
+      authentication: oauth2_client_credentials
+      credentials_secret: "psp/rave/api-credentials"
+    data_format: CDISC_SDTM_v3.4
+    domains:
+      - DM   # Demographics
+      - AE   # Adverse Events
+      - CM   # Concomitant Medications
+      - LB   # Laboratory Results
+      - VS   # Vital Signs
+      - EX   # Exposure
+      - DS   # Disposition
+      - MH   # Medical History
+      - RS   # Response (tumor assessments)
+    refresh_cadence: near_real_time  # 15-minute sync
+    studies:
+      - protocol_id: "D9310C00001"  # DURGA
+        status: active
+      - protocol_id: "D9310C00002"  # SLE-LN CAR-T
+        status: active
+      - protocol_id: "D8830C00015"  # Retrospective study 1
+        status: completed
+      - protocol_id: "D8830C00022"  # Retrospective study 2
+        status: completed
+      - protocol_id: "D8830C00031"  # Retrospective study 3
+        status: completed
+    quality_thresholds:
+      completeness_minimum: 0.95
+      timeliness_max_lag_hours: 4
+
+  inform_ctms:
+    display_name: "Oracle Health Sciences InForm CTMS"
+    type: clinical_trial_management
+    description: "Trial management - enrollment, site, visit tracking"
+    connection:
+      method: database
+      driver: oracle
+      host: "${INFORM_DB_HOST}"
+      port: 1521
+      database: "${INFORM_DB_SID}"
+      credentials_secret: "psp/inform/db-credentials"
+    data_format: proprietary_relational
+    refresh_cadence: daily
+    quality_thresholds:
+      completeness_minimum: 0.98
+
+  # ─── Central Laboratory Systems ─────────────────────────────────────
+
+  central_lab_covance:
+    display_name: "Covance Central Lab"
+    type: laboratory_system
+    description: "Central laboratory results - hematology, chemistry, cytokines"
+    connection:
+      method: hl7_fhir_r4
+      base_url: "${COVANCE_FHIR_URL}"
+      authentication: oauth2_client_credentials
+      credentials_secret: "psp/covance/fhir-credentials"
+    data_format: FHIR_R4
+    resources:
+      - Observation   # Lab results
+      - DiagnosticReport
+      - Specimen
+    panels:
+      - standard_hematology   # CBC with differential
+      - comprehensive_metabolic
+      - coagulation           # PT, aPTT, fibrinogen, d-dimer
+      - inflammatory_markers  # CRP, ferritin, procalcitonin
+      - cytokine_panel        # IL-6, IFN-gamma, IL-1beta, IL-10, TNF-alpha, IL-2, IL-8, GM-CSF
+      - liver_function
+      - renal_function
+    terminology: LOINC
+    refresh_cadence: daily  # results posted within 24h of collection
+    quality_thresholds:
+      completeness_minimum: 0.92
+      plausibility_check: true  # clinical range validation
+
+  local_lab_results:
+    display_name: "Local Laboratory Results"
+    type: laboratory_system
+    description: "Site-level local lab results (stat labs, inpatient monitoring)"
+    connection:
+      method: hl7_v2_interface
+      interface_engine: "${HL7_ENGINE_URL}"
+      message_types: [ORU_R01]
+    data_format: HL7_v2.5.1
+    refresh_cadence: near_real_time  # critical for inpatient CRS monitoring
+    quality_thresholds:
+      completeness_minimum: 0.80  # lower threshold - local labs have variable reporting
+      requires_reconciliation: true  # reconcile against central lab where overlap exists
+
+  # ─── Cytokine and Biomarker Assays ─────────────────────────────────
+
+  luminex_cytokine:
+    display_name: "Luminex Multiplex Cytokine Assays"
+    type: biomarker_assay
+    description: "Research-grade cytokine panels (Luminex xMAP / MSD)"
+    connection:
+      method: sftp
+      host: "${LUMINEX_SFTP_HOST}"
+      credentials_secret: "psp/luminex/sftp-credentials"
+      file_pattern: "cytokine_*.csv"
+    data_format: vendor_csv
+    analytes:
+      - IL-6
+      - IFN-gamma
+      - IL-1beta
+      - IL-10
+      - TNF-alpha
+      - IL-2
+      - IL-8
+      - GM-CSF
+      - IL-15
+      - IL-18
+      - MCP-1
+      - MIP-1alpha
+    refresh_cadence: batch  # results in batches per visit window
+    quality_thresholds:
+      coefficient_of_variation_max: 0.15
+      below_lloq_handling: lloq_divided_by_2
+
+  # ─── Flow Cytometry ─────────────────────────────────────────────────
+
+  flow_cytometry:
+    display_name: "Flow Cytometry (CAR-T Expansion)"
+    type: cellular_assay
+    description: "CAR-T cell expansion monitoring by flow cytometry"
+    connection:
+      method: sftp
+      host: "${FLOW_SFTP_HOST}"
+      credentials_secret: "psp/flow/sftp-credentials"
+      file_pattern: "*.fcs"
+    data_format: FCS_3.1
+    panels:
+      - car_t_expansion  # CD3, CAR+, CD4, CD8, Ki67
+      - t_cell_phenotype # naive, effector, memory subsets
+      - exhaustion       # PD-1, LAG-3, TIM-3
+    refresh_cadence: per_visit
+    quality_thresholds:
+      minimum_events: 10000
+      viability_minimum: 0.80
+
+  # ─── Genomics ───────────────────────────────────────────────────────
+
+  genomics_wes:
+    display_name: "Whole Exome Sequencing"
+    type: genomics
+    description: "Germline and tumor WES for pharmacogenomics and risk stratification"
+    connection:
+      method: s3
+      bucket: "${GENOMICS_S3_BUCKET}"
+      prefix: "wes/"
+      credentials_secret: "psp/genomics/aws-credentials"
+    data_format: VCF_4.3  # variant call format
+    supplementary_formats:
+      - BAM  # aligned reads (retained in Bronze only)
+      - CRAM # compressed aligned reads
+    reference_genome: GRCh38
+    pipelines:
+      variant_calling: GATK_4.5
+      annotation: VEP_110
+    panels_of_interest:
+      - hla_typing          # HLA-A, HLA-B, HLA-C, HLA-DRB1
+      - cytokine_pathway    # IL6, IL1B, TNF, IFNG polymorphisms
+      - pgx_variants        # CYP2D6, CYP3A4 (tocilizumab metabolism)
+      - immune_regulation   # CTLA4, PDCD1, FAS/FASL
+    refresh_cadence: per_patient  # one-time per patient
+    quality_thresholds:
+      mean_coverage_minimum: 100
+      call_rate_minimum: 0.98
+
+  tcr_repertoire:
+    display_name: "TCR Repertoire Sequencing"
+    type: genomics
+    description: "T-cell receptor sequencing for immune diversity analysis"
+    connection:
+      method: s3
+      bucket: "${GENOMICS_S3_BUCKET}"
+      prefix: "tcr/"
+      credentials_secret: "psp/genomics/aws-credentials"
+    data_format: AIRR  # Adaptive Immune Receptor Repertoire
+    refresh_cadence: per_visit
+    quality_thresholds:
+      unique_clonotypes_minimum: 1000
+
+  # ─── Imaging ────────────────────────────────────────────────────────
+
+  imaging_dicom:
+    display_name: "Medical Imaging (DICOM)"
+    type: imaging
+    description: "MRI, CT, PET-CT imaging for tumor burden and ICANS assessment"
+    connection:
+      method: dicomweb
+      base_url: "${PACS_DICOMWEB_URL}"
+      authentication: oauth2_client_credentials
+      credentials_secret: "psp/imaging/dicom-credentials"
+    data_format: DICOM
+    modalities:
+      - MR   # MRI (brain - ICANS correlation)
+      - CT   # CT (tumor burden)
+      - PT   # PET (metabolic tumor volume)
+    storage_policy:
+      bronze: dicom_metadata_only  # full DICOM in PACS
+      silver: extracted_features   # radiomics features
+      gold: aggregated_metrics     # tumor burden scores
+    refresh_cadence: per_protocol_schedule
+    quality_thresholds:
+      completeness_per_timepoint: 0.90
+
+  # ─── Manufacturing ──────────────────────────────────────────────────
+
+  manufacturing_batch:
+    display_name: "Cell Therapy Manufacturing Batch Records"
+    type: manufacturing
+    description: "Certificate of Analysis and batch data for cell therapy products"
+    connection:
+      method: api
+      base_url: "${MFG_API_URL}"
+      authentication: api_key
+      credentials_secret: "psp/manufacturing/api-key"
+    data_format: structured_xml
+    attributes:
+      - transduction_efficiency
+      - vector_copy_number
+      - cell_viability
+      - total_cell_count
+      - cd4_cd8_ratio
+      - expansion_fold
+      - sterility_result
+      - endotoxin_level
+      - mycoplasma_result
+    refresh_cadence: per_lot
+    quality_thresholds:
+      completeness_minimum: 1.00  # all CoA fields mandatory
+
+  # ─── External Databases ─────────────────────────────────────────────
+
+  faers:
+    display_name: "FDA Adverse Event Reporting System"
+    type: external_pharmacovigilance
+    description: "FDA post-market adverse event reports"
+    connection:
+      method: api
+      base_url: "https://api.fda.gov/drug/event.json"
+      authentication: api_key
+      credentials_secret: "psp/faers/api-key"
+    data_format: openFDA_JSON
+    filters:
+      product_type: ["biologic", "cell therapy"]
+      reaction_terms_meddra: ["cytokine release syndrome", "neurotoxicity", "HLH"]
+    refresh_cadence: quarterly
+    quality_thresholds:
+      deduplication_required: true
+
+  eudravigilance:
+    display_name: "EudraVigilance"
+    type: external_pharmacovigilance
+    description: "EMA adverse reaction reports"
+    connection:
+      method: ema_data_access
+      access_level: level_2  # line-listing access via data access agreement
+      credentials_secret: "psp/eudravigilance/credentials"
+    data_format: ICH_E2B_R3
+    refresh_cadence: quarterly
+    quality_thresholds:
+      deduplication_required: true
+
+  pubmed_literature:
+    display_name: "PubMed / PMC Literature"
+    type: literature
+    description: "Published literature for safety signal context and mechanistic evidence"
+    connection:
+      method: api
+      base_url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+      authentication: api_key
+      credentials_secret: "psp/pubmed/api-key"
+    search_queries:
+      - "CAR-T cytokine release syndrome"
+      - "immune effector cell neurotoxicity"
+      - "hemophagocytic lymphohistiocytosis cell therapy"
+      - "bispecific T-cell engager safety"
+    refresh_cadence: weekly
+    processing: nlp_extraction  # NLP pipeline extracts structured safety data

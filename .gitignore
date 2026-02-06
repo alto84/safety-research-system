@@ -1,0 +1,164 @@
+# PSP .gitignore
+
+# ─── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+.Python
+develop-eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.conda/
+
+# ─── IDE / Editor ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+*.sublime-project
+*.sublime-workspace
+
+# ─── OS ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ─── Patient Data and Clinical Files (NEVER commit) ──────────────────
+data/
+datasets/
+patient_data/
+clinical_data/
+*.sas7bdat
+*.xpt
+*.sas
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.arrow
+*.h5
+*.hdf5
+
+# ─── Genomics Data (NEVER commit) ────────────────────────────────────
+*.vcf
+*.vcf.gz
+*.bam
+*.bam.bai
+*.cram
+*.cram.crai
+*.fasta
+*.fastq
+*.fastq.gz
+*.fcs
+*.h5ad
+*.bed
+*.gff
+*.gtf
+
+# ─── Imaging Data (NEVER commit) ─────────────────────────────────────
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+*.nrrd
+
+# ─── Model Artifacts ─────────────────────────────────────────────────
+models/
+model_artifacts/
+checkpoints/
+*.pt
+*.pth
+*.onnx
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.keras
+*.savedmodel/
+mlruns/
+mlartifacts/
+
+# ─── Credentials and Secrets (NEVER commit) ──────────────────────────
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
+*credentials*
+*secret*
+*.keystore
+service_account*.json
+token.json
+
+# ─── Logs ─────────────────────────────────────────────────────────────
+logs/
+*.log
+*.log.*
+
+# ─── Terraform / Infrastructure ──────────────────────────────────────
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# ─── Docker ───────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ─── Jupyter ──────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+!notebooks/templates/*.ipynb
+
+# ─── Test and Coverage ────────────────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ─── Documentation Build ─────────────────────────────────────────────
+docs/_build/
+site/
+
+# ─── Evaluation Results (tracked in S3, not git) ─────────────────────
+eval_results/
+benchmark_results/
+
+# ─── Temporary Files ─────────────────────────────────────────────────
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig

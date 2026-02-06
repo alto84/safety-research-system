@@ -1,0 +1,334 @@
+# PSP Security Configuration
+# Classification: AstraZeneca Confidential
+# Last Updated: 2026-02-06
+#
+# Security controls aligned with:
+# - 21 CFR Part 11 (electronic records and signatures)
+# - EU Annex 11 (computerized systems)
+# - AZ Information Security Policy
+# - NIST Cybersecurity Framework
+# - ISO 27001
+
+encryption:
+  at_rest:
+    algorithm: AES-256-GCM
+    key_management: AWS_KMS
+    key_rotation_days: 365
+    key_policy: "psp-data-encryption-key-policy"
+    # Separate keys per data classification
+    keys:
+      patient_data: "alias/psp-patient-data-key"
+      model_artifacts: "alias/psp-model-artifacts-key"
+      audit_logs: "alias/psp-audit-log-key"
+      configuration: "alias/psp-config-key"
+
+  in_transit:
+    protocol: TLS_1.3
+    minimum_protocol: TLS_1.2  # fallback only for legacy lab interfaces
+    cipher_suites:
+      - TLS_AES_256_GCM_SHA384
+      - TLS_CHACHA20_POLY1305_SHA256
+    certificate_authority: AZ_Internal_PKI
+    certificate_rotation_days: 90
+    mutual_tls_required:
+      - ai_model_endpoints
+      - database_connections
+      - hl7_interfaces
+
+  database:
+    transparent_data_encryption: true
+    column_level_encryption:
+      - patient_identifiers  # pseudonymized but still protected
+      - genomic_data
+      - manufacturing_batch_ids
+
+access_control:
+  authentication:
+    provider: azure_active_directory
+    protocol: SAML_2.0
+    mfa_required: true
+    mfa_methods:
+      - authenticator_app  # preferred
+      - hardware_token     # backup
+    session_timeout_minutes: 15
+    concurrent_session_limit: 2
+    password_policy:
+      min_length: 14
+      complexity: true
+      history: 12  # cannot reuse last 12 passwords
+      max_age_days: 90
+      lockout_threshold: 5
+      lockout_duration_minutes: 30
+
+  roles:
+    # Role-Based Access Control (RBAC)
+    safety_scientist:
+      description: "Safety Sciences team - primary PSP users"
+      permissions:
+        - view_patient_risk_scores
+        - view_feature_attributions
+        - view_model_explanations
+        - view_alert_dashboard
+        - acknowledge_alerts
+        - override_alerts_with_justification
+        - view_aggregate_reports
+        - export_deidentified_reports
+      data_access:
+        patient_level: true
+        study_scope: assigned_studies_only
+        genomic_data: false  # requires additional approval
+
+    medical_monitor:
+      description: "Study medical monitors - clinical oversight"
+      permissions:
+        - view_patient_risk_scores
+        - view_feature_attributions
+        - view_model_explanations
+        - view_alert_dashboard
+        - acknowledge_alerts
+        - override_alerts_with_justification
+        - escalate_safety_signals
+        - view_aggregate_reports
+        - approve_alert_thresholds
+      data_access:
+        patient_level: true
+        study_scope: assigned_studies_only
+        genomic_data: true  # with study-specific approval
+
+    data_scientist:
+      description: "DS&AI model development team"
+      permissions:
+        - view_feature_store
+        - run_model_training
+        - run_model_evaluation
+        - view_eval_results
+        - deploy_to_staging
+        - view_monitoring_dashboards
+      data_access:
+        patient_level: false  # aggregated/pseudonymized features only
+        study_scope: all_approved_studies
+        genomic_data: false
+
+    ml_engineer:
+      description: "ML Engineering - platform operations"
+      permissions:
+        - manage_model_serving
+        - manage_data_pipelines
+        - view_system_metrics
+        - deploy_to_production  # requires approval workflow
+        - manage_model_routing
+        - view_monitoring_dashboards
+        - manage_infrastructure
+      data_access:
+        patient_level: false
+        study_scope: all_approved_studies
+        genomic_data: false
+
+    regulatory_affairs:
+      description: "Regulatory team - submission support"
+      permissions:
+        - view_model_cards
+        - view_validation_reports
+        - view_aggregate_reports
+        - export_regulatory_reports
+        - view_pccp_status
+      data_access:
+        patient_level: false
+        study_scope: all_approved_studies
+        genomic_data: false
+
+    platform_admin:
+      description: "Platform administrators"
+      permissions:
+        - manage_users
+        - manage_roles
+        - manage_configuration
+        - view_audit_logs
+        - manage_encryption_keys
+        - manage_backup_recovery
+      data_access:
+        patient_level: false  # admins do not access clinical data
+        study_scope: none
+        genomic_data: false
+      controls:
+        requires_two_person_rule: true  # critical admin actions require dual approval
+        privileged_access_ttl_hours: 4  # time-limited elevation
+
+  access_reviews:
+    cadence: quarterly
+    owner: information_security
+    certification_required: true  # managers must certify team access
+    auto_revoke_inactive_days: 90
+
+audit:
+  # 21 CFR Part 11 compliant audit trail
+  audit_trail:
+    enabled: true
+    storage: append_only_database
+    database:
+      type: aurora_postgresql
+      host: "${AUDIT_DB_HOST}"
+      port: 5432
+      database: psp_audit
+      credentials_secret: "psp/audit/db-credentials"
+      encryption: true
+    retention_years: 15  # ICH E6 requirement
+    integrity_verification:
+      algorithm: SHA-256
+      chain_validation: true  # hash chain for tamper detection
+      verification_cadence: daily
+
+  events_captured:
+    data_access:
+      - user_id
+      - timestamp_utc
+      - resource_accessed
+      - access_type  # read, write, export
+      - query_or_action
+      - data_volume_returned
+      - source_ip
+      - session_id
+
+    model_operations:
+      - user_id
+      - timestamp_utc
+      - operation  # train, evaluate, deploy, rollback
+      - model_version
+      - dataset_version
+      - parameters
+      - result_summary
+
+    clinical_actions:
+      - user_id
+      - timestamp_utc
+      - action  # alert_acknowledge, alert_override, signal_escalate
+      - patient_id_pseudonymized
+      - alert_id
+      - justification  # required for overrides
+      - model_prediction_at_time
+
+    system_events:
+      - timestamp_utc
+      - event_type
+      - component
+      - severity
+      - details
+      - correlation_id
+
+  reporting:
+    automated_reports:
+      - access_anomaly_detection  # unusual access patterns
+      - privileged_action_summary
+      - failed_authentication_summary
+    cadence: daily
+    distribution: information_security_team
+
+network_security:
+  vpc:
+    id: "${PSP_VPC_ID}"
+    cidr: "10.200.0.0/16"
+    private_subnets:
+      - "10.200.1.0/24"   # application tier
+      - "10.200.2.0/24"   # data tier
+      - "10.200.3.0/24"   # model serving tier
+    public_subnets: []     # no public subnets - all access via VPN/private link
+
+  ingress:
+    allowed_sources:
+      - az_corporate_vpn
+      - az_managed_endpoints
+      - hl7_interface_engine  # specific IP allowlist for lab feeds
+    web_application_firewall: true
+    ddos_protection: aws_shield_advanced
+
+  egress:
+    allowed_destinations:
+      - ai_model_endpoints     # Azure, GCP private endpoints
+      - external_data_apis     # FAERS, PubMed (via NAT gateway)
+      - az_internal_services   # DURGA, data warehouse
+    deny_all_other: true
+    data_loss_prevention:
+      enabled: true
+      rules:
+        - block_patient_identifiers_in_egress
+        - block_genomic_sequences_in_egress
+        - alert_on_large_data_exports
+
+  endpoint_protection:
+    vulnerability_scanning: weekly
+    patch_management: automated_within_30_days
+    container_scanning: on_build  # scan container images before deployment
+
+data_protection:
+  pseudonymization:
+    method: deterministic_encryption  # same patient always maps to same pseudonym
+    key_custodian: data_trustee  # independent of modeling team
+    re_identification_requires:
+      - dpo_approval
+      - medical_monitor_approval
+      - documented_patient_safety_justification
+
+  data_classification:
+    levels:
+      - label: restricted
+        description: "Patient-level identifiable data (pre-pseudonymization)"
+        handling: encrypted, access-logged, no-export
+        examples: [patient_names, dates_of_birth, mrn]
+      - label: confidential
+        description: "Pseudonymized patient data, model artifacts"
+        handling: encrypted, access-logged
+        examples: [pseudonymized_clinical_data, model_weights, eval_results]
+      - label: internal
+        description: "Aggregate reports, architecture docs, non-patient data"
+        handling: encrypted at rest
+        examples: [aggregate_safety_reports, system_documentation]
+
+  backup:
+    frequency: daily
+    retention_days: 90
+    cross_region_replication: true
+    backup_encryption: true
+    recovery_testing: quarterly
+    rto_hours: 4   # recovery time objective
+    rpo_hours: 1   # recovery point objective
+
+incident_response:
+  classification:
+    critical:
+      description: "Patient data breach, model producing unsafe outputs"
+      response_time_minutes: 30
+      escalation: ciso_and_cmo
+    major:
+      description: "Unauthorized access, system compromise, data integrity issue"
+      response_time_minutes: 120
+      escalation: information_security_lead
+    minor:
+      description: "Failed access attempts, configuration drift, non-critical vulnerability"
+      response_time_hours: 24
+      escalation: platform_admin
+
+  contacts:
+    security_operations: "${SOC_EMAIL}"
+    data_protection_officer: "${DPO_EMAIL}"
+    platform_lead: "${PLATFORM_LEAD_EMAIL}"
+
+  procedures:
+    - contain_and_isolate
+    - preserve_evidence
+    - assess_impact
+    - notify_stakeholders
+    - remediate
+    - post_incident_review
+    - update_controls
+
+compliance_scanning:
+  soc2_type2:
+    auditor: external  # annual audit
+    scope: [security, availability, confidentiality]
+  cis_benchmarks:
+    scan_cadence: weekly
+    auto_remediate: true  # for low-risk findings
+  penetration_testing:
+    cadence: annual
+    scope: [external, internal, application]
+    provider: external_certified
