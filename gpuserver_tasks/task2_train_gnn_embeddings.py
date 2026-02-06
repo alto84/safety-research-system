@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-PSP Task 2: Train Graph Neural Network Embeddings
-===================================================
+Task 2: Train Graph Neural Network Embeddings
+===============================================
 Target: gpuserver1 (192.168.1.100) - RTX 5090
 Depends on: Task 1 (knowledge graph must be built first)
 Estimated runtime: 15-45 minutes (GPU training)
-Output: /home/alton/psp-graph/gnn_models/
+Output: /home/alton/safety-graph/gnn_models/
 
-Trains multiple GNN architectures on the PSP knowledge graph:
+Trains multiple GNN architectures on the biomedical knowledge graph:
   1. Node2Vec embeddings (unsupervised, for baseline similarity)
   2. Graph Attention Network (GAT) for node classification (risk prediction)
   3. Relational GCN for edge-type-aware reasoning
@@ -31,7 +31,7 @@ from datetime import datetime
 import numpy as np
 
 # Setup
-BASE_DIR = Path("/home/alton/psp-graph")
+BASE_DIR = Path("/home/alton/safety-graph")
 KG_DIR = BASE_DIR / "knowledge_graph" / "output"
 EMBEDDINGS_DIR = KG_DIR / "embeddings_ready"
 MODEL_DIR = BASE_DIR / "gnn_models"
@@ -45,7 +45,7 @@ logging.basicConfig(
         logging.FileHandler(MODEL_DIR / "training.log")
     ]
 )
-log = logging.getLogger("psp-gnn")
+log = logging.getLogger("gnn-trainer")
 
 # ============================================================
 # Install dependencies
@@ -267,7 +267,7 @@ class LinkPredictor(nn.Module):
 # ============================================================
 
 class GNNTrainer:
-    """Trains GNN models on the PSP knowledge graph."""
+    """Trains GNN models on the biomedical knowledge graph."""
 
     def __init__(self, data: dict, device: str = None):
         self.data = data
@@ -691,7 +691,7 @@ def networkx_fallback():
 
 def main():
     log.info("=" * 60)
-    log.info("PSP GNN Embedding Training")
+    log.info("GNN Embedding Training")
     log.info("=" * 60)
     start = time.time()
 

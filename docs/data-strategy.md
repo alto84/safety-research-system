@@ -1,8 +1,7 @@
-# PSP Data Strategy
+# Predictive Safety Platform Data Strategy
 
-**Document Classification:** AstraZeneca Confidential - Internal Use Only
 **Version:** 1.0 | **Date:** 2026-02-06
-**Owner:** Data Science & AI / Safety Sciences
+**Owner:** Safety Research Team / Safety Sciences
 
 ---
 
@@ -150,7 +149,7 @@ Gold Layer (Feature Store)
 
 ### 4.4 Cross-Border Data Transfer
 
-- Primary processing within AZ-managed AWS regions (EU: eu-west-1, US: us-east-1).
+- Primary processing within managed AWS regions (EU: eu-west-1, US: us-east-1).
 - No patient-level data transferred to AI model provider endpoints. All LLM interactions use de-identified, aggregated, or synthetic data.
 - Standard Contractual Clauses (SCCs) in place for any EU-to-US data flows.
 - China data (if applicable) processed in-region per PIPL requirements.
@@ -192,7 +191,7 @@ Gold Layer (Feature Store)
 |------|---------------|
 | Data Product Owner (Safety Sciences) | Defines data requirements, validates clinical relevance |
 | Data Steward (Data Management) | Enforces standards, manages metadata catalog |
-| Data Engineer (DS&AI Engineering) | Builds and maintains pipelines, ensures SLAs |
+| Data Engineer (Engineering) | Builds and maintains pipelines, ensures SLAs |
 | Data Protection Officer | Approves privacy impact assessments, manages consent |
 | Information Security | Encryption, access control, vulnerability management |
 

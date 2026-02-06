@@ -1,8 +1,7 @@
-# Predictive Safety Platform (PSP) - Executive Summary
+# Predictive Safety Platform - Executive Summary
 
-**Document Classification:** AstraZeneca Confidential - Internal Use Only
 **Version:** 1.0 | **Date:** 2026-02-06
-**Author:** Cell Therapy Safety Sciences / Data Science & AI
+**Author:** Cell Therapy Safety Sciences / Safety Research Team
 **Sponsor:** SVP Patient Safety, SVP Oncology R&D
 
 ---
@@ -31,7 +30,7 @@ Cell and gene therapy (CGT) represents one of the highest-value frontiers in onc
 
 ## The Solution: Predictive Safety Platform
 
-PSP is an AI-powered platform that predicts immune-mediated adverse events **before clinical manifestation**, enabling preemptive intervention and proactive regulatory engagement.
+The Predictive Safety Platform is an AI-powered platform that predicts immune-mediated adverse events **before clinical manifestation**, enabling preemptive intervention and proactive regulatory engagement.
 
 ### Core Capabilities
 
@@ -45,7 +44,7 @@ PSP is an AI-powered platform that predicts immune-mediated adverse events **bef
 ```
 Data Layer          AI Layer              Application Layer
 -----------         ----------            ------------------
-Clinical DBs   -->  Feature Engine   -->  Risk Dashboard (DURGA)
+Clinical DBs   -->  Feature Engine   -->  Risk Dashboard (Study-A)
 Lab Systems    -->  Prediction Models -->  Clinician Alerts
 Genomics       -->  Causal Inference -->  Regulatory Signal Reports
 Manufacturing  -->  NLP/Literature   -->  DSMB Briefing Packs
@@ -59,8 +58,8 @@ Manufacturing  -->  NLP/Literature   -->  DSMB Briefing Packs
 
 | Stage | Timeline | Investment | Deliverable |
 |-------|----------|-----------|-------------|
-| Stage 1: Foundation | Year 1 | $8M | Validated tool, 3 study integrations, DURGA pathway |
-| Stage 2: Pilot | Year 2 | $7M | Advisory-mode deployment in DURGA and SLE-LN trials |
+| Stage 1: Foundation | Year 1 | $8M | Validated tool, 3 study integrations, Study-A pathway |
+| Stage 2: Pilot | Year 2 | $7M | Advisory-mode deployment in Study-A and Study-B trials |
 | Stage 3: Scale | Year 3+ | $5M | Cross-TA enterprise deployment, regulatory submissions |
 | **Total** | **3 years** | **$20M** | |
 
@@ -86,7 +85,7 @@ Manufacturing  -->  NLP/Literature   -->  DSMB Briefing Packs
 
 - **Regulatory differentiation:** No competitor has deployed prospective AI-based safety prediction in CGT filings. First-mover advantage with FDA/EMA.
 - **Pipeline protection:** De-risks the $5B+ CGT and bispecific portfolio by shifting safety from reactive to predictive.
-- **Platform economics:** Marginal cost of adding a new molecule to PSP decreases with each deployment. Stage 3 extends to T-cell engagers (TCEs), checkpoint inhibitors, and all immunology MoAs.
+- **Platform economics:** Marginal cost of adding a new molecule to the platform decreases with each deployment. Stage 3 extends to T-cell engagers (TCEs), checkpoint inhibitors, and all immunology MoAs.
 
 ---
 
@@ -114,7 +113,7 @@ The platform is designed from inception for cross-modality generalization. The f
 
 ## Governance and Oversight
 
-- **Steering Committee:** SVP Patient Safety (chair), SVP Oncology R&D, VP Data Science & AI, VP Regulatory Affairs, Chief Medical Officer (CGT)
+- **Steering Committee:** SVP Patient Safety (chair), SVP Oncology R&D, VP Safety Research Team, VP Regulatory Affairs, Chief Medical Officer (CGT)
 - **Operating Model:** Joint team across Safety Sciences, Data Science, Clinical Operations, and IT/Engineering
 - **Regulatory Strategy:** Co-development with FDA CBER through pre-submission meetings; alignment with FDA AI/ML SaMD framework
 - **Ethics Review:** Independent AI ethics review board with external clinical and bioethics advisors
@@ -123,10 +122,10 @@ The platform is designed from inception for cross-modality generalization. The f
 
 ## Decision Requested
 
-Approval of $8M Stage 1 funding to build the foundational platform, validate against 3 retrospective clinical studies, and establish the DURGA integration pathway. Stage 2/3 funding contingent on Stage 1 milestone achievement.
+Approval of $8M Stage 1 funding to build the foundational platform, validate against 3 retrospective clinical studies, and establish the Study-A integration pathway. Stage 2/3 funding contingent on Stage 1 milestone achievement.
 
 **Stage 1 Go/No-Go Criteria:**
 - AUROC >= 0.80 for Grade >= 3 CRS prediction at 24h pre-onset
-- Successful DURGA integration proof-of-concept
+- Successful Study-A integration proof-of-concept
 - FDA pre-submission feedback on AI-augmented safety monitoring
 - Data governance framework approved by DPO and Legal

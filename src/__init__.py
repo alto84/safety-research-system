@@ -1,7 +1,7 @@
 """
-Predictive Safety Platform (PSP)
+Predictive Safety Platform
 
-A pharmaceutical AI platform for predicting adverse events in cell therapy,
+A research AI platform for predicting adverse events in cell therapy,
 including Cytokine Release Syndrome (CRS), Immune effector Cell-Associated
 Neurotoxicity Syndrome (ICANS), and Hemophagocytic Lymphohistiocytosis (HLH).
 

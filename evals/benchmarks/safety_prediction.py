@@ -1,5 +1,5 @@
 """
-Safety prediction benchmark suite for PSP evaluation.
+Safety prediction benchmark suite for the platform evaluation.
 
 Runs the full evaluation battery across synthetic datasets:
 1. Discrimination: AUROC for Grade 3+ events (target > 0.80)
@@ -97,7 +97,7 @@ class BenchmarkReport:
     def summary(self) -> str:
         """Generate human-readable summary."""
         lines = [
-            f"PSP Safety Prediction Benchmark Report",
+            f"Safety Prediction Benchmark Report",
             f"{'=' * 50}",
             f"Dataset: {self.dataset_name}",
             f"Patients: {self.n_patients}",

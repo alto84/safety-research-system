@@ -1,1 +1,1 @@
-"""PSP test suite — unit, integration, and safety-critical validation tests."""
+"""Predictive Safety Platform test suite — unit, integration, and safety-critical validation tests."""

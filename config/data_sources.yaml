@@ -1,12 +1,11 @@
-# PSP Data Source Registry
-# Classification: AstraZeneca Confidential
+# Data Source Registry
 # Last Updated: 2026-02-06
 #
-# Defines all data sources integrated into the PSP platform.
+# Defines all data sources integrated into the platform.
 # Each source includes connection details, schema, refresh cadence, and quality thresholds.
 
 defaults:
-  data_lake_bucket: "s3://psp-data-lake"
+  data_lake_bucket: "s3://safety-data-lake"
   bronze_prefix: "bronze/"
   silver_prefix: "silver/"
   gold_prefix: "gold/"
@@ -24,7 +23,7 @@ sources:
       method: api
       base_url: "${RAVE_API_URL}"
       authentication: oauth2_client_credentials
-      credentials_secret: "psp/rave/api-credentials"
+      credentials_secret: "safety-platform/rave/api-credentials"
     data_format: CDISC_SDTM_v3.4
     domains:
       - DM   # Demographics
@@ -38,9 +37,9 @@ sources:
       - RS   # Response (tumor assessments)
     refresh_cadence: near_real_time  # 15-minute sync
     studies:
-      - protocol_id: "D9310C00001"  # DURGA
+      - protocol_id: "STUDY-A-001"  # Study-A
         status: active
-      - protocol_id: "D9310C00002"  # SLE-LN CAR-T
+      - protocol_id: "STUDY-B-001"  # Study-B CAR-T
         status: active
       - protocol_id: "D8830C00015"  # Retrospective study 1
         status: completed
@@ -62,7 +61,7 @@ sources:
       host: "${INFORM_DB_HOST}"
       port: 1521
       database: "${INFORM_DB_SID}"
-      credentials_secret: "psp/inform/db-credentials"
+      credentials_secret: "safety-platform/inform/db-credentials"
     data_format: proprietary_relational
     refresh_cadence: daily
     quality_thresholds:
@@ -78,7 +77,7 @@ sources:
       method: hl7_fhir_r4
       base_url: "${COVANCE_FHIR_URL}"
       authentication: oauth2_client_credentials
-      credentials_secret: "psp/covance/fhir-credentials"
+      credentials_secret: "safety-platform/covance/fhir-credentials"
     data_format: FHIR_R4
     resources:
       - Observation   # Lab results
@@ -121,7 +120,7 @@ sources:
     connection:
       method: sftp
       host: "${LUMINEX_SFTP_HOST}"
-      credentials_secret: "psp/luminex/sftp-credentials"
+      credentials_secret: "safety-platform/luminex/sftp-credentials"
       file_pattern: "cytokine_*.csv"
     data_format: vendor_csv
     analytes:
@@ -151,7 +150,7 @@ sources:
     connection:
       method: sftp
       host: "${FLOW_SFTP_HOST}"
-      credentials_secret: "psp/flow/sftp-credentials"
+      credentials_secret: "safety-platform/flow/sftp-credentials"
       file_pattern: "*.fcs"
     data_format: FCS_3.1
     panels:
@@ -173,7 +172,7 @@ sources:
       method: s3
       bucket: "${GENOMICS_S3_BUCKET}"
       prefix: "wes/"
-      credentials_secret: "psp/genomics/aws-credentials"
+      credentials_secret: "safety-platform/genomics/aws-credentials"
     data_format: VCF_4.3  # variant call format
     supplementary_formats:
       - BAM  # aligned reads (retained in Bronze only)
@@ -200,7 +199,7 @@ sources:
       method: s3
       bucket: "${GENOMICS_S3_BUCKET}"
       prefix: "tcr/"
-      credentials_secret: "psp/genomics/aws-credentials"
+      credentials_secret: "safety-platform/genomics/aws-credentials"
     data_format: AIRR  # Adaptive Immune Receptor Repertoire
     refresh_cadence: per_visit
     quality_thresholds:
@@ -216,7 +215,7 @@ sources:
       method: dicomweb
       base_url: "${PACS_DICOMWEB_URL}"
       authentication: oauth2_client_credentials
-      credentials_secret: "psp/imaging/dicom-credentials"
+      credentials_secret: "safety-platform/imaging/dicom-credentials"
     data_format: DICOM
     modalities:
       - MR   # MRI (brain - ICANS correlation)
@@ -240,7 +239,7 @@ sources:
       method: api
       base_url: "${MFG_API_URL}"
       authentication: api_key
-      credentials_secret: "psp/manufacturing/api-key"
+      credentials_secret: "safety-platform/manufacturing/api-key"
     data_format: structured_xml
     attributes:
       - transduction_efficiency
@@ -266,7 +265,7 @@ sources:
       method: api
       base_url: "https://api.fda.gov/drug/event.json"
       authentication: api_key
-      credentials_secret: "psp/faers/api-key"
+      credentials_secret: "safety-platform/faers/api-key"
     data_format: openFDA_JSON
     filters:
       product_type: ["biologic", "cell therapy"]
@@ -282,7 +281,7 @@ sources:
     connection:
       method: ema_data_access
       access_level: level_2  # line-listing access via data access agreement
-      credentials_secret: "psp/eudravigilance/credentials"
+      credentials_secret: "safety-platform/eudravigilance/credentials"
     data_format: ICH_E2B_R3
     refresh_cadence: quarterly
     quality_thresholds:
@@ -296,7 +295,7 @@ sources:
       method: api
       base_url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
       authentication: api_key
-      credentials_secret: "psp/pubmed/api-key"
+      credentials_secret: "safety-platform/pubmed/api-key"
     search_queries:
       - "CAR-T cytokine release syndrome"
       - "immune effector cell neurotoxicity"

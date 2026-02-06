@@ -1,4 +1,4 @@
-# Predictive Safety Platform (PSP)
+# Predictive Safety Platform
 
 ### AI-Enabled Predictive Clinical Safety
 **Reducing Risk & Accelerating Timelines in Cell Therapy Development**
@@ -33,7 +33,7 @@ predictive-safety-platform/
 │   └── deployment-roadmap.md          # Stage 1-2-3 implementation plan
 │
 ├── src/
-│   ├── engine/                        # PSP Engine core
+│   ├── engine/                        # SafetyEngine core
 │   │   ├── orchestrator/              # Layer 1: Model Orchestration
 │   │   ├── reasoning/                 # Layer 2: Agentic Scientific Reasoning
 │   │   └── integration/               # Layer 3: Operational Integration
@@ -77,7 +77,7 @@ predictive-safety-platform/
 ## The Three-Layer Engine
 
 ### Layer 1: Model Orchestration
-Normalizes and combines predictions from multiple foundation models (Claude, GPT, Gemini) behind AZ-secured API boundaries. Handles prompt routing, response normalization, confidence calibration, and ensemble aggregation.
+Normalizes and combines predictions from multiple foundation models (Claude, GPT, Gemini) behind secured API boundaries. Handles prompt routing, response normalization, confidence calibration, and ensemble aggregation.
 
 ### Layer 2: Agentic Scientific Reasoning
 Mechanism-aware hypothesis generation grounded in pathophysiology. Uses Graph Network Memory to encode biological pathways, cytokine cascades, and known AE mechanisms. Generates testable hypotheses about patient risk profiles.
@@ -102,14 +102,14 @@ The core output: a longitudinal, mechanistic risk score that converts diverse cl
 | Stage | Scope | Validation |
 |-------|-------|------------|
 | **Stage 1** | Build AI tool, 3 clinical studies, assess signal quality | Known outcomes |
-| **Stage 2** | Pilot in DURGA and SLE-LN trials, expand cell therapy portfolio | Prospective |
+| **Stage 2** | Pilot in Study-A and Study-B trials, expand cell therapy portfolio | Prospective |
 | **Stage 3** | Large-scale validation, cross-TA expansion | Enterprise-wide |
 
 ---
 
 ## Technology Stack
 
-- **Foundation Models**: Claude Opus, GPT-5, Gemini (AZ-secured API)
+- **Foundation Models**: Claude Opus, GPT-5, Gemini (secured enterprise API)
 - **Agent Framework**: Claude Code / custom agent harness
 - **Graph Database**: Neo4j (biological pathway knowledge graph)
 - **Compute**: GPU cluster for model inference and training
@@ -121,8 +121,5 @@ The core output: a longitudinal, mechanistic risk score that converts diverse cl
 
 ## License
 
-Proprietary - AstraZeneca Internal
+Open Source - Apache 2.0
 
-## Contact
-
-Project Sponsor: Serban Ghiorghiu

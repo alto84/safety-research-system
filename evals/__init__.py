@@ -1,1 +1,1 @@
-"""PSP evaluation framework — benchmarks, metrics, and synthetic datasets."""
+"""Predictive Safety Platform evaluation framework — benchmarks, metrics, and synthetic datasets."""

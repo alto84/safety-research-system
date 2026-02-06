@@ -1,1 +1,1 @@
-"""Unit tests for individual PSP components."""
+"""Unit tests for individual platform components."""

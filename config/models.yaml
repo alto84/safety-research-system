@@ -1,8 +1,7 @@
-# PSP Model Endpoint Configuration
-# Classification: AstraZeneca Confidential
+# Model Endpoint Configuration
 # Last Updated: 2026-02-06
 #
-# All endpoints are AZ-managed private deployments.
+# All endpoints are privately managed deployments.
 # No patient data is sent to public API endpoints.
 
 defaults:
@@ -38,7 +37,7 @@ models:
       requests_per_minute: 100
       tokens_per_minute: 500000
     eval_scores:
-      psp_composite: 0.87
+      composite_score: 0.87
       mechanistic_reasoning: 0.91
       calibrated_uncertainty: 0.84
       temporal_interpretation: 0.83
@@ -56,7 +55,7 @@ models:
       type: azure_openai_service
       url: "${AZURE_OPENAI_ENDPOINT}"
       region: uksouth
-      deployment_name: psp-gpt-5-2
+      deployment_name: safety-gpt-5-2
       api_version: "2026-01-01"
     authentication:
       type: managed_identity
@@ -74,7 +73,7 @@ models:
       requests_per_minute: 200
       tokens_per_minute: 800000
     eval_scores:
-      psp_composite: 0.85
+      composite_score: 0.85
       mechanistic_reasoning: 0.82
       calibrated_uncertainty: 0.80
       temporal_interpretation: 0.86
@@ -109,7 +108,7 @@ models:
       requests_per_minute: 150
       tokens_per_minute: 1000000
     eval_scores:
-      psp_composite: 0.84
+      composite_score: 0.84
       mechanistic_reasoning: 0.80
       calibrated_uncertainty: 0.82
       temporal_interpretation: 0.81
@@ -180,10 +179,10 @@ evaluation:
   schedule: monthly_automated
   manual_review: quarterly
   eval_suite_version: "2.0"
-  eval_dataset_path: "s3://psp-eval-data/held-out/v2/"
+  eval_dataset_path: "s3://safety-eval-data/held-out/v2/"
   promotion_criteria:
     # New model version must meet ALL of these to auto-promote
-    psp_composite_minimum: 0.80
+    composite_score_minimum: 0.80
     no_metric_regression: true  # no single metric can decrease vs. current production
     calibration_ece_maximum: 0.06
-  results_store: "s3://psp-model-registry/eval-results/"
+  results_store: "s3://safety-model-registry/eval-results/"

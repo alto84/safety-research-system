@@ -1,16 +1,15 @@
-# PSP AI Partnership Model
+# Predictive Safety Platform AI Partnership Model
 
-**Document Classification:** AstraZeneca Confidential - Internal Use Only
 **Version:** 1.0 | **Date:** 2026-02-06
-**Owner:** Data Science & AI / Strategic Partnerships
+**Owner:** Safety Research Team / Strategic Partnerships
 
 ---
 
 ## 1. Strategic Rationale
 
-The frontier AI landscape evolves faster than any single pharmaceutical company can internalize. PSP adopts a **multi-model, partner-agnostic architecture** that treats AI model providers as interchangeable capability sources, evaluated continuously against safety-domain-specific benchmarks.
+The frontier AI landscape evolves faster than any single pharmaceutical company can internalize. The platform adopts a **multi-model, partner-agnostic architecture** that treats AI model providers as interchangeable capability sources, evaluated continuously against safety-domain-specific benchmarks.
 
-**Core principle:** When models improve, PSP improves --- automatically, without re-architecture.
+**Core principle:** When models improve, the platform improves --- automatically, without re-architecture.
 
 ---
 
@@ -20,13 +19,13 @@ The frontier AI landscape evolves faster than any single pharmaceutical company 
 
 | Provider | Model | Primary Use Case | Endpoint |
 |----------|-------|-----------------|----------|
-| Anthropic | Claude Opus 4.5 | Mechanistic reasoning, safety narrative generation, regulatory document drafting | AZ-managed Azure private endpoint |
-| OpenAI | GPT 5.2 | Structured data extraction, literature NLP, multi-modal analysis | AZ-managed Azure OpenAI Service |
-| Google | Gemini 3 Ultra | Long-context analysis, genomics interpretation, cross-document synthesis | AZ-managed GCP Vertex AI endpoint |
+| Anthropic | Claude Opus 4.5 | Mechanistic reasoning, safety narrative generation, regulatory document drafting | Managed Azure private endpoint |
+| OpenAI | GPT 5.2 | Structured data extraction, literature NLP, multi-modal analysis | Managed Azure OpenAI Service |
+| Google | Gemini 3 Ultra | Long-context analysis, genomics interpretation, cross-document synthesis | Managed GCP Vertex AI endpoint |
 
 ### 2.2 Routing Logic
 
-PSP routes tasks to models based on empirical performance, not assumptions:
+The platform routes tasks to models based on empirical performance, not assumptions:
 
 ```
 Task arrives
@@ -56,13 +55,13 @@ If models disagree on high-stakes output: escalate to human review
 ### 2.3 Automatic Capability Absorption
 
 When a model provider releases an update:
-1. New model version is deployed to AZ-secured evaluation environment.
-2. Full PSP eval suite runs automatically (see Evaluation Framework).
+1. New model version is deployed to secured evaluation environment.
+2. Full platform eval suite runs automatically (see Evaluation Framework).
 3. If new version meets or exceeds current version on all critical metrics: automatic promotion to production routing table.
 4. If new version degrades on any critical metric: held for review by ML Engineering.
 5. Routing weights updated. No code changes required.
 
-This ensures PSP continuously absorbs improvements from the $10B+ annual R&D investment of major AI labs without internal re-development.
+This ensures the platform continuously absorbs improvements from the $10B+ annual R&D investment of major AI labs without internal re-development.
 
 ---
 
@@ -70,9 +69,9 @@ This ensures PSP continuously absorbs improvements from the $10B+ annual R&D inv
 
 ### 3.1 Why Generic Benchmarks Are Insufficient
 
-Standard AI benchmarks (MMLU, HumanEval, GPQA) do not measure capabilities relevant to pharmacovigilance. PSP maintains a custom evaluation suite targeting:
+Standard AI benchmarks (MMLU, HumanEval, GPQA) do not measure capabilities relevant to pharmacovigilance. The platform maintains a custom evaluation suite targeting:
 
-| Capability | Generic Benchmark Gap | PSP Eval |
+| Capability | Generic Benchmark Gap | Platform Eval |
 |-----------|----------------------|----------|
 | Cytokine cascade reasoning | Not tested | Multi-step immunological reasoning tasks |
 | Temporal risk trajectory | Not tested | Time-series interpretation and prediction |
@@ -85,7 +84,7 @@ Standard AI benchmarks (MMLU, HumanEval, GPQA) do not measure capabilities relev
 
 ### 3.2 Eval Suite Structure
 
-The PSP eval suite contains approximately 2,000 items across 8 capability domains, curated and validated by Safety Scientists and Clinical Pharmacologists.
+The platform eval suite contains approximately 2,000 items across 8 capability domains, curated and validated by Safety Scientists and Clinical Pharmacologists.
 
 **Eval item types:**
 - **Factual recall:** Does the model know that IL-6 is a key driver of CRS?
@@ -108,7 +107,7 @@ The PSP eval suite contains approximately 2,000 items across 8 capability domain
 
 ### 4.1 Shaping Partner Priorities
 
-AstraZeneca, as a major enterprise customer, can influence AI provider roadmaps to prioritize capabilities relevant to pharmacovigilance:
+The organization, as a major enterprise customer, can influence AI provider roadmaps to prioritize capabilities relevant to pharmacovigilance:
 
 | Priority Need | Current Gap | Engagement Strategy |
 |--------------|------------|-------------------|
@@ -125,7 +124,7 @@ AstraZeneca, as a major enterprise customer, can influence AI provider roadmaps 
 |---------|---------|---------|
 | Enterprise account teams | Monthly | Feature requests, roadmap previews, SLA discussions |
 | Research partnerships | Quarterly | Joint publications, benchmark development, evaluation methodology |
-| Early access programs | As available | Beta model evaluation against PSP evals before GA |
+| Early access programs | As available | Beta model evaluation against platform evals before GA |
 | Industry consortia (PHUSE, TransCelerate) | Semi-annual | Pre-competitive standards for AI in safety |
 
 ---
@@ -134,7 +133,7 @@ AstraZeneca, as a major enterprise customer, can influence AI provider roadmaps 
 
 ### 5.1 Non-Negotiable Standard
 
-Every PSP prediction must be accompanied by an interpretation that a qualified Safety Scientist can evaluate. This is a regulatory requirement, not a preference.
+Every platform prediction must be accompanied by an interpretation that a qualified Safety Scientist can evaluate. This is a regulatory requirement, not a preference.
 
 ### 5.2 Interpretability Stack
 
@@ -158,7 +157,7 @@ Every PSP prediction must be accompanied by an interpretation that a qualified S
 
 ### 6.1 Known Failure Modes
 
-PSP documentation must explicitly enumerate known failure modes for each deployed model:
+Platform documentation must explicitly enumerate known failure modes for each deployed model:
 
 | Failure Mode | Detection Method | Mitigation |
 |-------------|-----------------|------------|
@@ -173,7 +172,7 @@ PSP documentation must explicitly enumerate known failure modes for each deploye
 
 - Model failures classified using standard severity framework (Critical / Major / Minor).
 - Critical failures (false negative on Grade >= 4 event): immediate model quarantine, root cause analysis within 24 hours, corrective action plan within 72 hours.
-- All incidents tracked in PSP Incident Register with full audit trail.
+- All incidents tracked in Platform Incident Register with full audit trail.
 - Quarterly failure review with Steering Committee.
 
 ---
@@ -184,7 +183,7 @@ PSP documentation must explicitly enumerate known failure modes for each deploye
 
 | Criterion | Weight | Measurement |
 |-----------|--------|-------------|
-| Safety prediction accuracy | 30% | PSP eval suite composite score |
+| Safety prediction accuracy | 30% | Platform eval suite composite score |
 | Calibration quality | 20% | Expected calibration error across risk deciles |
 | Interpretability fidelity | 15% | Expert-rated explanation quality |
 | Latency (P95) | 10% | End-to-end response time |
@@ -203,6 +202,6 @@ PSP documentation must explicitly enumerate known failure modes for each deploye
 
 The multi-model architecture creates healthy competition among providers:
 - Providers see their relative performance (anonymized) and can target improvements.
-- PSP benefits from rapid capability improvements driven by competitive market dynamics.
+- The platform benefits from rapid capability improvements driven by competitive market dynamics.
 - No single-provider lock-in. Switching cost is limited to endpoint configuration.
 - Contractual terms allow renegotiation based on demonstrated performance.

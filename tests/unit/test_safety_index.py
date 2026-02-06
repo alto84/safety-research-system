@@ -2,7 +2,7 @@
 Tests for SafetyIndex computation — score ranges, mechanistic consistency,
 and structural validity of the composite risk output.
 
-The SafetyIndex is the primary PSP output: a composite, mechanistically-grounded
+The SafetyIndex is the primary platform output: a composite, mechanistically-grounded
 risk score for a patient at a point in time.
 """
 

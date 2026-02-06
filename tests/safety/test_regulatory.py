@@ -1,5 +1,5 @@
 """
-Tests validating regulatory requirements for the PSP.
+Tests validating regulatory requirements for the platform.
 
 These tests ensure:
 1. Audit trail completeness (21 CFR Part 11 compliance)
@@ -49,10 +49,10 @@ def contains_pii(text: str) -> list[str]:
 
 
 def is_pseudonymized(patient_id: str) -> bool:
-    """Check if a patient ID follows pseudonymization format (PSP-xxx or similar)."""
-    # Valid formats: PSP-TEST-xxx, PSP-xxx, PSEUDO-xxx, or UUID-like
+    """Check if a patient ID follows pseudonymization format (TEST-xxx or similar)."""
+    # Valid formats: TEST-xxx, PSEUDO-xxx, or UUID-like
     pseudo_pattern = re.compile(
-        r"^(PSP-|PSEUDO-|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+        r"^(TEST-|PSEUDO-|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
         re.IGNORECASE,
     )
     return bool(pseudo_pattern.match(patient_id))

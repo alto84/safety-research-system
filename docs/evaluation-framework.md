@@ -1,14 +1,13 @@
-# PSP Evaluation Framework
+# Predictive Safety Platform Evaluation Framework
 
-**Document Classification:** AstraZeneca Confidential - Internal Use Only
 **Version:** 1.0 | **Date:** 2026-02-06
-**Owner:** Data Science & AI / Biostatistics / Safety Sciences
+**Owner:** Safety Research Team / Biostatistics / Safety Sciences
 
 ---
 
 ## 1. Evaluation Philosophy
 
-PSP models are safety-critical. Evaluation must be rigorous, multi-dimensional, and continuous. A model that discriminates well but is poorly calibrated, or one that is accurate on average but biased against a subgroup, is unacceptable for clinical deployment.
+Platform models are safety-critical. Evaluation must be rigorous, multi-dimensional, and continuous. A model that discriminates well but is poorly calibrated, or one that is accurate on average but biased against a subgroup, is unacceptable for clinical deployment.
 
 **Evaluation dimensions:**
 1. Discrimination --- Can the model separate high-risk from low-risk patients?
@@ -78,7 +77,7 @@ PSP models are safety-critical. Evaluation must be rigorous, multi-dimensional, 
 | Decision Curve Analysis | Net benefit across threshold probabilities | Net benefit > treat-all and treat-none strategies across clinically relevant thresholds (5-30%) |
 | Number Needed to Screen (NNS) | Patients flagged per true high-grade event identified | NNS <= 5 for Grade >= 3 CRS |
 | Alert actionability | Proportion of alerts where clinician took a preemptive action | >= 40% (Stage 2 prospective) |
-| Time to intervention | Comparison of intervention timing with vs. without PSP alerts | Measurable reduction (target: >= 6 hours earlier) |
+| Time to intervention | Comparison of intervention timing with vs. without platform alerts | Measurable reduction (target: >= 6 hours earlier) |
 
 ### 3.3 Fairness and Bias Assessment
 
@@ -113,7 +112,7 @@ PSP models are safety-critical. Evaluation must be rigorous, multi-dimensional, 
 
 ### 4.1 Retrospective Validation (Stage 1)
 
-**Design:** Multi-study retrospective cohort analysis using completed AZ CGT trials with adjudicated safety data.
+**Design:** Multi-study retrospective cohort analysis using completed CGT trials with adjudicated safety data.
 
 **Protocol:**
 1. **Study selection:** Minimum 3 completed CGT studies with individual patient-level data, >= 200 patients total, >= 30 Grade >= 3 CRS events.
@@ -133,10 +132,10 @@ PSP models are safety-critical. Evaluation must be rigorous, multi-dimensional, 
 **Design:** Embedded prospective validation within active clinical trials, advisory mode only (no impact on treatment decisions during validation phase).
 
 **Protocol:**
-1. **Study integration:** PSP deployed in shadow mode in DURGA program and SLE-LN CAR-T study.
+1. **Study integration:** Platform deployed in shadow mode in Study-A program and Study-B CAR-T study.
 2. **Data collection:** Real-time predictions generated and stored but not displayed to clinicians during blinded validation phase.
 3. **Unblinding:** After pre-specified number of events (n >= 20 Grade >= 3 events per study), predictions unblinded and compared to actual outcomes.
-4. **Transition to advisory mode:** If prospective validation meets pre-specified criteria, PSP transitions to clinician-visible advisory mode with IRB/ethics approval.
+4. **Transition to advisory mode:** If prospective validation meets pre-specified criteria, the platform transitions to clinician-visible advisory mode with IRB/ethics approval.
 
 **Success criteria for Stage 2 gate:**
 - Prospective AUROC for Grade >= 3 CRS >= 0.78 (accounting for real-world data quality)

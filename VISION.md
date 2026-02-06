@@ -23,13 +23,13 @@ That prediction is not a static number. It evolves. As real-time labs come in, a
 ## The Three Revolutions in One
 
 ### 1. From Reactive to Predictive
-Traditional pharmacovigilance detects signals after the fact. PSP predicts them before they manifest. Population-level risk profiles guide portfolio decisions. Patient-level scores guide clinical ones. The same engine, operating at different scales.
+Traditional pharmacovigilance detects signals after the fact. The platform predicts them before they manifest. Population-level risk profiles guide portfolio decisions. Patient-level scores guide clinical ones. The same engine, operating at different scales.
 
 ### 2. From Statistical to Mechanistic
-Current approaches fit curves to historical data. PSP reasons about biology. It encodes cytokine cascades, receptor dynamics, and pathway interactions in a knowledge graph. When it predicts CRS, it can show you *why* — tracing the predicted cascade from CAR-T expansion through IL-6 release to endothelial activation. This isn't just interpretability for regulators. It's how the system generates novel hypotheses.
+Current approaches fit curves to historical data. The platform reasons about biology. It encodes cytokine cascades, receptor dynamics, and pathway interactions in a knowledge graph. When it predicts CRS, it can show you *why* — tracing the predicted cascade from CAR-T expansion through IL-6 release to endothelial activation. This isn't just interpretability for regulators. It's how the system generates novel hypotheses.
 
 ### 3. From Isolated to Integrated
-Safety data lives in silos: clinical databases, lab systems, imaging, genomics, literature, spontaneous reports, social media signals. PSP doesn't just aggregate — it reasons across modalities. A genomic variant, combined with a lab value, combined with a literature finding about a related pathway, produces an insight none could generate alone.
+Safety data lives in silos: clinical databases, lab systems, imaging, genomics, literature, spontaneous reports, social media signals. The platform doesn't just aggregate — it reasons across modalities. A genomic variant, combined with a lab value, combined with a literature finding about a related pathway, produces an insight none could generate alone.
 
 ---
 
@@ -37,9 +37,9 @@ Safety data lives in silos: clinical databases, lab systems, imaging, genomics, 
 
 This platform is designed to get smarter over time. Not through manual retraining, but through three built-in feedback loops:
 
-**Foundation Model Absorption**: As Claude, GPT, and Gemini improve, PSP improves automatically. No re-engineering. The platform calls models through versioned APIs — when a model gets better at biomedical reasoning, every prediction benefits.
+**Foundation Model Absorption**: As Claude, GPT, and Gemini improve, the platform improves automatically. No re-engineering. The platform calls models through versioned APIs — when a model gets better at biomedical reasoning, every prediction benefits.
 
-**Knowledge Graph Growth**: Every validated hypothesis enriches the graph. Every confirmed adverse event adds evidence weight to mechanistic pathways. The graph becomes a corporate asset — a living map of safety biology that compounds with every trial.
+**Knowledge Graph Growth**: Every validated hypothesis enriches the graph. Every confirmed adverse event adds evidence weight to mechanistic pathways. The graph becomes an institutional asset — a living map of safety biology that compounds with every trial.
 
 **Clinical Feedback**: Prospective deployment creates ground truth. Predictions are logged, outcomes are observed, and the system calibrates itself against reality. Over years, this feedback loop creates a dataset that doesn't exist anywhere else: longitudinal predictions paired with outcomes at scale.
 
@@ -66,21 +66,21 @@ Stage 3 is where the vision fully materializes:
 
 **Cross-TA Deployment**: Oncology, immunology, rare diseases — every therapeutic area benefits from predictive safety.
 
-**Regulatory Integration**: PSP-generated risk profiles become part of IND submissions, informing regulatory strategy with quantitative safety predictions rather than retrospective characterizations.
+**Regulatory Integration**: Platform-generated risk profiles become part of IND submissions, informing regulatory strategy with quantitative safety predictions rather than retrospective characterizations.
 
 **Portfolio Optimization**: Population-level safety indices become a factor in investment decisions. Which molecules advance? Which combinations are pursued? Predictive safety quantifies what was previously intuition.
 
-**Industry Standard**: AstraZeneca publishes the methodology. The Safety Index becomes a recognized metric. Competitors adopt, but AZ maintains a data advantage — years of accumulated predictions, outcomes, and graph enrichment that can't be replicated.
+**Industry Standard**: The organization publishes the methodology. The Safety Index becomes a recognized metric. Competitors adopt, but the organization maintains a data advantage — years of accumulated predictions, outcomes, and graph enrichment that can't be replicated.
 
 ---
 
 ## What Success Looks Like
 
-**Year 1**: A clinician monitoring a CAR-T patient opens the PSP dashboard and sees a risk trajectory that accurately predicted the timing and severity of CRS 24 hours before onset. The patient received preemptive intervention. The event was managed as Grade 1 instead of Grade 3.
+**Year 1**: A clinician monitoring a CAR-T patient opens the platform dashboard and sees a risk trajectory that accurately predicted the timing and severity of CRS 24 hours before onset. The patient received preemptive intervention. The event was managed as Grade 1 instead of Grade 3.
 
-**Year 3**: AstraZeneca's cell therapy portfolio has zero unplanned clinical holds attributable to safety events that PSP was deployed against. Risk profiles are a standard component of every safety section in regulatory submissions.
+**Year 3**: The organization's cell therapy portfolio has zero unplanned clinical holds attributable to safety events that the platform was deployed against. Risk profiles are a standard component of every safety section in regulatory submissions.
 
-**Year 5**: The Predictive Safety Index is referenced in FDA guidance documents as an example of validated AI-assisted pharmacovigilance. Three other major pharma companies have licensed the methodology. AZ's knowledge graph contains 50,000+ validated mechanistic relationships.
+**Year 5**: The Predictive Safety Index is referenced in FDA guidance documents as an example of validated AI-assisted pharmacovigilance. Three other major pharma companies have licensed the methodology. The organization's knowledge graph contains 50,000+ validated mechanistic relationships.
 
 **Year 10**: Predictive safety is table stakes. No one runs a trial without it. And the company that started it — that built the first knowledge graph, that established the first validation framework, that published the first regulatory-accepted AI safety predictions — owns the standard.
 
@@ -90,7 +90,7 @@ Stage 3 is where the vision fully materializes:
 
 $20M to shift the paradigm from characterizing harm to preventing it.
 
-The technology is ready. Foundation models can reason about biology. Graph networks can encode mechanisms. Agentic systems can orchestrate complex workflows. The data exists across AZ's clinical portfolio.
+The technology is ready. Foundation models can reason about biology. Graph networks can encode mechanisms. Agentic systems can orchestrate complex workflows. The data exists across the organization's clinical portfolio.
 
 What's missing is the architecture that connects them — the engine that takes a patient's data, reasons through biological pathways, consults multiple foundation models, and delivers an interpretable, mechanistic prediction into a clinician's workflow.
 

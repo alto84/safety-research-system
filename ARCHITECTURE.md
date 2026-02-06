@@ -1,4 +1,4 @@
-# PSP System Architecture
+# Predictive Safety Platform System Architecture
 
 ## High-Level Architecture
 
@@ -23,7 +23,7 @@
                     └──────────────────────────┼──────────────────────────┘
                                                │
                                     ┌──────────▼──────────┐
-                                    │   PSP Engine          │
+                                    │   SafetyEngine        │
                                     │   (Core Prediction)   │
                                     └──────────┬──────────┘
                                                │
@@ -52,14 +52,14 @@
 
 ### 1. API Gateway
 - **Technology**: Kong / AWS API Gateway
-- **Authentication**: mTLS with AZ-issued certificates
+- **Authentication**: mTLS with organization-issued certificates
 - **Authorization**: RBAC (clinician, data scientist, admin, audit)
 - **Rate Limiting**: Per-user and per-endpoint quotas
 - **Audit**: Every request logged with full context
 
 ### 2. Dashboard Service
 - **Framework**: Next.js (React) with WebSocket for real-time updates
-- **Hosting**: AZ internal infrastructure (Kubernetes)
+- **Hosting**: Internal infrastructure (Kubernetes)
 - **Key Views**:
   - Trial overview with patient risk heatmap
   - Individual patient risk trajectory
@@ -67,7 +67,7 @@
   - Prediction audit log
   - Model performance monitoring
 
-### 3. PSP Engine
+### 3. SafetyEngine
 - **Language**: Python 3.11+
 - **Framework**: FastAPI (REST + WebSocket endpoints)
 - **Orchestration**: LangGraph for agent workflows
@@ -128,7 +128,7 @@
 Lab Result (HL7) ──→ Kafka ──→ Feature Extractor ──→ Feature Store (Online)
                                        │
                                        ▼
-                              PSP Engine triggered
+                              SafetyEngine triggered
                                        │
                               ┌────────┼────────┐
                               ▼        ▼        ▼
@@ -182,7 +182,7 @@ Hypothesis Validated ──→ Confidence Update ──→ Edge Weight Update �
 ```
 Developer Workstation
   └── Claude Code Agent Harness
-       ├── PSP Engine (local)
+       ├── SafetyEngine (local)
        ├── Neo4j (Docker)
        ├── Feature Store (local/mock)
        └── Model APIs (sandbox endpoints)
@@ -190,8 +190,8 @@ Developer Workstation
 
 ### Staging Environment
 ```
-AZ Cloud (Kubernetes)
-  ├── PSP Engine (3 replicas)
+Cloud (Kubernetes)
+  ├── SafetyEngine (3 replicas)
   ├── Neo4j Cluster (3 nodes)
   ├── Feature Store (Feast on Redis)
   ├── Kafka Cluster
@@ -202,8 +202,8 @@ AZ Cloud (Kubernetes)
 
 ### Production Environment
 ```
-AZ Cloud (Kubernetes) — GxP Validated
-  ├── PSP Engine (5 replicas, auto-scaling)
+Cloud (Kubernetes) — GxP Validated
+  ├── SafetyEngine (5 replicas, auto-scaling)
   ├── Neo4j Enterprise Cluster (3 nodes, HA)
   ├── Feature Store (Feast on DynamoDB)
   ├── Kafka Cluster (managed)
@@ -220,10 +220,10 @@ AZ Cloud (Kubernetes) — GxP Validated
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                AZ Network Boundary               │
+│                Organization Network Boundary     │
 │                                                   │
 │  ┌──────────┐    ┌──────────┐    ┌──────────┐   │
-│  │ Patient   │    │ PSP      │    │ Dashboard│   │
+│  │ Patient   │    │ Safety   │    │ Dashboard│   │
 │  │ Data      │───▶│ Engine   │───▶│ (no PII) │   │
 │  │ (encrypted)    │          │    │          │   │
 │  └──────────┘    └────┬─────┘    └──────────┘   │
@@ -242,12 +242,12 @@ AZ Cloud (Kubernetes) — GxP Validated
 │              │  Gemini)        │                  │
 │              └─────────────────┘                  │
 │                                                   │
-│              External Cloud (AZ-Approved)          │
+│              External Cloud (Approved)             │
 └───────────────────────────────────────────────────┘
 ```
 
 **Key Security Principles**:
-1. Patient data never leaves AZ network boundary
+1. Patient data never leaves the organization's network boundary
 2. Foundation model prompts are stripped of PII where possible
 3. When PII is required for reasoning, it goes through approved enterprise API endpoints with BAA/DPA
 4. All model interactions logged in immutable audit trail

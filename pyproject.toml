@@ -7,17 +7,17 @@ name = "predictive-safety-platform"
 version = "0.1.0"
 description = "AI-powered adverse event prediction for cell therapy clinical trials"
 readme = "docs/executive-summary.md"
-license = {text = "Proprietary - AstraZeneca"}
+license = {text = "Apache-2.0"}
 requires-python = ">=3.11"
 authors = [
-    {name = "AstraZeneca Data Science & AI"},
-    {name = "AstraZeneca Safety Sciences"},
+    {name = "Safety Research Team"},
+    {name = "Safety Sciences Team"},
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Healthcare Industry",
     "Intended Audience :: Science/Research",
-    "License :: Other/Proprietary License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -110,20 +110,19 @@ genomics = [
 ]
 
 [project.scripts]
-psp = "psp.cli:main"
-psp-serve = "psp.serving.app:run"
-psp-evaluate = "psp.evaluation.runner:main"
-psp-monitor = "psp.monitoring.runner:main"
+safety-platform = "safety_platform.cli:main"
+safety-serve = "safety_platform.serving.app:run"
+safety-evaluate = "safety_platform.evaluation.runner:main"
+safety-monitor = "safety_platform.monitoring.runner:main"
 
 [project.urls]
-Documentation = "https://psp-docs.astrazeneca.net"
-Repository = "https://github.astrazeneca.net/ds-ai/predictive-safety-platform"
-"Issue Tracker" = "https://github.astrazeneca.net/ds-ai/predictive-safety-platform/issues"
+Repository = "https://github.com/alto84/safety-research-system"
+"Issue Tracker" = "https://github.com/alto84/safety-research-system/issues"
 
 # ── Tool Configuration ────────────────────────────────────────────────
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/psp"]
+packages = ["src"]
 
 [tool.ruff]
 target-version = "py311"
@@ -177,7 +176,7 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "-ra",
-    "--cov=psp",
+    "--cov=src",
     "--cov-report=term-missing",
 ]
 markers = [
@@ -193,7 +192,7 @@ filterwarnings = [
 
 [tool.coverage.run]
 branch = true
-source = ["psp"]
+source = ["src"]
 
 [tool.coverage.report]
 fail_under = 80

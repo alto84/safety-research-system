@@ -1,5 +1,5 @@
 """
-Shared fixtures for PSP test suite.
+Shared fixtures for the platform test suite.
 
 Provides realistic mock data for:
 - Patients at low/medium/high CRS risk
@@ -48,7 +48,7 @@ class EvidenceStrength(Enum):
 
 
 # ---------------------------------------------------------------------------
-# Data classes mirroring the PSP specification
+# Data classes mirroring the platform specification
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -172,7 +172,7 @@ class RiskTrajectory:
 
 @dataclass
 class PatientData:
-    """Full patient data bundle used as input to the PSP engine."""
+    """Full patient data bundle used as input to the safety engine."""
     patient_id: str
     demographics: dict
     baseline_labs: dict
@@ -256,7 +256,7 @@ def all_endpoints(claude_endpoint, gpt_endpoint, gemini_endpoint):
 def low_risk_patient():
     """Low CRS risk: low tumor burden, normal baseline cytokines, no risk factors."""
     return PatientData(
-        patient_id="PSP-TEST-LOW-001",
+        patient_id="TEST-LOW-001",
         demographics={"age": 45, "sex": "F", "bmi": 24.1, "race": "white"},
         baseline_labs={
             "crp_mg_l": 3.2,           # Normal (<10)
@@ -316,7 +316,7 @@ def low_risk_patient():
 def medium_risk_patient():
     """Medium CRS risk: moderate tumor burden, mildly elevated cytokines."""
     return PatientData(
-        patient_id="PSP-TEST-MED-001",
+        patient_id="TEST-MED-001",
         demographics={"age": 62, "sex": "M", "bmi": 29.3, "race": "black"},
         baseline_labs={
             "crp_mg_l": 18.5,          # Mildly elevated
@@ -376,7 +376,7 @@ def medium_risk_patient():
 def high_risk_patient():
     """High CRS risk: high tumor burden, markedly elevated baseline cytokines, prior CRS."""
     return PatientData(
-        patient_id="PSP-TEST-HIGH-001",
+        patient_id="TEST-HIGH-001",
         demographics={"age": 71, "sex": "M", "bmi": 32.0, "race": "asian"},
         baseline_labs={
             "crp_mg_l": 85.0,           # Markedly elevated
@@ -870,7 +870,7 @@ def sample_audit_record(high_risk_patient, high_risk_aggregated):
     return AuditRecord(
         prediction_id=str(uuid.uuid4()),
         timestamp=datetime(2026, 2, 6, 10, 0, 0),
-        patient_id="PSP-TEST-HIGH-001",
+        patient_id="TEST-HIGH-001",
         input_features=high_risk_patient.baseline_labs,
         graph_snapshot_version="kg-v1.2.0",
         model_versions={"claude-opus-4": "4.0", "gpt-5.2": "5.2", "gemini-3": "3.0"},
@@ -919,7 +919,7 @@ def rapidly_rising_trajectory():
 @pytest.fixture
 def simple_screening_query():
     return SafetyQuery(
-        patient_id="PSP-TEST-LOW-001",
+        patient_id="TEST-LOW-001",
         domain="crs",
         query_text="Assess CRS risk based on baseline labs for pre-screening.",
         urgency=Urgency.BATCH,
@@ -931,7 +931,7 @@ def simple_screening_query():
 @pytest.fixture
 def complex_mechanistic_query():
     return SafetyQuery(
-        patient_id="PSP-TEST-HIGH-001",
+        patient_id="TEST-HIGH-001",
         domain="crs",
         query_text=(
             "Patient shows explosive IL-6 rise (48 -> 520 -> 2800 pg/mL over 24h) "
@@ -948,7 +948,7 @@ def complex_mechanistic_query():
 @pytest.fixture
 def realtime_monitoring_query():
     return SafetyQuery(
-        patient_id="PSP-TEST-MED-001",
+        patient_id="TEST-MED-001",
         domain="crs",
         query_text="Updated cytokine panel received. Re-evaluate CRS risk trajectory.",
         urgency=Urgency.REALTIME,

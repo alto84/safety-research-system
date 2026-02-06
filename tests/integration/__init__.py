@@ -1,1 +1,1 @@
-"""Integration tests for PSP end-to-end flows."""
+"""Integration tests for the platform end-to-end flows."""

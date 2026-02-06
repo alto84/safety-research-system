@@ -1,14 +1,13 @@
-# PSP Regulatory Compliance Framework
+# Predictive Safety Platform Regulatory Compliance Framework
 
-**Document Classification:** AstraZeneca Confidential - Internal Use Only
 **Version:** 1.0 | **Date:** 2026-02-06
-**Owner:** Regulatory Affairs / Quality Assurance / Data Science & AI
+**Owner:** Regulatory Affairs / Quality Assurance / Safety Research Team
 
 ---
 
 ## 1. Regulatory Landscape
 
-PSP operates at the intersection of pharmaceutical safety and AI/ML-based software. The following regulatory frameworks apply:
+The platform operates at the intersection of pharmaceutical safety and AI/ML-based software. The following regulatory frameworks apply:
 
 | Framework | Jurisdiction | Applicability |
 |-----------|-------------|---------------|
@@ -27,17 +26,17 @@ PSP operates at the intersection of pharmaceutical safety and AI/ML-based softwa
 
 ### 2.1 Product Classification
 
-PSP functions as a **Clinical Decision Support (CDS) tool in advisory mode**. Under current FDA guidance:
+The platform functions as a **Clinical Decision Support (CDS) tool in advisory mode**. Under current FDA guidance:
 
-- PSP does **not** autonomously make treatment decisions. All outputs are recommendations presented to qualified clinicians.
+- The platform does **not** autonomously make treatment decisions. All outputs are recommendations presented to qualified clinicians.
 - Classification target: **Class II SaMD** (provides information to inform clinical management; condition is serious).
 - Regulatory pathway: **De Novo** or **510(k)** depending on predicate availability at time of submission.
 
 ### 2.2 Good Machine Learning Practice (GMLP)
 
-PSP adheres to the FDA/Health Canada/MHRA joint principles for GMLP:
+The platform adheres to the FDA/Health Canada/MHRA joint principles for GMLP:
 
-| Principle | PSP Implementation |
+| Principle | Platform Implementation |
 |-----------|--------------------|
 | Multi-disciplinary expertise | Joint team: Safety Scientists, Clinicians, Data Scientists, Regulatory, QA |
 | Good software engineering | CI/CD with automated testing, code review, version control |
@@ -52,7 +51,7 @@ PSP adheres to the FDA/Health Canada/MHRA joint principles for GMLP:
 
 ### 2.3 Predetermined Change Control Plan (PCCP)
 
-The PCCP defines the boundaries within which PSP models can be updated without requiring a new regulatory submission.
+The PCCP defines the boundaries within which platform models can be updated without requiring a new regulatory submission.
 
 **Permitted changes (within PCCP scope):**
 - Model re-training on new data from the same study populations and data types.
@@ -80,7 +79,7 @@ The PCCP defines the boundaries within which PSP models can be updated without r
 
 ### 3.1 System Classification
 
-Under GAMP 5 (2nd Edition), PSP components are classified as:
+Under GAMP 5 (2nd Edition), platform components are classified as:
 
 | Component | GAMP Category | Validation Approach |
 |-----------|--------------|-------------------|
@@ -152,7 +151,7 @@ Following ICH Q9 risk management principles:
 | Signature binding | Electronic signatures cryptographically bound to their respective records. |
 | Signature components | Enterprise SSO (SAML 2.0) + MFA for all GxP actions. |
 | Signature meaning | Each signature records: identity, date/time, meaning (authorship, review, approval). |
-| Non-repudiation | Digital certificates managed by AZ PKI infrastructure. |
+| Non-repudiation | Digital certificates managed by organizational PKI infrastructure. |
 
 ### 4.3 System Controls
 
@@ -170,11 +169,11 @@ Following ICH Q9 risk management principles:
 
 ### 5.1 Design Principles
 
-PSP is architected as an **advisory system**, not an autonomous decision-maker. This is a fundamental design constraint, not an optional feature.
+The platform is architected as an **advisory system**, not an autonomous decision-maker. This is a fundamental design constraint, not an optional feature.
 
 **Mandatory human decision points:**
 
-| Decision | Human Role | PSP Role |
+| Decision | Human Role | Platform Role |
 |----------|-----------|----------|
 | Patient risk classification | Medical Monitor / Investigator decides | Provides risk score, confidence interval, contributing factors |
 | Preemptive intervention (e.g., tocilizumab, steroids) | Treating physician decides | Provides risk trajectory and time-to-event estimate |
@@ -184,7 +183,7 @@ PSP is architected as an **advisory system**, not an autonomous decision-maker. 
 
 ### 5.2 Alert Design
 
-- **No autonomous actions.** PSP never triggers treatment changes, protocol amendments, or regulatory submissions without human authorization.
+- **No autonomous actions.** The platform never triggers treatment changes, protocol amendments, or regulatory submissions without human authorization.
 - **Graded alerting:** Risk scores mapped to alert tiers (Watch / Advisory / Urgent) with role-appropriate routing.
 - **Dismissal documentation:** Clinician must document rationale when overriding or dismissing a high-confidence alert. Dismissal patterns monitored for systematic issues.
 - **Feedback loop:** Clinician decisions (follow / override) feed back into model performance monitoring.
@@ -201,7 +200,7 @@ PSP is architected as an **advisory system**, not an autonomous decision-maker. 
 
 ### 6.1 Model Card (Per Deployed Model)
 
-Every deployed PSP model must have a model card containing:
+Every deployed platform model must have a model card containing:
 
 1. **Model details:** Name, version, architecture, training date, training data description.
 2. **Intended use:** Target population, clinical context, decision support function.

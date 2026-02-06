@@ -1,4 +1,4 @@
-# PSP Technical Specification
+# Predictive Safety Platform Technical Specification
 
 ## Document Control
 - **Version**: 0.1.0 (Draft)
@@ -9,7 +9,7 @@
 
 ## 1. System Overview
 
-The Predictive Safety Platform (PSP) is an AI-enabled clinical safety system that transforms pharmacovigilance from reactive event characterization to proactive risk prediction. The system integrates multi-modal patient data through a three-layer engine to produce mechanistic, interpretable safety predictions.
+The Predictive Safety Platform is an AI-enabled clinical safety system that transforms pharmacovigilance from reactive event characterization to proactive risk prediction. The system integrates multi-modal patient data through a three-layer engine to produce mechanistic, interpretable safety predictions.
 
 ### 1.1 Primary Objectives
 
@@ -28,14 +28,14 @@ The Predictive Safety Platform (PSP) is an AI-enabled clinical safety system tha
 - ICANS (Immune effector Cell-Associated Neurotoxicity Syndrome)
 - IEC-HS/HLH (Hemophagocytic Lymphohistiocytosis)
 - 3 retrospective clinical studies for model development
-- DURGA trial data integration pathway
+- Study-A trial data integration pathway
 
 **Future Scope (Stage 2-3)**:
 - TCE (T-cell Engager) safety prediction
 - Checkpoint inhibitor immune-related AEs
 - Cross-TA expansion (oncology, immunology, rare diseases)
 - Real-time prospective deployment
-- SLE-LN trial integration
+- Study-B trial integration
 
 ---
 
@@ -163,10 +163,10 @@ class EnsembleAggregator:
 ```
 
 #### 2.2.4 API Security Gateway
-All model calls pass through AZ-secured API boundaries:
+All model calls pass through secured API boundaries:
 
-- **Authentication**: mTLS with AZ-issued certificates
-- **Data classification**: Patient data never leaves AZ network boundary
+- **Authentication**: mTLS with organization-issued certificates
+- **Data classification**: Patient data never leaves the organization's network boundary
 - **Prompt sanitization**: Strips PII before foundation model calls where possible
 - **Audit logging**: Every API call logged with full request/response for regulatory audit
 - **Rate limiting**: Per-model and per-trial rate limits
@@ -439,9 +439,9 @@ Raw Sources → Ingestion → Normalization → Feature Store → Model Input
 
 | Model | Role | Strength | Access |
 |-------|------|----------|--------|
-| Claude Opus | Primary reasoning, mechanistic analysis | Long-context, nuanced reasoning | AZ Enterprise API |
-| GPT-5 | Pattern recognition, large-scale feature analysis | Broad training data | AZ Enterprise API |
-| Gemini | Multi-modal integration, structured output | Native multi-modal | AZ Enterprise API |
+| Claude Opus | Primary reasoning, mechanistic analysis | Long-context, nuanced reasoning | Enterprise API |
+| GPT-5 | Pattern recognition, large-scale feature analysis | Broad training data | Enterprise API |
+| Gemini | Multi-modal integration, structured output | Native multi-modal | Enterprise API |
 
 **Prompt Engineering Strategy**:
 - Domain-specific system prompts encoding pharmacovigilance expertise
@@ -504,7 +504,7 @@ The **Safety Index** is the primary output — a composite score that converts d
 ```python
 @dataclass
 class SafetyIndex:
-    """The core PSP output for a patient at a point in time."""
+    """The core platform output for a patient at a point in time."""
 
     # Composite risk
     overall_risk: float           # 0.0 - 1.0, calibrated probability of any Grade 2+ event
@@ -572,7 +572,7 @@ class PopulationSafetyIndex:
     # Portfolio value
     hold_probability: float        # Estimated probability of clinical hold
     expected_hold_duration: int    # Days, if hold occurs
-    risk_mitigation_impact: float  # Expected reduction with PSP-guided monitoring
+    risk_mitigation_impact: float  # Expected reduction with platform-guided monitoring
 ```
 
 ---
@@ -581,7 +581,7 @@ class PopulationSafetyIndex:
 
 ### 6.1 Custom Evaluation Suite
 
-PSP requires domain-specific evaluations, not generic ML benchmarks.
+The platform requires domain-specific evaluations, not generic ML benchmarks.
 
 **Evaluation Dimensions**:
 
@@ -626,7 +626,7 @@ Continuous monitoring for:
 
 ### 7.1 Design Principles
 
-The PSP is designed for automatic capability absorption:
+The platform is designed for automatic capability absorption:
 
 1. **API-First**: All model interactions through versioned APIs. New model versions drop in without re-engineering.
 2. **Eval-Driven**: Custom benchmarks targeting safety prediction. When a model improves on the eval, its weight in the ensemble increases automatically.
@@ -652,11 +652,11 @@ The PSP is designed for automatic capability absorption:
 
 ### 8.1 Data Security
 
-- **Network boundary**: Patient data never leaves AZ network. Foundation models accessed via secure API endpoints within AZ infrastructure (or approved cloud boundaries).
+- **Network boundary**: Patient data never leaves the organization's network. Foundation models accessed via secure API endpoints within the organization's infrastructure (or approved cloud boundaries).
 - **Encryption**: AES-256 at rest, TLS 1.3 in transit
 - **Access control**: Role-based with principle of least privilege
 - **Audit logging**: Immutable logs for all data access and model calls
-- **Data classification**: Automated classification and handling per AZ data policies
+- **Data classification**: Automated classification and handling per organizational data policies
 
 ### 8.2 Regulatory Compliance
 
@@ -691,9 +691,9 @@ The PSP is designed for automatic capability absorption:
 
 | Quarter | Deliverables |
 |---------|-------------|
-| Q5 | Shadow deployment on DURGA trial |
+| Q5 | Shadow deployment on pilot study trial |
 | Q6 | Shadow validation results, calibration update |
-| Q7 | Advisory mode deployment, SLE-LN integration |
+| Q7 | Advisory mode deployment, Study-B integration |
 | Q8 | Stage 2 validation report, regulatory strategy document |
 
 ### 9.3 Stage 3: Scale (Months 25-36+)
@@ -745,7 +745,6 @@ The PSP is designed for automatic capability absorption:
 | MOA | Mechanism of Action |
 | MedDRA | Medical Dictionary for Regulatory Activities |
 | FAERS | FDA Adverse Event Reporting System |
-| PSP | Predictive Safety Platform |
 | Safety Index | Composite mechanistic risk score |
 | KG | Knowledge Graph |
 | GNN | Graph Neural Network |

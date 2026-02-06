@@ -2,7 +2,7 @@
 Tests for KnowledgeGraph — pathway queries, mechanism validation, and
 graph traversal for CRS/ICANS/HLH pathways.
 
-The KnowledgeGraph is the institutional memory of the PSP, encoding biological
+The KnowledgeGraph is the institutional memory of the platform, encoding biological
 mechanisms, validated hypotheses, and observed relationships.
 """
 
@@ -18,7 +18,7 @@ from tests.conftest import KGNode, KGEdge
 # ---------------------------------------------------------------------------
 
 class KnowledgeGraph:
-    """In-memory knowledge graph for testing PSP pathway queries.
+    """In-memory knowledge graph for testing platform pathway queries.
 
     Production implementation uses Neo4j with Cypher queries. This in-memory
     version mirrors the same interface for unit testing.

@@ -1,1 +1,1 @@
-"""Custom clinical and fairness metrics for PSP evaluation."""
+"""Custom clinical and fairness metrics for the platform evaluation."""

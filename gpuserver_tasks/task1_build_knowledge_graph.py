@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-PSP Task 1: Build Comprehensive Biomedical Knowledge Graph
-===========================================================
+Task 1: Build Comprehensive Biomedical Knowledge Graph
+=======================================================
 Target: gpuserver1 (192.168.1.100)
 Estimated runtime: 30-60 minutes (download + parse + build)
-Output: /home/alton/psp-graph/knowledge_graph/
+Output: /home/alton/safety-graph/knowledge_graph/
 
 This script downloads and integrates data from 7 major biomedical databases
 to construct a comprehensive knowledge graph focused on cell therapy safety
@@ -77,7 +77,7 @@ except ImportError:
 # Configuration
 # ============================================================
 
-BASE_DIR = Path("/home/alton/psp-graph/knowledge_graph")
+BASE_DIR = Path("/home/alton/safety-graph/knowledge_graph")
 DATA_DIR = BASE_DIR / "raw_data"
 OUTPUT_DIR = BASE_DIR / "output"
 NEO4J_DIR = OUTPUT_DIR / "neo4j_import"
@@ -96,7 +96,7 @@ logging.basicConfig(
         logging.FileHandler(BASE_DIR / "build.log")
     ]
 )
-log = logging.getLogger("psp-kg")
+log = logging.getLogger("kg-builder")
 
 # ============================================================
 # Data Source URLs
@@ -236,7 +236,7 @@ class DownloadManager:
         max_retries = 3
         for attempt in range(max_retries):
             try:
-                req = Request(url, headers={"User-Agent": "PSP-KnowledgeGraph/1.0"})
+                req = Request(url, headers={"User-Agent": "SafetyKG/1.0"})
                 response = urlopen(req, timeout=120)
                 total_size = int(response.headers.get('content-length', 0))
 
@@ -292,7 +292,7 @@ class KnowledgeGraphBuilder:
     def build(self):
         """Main build pipeline."""
         log.info("=" * 60)
-        log.info("PSP Knowledge Graph Builder")
+        log.info("Knowledge Graph Builder")
         log.info("=" * 60)
         start_time = time.time()
 
@@ -1002,7 +1002,7 @@ class KnowledgeGraphBuilder:
                 "node_types": {k: len(v) for k, v in self.node_types.items()},
                 "edge_types": dict(self.edge_types),
                 "built": datetime.now().isoformat(),
-                "builder": "PSP Knowledge Graph Builder v1.0"
+                "builder": "Knowledge Graph Builder v1.0"
             }
         }
 

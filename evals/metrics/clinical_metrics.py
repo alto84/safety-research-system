@@ -1,5 +1,5 @@
 """
-Custom clinical metrics for PSP evaluation.
+Custom clinical metrics for the platform evaluation.
 
 Metrics designed for graded adverse event prediction in cell therapy:
 - AUROC for graded severity events (ordinal, not binary)

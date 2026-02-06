@@ -1,14 +1,13 @@
-# PSP Deployment Roadmap
+# Predictive Safety Platform Deployment Roadmap
 
-**Document Classification:** AstraZeneca Confidential - Internal Use Only
 **Version:** 1.0 | **Date:** 2026-02-06
-**Owner:** Data Science & AI / Clinical Operations / Safety Sciences
+**Owner:** Safety Research Team / Clinical Operations / Safety Sciences
 
 ---
 
 ## Overview
 
-PSP deployment follows a three-stage gated approach. Each stage has defined entry criteria, deliverables, success metrics, and gate reviews before proceeding.
+Platform deployment follows a three-stage gated approach. Each stage has defined entry criteria, deliverables, success metrics, and gate reviews before proceeding.
 
 ```
 STAGE 1 (Year 1)          STAGE 2 (Year 2)          STAGE 3 (Year 3+)
@@ -17,8 +16,8 @@ $8M                        $7M                       $5M
 -----------------------    ---------------------     ----------------------
 Build platform             Deploy advisory mode      Cross-TA expansion
 Retrospective validation   Prospective validation    Regulatory submissions
-3 study integrations       DURGA + SLE-LN pilots     Enterprise deployment
-DURGA integration path     Clinician feedback loop   Continuous learning
+3 study integrations       Study-A + Study-B pilots  Enterprise deployment
+Study-A integration path   Clinician feedback loop   Continuous learning
 FDA pre-submission         EMA qualification          SaMD clearance
 ```
 
@@ -28,7 +27,7 @@ FDA pre-submission         EMA qualification          SaMD clearance
 
 ### Objective
 
-Build the core platform, validate predictive performance retrospectively, and establish the pathway for integration into AZ clinical systems.
+Build the core platform, validate predictive performance retrospectively, and establish the pathway for integration into clinical systems.
 
 ### Budget: $8M
 
@@ -44,7 +43,7 @@ Build the core platform, validate predictive performance retrospectively, and es
 
 | Deliverable | Owner | Dependencies |
 |-------------|-------|-------------|
-| Cloud environment provisioned (AWS, AZ-managed) | Engineering | InfoSec approval |
+| Cloud environment provisioned (AWS, managed) | Engineering | InfoSec approval |
 | Data governance framework approved | Data Steward / DPO | Legal, Ethics review |
 | Data pipelines for 3 retrospective studies built | Data Engineering | Data access agreements |
 | Feature store schema defined and implemented | Data Science / Engineering | Clinical SME input |
@@ -78,8 +77,8 @@ Build the core platform, validate predictive performance retrospectively, and es
 
 | Deliverable | Owner | Dependencies |
 |-------------|-------|-------------|
-| DURGA integration architecture designed | Engineering / DURGA team | DURGA API specifications |
-| DURGA integration proof-of-concept (sandbox) | Engineering | DURGA sandbox access |
+| Study-A integration architecture designed | Engineering / Study-A team | Study-A API specifications |
+| Study-A integration proof-of-concept (sandbox) | Engineering | Study-A sandbox access |
 | Risk dashboard prototype (clinician-facing) | UX / Engineering | Clinician design feedback |
 | GAMP validation documentation complete | Quality Assurance | All testing complete |
 | PCCP draft submitted to FDA | Regulatory Affairs | FDA pre-sub feedback |
@@ -92,7 +91,7 @@ Build the core platform, validate predictive performance retrospectively, and es
 | AUROC (Grade >= 3 CRS, 24h pre-onset) | >= 0.80 on at least 2/3 studies | |
 | Calibration | ECE <= 0.07 | |
 | Fairness | No subgroup AUROC < 0.70 | |
-| DURGA integration PoC | Functional in sandbox | |
+| Study-A integration PoC | Functional in sandbox | |
 | FDA pre-submission | Meeting completed, feedback documented | |
 | GAMP validation | IQ/OQ complete | |
 | Budget | Within 10% of allocation | |
@@ -103,13 +102,13 @@ Build the core platform, validate predictive performance retrospectively, and es
 
 ### Objective
 
-Deploy PSP in advisory mode within active clinical trials. Collect prospective validation data and clinician feedback. Refine models based on real-world performance.
+Deploy the platform in advisory mode within active clinical trials. Collect prospective validation data and clinician feedback. Refine models based on real-world performance.
 
 ### Budget: $7M
 
 | Category | Allocation | Details |
 |----------|-----------|---------|
-| Engineering (DURGA integration, scale) | $2.5M | Production integration, monitoring, alerting |
+| Engineering (Study-A integration, scale) | $2.5M | Production integration, monitoring, alerting |
 | Data science (model refinement) | $1.5M | Prospective recalibration, new features, model updates |
 | Clinical operations (deployment support) | $1.5M | Site training, workflow integration, feedback collection |
 | Regulatory/quality | $1.0M | Prospective validation study, EMA qualification, PQ |
@@ -119,9 +118,9 @@ Deploy PSP in advisory mode within active clinical trials. Collect prospective v
 
 | Deliverable | Owner | Dependencies |
 |-------------|-------|-------------|
-| DURGA production integration complete | Engineering / DURGA team | DURGA release cycle alignment |
-| PSP deployed in shadow mode (DURGA program) | Engineering / Clinical Ops | IRB/ethics approval for shadow deployment |
-| PSP deployed in shadow mode (SLE-LN CAR-T study) | Engineering / Clinical Ops | Study team agreement |
+| Study-A production integration complete | Engineering / Study-A team | Study-A release cycle alignment |
+| Platform deployed in shadow mode (Study-A program) | Engineering / Clinical Ops | IRB/ethics approval for shadow deployment |
+| Platform deployed in shadow mode (Study-B CAR-T study) | Engineering / Clinical Ops | Study team agreement |
 | Site training materials developed | Clinical Ops / Medical Affairs | Clinician feedback on prototype |
 | Production monitoring dashboards operational | ML Engineering / SRE | Monitoring infrastructure |
 | **EMA qualification advice request submitted** | Regulatory Affairs | EMA briefing document |
@@ -140,8 +139,8 @@ Deploy PSP in advisory mode within active clinical trials. Collect prospective v
 
 | Deliverable | Owner | Dependencies |
 |-------------|-------|-------------|
-| Prospective validation analysis (DURGA) | Biostatistics | Pre-specified event threshold met |
-| Prospective validation analysis (SLE-LN) | Biostatistics | Pre-specified event threshold met |
+| Prospective validation analysis (Study-A) | Biostatistics | Pre-specified event threshold met |
+| Prospective validation analysis (Study-B) | Biostatistics | Pre-specified event threshold met |
 | Model recalibration based on prospective data | Data Science | Validation results reviewed |
 | Clinician feedback analysis and model refinement | Data Science / UX | Feedback collected |
 | Advisory mode deployment plan approved | Steering Committee / IRB | Prospective validation meets criteria |
@@ -150,8 +149,8 @@ Deploy PSP in advisory mode within active clinical trials. Collect prospective v
 
 | Deliverable | Owner | Dependencies |
 |-------------|-------|-------------|
-| PSP transitions to advisory mode (DURGA) | Clinical Ops / Engineering | IRB approval, site training |
-| PSP transitions to advisory mode (SLE-LN) | Clinical Ops / Engineering | IRB approval, site training |
+| Platform transitions to advisory mode (Study-A) | Clinical Ops / Engineering | IRB approval, site training |
+| Platform transitions to advisory mode (Study-B) | Clinical Ops / Engineering | IRB approval, site training |
 | Clinician override tracking operational | Engineering / Safety Sciences | Feedback loop architecture |
 | Clinical utility assessment initiated | Biostatistics / Safety Sciences | Advisory mode generating data |
 | EMA qualification feedback received | Regulatory Affairs | EMA timeline |
@@ -175,7 +174,7 @@ Deploy PSP in advisory mode within active clinical trials. Collect prospective v
 
 ### Objective
 
-Expand PSP across therapeutic areas and molecule classes. Submit for regulatory clearance. Establish as enterprise safety AI infrastructure.
+Expand the platform across therapeutic areas and molecule classes. Submit for regulatory clearance. Establish as enterprise safety AI infrastructure.
 
 ### Budget: $5M
 
@@ -202,22 +201,22 @@ Expand PSP across therapeutic areas and molecule classes. Submit for regulatory 
 | Deliverable | Owner | Timeline |
 |-------------|-------|----------|
 | SaMD regulatory submission (De Novo or 510(k)) | Regulatory Affairs | Month 31-33 |
-| PSP safety data included in first BLA submission | Regulatory / Safety Sciences | Month 33-36 |
+| Platform safety data included in first BLA submission | Regulatory / Safety Sciences | Month 33-36 |
 | Enterprise deployment to all CGT and TCE programs | Engineering / Clinical Ops | Month 31-36 |
 | Continuous learning pipeline operational (per PCCP) | ML Engineering | Month 34-36 |
 | Partnership with 2+ academic medical centers for external validation | Clinical Partnerships | Month 31-36 |
-| PSP operating model transitioned to steady-state | Program Management | Month 36 |
+| Platform operating model transitioned to steady-state | Program Management | Month 36 |
 
 ### Stage 3 Success Criteria
 
 | Criterion | Target |
 |-----------|--------|
-| Programs using PSP | >= 5 active clinical programs |
+| Programs using platform | >= 5 active clinical programs |
 | Therapeutic areas | >= 2 (Cell Therapy + TCE minimum) |
-| Regulatory submissions incorporating PSP data | >= 1 |
+| Regulatory submissions incorporating platform data | >= 1 |
 | SaMD clearance | Application submitted |
 | Operational cost per program | Decreasing year-over-year (platform economics) |
-| Clinical holds in PSP-monitored programs | Measurable reduction vs. historical baseline |
+| Clinical holds in platform-monitored programs | Measurable reduction vs. historical baseline |
 
 ---
 
@@ -226,7 +225,7 @@ Expand PSP across therapeutic areas and molecule classes. Submit for regulatory 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|-----------|
 | Insufficient training data (rare high-grade events) | Medium | High | Multi-study pooling, synthetic data augmentation, external data partnerships |
-| DURGA integration delays | Medium | Medium | Early engagement with DURGA team, fallback standalone deployment |
+| Study-A integration delays | Medium | Medium | Early engagement with Study-A team, fallback standalone deployment |
 | Regulatory uncertainty (evolving AI/ML guidance) | Medium | High | Proactive FDA/EMA engagement, flexible PCCP design |
 | Clinician adoption resistance | Medium | Medium | Co-design with investigators, demonstrate clinical utility early |
 | AI model provider disruption (pricing, availability) | Low | Medium | Multi-model architecture, no single-provider dependency |

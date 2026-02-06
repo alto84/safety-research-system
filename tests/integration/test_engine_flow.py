@@ -1,5 +1,5 @@
 """
-Integration tests for PSPEngine — end-to-end flow from patient data to Safety Index.
+Integration tests for SafetyEngine — end-to-end flow from patient data to Safety Index.
 
 These tests verify that the complete prediction pipeline works correctly:
 PatientData -> PromptRouter -> Model Inference -> Normalizer -> Ensemble -> SafetyIndex -> Alerts
@@ -39,11 +39,11 @@ from tests.unit.test_knowledge_graph import KnowledgeGraph
 
 
 # ---------------------------------------------------------------------------
-# PSPEngine — orchestrates the full prediction pipeline
+# SafetyEngine — orchestrates the full prediction pipeline
 # ---------------------------------------------------------------------------
 
-class PSPEngine:
-    """Core PSP prediction engine, integrating all components."""
+class SafetyEngine:
+    """Core safety prediction engine, integrating all components."""
 
     def __init__(
         self,
@@ -234,8 +234,8 @@ def crs_knowledge_graph(crs_pathway_nodes, crs_pathway_edges):
 
 @pytest.fixture
 def engine_low_risk(all_endpoints, crs_knowledge_graph):
-    """PSP engine configured with mock models returning low-risk scores."""
-    return PSPEngine(
+    """Safety engine configured with mock models returning low-risk scores."""
+    return SafetyEngine(
         router=PromptRouter(all_endpoints),
         normalizer=ResponseNormalizer(),
         ensemble=EnsembleAggregator(platt_a=-4.0, platt_b=2.0),
@@ -248,8 +248,8 @@ def engine_low_risk(all_endpoints, crs_knowledge_graph):
 
 @pytest.fixture
 def engine_high_risk(all_endpoints, crs_knowledge_graph):
-    """PSP engine configured with mock models returning high-risk scores."""
-    return PSPEngine(
+    """Safety engine configured with mock models returning high-risk scores."""
+    return SafetyEngine(
         router=PromptRouter(all_endpoints),
         normalizer=ResponseNormalizer(),
         ensemble=EnsembleAggregator(platt_a=-4.0, platt_b=2.0),
@@ -262,7 +262,7 @@ def engine_high_risk(all_endpoints, crs_knowledge_graph):
 
 @pytest.fixture
 def engine_failing_models(all_endpoints, crs_knowledge_graph):
-    """PSP engine where some models fail (return invalid data)."""
+    """Safety engine where some models fail (return invalid data)."""
     call_count = {"n": 0}
 
     def flaky_model_call(endpoint: ModelEndpoint, query: SafetyQuery) -> dict:
@@ -281,7 +281,7 @@ def engine_failing_models(all_endpoints, crs_knowledge_graph):
             "token_usage": {"prompt_tokens": 2000, "completion_tokens": 300, "total_tokens": 2300},
         }
 
-    return PSPEngine(
+    return SafetyEngine(
         router=PromptRouter(all_endpoints),
         normalizer=ResponseNormalizer(),
         ensemble=EnsembleAggregator(platt_a=-4.0, platt_b=2.0),
@@ -381,7 +381,7 @@ class TestRiskOrdering:
                 "token_usage": {"prompt_tokens": 2000, "completion_tokens": 300, "total_tokens": 2300},
             }
 
-        engine = PSPEngine(
+        engine = SafetyEngine(
             router=PromptRouter(all_endpoints),
             normalizer=ResponseNormalizer(),
             ensemble=EnsembleAggregator(platt_a=-4.0, platt_b=2.0),
@@ -420,7 +420,7 @@ class TestKnowledgeGraphIntegration:
 
     def test_empty_kg_still_works(self, all_endpoints, low_risk_patient):
         """Engine should function even without KG data."""
-        engine = PSPEngine(
+        engine = SafetyEngine(
             router=PromptRouter(all_endpoints),
             normalizer=ResponseNormalizer(),
             ensemble=EnsembleAggregator(platt_a=-4.0, platt_b=2.0),

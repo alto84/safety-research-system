@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-PSP Task 3: Interactive Knowledge Graph Explorer
-==================================================
+Task 3: Interactive Knowledge Graph Explorer
+==============================================
 Target: gpuserver1 (192.168.1.100)
 Depends on: Task 1 (knowledge graph), Task 2 (embeddings optional)
 Port: 5002
 Output: Web application at http://192.168.1.100:5002
 
-A beautiful, interactive web application for exploring the PSP
+A beautiful, interactive web application for exploring the
 biomedical knowledge graph. Built with Flask + D3.js force-directed
 graph visualization.
 
@@ -21,7 +21,7 @@ Features:
   - Edge type filtering
   - t-SNE embedding view (if Task 2 completed)
   - Export selected subgraph as JSON
-  - Dark theme matching PSP dashboard aesthetic
+  - Dark theme matching dashboard aesthetic
 """
 
 import os
@@ -39,13 +39,13 @@ except ImportError:
     from flask_cors import CORS
 
 # Setup
-BASE_DIR = Path("/home/alton/psp-graph")
+BASE_DIR = Path("/home/alton/safety-graph")
 KG_DIR = BASE_DIR / "knowledge_graph" / "output"
 MODEL_DIR = BASE_DIR / "gnn_models"
 PORT = 5002
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
-log = logging.getLogger("psp-explorer")
+log = logging.getLogger("graph-explorer")
 
 app = Flask(__name__)
 CORS(app)
@@ -290,7 +290,7 @@ HTML_TEMPLATE = """
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSP Graph Explorer</title>
+<title>Biomedical Graph Explorer</title>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -395,7 +395,7 @@ HTML_TEMPLATE = """
 <div class="app">
   <header class="header">
     <div style="display:flex;align-items:center;gap:0.8rem">
-      <h1>PSP Graph Explorer</h1>
+      <h1>Biomedical Graph Explorer</h1>
       <span class="stats" id="stats">Loading...</span>
     </div>
     <div class="stats">
@@ -690,7 +690,7 @@ def index():
 
 if __name__ == "__main__":
     if load_graph():
-        log.info(f"\nStarting PSP Graph Explorer on port {PORT}...")
+        log.info(f"\nStarting Biomedical Graph Explorer on port {PORT}...")
         log.info(f"Open http://192.168.1.100:{PORT} in your browser")
         app.run(host="0.0.0.0", port=PORT, debug=False)
     else:

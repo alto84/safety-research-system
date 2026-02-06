@@ -1,5 +1,5 @@
 """
-PSPEngine: top-level coordinator for the Predictive Safety Platform.
+SafetyEngine: top-level coordinator for the Predictive Safety Platform.
 
 Ties together all engine components -- orchestrator, reasoning, integration,
 knowledge graph, and Safety Index -- into a single cohesive API. The primary
@@ -78,10 +78,10 @@ class PredictionResult:
 
 
 # ---------------------------------------------------------------------------
-# PSPEngine
+# SafetyEngine
 # ---------------------------------------------------------------------------
 
-class PSPEngine:
+class SafetyEngine:
     """Main entry point for the Predictive Safety Platform.
 
     Orchestrates the full prediction pipeline:
@@ -98,7 +98,7 @@ class PSPEngine:
 
     Usage::
 
-        engine = PSPEngine()
+        engine = SafetyEngine()
         engine.initialize()
         result = await engine.process_patient(patient_data)
     """
@@ -109,7 +109,7 @@ class PSPEngine:
         gateway: SecureAPIGateway | None = None,
         model_backend: ModelBackend | None = None,
     ) -> None:
-        """Initialize the PSP Engine.
+        """Initialize the Safety Engine.
 
         Args:
             knowledge_graph: Pre-loaded knowledge graph. If None, a new one
@@ -149,7 +149,7 @@ class PSPEngine:
             alert_configs: Alert threshold configurations. Defaults to
                 standard thresholds for CRS, ICANS, and HLH.
         """
-        logger.info("Initializing PSPEngine...")
+        logger.info("Initializing SafetyEngine...")
 
         # Load knowledge graph pathways
         if load_default_pathways:
@@ -175,7 +175,7 @@ class PSPEngine:
 
         self._initialized = True
         logger.info(
-            "PSPEngine initialized (KG: %d nodes, %d edges)",
+            "SafetyEngine initialized (KG: %d nodes, %d edges)",
             self._kg.node_count, self._kg.edge_count,
         )
 
@@ -205,7 +205,7 @@ class PSPEngine:
             RuntimeError: If the engine has not been initialized.
         """
         if not self._initialized:
-            raise RuntimeError("PSPEngine.initialize() must be called first")
+            raise RuntimeError("SafetyEngine.initialize() must be called first")
 
         pipeline_start = time.monotonic()
 
@@ -223,7 +223,7 @@ class PSPEngine:
             event_type=AuditEventType.PREDICTION_REQUEST,
             patient_id=patient.patient_id,
             session_id=session_id,
-            actor="PSPEngine",
+            actor="SafetyEngine",
             input_data={
                 "biomarker_count": len(patient.biomarkers),
                 "hours_since_infusion": patient.hours_since_infusion,
@@ -253,7 +253,7 @@ class PSPEngine:
                     event_type=AuditEventType.ERROR,
                     patient_id=patient.patient_id,
                     session_id=session_id,
-                    actor="PSPEngine",
+                    actor="SafetyEngine",
                     output_data={"adverse_event": ae.value, "error": "pipeline_failure"},
                 )
 

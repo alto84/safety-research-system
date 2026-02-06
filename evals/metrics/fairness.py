@@ -1,5 +1,5 @@
 """
-Fairness metrics for PSP evaluation.
+Fairness metrics for the platform evaluation.
 
 Ensures the platform produces equitable predictions across demographic subgroups:
 - Equalized odds (equal TPR and FPR across groups)
