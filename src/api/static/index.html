@@ -1072,10 +1072,13 @@ function renderOverview() {
             const siCls = si !== '--' && si > 0.9 ? (si > 1.2 ? 'cell-high' : 'cell-low') : '';
             const o2 = tp.clinical?.oxygen_requirement || 'Not recorded';
             const o2Cls = o2 !== 'Room air' && o2 !== 'Not recorded' ? 'cell-high' : '';
+            const spo2 = v.spo2;
+            const spo2Cls = spo2 && spo2 < 94 ? 'cell-high' : (spo2 && spo2 < 96 ? 'cell-low' : '');
             return `<div style="margin-top:12px; padding:10px; background:var(--surface-hover); border-radius:var(--radius); font-size:13px;">
               <strong>Derived Vitals:</strong>
               MAP <span class="${mapCls}" style="font-weight:600;">${map}</span> mmHg |
               Shock Index <span class="${siCls}" style="font-weight:600;">${si}</span> |
+              SpO2 <span class="${spo2Cls}" style="font-weight:600;">${spo2 ? spo2 + '%' : '--'}</span> |
               O2: <span class="${o2Cls}" style="font-weight:600;">${o2}</span>
             </div>`;
           })() : ''}
@@ -1251,8 +1254,10 @@ function renderCRS() {
   const pred = lastPrediction;
   const temp = tp.vitals?.temperature || 37.0;
   const hasFever = temp >= 38.0;
+  const _crsAlerts = generateAlerts(tp, pred);
 
   return `
+    ${_crsAlerts.length > 0 ? renderAlertsHtml(_crsAlerts) : ''}
     <div class="card">
       <div class="card-header">
         <div class="card-title">&#127777; CRS Assessment - ASTCT Consensus Grading</div>
@@ -1365,9 +1370,12 @@ function renderCRS() {
 function renderDay1() {
   if (!currentPatient) return emptyState('Day 1 Monitoring', 'Select a patient');
   const tp = currentPatient.timepoints[currentTimepoint];
+  const pred = lastPrediction;
   const temp = tp.vitals?.temperature || 37.0;
+  const _day1Alerts = generateAlerts(tp, pred);
 
   return `
+    ${_day1Alerts.length > 0 ? renderAlertsHtml(_day1Alerts) : ''}
     <div class="card">
       <div class="card-header">
         <div class="card-title">&#9201; Day 1 Post-Infusion Assessment</div>
@@ -1433,6 +1441,8 @@ function renderDay1() {
 function renderICANS() {
   if (!currentPatient) return emptyState('ICANS Assessment', 'Select a patient');
   const tp = currentPatient.timepoints[currentTimepoint];
+  const pred = lastPrediction;
+  const _icansAlerts = generateAlerts(tp, pred);
 
   // Current ICE score card
   const iceScore = tp.clinical?.ice_score;
@@ -1450,6 +1460,7 @@ function renderICANS() {
   }
 
   return `
+    ${_icansAlerts.length > 0 ? renderAlertsHtml(_icansAlerts) : ''}
     <div class="card" style="border-left: 4px solid ${iceColor};">
       <div class="card-header">
         <div class="card-title">Current ICE Score</div>
@@ -1568,8 +1579,10 @@ function renderHLH() {
   const hscoreResult = pred?.individual_scores?.find(s => s.model_name === 'HScore');
   const ferritin = tp.labs?.ferritin || 0;
   const fibrinogen = tp.labs?.fibrinogen || 3;
+  const _hlhAlerts = generateAlerts(tp, pred);
 
   return `
+    ${_hlhAlerts.length > 0 ? renderAlertsHtml(_hlhAlerts) : ''}
     ${ferritin > 10000 || fibrinogen < 1.5 ? `
       <div class="alert alert-danger">
         <span class="alert-icon">&#9888;</span>
@@ -1644,8 +1657,10 @@ function renderHematox() {
   const tp = currentPatient.timepoints[currentTimepoint];
   const pred = lastPrediction;
   const hematoxResult = pred?.individual_scores?.find(s => s.model_name === 'CAR_HEMATOTOX');
+  const _hematoxAlerts = generateAlerts(tp, pred);
 
   return `
+    ${_hematoxAlerts.length > 0 ? renderAlertsHtml(_hematoxAlerts) : ''}
     <div class="card">
       <div class="card-header">
         <div class="card-title">&#129656; CAR-HEMATOTOX Score</div>
@@ -1720,13 +1735,16 @@ function renderDischarge() {
   if (!currentPatient) return emptyState('Discharge Planning', 'Select a patient');
   const tp = currentPatient.timepoints[currentTimepoint];
   const pred = lastPrediction;
+  const _dischargeAlerts = generateAlerts(tp, pred);
 
+  const o2req = tp.clinical?.oxygen_requirement || '';
+  const noO2 = !o2req || o2req === 'Room air' || o2req === 'None';
   const criteria = [
     { name: 'Afebrile >= 24h (no antipyretics)', met: (tp.vitals?.temperature || 37) < 38.0 },
     { name: 'No vasopressor requirement', met: true },
-    { name: 'No supplemental O2 requirement', met: true },
-    { name: 'CRS resolved or Grade <= 1', met: (pred?.risk_level || 'low') !== 'high' },
-    { name: 'ICANS resolved or Grade <= 1', met: true },
+    { name: 'No supplemental O2 requirement', met: noO2 },
+    { name: 'CRS resolved or Grade <= 1', met: (tp.clinical?.crs_grade ?? 0) <= 1 },
+    { name: 'ICANS resolved or Grade <= 1', met: (tp.clinical?.icans_grade ?? 0) <= 1 },
     { name: 'ANC > 0.5 x 10^9/L (or safe for outpatient G-CSF)', met: (tp.labs?.anc || 5) > 0.5 },
     { name: 'Platelets > 20 x 10^9/L (or transfusion plan)', met: (tp.labs?.platelets || 150) > 20 },
     { name: 'Oral medications tolerated', met: true },
@@ -1740,6 +1758,7 @@ function renderDischarge() {
   const readyPercent = (metCount / criteria.length * 100).toFixed(0);
 
   return `
+    ${_dischargeAlerts.length > 0 ? renderAlertsHtml(_dischargeAlerts) : ''}
     <div class="card">
       <div class="card-header">
         <div class="card-title">&#127968; Discharge Readiness Assessment</div>
@@ -2102,6 +2121,7 @@ function renderAlertsHtml(alerts) {
 function getRiskIcon(level) {
   if (!level) return '';
   const l = level.toLowerCase();
+  if (l === 'critical') return '&#9760;'; // skull - most severe
   if (l === 'high') return '&#9888;';  // warning sign
   if (l === 'moderate') return '&#9650;'; // triangle
   if (l === 'low') return '&#10003;'; // checkmark
@@ -2118,8 +2138,9 @@ function generateAlerts(tp, pred) {
   const labs = tp.labs || {};
   const vitals = tp.vitals || {};
 
-  if (pred.risk_level === 'high') {
-    alerts.push({ type: 'danger', icon: '&#9888;', title: 'HIGH RISK', message: `Composite score ${(pred.composite_score * 100).toFixed(1)}%. Multiple models indicate elevated risk. Consider escalation.` });
+  if (pred.risk_level === 'high' || pred.risk_level === 'critical') {
+    const label = pred.risk_level === 'critical' ? 'CRITICAL RISK' : 'HIGH RISK';
+    alerts.push({ type: 'danger', icon: '&#9888;', title: label, message: `Composite score ${(pred.composite_score * 100).toFixed(1)}%. Multiple models indicate elevated risk. Consider escalation.` });
   }
   if (vitals.temperature >= 38.9) {
     alerts.push({ type: 'danger', icon: '&#127777;', title: 'High Fever', message: `Temperature ${vitals.temperature}C. Meets Hay classifier fever criterion. Evaluate for severe CRS.` });
@@ -2183,8 +2204,8 @@ function generateAlerts(tp, pred) {
   return alerts;
 }
 
-function generateAlertsFromPrediction(pred, labs, vitals) {
-  return generateAlerts({ labs, vitals }, pred);
+function generateAlertsFromPrediction(pred, labs, vitals, clinical) {
+  return generateAlerts({ labs, vitals, clinical: clinical || {} }, pred);
 }
 
 // ============================================================================
@@ -2194,7 +2215,7 @@ function getAnticipatedTests(tp, pred) {
   const tests = [];
   const labs = tp.labs || {};
   const vitals = tp.vitals || {};
-  const riskHigh = pred?.risk_level === 'high';
+  const riskHigh = pred?.risk_level === 'high' || pred?.risk_level === 'critical';
   const hasFever = (vitals.temperature || 37) >= 38.0;
 
   // Always recommended
