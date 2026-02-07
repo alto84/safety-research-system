@@ -108,6 +108,34 @@ body {
 }
 .theme-toggle:hover { background: var(--surface-hover); }
 
+/* Architecture Diagram Overlay */
+.arch-overlay { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); overflow-y:auto; padding:24px; }
+.arch-overlay.active { display:flex; justify-content:center; align-items:flex-start; }
+.arch-container { background:var(--surface); border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); max-width:1100px; width:100%; padding:32px; position:relative; margin:auto; }
+.arch-close { position:absolute; top:12px; right:16px; background:none; border:none; font-size:24px; cursor:pointer; color:var(--text-secondary); padding:4px 8px; border-radius:var(--radius); }
+.arch-close:hover { background:var(--surface-hover); color:var(--text); }
+.arch-title { font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.arch-subtitle { font-size:13px; color:var(--text-secondary); margin-bottom:24px; }
+.arch-svg { width:100%; height:auto; }
+.arch-svg text { font-family:var(--font); }
+.arch-svg .node-box { rx:8; ry:8; stroke-width:1.5; cursor:pointer; transition:filter 0.2s; }
+.arch-svg .node-box:hover { filter:brightness(0.95) drop-shadow(0 2px 6px rgba(0,0,0,0.15)); }
+.arch-svg .flow-line { fill:none; stroke-width:2; stroke-linecap:round; }
+.arch-svg .flow-arrow { stroke-width:2; stroke-linecap:round; fill:none; }
+.arch-svg .label-primary { font-size:13px; font-weight:600; fill:var(--text); }
+.arch-svg .label-secondary { font-size:10.5px; fill:var(--text-secondary); }
+.arch-svg .label-mono { font-size:10px; font-family:var(--mono); fill:var(--text-secondary); }
+.arch-svg .section-label { font-size:11px; font-weight:700; fill:var(--text-secondary); letter-spacing:1.2px; text-transform:uppercase; }
+@keyframes flowPulse { 0% { stroke-dashoffset:16; } 100% { stroke-dashoffset:0; } }
+.arch-svg .flow-animated { stroke-dasharray:8 8; animation:flowPulse 1s linear infinite; }
+.arch-legend { display:flex; flex-wrap:wrap; gap:16px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+.arch-legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); }
+.arch-legend-swatch { width:14px; height:14px; border-radius:3px; border:1px solid var(--border); }
+.arch-info { margin-top:20px; padding:16px; background:var(--surface-hover); border-radius:var(--radius); font-size:13px; color:var(--text-secondary); line-height:1.6; display:none; }
+.arch-info.active { display:block; }
+.arch-info-title { font-weight:600; color:var(--text); margin-bottom:4px; font-size:14px; }
+.arch-info code { font-family:var(--mono); background:var(--bg); padding:1px 5px; border-radius:3px; font-size:11.5px; }
+
 /* Task Navigation */
 .task-nav {
   background: var(--surface);
@@ -473,10 +501,21 @@ body {
   </div>
   <div class="header-right">
     <span id="clockDisplay" style="font-size:13px; color:var(--text-secondary); font-family:var(--mono);"></span>
+    <button class="btn btn-secondary btn-sm" onclick="openArchDiagram()" title="System Architecture">&#9881; Architecture</button>
     <button class="theme-toggle" onclick="toggleTheme()">Theme</button>
     <button class="btn btn-secondary btn-sm" onclick="window.print()">Print</button>
   </div>
 </header>
+
+<!-- Architecture Diagram Overlay -->
+<div class="arch-overlay" id="archOverlay" onclick="if(event.target===this)closeArchDiagram()">
+  <div class="arch-container">
+    <button class="arch-close" onclick="closeArchDiagram()" aria-label="Close">&times;</button>
+    <div class="arch-title">&#9881; System Architecture</div>
+    <div class="arch-subtitle">Click any component to see details. Animated lines show data flow direction.</div>
+    <div id="archDiagramContent"></div>
+  </div>
+</div>
 
 <!-- Task Navigation (T8: WAI-ARIA Tabs pattern) -->
 <nav class="task-nav" id="taskNav" aria-label="Task workflow">
@@ -2320,6 +2359,495 @@ window.addEventListener('DOMContentLoaded', async () => {
     selectPatient(0);
   }
 });
+
+// ========================================================================
+// Architecture Diagram Functions
+// ========================================================================
+
+let archDiagramRendered = false;
+
+function openArchDiagram() {
+  const overlay = document.getElementById('archOverlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    if (!archDiagramRendered) {
+      renderArchDiagram();
+      archDiagramRendered = true;
+    }
+  }
+}
+
+function closeArchDiagram() {
+  const overlay = document.getElementById('archOverlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeArchDiagram();
+  }
+});
+
+function renderArchDiagram() {
+  const container = document.getElementById('archDiagramContent');
+  if (!container) return;
+
+  // Color constants (hex values for SVG compatibility)
+  const C = {
+    primary: '#2563eb', primaryLight: '#dbeafe',
+    info: '#0284c7', infoLight: '#e0f2fe',
+    success: '#059669', successLight: '#d1fae5',
+    warning: '#d97706', warningLight: '#fef3c7',
+    danger: '#dc2626', dangerLight: '#fee2e2',
+    moderate: '#ea580c', moderateLight: '#ffedd5',
+    purple: '#7c3aed', purpleLight: '#f0e6ff',
+    text: '#1a1a2e', textSec: '#5a5a7a',
+    border: '#e2e4ea', surface: '#ffffff',
+    font: "'Inter',sans-serif"
+  };
+
+  // Node definitions
+  const nodes = {
+    // Data Input Layer
+    patientData: {
+      id: 'patientData', x: 10, y: 30, w: 150, h: 210,
+      label: 'Patient Data', fill: C.primaryLight, stroke: C.primary, layer: 'input',
+      desc: 'Real-time patient data including laboratory results, vital signs, demographics, and clinical context.',
+      details: ['Labs: CBC, CMP, CRP, Ferritin, LDH, Fibrinogen', 'Vitals: Temp, HR, BP, SpO2, RR', 'Demographics & History', 'Clinical: CRS/ICANS grade, ICE score'],
+      files: ['models/schemas.py', 'models/patient.py'],
+      endpoints: ['POST /api/v1/predict']
+    },
+    demoCases: {
+      id: 'demoCases', x: 10, y: 265, w: 150, h: 100,
+      label: 'Demo Cases', fill: C.primaryLight, stroke: C.primary, layer: 'input',
+      desc: '8 pre-built patient scenarios with multi-timepoint longitudinal data for demonstration and testing.',
+      details: ['8 patient scenarios', 'Multi-timepoint data', 'Covers Low to Critical risk', 'Realistic clinical trajectories'],
+      files: ['static/index.html (DEMO_CASES)', 'demo_cases.py'],
+      endpoints: ['GET /api/v1/patient/{id}/timeline']
+    },
+
+    // API Layer
+    fastapi: {
+      id: 'fastapi', x: 210, y: 30, w: 160, h: 155,
+      label: 'FastAPI Server', fill: C.infoLight, stroke: C.info, layer: 'api',
+      desc: 'FastAPI application server on port 5003 handling all REST and WebSocket endpoints with middleware pipeline.',
+      details: ['POST /api/v1/predict', 'POST /api/v1/predict/batch', 'GET /api/v1/patient/{id}/timeline', 'GET /api/v1/models/status', 'GET /api/v1/scores/easix', 'GET /api/v1/scores/hscore', 'GET /api/v1/scores/car-hematotox', 'GET /api/v1/health', 'WS /ws/monitor/{id}'],
+      files: ['main.py', 'api/routes.py', 'api/websocket.py'],
+      endpoints: ['Port 5003']
+    },
+    middleware: {
+      id: 'middleware', x: 210, y: 210, w: 160, h: 90,
+      label: 'Middleware', fill: C.infoLight, stroke: C.info, layer: 'api',
+      desc: 'Request processing middleware pipeline for validation, tracking, and cross-origin support.',
+      details: ['Request ID generation', 'CORS handling', 'Process time tracking', 'Pydantic validation'],
+      files: ['main.py', 'api/middleware.py'],
+      endpoints: ['Applied to all routes']
+    },
+
+    // Ensemble Runner
+    ensemble: {
+      id: 'ensemble', x: 420, y: 30, w: 180, h: 55,
+      label: 'Ensemble Runner', fill: C.successLight, stroke: C.success, layer: 'ensemble',
+      desc: 'BiomarkerEnsembleRunner orchestrates a 2-layer model architecture, running standard lab models first, then cytokine models when data is available.',
+      details: ['2-layer architecture', 'Layer 0: Always available (standard labs)', 'Layer 1: When available (cytokine panel)', 'Score normalization pipeline'],
+      files: ['ensemble/runner.py', 'ensemble/models/'],
+      endpoints: ['Called by POST /api/v1/predict']
+    },
+
+    // Layer 0 models
+    easix: {
+      id: 'easix', x: 420, y: 105, w: 85, h: 50,
+      label: 'EASIX', fill: C.successLight, stroke: C.success, layer: 'layer0',
+      desc: 'Endothelial Activation and Stress Index. Validated biomarker for endothelial dysfunction in CRS.',
+      details: ['Formula: (LDH x Creatinine) / Platelets', 'Log-transformed normalization', 'Layer 0 - Standard Labs'],
+      files: ['ensemble/models/easix.py'],
+      endpoints: ['GET /api/v1/scores/easix']
+    },
+    mEasix: {
+      id: 'mEasix', x: 515, y: 105, w: 85, h: 50,
+      label: 'Mod EASIX', fill: C.successLight, stroke: C.success, layer: 'layer0',
+      desc: 'Modified EASIX replacing creatinine with CRP for improved sensitivity to inflammatory endothelial activation.',
+      details: ['Formula: (LDH x CRP) / Platelets', 'Log-transformed normalization', 'Layer 0 - Standard Labs'],
+      files: ['ensemble/models/easix.py'],
+      endpoints: ['GET /api/v1/scores/easix']
+    },
+    pmEasix: {
+      id: 'pmEasix', x: 420, y: 165, w: 85, h: 50,
+      label: 'Pre-Mod EASIX', fill: C.successLight, stroke: C.success, layer: 'layer0',
+      desc: 'Pre-infusion Modified EASIX using baseline labs to predict CRS severity before CAR-T infusion.',
+      details: ['Formula: (LDH x Ferritin) / Platelets', 'Log-transformed normalization', 'Layer 0 - Standard Labs'],
+      files: ['ensemble/models/easix.py'],
+      endpoints: ['GET /api/v1/scores/easix']
+    },
+    hscore: {
+      id: 'hscore', x: 515, y: 165, w: 85, h: 50,
+      label: 'HScore', fill: C.successLight, stroke: C.success, layer: 'layer0',
+      desc: 'Hemophagocytic Syndrome Score adapted for CAR-T associated macrophage activation syndrome (MAS) detection.',
+      details: ['Multi-parameter scoring', 'Linear normalization 0-337', 'Fever + cytopenias + ferritin + fibrinogen', 'Layer 0 - Standard Labs'],
+      files: ['ensemble/models/hscore.py'],
+      endpoints: ['GET /api/v1/scores/hscore']
+    },
+    carHematotox: {
+      id: 'carHematotox', x: 420, y: 225, w: 180, h: 50,
+      label: 'CAR-HEMATOTOX', fill: C.successLight, stroke: C.success, layer: 'layer0',
+      desc: 'CAR-T Hematotoxicity risk model predicting prolonged cytopenias post-infusion using baseline hematologic parameters.',
+      details: ['ANC + Hemoglobin + Platelet + CRP + Ferritin', 'Linear normalization', 'Hematotoxicity prediction', 'Layer 0 - Standard Labs'],
+      files: ['ensemble/models/car_hematotox.py'],
+      endpoints: ['GET /api/v1/scores/car-hematotox']
+    },
+
+    // Layer 1 models
+    teachey: {
+      id: 'teachey', x: 420, y: 305, w: 130, h: 50,
+      label: 'Teachey 3-Cytokine', fill: C.warningLight, stroke: C.warning, layer: 'layer1',
+      desc: 'Teachey 3-cytokine regression model using IFNg, IL13, and MIP1a to predict severe CRS (Grade 4-5).',
+      details: ['IFNg + IL13 + MIP1a', 'Direct score normalization', 'Requires cytokine panel', 'Layer 1 - When Available'],
+      files: ['ensemble/models/teachey.py'],
+      endpoints: ['POST /api/v1/predict']
+    },
+    hay: {
+      id: 'hay', x: 470, y: 365, w: 130, h: 50,
+      label: 'Hay Binary', fill: C.warningLight, stroke: C.warning, layer: 'layer1',
+      desc: 'Hay binary classifier using sgp130, IFNg, and IL1RA to classify patients as high vs. low CRS risk.',
+      details: ['sgp130 + IFNg + IL1RA', 'Binary classification', 'Direct score normalization', 'Layer 1 - When Available'],
+      files: ['ensemble/models/hay.py'],
+      endpoints: ['POST /api/v1/predict']
+    },
+
+    // Risk Aggregation
+    normalize: {
+      id: 'normalize', x: 660, y: 50, w: 150, h: 55,
+      label: 'Score Normalization', fill: C.moderateLight, stroke: C.moderate, layer: 'aggregation',
+      desc: 'Normalizes raw model scores to 0-1 range using model-specific transforms (log, linear, direct).',
+      details: ['_normalise_score()', 'Log-transform: EASIX variants', 'Linear: HScore, CAR-HEMATOTOX', 'Direct: Teachey, Hay'],
+      files: ['ensemble/runner.py'],
+      endpoints: ['Internal']
+    },
+    composite: {
+      id: 'composite', x: 660, y: 120, w: 150, h: 55,
+      label: 'Composite Score', fill: C.moderateLight, stroke: C.moderate, layer: 'aggregation',
+      desc: 'Confidence-weighted composite score combining all available model outputs based on data completeness.',
+      details: ['Confidence-weighted averaging', 'Weights by model reliability', 'Adjusts for available data', 'Produces 0-1 composite'],
+      files: ['ensemble/runner.py'],
+      endpoints: ['In prediction response']
+    },
+    riskClass: {
+      id: 'riskClass', x: 660, y: 190, w: 150, h: 55,
+      label: 'Risk Classification', fill: C.moderateLight, stroke: C.moderate, layer: 'aggregation',
+      desc: 'Max-risk aggregation to determine overall risk level with discordance detection across models.',
+      details: ['Low / Moderate / High / Critical', 'Max-risk aggregation', 'Risk discordance detection', 'Contributing factors extraction'],
+      files: ['ensemble/runner.py', 'models/risk.py'],
+      endpoints: ['risk_level in response']
+    },
+
+    // Dashboard Output
+    dashboard: {
+      id: 'dashboard', x: 870, y: 30, w: 170, h: 195,
+      label: 'Dashboard', fill: C.purpleLight, stroke: C.purple, layer: 'output',
+      desc: 'Clinical dashboard with 9 workflow tabs, real-time monitoring via WebSocket, and comprehensive data visualization.',
+      details: ['9 Clinical workflow tabs', 'Alert generation (generateAlerts)', 'Trend sparkline charts', 'Score cards with citations', 'Risk meter visualization', 'Real-time WebSocket updates'],
+      files: ['static/index.html', 'static/styles.css'],
+      endpoints: ['WS /ws/monitor/{id}', 'All GET endpoints']
+    },
+    alerts: {
+      id: 'alerts', x: 870, y: 250, w: 170, h: 65,
+      label: 'Alert Generation', fill: C.purpleLight, stroke: C.purple, layer: 'output',
+      desc: 'Automated alert generation based on risk thresholds, vital sign changes, and trend analysis.',
+      details: ['Threshold-based triggers', 'Trend analysis alerts', 'Priority classification', 'Clinical action recommendations'],
+      files: ['static/index.html (generateAlerts)'],
+      endpoints: ['Client-side']
+    },
+    websocket: {
+      id: 'websocket', x: 870, y: 340, w: 170, h: 65,
+      label: 'WebSocket Monitor', fill: C.purpleLight, stroke: C.purple, layer: 'output',
+      desc: 'Real-time patient monitoring via WebSocket connection for live updates without page refresh.',
+      details: ['Live data streaming', 'Auto-reconnect', 'Patient-specific channels', 'Push notifications'],
+      files: ['api/websocket.py', 'static/index.html'],
+      endpoints: ['WS /ws/monitor/{id}']
+    }
+  };
+
+  // Flow connections (from -> to)
+  const flows = [
+    { from: 'patientData', to: 'fastapi', color: C.primary, animated: true },
+    { from: 'demoCases', to: 'fastapi', color: C.primary, animated: true },
+    { from: 'fastapi', to: 'middleware', color: C.info, animated: false },
+    { from: 'fastapi', to: 'ensemble', color: C.primary, animated: true },
+    { from: 'ensemble', to: 'easix', color: C.success, animated: false },
+    { from: 'ensemble', to: 'mEasix', color: C.success, animated: false },
+    { from: 'ensemble', to: 'pmEasix', color: C.success, animated: false },
+    { from: 'ensemble', to: 'hscore', color: C.success, animated: false },
+    { from: 'ensemble', to: 'carHematotox', color: C.success, animated: false },
+    { from: 'ensemble', to: 'teachey', color: C.warning, animated: false },
+    { from: 'ensemble', to: 'hay', color: C.warning, animated: false },
+    { from: 'easix', to: 'normalize', color: C.primary, animated: true },
+    { from: 'mEasix', to: 'normalize', color: C.primary, animated: true },
+    { from: 'pmEasix', to: 'normalize', color: C.primary, animated: true },
+    { from: 'hscore', to: 'normalize', color: C.primary, animated: true },
+    { from: 'carHematotox', to: 'normalize', color: C.primary, animated: true },
+    { from: 'teachey', to: 'normalize', color: C.primary, animated: true },
+    { from: 'hay', to: 'normalize', color: C.primary, animated: true },
+    { from: 'normalize', to: 'composite', color: C.moderate, animated: false },
+    { from: 'composite', to: 'riskClass', color: C.moderate, animated: false },
+    { from: 'riskClass', to: 'dashboard', color: C.success, animated: true },
+    { from: 'riskClass', to: 'alerts', color: C.moderate, animated: true },
+    { from: 'dashboard', to: 'websocket', color: C.purple, animated: false }
+  ];
+
+  // Helper: get center-right / center-left connection points
+  function rightOf(n) { return { x: n.x + n.w, y: n.y + n.h / 2 }; }
+  function leftOf(n) { return { x: n.x, y: n.y + n.h / 2 }; }
+  function bottomOf(n) { return { x: n.x + n.w / 2, y: n.y + n.h }; }
+  function topOf(n) { return { x: n.x + n.w / 2, y: n.y }; }
+
+  // Build SVG
+  let svg = `<svg class="arch-svg" viewBox="0 0 1060 720" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Defs for arrow markers and animation
+  svg += `<defs>
+    <marker id="arrowBlue" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0 0, 10 3.5, 0 7" fill="${C.primary}" />
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0 0, 10 3.5, 0 7" fill="${C.success}" />
+    </marker>
+    <marker id="arrowOrange" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0 0, 10 3.5, 0 7" fill="${C.moderate}" />
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0 0, 10 3.5, 0 7" fill="${C.purple}" />
+    </marker>
+  </defs>`;
+
+  // Layer labels (background)
+  const layers = [
+    { x: 5, y: 15, w: 162, h: 365, label: 'Data Input', color: C.primaryLight },
+    { x: 205, y: 15, w: 172, h: 300, label: 'API Layer', color: C.infoLight },
+    { x: 415, y: 15, w: 192, h: 410, label: 'Ensemble Models', color: C.successLight },
+    { x: 655, y: 15, w: 162, h: 250, label: 'Risk Aggregation', color: C.moderateLight },
+    { x: 865, y: 15, w: 182, h: 400, label: 'Dashboard Output', color: C.purpleLight }
+  ];
+
+  layers.forEach(l => {
+    svg += `<rect x="${l.x}" y="${l.y}" width="${l.w}" height="${l.h}" rx="8" ry="8" fill="${l.color}" opacity="0.25" stroke="${C.border}" stroke-width="1" stroke-dasharray="4,3"/>`;
+    svg += `<text x="${l.x + 8}" y="${l.y + 2}" font-family="${C.font}" font-size="9" fill="${C.textSec}" font-weight="600" text-anchor="start" dominant-baseline="hanging">${l.label}</text>`;
+  });
+
+  // Layer 0 / Layer 1 sub-labels
+  svg += `<text x="425" y="93" font-family="${C.font}" font-size="8" fill="${C.success}" font-weight="600">LAYER 0 — Standard Labs</text>`;
+  svg += `<text x="425" y="295" font-family="${C.font}" font-size="8" fill="${C.warning}" font-weight="600">LAYER 1 — Cytokine Panel</text>`;
+
+  // Draw flow lines
+  function getMarker(color) {
+    if (color === C.success) return 'url(#arrowGreen)';
+    if (color === C.moderate) return 'url(#arrowOrange)';
+    if (color === C.purple) return 'url(#arrowPurple)';
+    return 'url(#arrowBlue)';
+  }
+
+  flows.forEach(f => {
+    const fromNode = nodes[f.from];
+    const toNode = nodes[f.to];
+    if (!fromNode || !toNode) return;
+
+    let p1, p2;
+    // Determine connection points
+    if (toNode.x > fromNode.x + fromNode.w - 10) {
+      p1 = rightOf(fromNode);
+      p2 = leftOf(toNode);
+    } else if (toNode.y > fromNode.y + fromNode.h - 10) {
+      p1 = bottomOf(fromNode);
+      p2 = topOf(toNode);
+    } else {
+      p1 = rightOf(fromNode);
+      p2 = leftOf(toNode);
+    }
+
+    const midX = (p1.x + p2.x) / 2;
+    const dash = f.animated ? 'stroke-dasharray="6,4"' : '';
+    const animTag = f.animated
+      ? `<animate attributeName="stroke-dashoffset" values="20;0" dur="1.5s" repeatCount="indefinite"/>`
+      : '';
+
+    svg += `<path d="M${p1.x},${p1.y} C${midX},${p1.y} ${midX},${p2.y} ${p2.x},${p2.y}" fill="none" stroke="${f.color}" stroke-width="1.5" ${dash} marker-end="${getMarker(f.color)}" opacity="0.7">${animTag}</path>`;
+  });
+
+  // Draw node boxes
+  Object.values(nodes).forEach(n => {
+    const isSmall = n.h <= 55;
+    const fontSize = isSmall ? 10 : 11;
+    const cursor = 'pointer';
+
+    svg += `<g class="arch-node" data-node-id="${n.id}" style="cursor:${cursor}" onclick="showArchNodeInfo('${n.id}')">`;
+    svg += `<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="6" ry="6" fill="${n.fill}" stroke="${n.stroke}" stroke-width="1.5"/>`;
+
+    // Label
+    svg += `<text x="${n.x + n.w / 2}" y="${n.y + (isSmall ? n.h / 2 + 1 : 18)}" font-family="${C.font}" font-size="${fontSize}" fill="${C.text}" font-weight="600" text-anchor="middle" dominant-baseline="${isSmall ? 'middle' : 'auto'}">${n.label}</text>`;
+
+    // Sub-details for larger boxes
+    if (!isSmall && n.details) {
+      const startY = n.y + 32;
+      const maxLines = Math.min(n.details.length, Math.floor((n.h - 38) / 14));
+      for (let i = 0; i < maxLines; i++) {
+        let txt = n.details[i];
+        // Truncate long lines
+        if (txt.length > 24) txt = txt.substring(0, 22) + '...';
+        svg += `<text x="${n.x + 8}" y="${startY + i * 13}" font-family="${C.font}" font-size="8" fill="${C.textSec}">${escSvgText(txt)}</text>`;
+      }
+    }
+
+    svg += `</g>`;
+  });
+
+  // Legend
+  const legendY = 440;
+  svg += `<g transform="translate(10, ${legendY})">`;
+  svg += `<text x="0" y="0" font-family="${C.font}" font-size="11" fill="${C.text}" font-weight="600">Legend</text>`;
+
+  const legendItems = [
+    { label: 'Data Input', fill: C.primaryLight, stroke: C.primary },
+    { label: 'API Layer', fill: C.infoLight, stroke: C.info },
+    { label: 'Layer 0 Models (Standard Labs)', fill: C.successLight, stroke: C.success },
+    { label: 'Layer 1 Models (Cytokine Panel)', fill: C.warningLight, stroke: C.warning },
+    { label: 'Risk Aggregation', fill: C.moderateLight, stroke: C.moderate },
+    { label: 'Dashboard Output', fill: C.purpleLight, stroke: C.purple }
+  ];
+
+  legendItems.forEach((item, i) => {
+    const lx = (i % 3) * 340;
+    const ly = 15 + Math.floor(i / 3) * 22;
+    svg += `<rect x="${lx}" y="${ly}" width="14" height="14" rx="3" fill="${item.fill}" stroke="${item.stroke}" stroke-width="1.5"/>`;
+    svg += `<text x="${lx + 20}" y="${ly + 11}" font-family="${C.font}" font-size="10" fill="${C.text}">${item.label}</text>`;
+  });
+
+  // Flow line legend
+  svg += `<line x1="0" y1="62" x2="30" y2="62" stroke="${C.primary}" stroke-width="1.5" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" values="20;0" dur="1.5s" repeatCount="indefinite"/></line>`;
+  svg += `<text x="36" y="66" font-family="${C.font}" font-size="10" fill="${C.text}">Animated = active data flow</text>`;
+  svg += `<line x1="240" y1="62" x2="270" y2="62" stroke="${C.primary}" stroke-width="1.5"/>`;
+  svg += `<text x="276" y="66" font-family="${C.font}" font-size="10" fill="${C.text}">Solid = structural connection</text>`;
+
+  svg += `</g>`;
+
+  // Instruction text
+  svg += `<text x="530" y="715" font-family="${C.font}" font-size="10" fill="${C.textSec}" text-anchor="middle" font-style="italic">Click any component to view details below</text>`;
+
+  svg += `</svg>`;
+
+  // Info panel
+  const infoPanel = `<div class="arch-info" id="archInfoPanel" style="display:none;">
+    <div style="display:flex;align-items:flex-start;gap:16px;">
+      <div style="flex:1;">
+        <h3 id="archInfoTitle" style="margin:0 0 8px 0;font-size:16px;color:${C.text};"></h3>
+        <p id="archInfoDesc" style="margin:0 0 12px 0;font-size:13px;color:${C.textSec};line-height:1.5;"></p>
+        <div id="archInfoDetails"></div>
+      </div>
+      <div style="flex:0 0 260px;">
+        <div id="archInfoFiles" style="margin-bottom:10px;"></div>
+        <div id="archInfoEndpoints"></div>
+      </div>
+    </div>
+  </div>`;
+
+  // Legend container
+  const legendHTML = `<div class="arch-legend" style="margin-top:4px;padding:0;"></div>`;
+
+  container.innerHTML = svg + infoPanel + legendHTML;
+
+  // Store nodes on window for click handler
+  window._archNodes = nodes;
+}
+
+function escSvgText(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showArchNodeInfo(nodeId) {
+  const nodes = window._archNodes;
+  if (!nodes || !nodes[nodeId]) return;
+
+  const n = nodes[nodeId];
+  const C = {
+    text: '#1a1a2e', textSec: '#5a5a7a',
+    primary: '#2563eb', info: '#0284c7', success: '#059669',
+    warning: '#d97706', moderate: '#ea580c', purple: '#7c3aed'
+  };
+
+  // Color map by layer
+  const layerColors = {
+    input: C.primary, api: C.info, ensemble: C.success,
+    layer0: C.success, layer1: C.warning,
+    aggregation: C.moderate, output: C.purple
+  };
+  const accent = layerColors[n.layer] || C.primary;
+
+  const panel = document.getElementById('archInfoPanel');
+  if (!panel) return;
+  panel.style.display = 'block';
+  panel.style.borderLeft = `4px solid ${accent}`;
+
+  document.getElementById('archInfoTitle').textContent = n.label;
+  document.getElementById('archInfoTitle').style.color = accent;
+  document.getElementById('archInfoDesc').textContent = n.desc;
+
+  // Details
+  const detailsEl = document.getElementById('archInfoDetails');
+  if (n.details && n.details.length) {
+    detailsEl.innerHTML = '<strong style="font-size:12px;color:' + C.text + ';">Details</strong>' +
+      '<ul style="margin:6px 0 0 0;padding-left:18px;list-style:disc;">' +
+      n.details.map(d => `<li style="font-size:12px;color:${C.textSec};margin-bottom:3px;">${escHtml(d)}</li>`).join('') +
+      '</ul>';
+  } else {
+    detailsEl.innerHTML = '';
+  }
+
+  // Files
+  const filesEl = document.getElementById('archInfoFiles');
+  if (n.files && n.files.length) {
+    filesEl.innerHTML = '<strong style="font-size:12px;color:' + C.text + ';">Key Files</strong>' +
+      '<ul style="margin:6px 0 0 0;padding-left:18px;list-style:none;">' +
+      n.files.map(f => `<li style="font-size:11px;color:${C.textSec};margin-bottom:2px;"><code style="background:#f0f1f5;padding:1px 5px;border-radius:3px;font-size:11px;">${escHtml(f)}</code></li>`).join('') +
+      '</ul>';
+  } else {
+    filesEl.innerHTML = '';
+  }
+
+  // Endpoints
+  const epEl = document.getElementById('archInfoEndpoints');
+  if (n.endpoints && n.endpoints.length) {
+    epEl.innerHTML = '<strong style="font-size:12px;color:' + C.text + ';">Endpoints</strong>' +
+      '<ul style="margin:6px 0 0 0;padding-left:18px;list-style:none;">' +
+      n.endpoints.map(e => `<li style="font-size:11px;color:${accent};margin-bottom:2px;font-family:monospace;">${escHtml(e)}</li>`).join('') +
+      '</ul>';
+  } else {
+    epEl.innerHTML = '';
+  }
+
+  // Highlight selected node in SVG
+  document.querySelectorAll('.arch-node rect').forEach(rect => {
+    rect.style.filter = '';
+    rect.style.strokeWidth = '1.5';
+  });
+  const selectedGroup = document.querySelector(`.arch-node[data-node-id="${nodeId}"]`);
+  if (selectedGroup) {
+    const rect = selectedGroup.querySelector('rect');
+    if (rect) {
+      rect.style.filter = `drop-shadow(0 0 6px ${accent})`;
+      rect.style.strokeWidth = '2.5';
+    }
+  }
+
+  // Scroll info panel into view
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 </script>
 </body>
 </html>
