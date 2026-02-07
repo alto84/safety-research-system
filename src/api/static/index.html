@@ -60,6 +60,19 @@
   --shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
 }
 
+/* Dark theme risk badge overrides for contrast */
+[data-theme="dark"] .risk-low { color: #34d399; }
+[data-theme="dark"] .risk-moderate { color: #fb923c; }
+[data-theme="dark"] .risk-high { color: #f87171; }
+[data-theme="dark"] .risk-critical { background: #7f1d1d; color: #fecaca; }
+
+/* T12: Focus-visible for keyboard accessibility */
+*:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* T14: Skip navigation link */
+.skip-link { position: absolute; top: -100px; left: 8px; background: var(--primary); color: #fff; padding: 8px 16px; z-index: 999; border-radius: var(--radius); font-size: 14px; text-decoration: none; }
+.skip-link:focus { top: 8px; }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: var(--font);
@@ -159,9 +172,11 @@ body {
   display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px;
   font-weight: 600; margin-top: 4px; text-transform: uppercase;
 }
-.risk-low { background: var(--success-light); color: var(--success); }
-.risk-moderate { background: var(--moderate-light); color: var(--moderate); }
-.risk-high { background: var(--danger-light); color: var(--danger); }
+.risk-low { background: var(--success-light); color: #047857; }
+.risk-moderate { background: var(--moderate-light); color: #9a3412; }
+.risk-high { background: var(--danger-light); color: #b91c1c; }
+.risk-critical { background: #450a0a; color: #fecaca; font-weight: 700; animation: pulse-critical 1s infinite; }
+@keyframes pulse-critical { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); } 50% { box-shadow: 0 0 8px 4px rgba(220,38,38,0.3); } }
 .risk-unknown { background: var(--info-light); color: var(--info); }
 
 /* Content Area */
@@ -353,6 +368,14 @@ body {
   }
   .print-header .print-title { font-size: 16px; font-weight: 700; }
   .print-header .print-meta { display: flex; gap: 24px; margin-top: 4px; }
+  .risk-low::before { content: "[LOW] "; font-weight: 700; }
+  .risk-moderate::before { content: "[MOD] "; font-weight: 700; }
+  .risk-high::before { content: "[HIGH] "; font-weight: 700; }
+  .risk-critical::before { content: "[CRIT] "; font-weight: 700; }
+  .pc-risk { background: #fff !important; color: #000 !important; border: 2px solid #000; }
+  .score-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .alert { border: 2px solid #000 !important; }
+  .skip-link { display: none !important; }
   @page { margin: 1cm; }
 }
 
@@ -432,6 +455,9 @@ body {
 </head>
 <body>
 
+<!-- T14: Skip navigation -->
+<a href="#contentArea" class="skip-link">Skip to main content</a>
+
 <!-- Header -->
 <header class="header">
   <div class="header-left">
@@ -451,17 +477,19 @@ body {
   </div>
 </header>
 
-<!-- Task Navigation -->
-<nav class="task-nav" id="taskNav">
-  <button class="task-btn active" data-task="overview"><span class="task-icon">&#128202;</span> Overview</button>
-  <button class="task-btn" data-task="pre-infusion"><span class="task-icon">&#128203;</span> Pre-Infusion</button>
-  <button class="task-btn" data-task="day1"><span class="task-icon">&#9201;</span> Day 1 Monitor</button>
-  <button class="task-btn" data-task="crs"><span class="task-icon">&#127777;</span> CRS Monitor</button>
-  <button class="task-btn" data-task="icans"><span class="task-icon">&#129504;</span> ICANS</button>
-  <button class="task-btn" data-task="hlh"><span class="task-icon">&#9888;</span> HLH Screen</button>
-  <button class="task-btn" data-task="hematox"><span class="task-icon">&#129656;</span> Hematologic</button>
-  <button class="task-btn" data-task="discharge"><span class="task-icon">&#127968;</span> Discharge</button>
-  <button class="task-btn" data-task="visit"><span class="task-icon">&#128105;&#8205;&#9877;</span> Clinical Visit</button>
+<!-- Task Navigation (T8: WAI-ARIA Tabs pattern) -->
+<nav class="task-nav" id="taskNav" aria-label="Task workflow">
+  <div role="tablist" aria-label="Clinical workflow tabs" id="taskTablist">
+    <button class="task-btn active" data-task="overview" role="tab" aria-selected="true" tabindex="0"><span class="task-icon">&#128202;</span> Overview</button>
+    <button class="task-btn" data-task="pre-infusion" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128203;</span> Pre-Infusion</button>
+    <button class="task-btn" data-task="day1" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9201;</span> Day 1 Monitor</button>
+    <button class="task-btn" data-task="crs" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#127777;</span> CRS Monitor</button>
+    <button class="task-btn" data-task="icans" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#129504;</span> ICANS</button>
+    <button class="task-btn" data-task="hlh" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9888;</span> HLH Screen</button>
+    <button class="task-btn" data-task="hematox" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#129656;</span> Hematologic</button>
+    <button class="task-btn" data-task="discharge" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#127968;</span> Discharge</button>
+    <button class="task-btn" data-task="visit" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128105;&#8205;&#9877;</span> Clinical Visit</button>
+  </div>
 </nav>
 
 <!-- Main Layout -->
@@ -470,7 +498,7 @@ body {
   <aside class="patient-sidebar">
     <div class="sidebar-section">
       <div class="sidebar-title">Demo Patients</div>
-      <div id="patientList">
+      <div id="patientList" role="listbox" aria-label="Demo Patients">
         <div class="empty-state" style="padding:24px 12px;">
           <div class="loading-spinner"></div>
           <p style="font-size:12px; margin-top:8px;">Loading demo cases...</p>
@@ -496,7 +524,7 @@ body {
   </aside>
 
   <!-- Content Area -->
-  <main class="content-area" id="contentArea">
+  <main class="content-area" id="contentArea" role="tabpanel" aria-live="polite">
     <div class="print-header" id="printHeader">
       <div class="print-title">Cell Therapy Safety Platform - Clinical Assessment</div>
       <div class="print-meta" id="printMeta"></div>
@@ -504,7 +532,7 @@ body {
     <!-- Dynamic content rendered by JS -->
     <div id="taskContent"></div>
     <div style="text-align:center; padding:16px; font-size:11px; color:var(--text-secondary); border-top:1px solid var(--border); margin-top:24px;">
-      Scores computed from published clinical formulas (EASIX, HScore, CAR-HEMATOTOX, Teachey, Hay). For clinical decision support only &mdash; not a substitute for clinical judgment.
+      <strong>IMPORTANT:</strong> This software is <strong>NOT</strong> an FDA-cleared or approved medical device. Not intended to diagnose, treat, cure, or prevent any disease. All clinical decisions must be made by qualified healthcare providers exercising independent clinical judgment. Scoring algorithms are deterministic calculations from published formulas (EASIX, HScore, CAR-HEMATOTOX, Teachey, Hay). The composite risk index is <strong>NOT</strong> a validated clinical prediction. <a href="#" onclick="event.preventDefault();alert('Version 0.2.0 | Algorithms: EASIX (Pennisi 2021), Modified EASIX, HScore (Fardet 2014), CAR-HEMATOTOX (Rejeski 2021), Hay Binary (2017), Teachey 3-Cytokine (2016). Not validated in prospective clinical trials.');" style="color:var(--primary);">Software v0.2.0 details</a>
     </div>
   </main>
 </div>
@@ -534,7 +562,13 @@ const NORMAL_RANGES = {
   ast: { low: 10, high: 40, unit: 'U/L', name: 'AST' },
   fibrinogen: { low: 2.0, high: 4.0, unit: 'g/L', name: 'Fibrinogen' },
   triglycerides: { low: 0.5, high: 1.7, unit: 'mmol/L', name: 'Triglycerides' },
-  alt: { low: 0, high: 33, unit: 'U/L', name: 'ALT' },
+  alt: { low: 0, high: 40, unit: 'U/L', name: 'ALT' },
+};
+
+// T15: Required inputs per model (for skipped model display)
+const MODEL_REQUIRED_INPUTS = {
+  'Teachey_3Cytokine': ['IFN-gamma (ifn_gamma)', 'sgp130', 'IL-1RA (il1ra)'],
+  'Hay_Binary_Classifier': ['Temperature', 'MCP-1 (mcp1)'],
 };
 
 // ASTCT CRS Grading criteria
@@ -607,6 +641,7 @@ async function getCarHematotox(anc, hgb, plt, crp, ferr) {
 function riskClass(level) {
   if (!level) return 'risk-unknown';
   const l = level.toLowerCase();
+  if (l === 'critical') return 'risk-critical';
   if (l === 'high') return 'risk-high';
   if (l === 'moderate') return 'risk-moderate';
   if (l === 'low') return 'risk-low';
@@ -616,6 +651,7 @@ function riskClass(level) {
 function riskBorderClass(level) {
   if (!level) return '';
   const l = level.toLowerCase();
+  if (l === 'critical') return 'risk-high-border';
   if (l === 'high') return 'risk-high-border';
   if (l === 'moderate') return 'risk-moderate-border';
   if (l === 'low') return 'risk-low-border';
@@ -640,11 +676,12 @@ function labValueDisplay(key, value) {
   if (value == null) return '<span style="color:var(--text-secondary)">--</span>';
   const r = NORMAL_RANGES[key];
   let cls = '';
+  let flag = '';
   if (r) {
-    if (value > r.high) cls = 'cell-high';
-    else if (value < r.low) cls = 'cell-low';
+    if (value > r.high) { cls = 'cell-high'; flag = ' <strong>H</strong>'; }
+    else if (value < r.low) { cls = 'cell-low'; flag = ' <strong>L</strong>'; }
   }
-  return `<span class="${cls}">${value}</span>`;
+  return `<span class="${cls}">${value}${flag}</span>`;
 }
 
 // ============================================================================
@@ -656,14 +693,20 @@ function renderPatientList() {
     container.innerHTML = '<div class="empty-state" style="padding:16px 0;"><p style="font-size:12px;">No demo cases loaded</p></div>';
     return;
   }
-  container.innerHTML = DEMO_CASES.map((p, i) => `
-    <div class="patient-card ${currentPatient && currentPatient.id === p.id ? 'active' : ''}" onclick="selectPatient(${i})">
+  container.innerHTML = DEMO_CASES.map((p, i) => {
+    const isActive = currentPatient && currentPatient.id === p.id;
+    const tpIdx = isActive ? currentTimepoint : 0;
+    const risk = p.timepoints[tpIdx]?.expected_risk || p.timepoints[0]?.expected_risk || 'unknown';
+    return `
+    <div class="patient-card ${isActive ? 'active' : ''}" role="option" aria-selected="${isActive}" tabindex="0"
+         aria-label="${p.name}, ${p.age}${p.sex}, ${risk} risk"
+         onclick="selectPatient(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPatient(${i})}">
       <div class="pc-name">${p.name}</div>
       <div class="pc-meta">${p.age}${p.sex} | ${p.diagnosis.substring(0, 40)}...</div>
       <div class="pc-meta">${p.product}</div>
-      <span class="pc-risk ${riskClass(p.timepoints[p.timepoints.length-1].expected_risk)}">${p.timepoints[p.timepoints.length-1].expected_risk || 'unknown'}</span>
-    </div>
-  `).join('');
+      <span class="pc-risk ${riskClass(risk)}">${getRiskIcon(risk)} ${(risk || 'unknown').toUpperCase()}</span>
+    </div>`;
+  }).join('');
 }
 
 function selectPatient(index) {
@@ -750,12 +793,28 @@ async function loadTimepoint() {
 // ============================================================================
 // TASK NAVIGATION
 // ============================================================================
-document.querySelectorAll('.task-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.task-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentTask = btn.dataset.task;
-    renderTaskContent();
+// T8: Tab navigation with ARIA and arrow keys
+const tabButtons = document.querySelectorAll('.task-btn');
+function activateTab(btn) {
+  tabButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); b.tabIndex = -1; });
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+  btn.tabIndex = 0;
+  btn.focus();
+  currentTask = btn.dataset.task;
+  renderTaskContent();
+}
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => activateTab(btn));
+  btn.addEventListener('keydown', (e) => {
+    const tabs = Array.from(tabButtons);
+    const idx = tabs.indexOf(btn);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const next = e.key === 'ArrowRight' ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
+      activateTab(tabs[next]);
+    } else if (e.key === 'Home') { e.preventDefault(); activateTab(tabs[0]); }
+    else if (e.key === 'End') { e.preventDefault(); activateTab(tabs[tabs.length - 1]); }
   });
 });
 
@@ -942,7 +1001,7 @@ function renderOverview() {
   const alerts = generateAlerts(tp, pred);
 
   return `
-    ${alerts.map(a => `<div class="alert alert-${a.type}"><span class="alert-icon">${a.icon}</span><div><strong>${a.title}</strong><br>${a.message}</div></div>`).join('')}
+    ${renderAlertsHtml(alerts)}
 
     <div class="card">
       <div class="card-header">
@@ -955,7 +1014,7 @@ function renderOverview() {
             <div class="risk-meter-indicator" style="left: ${Math.min(pred.composite_score * 100, 98)}%;"></div>
           </div>
           <div class="risk-meter-labels">
-            <span>Low Risk</span><span>Moderate</span><span>High Risk</span>
+            <span>${getRiskIcon('low')} Low Risk</span><span>${getRiskIcon('moderate')} Moderate</span><span>${getRiskIcon('high')} High Risk</span>
           </div>
         </div>
         <div style="text-align:center; margin-top:8px;">
@@ -980,13 +1039,15 @@ function renderOverview() {
           ${s.warnings?.length ? `<div style="font-size:10px; color:var(--warning); margin-top:4px;">${s.warnings.slice(0,2).join('; ')}</div>` : ''}
         </div>
       `).join('')}
-      ${getSkippedModels(pred).map(name => `
+      ${getSkippedModels(pred).map(name => {
+        const missing = MODEL_REQUIRED_INPUTS[name];
+        return `
         <div class="score-card" style="opacity:0.5; border-style:dashed;">
           <div class="score-label">${name.replace(/_/g, ' ')}</div>
-          <div class="score-value" style="font-size:16px; color:var(--text-secondary);">Not Evaluated</div>
-          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Missing required inputs</div>
-        </div>
-      `).join('')}
+          <div class="score-value" style="font-size:16px; color:var(--text-secondary);">Cannot compute</div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">${missing ? 'Missing: ' + missing.join(', ') : 'Missing required inputs'}</div>
+        </div>`;
+      }).join('')}
     </div>
 
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:16px;">
@@ -1002,6 +1063,21 @@ function renderOverview() {
               }).join('')}
             </tbody>
           </table>
+          ${(tp.vitals?.systolic_bp && tp.vitals?.diastolic_bp) ? (() => {
+            const v = tp.vitals;
+            const map = ((v.systolic_bp + 2 * v.diastolic_bp) / 3).toFixed(0);
+            const si = v.heart_rate ? (v.heart_rate / v.systolic_bp).toFixed(2) : '--';
+            const mapCls = map < 65 ? 'cell-high' : '';
+            const siCls = si !== '--' && si > 0.9 ? (si > 1.2 ? 'cell-high' : 'cell-low') : '';
+            const o2 = tp.clinical?.oxygen_requirement || 'Not recorded';
+            const o2Cls = o2 !== 'Room air' && o2 !== 'Not recorded' ? 'cell-high' : '';
+            return `<div style="margin-top:12px; padding:10px; background:var(--surface-hover); border-radius:var(--radius); font-size:13px;">
+              <strong>Derived Vitals:</strong>
+              MAP <span class="${mapCls}" style="font-weight:600;">${map}</span> mmHg |
+              Shock Index <span class="${siCls}" style="font-weight:600;">${si}</span> |
+              O2: <span class="${o2Cls}" style="font-weight:600;">${o2}</span>
+            </div>`;
+          })() : ''}
         </div>
       </div>
 
@@ -1222,16 +1298,18 @@ function renderCRS() {
       <div class="card">
         <div class="card-header"><div class="card-title">&#128137; CRS Management Algorithm</div></div>
         <div class="card-body" style="font-size:13px;">
-          <div style="padding:8px; background:var(--success-bg); border-radius:var(--radius); margin-bottom:8px;">
+          ${tp.clinical?.oxygen_requirement ? `<div style="padding:8px; margin-bottom:8px; background:${tp.clinical.oxygen_requirement === 'Room air' ? 'var(--success-bg)' : 'var(--warning-bg)'}; border-radius:var(--radius); font-weight:600;">
+            O2: ${tp.clinical.oxygen_requirement}</div>` : ''}
+          <div data-crs-mgmt="1" style="padding:8px; background:var(--success-bg); border-radius:var(--radius); margin-bottom:8px; transition:var(--transition);">
             <strong>Grade 1:</strong> Supportive care. Acetaminophen for fever. Monitor vitals q4h.
           </div>
-          <div style="padding:8px; background:var(--warning-bg); border-radius:var(--radius); margin-bottom:8px;">
-            <strong>Grade 2:</strong> Consider Tocilizumab 8mg/kg IV (max 800mg). IV fluids. Monitor q2h.
+          <div data-crs-mgmt="2" style="padding:8px; background:var(--warning-bg); border-radius:var(--radius); margin-bottom:8px; transition:var(--transition);">
+            <strong>Grade 2:</strong> Tocilizumab 8mg/kg IV (max 800mg)${currentPatient?.weight_kg ? ` <strong style="color:var(--primary);">[${Math.min(currentPatient.weight_kg * 8, 800).toFixed(0)}mg for ${currentPatient.weight_kg}kg]</strong>` : ''}. IV fluids. Monitor q2h.
           </div>
-          <div style="padding:8px; background:var(--danger-bg); border-radius:var(--radius); margin-bottom:8px;">
-            <strong>Grade 3:</strong> Tocilizumab + Dexamethasone 10mg IV q6h. Vasopressor support. ICU transfer. Monitor q1h.
+          <div data-crs-mgmt="3" style="padding:8px; background:var(--danger-bg); border-radius:var(--radius); margin-bottom:8px; transition:var(--transition);">
+            <strong>Grade 3:</strong> Tocilizumab${currentPatient?.weight_kg ? ` <strong>[${Math.min(currentPatient.weight_kg * 8, 800).toFixed(0)}mg]</strong>` : ''} + Dexamethasone 10mg IV q6h. Vasopressor support. ICU transfer. Monitor q1h.
           </div>
-          <div style="padding:8px; background:var(--danger-bg); border-radius:var(--radius);">
+          <div data-crs-mgmt="4" style="padding:8px; background:var(--danger-bg); border-radius:var(--radius); transition:var(--transition);">
             <strong>Grade 4:</strong> Tocilizumab + High-dose methylprednisolone 1g IV. Mechanical ventilation PRN. ICU mandatory.
           </div>
         </div>
@@ -1355,14 +1433,46 @@ function renderICANS() {
   if (!currentPatient) return emptyState('ICANS Assessment', 'Select a patient');
   const tp = currentPatient.timepoints[currentTimepoint];
 
+  // Current ICE score card
+  const iceScore = tp.clinical?.ice_score;
+  const icansGrade = tp.clinical?.icans_grade;
+  const hasIce = iceScore != null;
+  const iceColor = hasIce ? (iceScore >= 7 ? 'var(--success)' : iceScore >= 3 ? 'var(--warning)' : 'var(--danger)') : 'var(--text-secondary)';
+  let iceDelta = '';
+  if (hasIce && currentTimepoint > 0) {
+    const prevTp = currentPatient.timepoints[currentTimepoint - 1];
+    const prevIce = prevTp?.clinical?.ice_score;
+    if (prevIce != null && prevIce !== iceScore) {
+      iceDelta = iceScore < prevIce ? `<span style="font-size:13px; color:var(--text-secondary); margin-left:8px;">&#9660; down from ${prevIce}/10</span>` :
+                 `<span style="font-size:13px; color:var(--text-secondary); margin-left:8px;">&#9650; up from ${prevIce}/10</span>`;
+    }
+  }
+
   return `
+    <div class="card" style="border-left: 4px solid ${iceColor};">
+      <div class="card-header">
+        <div class="card-title">Current ICE Score</div>
+        ${icansGrade ? `<span class="pc-risk ${icansGrade >= 3 ? 'risk-high' : icansGrade >= 2 ? 'risk-moderate' : icansGrade >= 1 ? 'risk-low' : 'risk-low'}" style="font-size:13px; padding:4px 12px;">ICANS Grade ${icansGrade}</span>` : ''}
+      </div>
+      <div class="card-body" style="text-align:center; padding:20px;">
+        ${hasIce ? `
+          <div style="font-size:32px; font-weight:700; font-family:var(--mono); color:${iceColor};">${iceScore}/10</div>
+          <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">
+            ${icansGrade != null ? `ICANS Grade ${icansGrade}` : ''}${iceDelta}
+          </div>
+        ` : `
+          <div style="font-size:16px; color:var(--text-secondary);">No ICE score recorded for this timepoint</div>
+        `}
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-header">
         <div class="card-title">&#129504; ICANS Assessment - ICE Score</div>
         <span style="font-size:12px; color:var(--text-secondary);">ASTCT Consensus Grading</span>
       </div>
       <div class="card-body">
-        <h4 style="margin-bottom:12px;">ICE Score Calculator (Immune Effector Cell-Associated Encephalopathy)</h4>
+        <h4 style="margin-bottom:12px;">New ICE Assessment (Immune Effector Cell-Associated Encephalopathy)</h4>
         <div class="form-grid" style="grid-template-columns: repeat(5, 1fr);">
           <div class="form-group">
             <div class="form-label">Orientation</div>
@@ -1705,11 +1815,12 @@ function renderClinicalVisit() {
           <div class="form-group">
             <div class="form-label">Product</div>
             <select class="form-input" id="visitProduct">
-              <option>Axicabtagene ciloleucel</option>
-              <option>Tisagenlecleucel</option>
-              <option>Lisocabtagene maraleucel</option>
-              <option>Idecabtagene vicleucel</option>
-              <option>Ciltacabtagene autoleucel</option>
+              <option>Axicabtagene ciloleucel (Yescarta)</option>
+              <option>Brexucabtagene autoleucel (Tecartus)</option>
+              <option>Tisagenlecleucel (Kymriah)</option>
+              <option>Lisocabtagene maraleucel (Breyanzi)</option>
+              <option>Idecabtagene vicleucel (Abecma)</option>
+              <option>Ciltacabtagene autoleucel (Carvykti)</option>
             </select>
           </div>
         </div>
@@ -1831,7 +1942,7 @@ async function runManualPrediction() {
     const alerts = generateAlertsFromPrediction(pred, labs, vitals);
 
     container.innerHTML = `
-      ${alerts.map(a => `<div class="alert alert-${a.type}"><span class="alert-icon">${a.icon}</span><div><strong>${a.title}</strong><br>${a.message}</div></div>`).join('')}
+      ${renderAlertsHtml(alerts)}
 
       <div class="card">
         <div class="card-header">
@@ -1843,7 +1954,7 @@ async function runManualPrediction() {
             <div class="risk-meter-bar">
               <div class="risk-meter-indicator" style="left: ${Math.min(pred.composite_score * 100, 98)}%;"></div>
             </div>
-            <div class="risk-meter-labels"><span>Low</span><span>Moderate</span><span>High</span></div>
+            <div class="risk-meter-labels"><span>${getRiskIcon('low')} Low</span><span>${getRiskIcon('moderate')} Moderate</span><span>${getRiskIcon('high')} High</span></div>
           </div>
           <div style="text-align:center; margin-top:8px;">
             <span style="font-family:var(--mono); font-size:28px; font-weight:700;">${pred.risk_level.toUpperCase()}</span>
@@ -1859,7 +1970,7 @@ async function runManualPrediction() {
         ${(pred.individual_scores || []).map(s => `
           <div class="score-card ${riskBorderClass(s.risk_level)}">
             <div class="score-label">${s.model_name.replace(/_/g, ' ')}</div>
-            <div class="score-value">${formatScore(s.score)}</div>
+            <div class="score-value">${getRiskIcon(s.risk_level)} ${formatScore(s.score)}</div>
             <div class="score-risk ${riskClass(s.risk_level)}">${(s.risk_level || 'N/A').toUpperCase()}</div>
             <div class="score-citation">${s.citation || ''}</div>
             ${s.warnings?.length ? `<div style="font-size:11px; color:var(--warning); margin-top:4px;">${s.warnings.join('; ')}</div>` : ''}
@@ -1914,10 +2025,13 @@ function selectCRSGrade(el, grade) {
   if (currentPatient) {
     localStorage.setItem(`crs-grade-${currentPatient.id}-${currentTimepoint}`, grade);
   }
-  // Highlight matching management protocol
+  // Highlight matching management protocol and scroll into view
   document.querySelectorAll('[data-crs-mgmt]').forEach(row => {
-    row.style.outline = row.dataset.crsMgmt == grade ? '2px solid var(--primary)' : 'none';
-    row.style.transform = row.dataset.crsMgmt == grade ? 'scale(1.02)' : 'none';
+    const isMatch = row.dataset.crsMgmt == grade;
+    row.style.outline = isMatch ? '2px solid var(--primary)' : 'none';
+    row.style.transform = isMatch ? 'scale(1.02)' : 'none';
+    row.style.boxShadow = isMatch ? '0 0 8px rgba(37,99,235,0.3)' : 'none';
+    if (isMatch) row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 }
 
@@ -1974,6 +2088,16 @@ function getModelAgreementSummary(pred) {
   return `${counts.total} of ${counts.total + skipped} models: ${parts.join(', ')}`;
 }
 
+// T1: Render alerts with ARIA live regions for screen readers
+function renderAlertsHtml(alerts) {
+  const danger = alerts.filter(a => a.type === 'danger');
+  const other = alerts.filter(a => a.type !== 'danger');
+  return `<div role="alert" aria-live="assertive" aria-atomic="false">
+    ${danger.map(a => `<div class="alert alert-${a.type}"><span class="alert-icon">${a.icon}</span><div><strong>${a.title}</strong><br>${a.message}</div></div>`).join('')}
+  </div>
+  ${other.map(a => `<div class="alert alert-${a.type}"><span class="alert-icon">${a.icon}</span><div><strong>${a.title}</strong><br>${a.message}</div></div>`).join('')}`;
+}
+
 function getRiskIcon(level) {
   if (!level) return '';
   const l = level.toLowerCase();
@@ -2026,8 +2150,33 @@ function generateAlerts(tp, pred) {
   if (vitals.respiratory_rate && vitals.respiratory_rate > 24) {
     alerts.push({ type: 'warning', icon: '&#129729;', title: 'Tachypnea', message: `RR ${vitals.respiratory_rate}/min (>24). Early sign of respiratory decompensation.` });
   }
-  if (labs.alt && labs.alt > 165) {
-    alerts.push({ type: 'warning', icon: '&#9888;', title: 'ALT >5x ULN', message: `ALT ${labs.alt} U/L (>5x ULN). Consider hepatotoxicity. Hold tocilizumab if recently given.` });
+  if (labs.alt && labs.alt > 200) {
+    alerts.push({ type: 'warning', icon: '&#9888;', title: 'ALT >5x ULN', message: `ALT ${labs.alt} U/L (>5x ULN of 40). Consider hepatotoxicity. Hold tocilizumab if recently given.` });
+  }
+  // T4: MAP-based alert
+  if (vitals.systolic_bp && vitals.diastolic_bp) {
+    const map = (vitals.systolic_bp + 2 * vitals.diastolic_bp) / 3;
+    if (map < 65) {
+      alerts.push({ type: 'danger', icon: '&#128147;', title: 'Low MAP', message: `MAP ${map.toFixed(0)} mmHg (<65). Below critical threshold. Assess fluid status and vasopressor need.` });
+    }
+    const si = vitals.heart_rate ? vitals.heart_rate / vitals.systolic_bp : null;
+    if (si && si > 1.2) {
+      alerts.push({ type: 'danger', icon: '&#128147;', title: 'Shock Index Elevated', message: `SI ${si.toFixed(2)} (>1.2). Significant hemodynamic instability.` });
+    } else if (si && si > 0.9) {
+      alerts.push({ type: 'warning', icon: '&#128147;', title: 'Shock Index Elevated', message: `SI ${si.toFixed(2)} (>0.9). Early hemodynamic compromise.` });
+    }
+  }
+  // T10: HScore >= 169 alert
+  if (pred && pred.individual_scores) {
+    const hscore = pred.individual_scores.find(s => s.model_name === 'HScore');
+    if (hscore && hscore.score >= 169) {
+      alerts.push({ type: 'danger', icon: '&#9888;', title: 'HScore Critical', message: `HScore ${hscore.score.toFixed(0)} (>=169, >93% HLH probability). Evaluate for IEC-HS. Consider pulse methylprednisolone and hematology consultation.` });
+    }
+  }
+  // T3: ICANS without CRS alert
+  const clinical = tp.clinical || {};
+  if (clinical.icans_grade > 0 && (!clinical.crs_grade || clinical.crs_grade === 0)) {
+    alerts.push({ type: 'danger', icon: '&#129504;', title: 'ICANS Without Active CRS', message: `ICANS Grade ${clinical.icans_grade} detected without active CRS. Dexamethasone is first-line for isolated ICANS. Tocilizumab has limited CNS penetration and is NOT recommended as initial therapy for isolated ICANS.` });
   }
 
   return alerts;
