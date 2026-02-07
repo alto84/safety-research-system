@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cell Therapy Safety Platform - Clinical Dashboard</title>
+<style>
+:root {
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --surface-hover: #f0f1f5;
+  --text: #1a1a2e;
+  --text-secondary: #5a5a7a;
+  --border: #e2e4ea;
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+  --danger-bg: #fef2f2;
+  --warning: #d97706;
+  --warning-light: #fef3c7;
+  --warning-bg: #fffbeb;
+  --success: #059669;
+  --success-light: #d1fae5;
+  --success-bg: #ecfdf5;
+  --info: #0284c7;
+  --info-light: #e0f2fe;
+  --moderate: #ea580c;
+  --moderate-light: #ffedd5;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --transition: 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface-hover: #252836;
+  --text: #e4e4f0;
+  --text-secondary: #9a9ab8;
+  --border: #2d3040;
+  --primary-light: #1e3a5f;
+  --danger-light: #3f1515;
+  --danger-bg: #2a1010;
+  --warning-light: #3f2a08;
+  --warning-bg: #2a1d08;
+  --success-light: #0a3020;
+  --success-bg: #081f15;
+  --info-light: #0a2540;
+  --moderate-light: #3f1f08;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.logo { font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+.logo svg { width: 28px; height: 28px; }
+.header-status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.theme-toggle {
+  background: none; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 6px 10px; cursor: pointer; color: var(--text); font-size: 14px;
+}
+.theme-toggle:hover { background: var(--surface-hover); }
+
+/* Task Navigation */
+.task-nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.task-nav::-webkit-scrollbar { display: none; }
+.task-btn {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.task-btn:hover { color: var(--text); background: var(--surface-hover); }
+.task-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.task-btn .task-icon { font-size: 16px; }
+
+/* Main Layout */
+.main-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 0;
+  min-height: calc(100vh - 100px);
+}
+
+/* Patient Sidebar */
+.patient-sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+}
+.sidebar-section { padding: 16px; border-bottom: 1px solid var(--border); }
+.sidebar-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 10px; }
+
+/* Patient Cards */
+.patient-card {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.patient-card:hover { border-color: var(--primary); background: var(--primary-light); }
+.patient-card.active { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 0 0 1px var(--primary); }
+.patient-card .pc-name { font-weight: 600; font-size: 14px; }
+.patient-card .pc-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.patient-card .pc-risk {
+  display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px;
+  font-weight: 600; margin-top: 4px; text-transform: uppercase;
+}
+.risk-low { background: var(--success-light); color: var(--success); }
+.risk-moderate { background: var(--moderate-light); color: var(--moderate); }
+.risk-high { background: var(--danger-light); color: var(--danger); }
+.risk-unknown { background: var(--info-light); color: var(--info); }
+
+/* Content Area */
+.content-area {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.card-body { padding: 18px; }
+.card-footer { padding: 12px 18px; border-top: 1px solid var(--border); background: var(--surface-hover); }
+
+/* Alert Banners */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+}
+.alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.alert-danger { background: var(--danger-bg); border: 1px solid var(--danger-light); color: var(--danger); }
+.alert-warning { background: var(--warning-bg); border: 1px solid var(--warning-light); color: var(--warning); }
+.alert-success { background: var(--success-bg); border: 1px solid var(--success-light); color: var(--success); }
+.alert-info { background: var(--info-light); border: 1px solid var(--info); color: var(--info); }
+
+/* Score Display */
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.score-card {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  transition: var(--transition);
+}
+.score-card:hover { box-shadow: var(--shadow-md); }
+.score-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+.score-value { font-size: 28px; font-weight: 700; margin: 4px 0; font-family: var(--mono); }
+.score-risk { font-size: 12px; font-weight: 600; }
+.score-citation { font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-style: italic; }
+.score-card.risk-low-border { border-left: 4px solid var(--success); }
+.score-card.risk-moderate-border { border-left: 4px solid var(--moderate); }
+.score-card.risk-high-border { border-left: 4px solid var(--danger); }
+
+/* Form Controls */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-label {
+  font-size: 12px; font-weight: 500; color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.form-label .unit { font-size: 10px; color: var(--text-secondary); font-weight: 400; }
+.form-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-family: var(--mono);
+  transition: var(--transition);
+}
+.form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+.form-input.value-abnormal-high { border-color: var(--danger); background: var(--danger-bg); }
+.form-input.value-abnormal-low { border-color: var(--warning); background: var(--warning-bg); }
+
+/* Buttons */
+.btn {
+  padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: var(--transition); border: 1px solid transparent;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-secondary { background: var(--surface); border-color: var(--border); color: var(--text); }
+.btn-secondary:hover { background: var(--surface-hover); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before {
+  content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+  width: 2px; background: var(--border);
+}
+.timeline-item { position: relative; padding-bottom: 20px; }
+.timeline-dot {
+  position: absolute; left: -20px; top: 4px; width: 12px; height: 12px;
+  border-radius: 50%; border: 2px solid var(--border); background: var(--surface);
+}
+.timeline-dot.active { border-color: var(--primary); background: var(--primary); }
+.timeline-dot.danger { border-color: var(--danger); background: var(--danger); }
+.timeline-dot.warning { border-color: var(--warning); background: var(--warning); }
+.timeline-dot.success { border-color: var(--success); background: var(--success); }
+.timeline-label { font-size: 13px; font-weight: 600; }
+.timeline-note { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.timeline-btn {
+  font-size: 12px; color: var(--primary); background: none; border: none;
+  cursor: pointer; margin-top: 4px; padding: 2px 0;
+}
+.timeline-btn:hover { text-decoration: underline; }
+
+/* Anticipated Tests */
+.test-list { list-style: none; }
+.test-item {
+  padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px;
+}
+.test-item .test-name { font-weight: 500; }
+.test-item .test-freq { font-size: 11px; color: var(--text-secondary); }
+.test-priority-stat { border-left: 3px solid var(--danger); }
+.test-priority-urgent { border-left: 3px solid var(--warning); }
+.test-priority-routine { border-left: 3px solid var(--success); }
+
+/* Data Table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  text-align: left; padding: 8px 12px; background: var(--surface-hover);
+  font-weight: 600; font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.3px; color: var(--text-secondary); border-bottom: 1px solid var(--border);
+}
+.data-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.data-table tr:hover td { background: var(--surface-hover); }
+.cell-high { color: var(--danger); font-weight: 600; }
+.cell-low { color: var(--warning); font-weight: 600; }
+
+/* Composite Risk Meter */
+.risk-meter { width: 100%; margin: 12px 0; }
+.risk-meter-bar {
+  height: 24px; border-radius: 12px; position: relative; overflow: hidden;
+  background: linear-gradient(90deg, var(--success) 0%, #84cc16 25%, var(--warning) 50%, var(--moderate) 75%, var(--danger) 100%);
+}
+.risk-meter-indicator {
+  position: absolute; top: -4px; width: 4px; height: 32px;
+  background: var(--text); border-radius: 2px;
+  transition: left 0.5s ease;
+}
+.risk-meter-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+
+/* Teaching Points */
+.teaching-point {
+  padding: 10px 14px; background: var(--info-light); border-radius: var(--radius);
+  margin-bottom: 8px; font-size: 13px; display: flex; gap: 8px;
+}
+.teaching-icon { font-size: 16px; flex-shrink: 0; }
+
+/* Print */
+@media print {
+  .header, .task-nav, .patient-sidebar, .btn, .theme-toggle { display: none !important; }
+  .main-layout { grid-template-columns: 1fr !important; }
+  .content-area { max-height: none !important; }
+  .card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc !important; }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .patient-sidebar { max-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+/* Loading */
+.loading-spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid var(--border); border-top-color: var(--primary);
+  border-radius: 50%; animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state {
+  text-align: center; padding: 48px 24px; color: var(--text-secondary);
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state .empty-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.empty-state .empty-desc { font-size: 13px; }
+
+/* Tabs within cards */
+.tab-bar { display: flex; border-bottom: 1px solid var(--border); }
+.tab-btn {
+  padding: 8px 16px; background: none; border: none;
+  border-bottom: 2px solid transparent; color: var(--text-secondary);
+  font-size: 13px; cursor: pointer; font-weight: 500;
+}
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* CRS Grading visual */
+.crs-grade-strip {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin: 12px 0;
+}
+.crs-grade-box {
+  padding: 8px; text-align: center; border-radius: var(--radius); font-size: 12px; font-weight: 600;
+  border: 2px solid transparent; cursor: pointer; transition: var(--transition);
+}
+.crs-grade-box:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.crs-g0 { background: var(--success-light); color: var(--success); }
+.crs-g1 { background: #fef9c3; color: #a16207; }
+.crs-g2 { background: var(--warning-light); color: var(--warning); }
+.crs-g3 { background: var(--moderate-light); color: var(--moderate); }
+.crs-g4 { background: var(--danger-light); color: var(--danger); }
+.crs-grade-box.selected { border-color: var(--text); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+/* Vitals sparkline placeholder */
+.sparkline-row { display: flex; align-items: center; gap: 12px; padding: 6px 0; }
+.sparkline-label { width: 100px; font-size: 12px; font-weight: 500; }
+.sparkline-value { font-family: var(--mono); font-size: 14px; font-weight: 600; min-width: 60px; }
+.sparkline-bar { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.sparkline-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">
+      <svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="2"/><path d="M9 14l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Cell Therapy Safety Platform
+    </div>
+    <div class="header-status">
+      <span class="status-dot" id="apiStatus"></span>
+      <span id="apiStatusText">Connecting...</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <span id="clockDisplay" style="font-size:13px; color:var(--text-secondary); font-family:var(--mono);"></span>
+    <button class="theme-toggle" onclick="toggleTheme()">Theme</button>
+    <button class="btn btn-secondary btn-sm" onclick="window.print()">Print</button>
+  </div>
+</header>
+
+<!-- Task Navigation -->
+<nav class="task-nav" id="taskNav">
+  <button class="task-btn active" data-task="overview"><span class="task-icon">&#128202;</span> Overview</button>
+  <button class="task-btn" data-task="pre-infusion"><span class="task-icon">&#128203;</span> Pre-Infusion</button>
+  <button class="task-btn" data-task="day1"><span class="task-icon">&#9201;</span> Day 1 Monitor</button>
+  <button class="task-btn" data-task="crs"><span class="task-icon">&#127777;</span> CRS Monitor</button>
+  <button class="task-btn" data-task="icans"><span class="task-icon">&#129504;</span> ICANS</button>
+  <button class="task-btn" data-task="hlh"><span class="task-icon">&#9888;</span> HLH Screen</button>
+  <button class="task-btn" data-task="hematox"><span class="task-icon">&#129656;</span> Hematologic</button>
+  <button class="task-btn" data-task="discharge"><span class="task-icon">&#127968;</span> Discharge</button>
+  <button class="task-btn" data-task="visit"><span class="task-icon">&#128105;&#8205;&#9877;</span> Clinical Visit</button>
+</nav>
+
+<!-- Main Layout -->
+<div class="main-layout">
+  <!-- Patient Sidebar -->
+  <aside class="patient-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Demo Patients</div>
+      <div id="patientList">
+        <div class="empty-state" style="padding:24px 12px;">
+          <div class="loading-spinner"></div>
+          <p style="font-size:12px; margin-top:8px;">Loading demo cases...</p>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Current Patient</div>
+      <div id="currentPatientInfo">
+        <div class="empty-state" style="padding:16px 0;">
+          <p style="font-size:12px;">Select a patient to begin</p>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Timepoint</div>
+      <div id="timepointSelector">
+        <div class="empty-state" style="padding:16px 0;">
+          <p style="font-size:12px;">No patient selected</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content Area -->
+  <main class="content-area" id="contentArea">
+    <!-- Dynamic content rendered by JS -->
+    <div id="taskContent"></div>
+  </main>
+</div>
+
+<!-- Load demo cases -->
+<script src="/static/demo_cases.js"></script>
+<script>
+// ============================================================================
+// CONFIG & STATE
+// ============================================================================
+const API_BASE = window.location.origin;
+let currentPatient = null;
+let currentTimepoint = 0;
+let currentTask = 'overview';
+let lastPrediction = null;
+let apiConnected = false;
+
+// Normal ranges for lab value flagging
+const NORMAL_RANGES = {
+  ldh: { low: 140, high: 280, unit: 'U/L', name: 'LDH' },
+  creatinine: { low: 0.6, high: 1.2, unit: 'mg/dL', name: 'Creatinine' },
+  platelets: { low: 150, high: 400, unit: '10^9/L', name: 'Platelets' },
+  crp: { low: 0, high: 10, unit: 'mg/L', name: 'CRP' },
+  ferritin: { low: 20, high: 300, unit: 'ng/mL', name: 'Ferritin' },
+  anc: { low: 1.5, high: 8.0, unit: '10^9/L', name: 'ANC' },
+  hemoglobin: { low: 12.0, high: 17.5, unit: 'g/dL', name: 'Hemoglobin' },
+  ast: { low: 10, high: 40, unit: 'U/L', name: 'AST' },
+  fibrinogen: { low: 2.0, high: 4.0, unit: 'g/L', name: 'Fibrinogen' },
+  triglycerides: { low: 0.5, high: 1.7, unit: 'mmol/L', name: 'Triglycerides' },
+};
+
+// ASTCT CRS Grading criteria
+const CRS_GRADES = {
+  0: { label: 'None', criteria: 'No CRS symptoms', color: 'success' },
+  1: { label: 'Grade 1', criteria: 'Fever (T >= 38.0C). No hypotension. No hypoxia.', color: 'warning' },
+  2: { label: 'Grade 2', criteria: 'Fever + hypotension not requiring vasopressors, and/or hypoxia requiring low-flow O2.', color: 'warning' },
+  3: { label: 'Grade 3', criteria: 'Fever + hypotension requiring a vasopressor (+/- vasopressin), and/or hypoxia requiring high-flow O2 or non-rebreather.', color: 'danger' },
+  4: { label: 'Grade 4', criteria: 'Fever + hypotension requiring multiple vasopressors, and/or hypoxia requiring positive pressure (CPAP/BiPAP/ventilator).', color: 'danger' },
+};
+
+// ============================================================================
+// API CALLS
+// ============================================================================
+async function apiFetch(endpoint, options = {}) {
+  try {
+    const resp = await fetch(`${API_BASE}${endpoint}`, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options,
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+      throw new Error(err.detail || err.error || `HTTP ${resp.status}`);
+    }
+    return await resp.json();
+  } catch (e) {
+    console.error(`API call failed: ${endpoint}`, e);
+    throw e;
+  }
+}
+
+async function checkApiHealth() {
+  try {
+    const data = await apiFetch('/api/v1/health');
+    apiConnected = true;
+    document.getElementById('apiStatus').style.background = 'var(--success)';
+    document.getElementById('apiStatusText').textContent = `Connected - ${data.models_available} models`;
+    return data;
+  } catch {
+    apiConnected = false;
+    document.getElementById('apiStatus').style.background = 'var(--danger)';
+    document.getElementById('apiStatusText').textContent = 'Disconnected';
+    return null;
+  }
+}
+
+async function runPrediction(patientData) {
+  return apiFetch('/api/v1/predict', {
+    method: 'POST',
+    body: JSON.stringify(patientData),
+  });
+}
+
+async function getEasix(ldh, creatinine, platelets) {
+  return apiFetch(`/api/v1/scores/easix?ldh=${ldh}&creatinine=${creatinine}&platelets=${platelets}`);
+}
+
+async function getHScore(params) {
+  const qs = Object.entries(params).map(([k,v]) => `${k}=${v}`).join('&');
+  return apiFetch(`/api/v1/scores/hscore?${qs}`);
+}
+
+async function getCarHematotox(anc, hgb, plt, crp, ferr) {
+  return apiFetch(`/api/v1/scores/car-hematotox?anc=${anc}&hemoglobin=${hgb}&platelets=${plt}&crp=${crp}&ferritin=${ferr}`);
+}
+
+// ============================================================================
+// RENDER HELPERS
+// ============================================================================
+function riskClass(level) {
+  if (!level) return 'risk-unknown';
+  const l = level.toLowerCase();
+  if (l === 'high') return 'risk-high';
+  if (l === 'moderate') return 'risk-moderate';
+  if (l === 'low') return 'risk-low';
+  return 'risk-unknown';
+}
+
+function riskBorderClass(level) {
+  if (!level) return '';
+  const l = level.toLowerCase();
+  if (l === 'high') return 'risk-high-border';
+  if (l === 'moderate') return 'risk-moderate-border';
+  if (l === 'low') return 'risk-low-border';
+  return '';
+}
+
+function flagValue(key, value) {
+  if (value == null || !NORMAL_RANGES[key]) return '';
+  const r = NORMAL_RANGES[key];
+  if (value > r.high) return 'value-abnormal-high';
+  if (value < r.low) return 'value-abnormal-low';
+  return '';
+}
+
+function formatScore(score) {
+  if (score == null) return '--';
+  if (typeof score === 'number') return score.toFixed(2);
+  return String(score);
+}
+
+function labValueDisplay(key, value) {
+  if (value == null) return '<span style="color:var(--text-secondary)">--</span>';
+  const r = NORMAL_RANGES[key];
+  let cls = '';
+  if (r) {
+    if (value > r.high) cls = 'cell-high';
+    else if (value < r.low) cls = 'cell-low';
+  }
+  return `<span class="${cls}">${value}</span>`;
+}
+
+// ============================================================================
+// PATIENT SIDEBAR
+// ============================================================================
+function renderPatientList() {
+  const container = document.getElementById('patientList');
+  if (typeof DEMO_CASES === 'undefined' || !DEMO_CASES.length) {
+    container.innerHTML = '<div class="empty-state" style="padding:16px 0;"><p style="font-size:12px;">No demo cases loaded</p></div>';
+    return;
+  }
+  container.innerHTML = DEMO_CASES.map((p, i) => `
+    <div class="patient-card ${currentPatient && currentPatient.id === p.id ? 'active' : ''}" onclick="selectPatient(${i})">
+      <div class="pc-name">${p.name}</div>
+      <div class="pc-meta">${p.age}${p.sex} | ${p.diagnosis.substring(0, 40)}...</div>
+      <div class="pc-meta">${p.product}</div>
+      <span class="pc-risk ${riskClass(p.timepoints[p.timepoints.length-1].expected_risk)}">${p.timepoints[p.timepoints.length-1].expected_risk || 'unknown'}</span>
+    </div>
+  `).join('');
+}
+
+function selectPatient(index) {
+  currentPatient = DEMO_CASES[index];
+  currentTimepoint = 0;
+  renderPatientList();
+  renderCurrentPatientInfo();
+  renderTimepointSelector();
+  loadTimepoint();
+}
+
+function renderCurrentPatientInfo() {
+  const container = document.getElementById('currentPatientInfo');
+  if (!currentPatient) {
+    container.innerHTML = '<div class="empty-state" style="padding:16px 0;"><p style="font-size:12px;">Select a patient</p></div>';
+    return;
+  }
+  const p = currentPatient;
+  container.innerHTML = `
+    <div style="font-weight:600; font-size:15px;">${p.name}</div>
+    <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">${p.age}${p.sex} | ${p.id}</div>
+    <div style="font-size:12px; margin-top:6px;">${p.diagnosis}</div>
+    <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">${p.product}</div>
+    <div style="font-size:12px; color:var(--text-secondary); margin-top:6px; font-style:italic;">${p.description}</div>
+  `;
+}
+
+function renderTimepointSelector() {
+  const container = document.getElementById('timepointSelector');
+  if (!currentPatient) {
+    container.innerHTML = '<div class="empty-state" style="padding:16px 0;"><p style="font-size:12px;">No patient selected</p></div>';
+    return;
+  }
+  const tps = currentPatient.timepoints;
+  container.innerHTML = `
+    <div class="timeline">
+      ${tps.map((tp, i) => `
+        <div class="timeline-item">
+          <div class="timeline-dot ${i === currentTimepoint ? 'active' : ''} ${tp.expected_risk === 'high' ? 'danger' : tp.expected_risk === 'moderate' ? 'warning' : 'success'}"></div>
+          <button class="timeline-btn" onclick="selectTimepoint(${i})" style="font-weight:${i === currentTimepoint ? '700' : '400'};">${tp.label}</button>
+          <div class="timeline-note">${tp.clinical_note ? tp.clinical_note.substring(0, 50) : ''}...</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function selectTimepoint(index) {
+  currentTimepoint = index;
+  renderTimepointSelector();
+  loadTimepoint();
+}
+
+async function loadTimepoint() {
+  if (!currentPatient) return;
+  const tp = currentPatient.timepoints[currentTimepoint];
+
+  // Build prediction request
+  const reqData = {
+    patient_id: currentPatient.id,
+    labs: tp.labs || {},
+    vitals: tp.vitals || {},
+    clinical: tp.clinical || {},
+  };
+
+  try {
+    lastPrediction = await runPrediction(reqData);
+  } catch (e) {
+    lastPrediction = null;
+    console.error('Prediction failed:', e);
+  }
+
+  renderTaskContent();
+}
+
+// ============================================================================
+// TASK NAVIGATION
+// ============================================================================
+document.querySelectorAll('.task-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.task-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTask = btn.dataset.task;
+    renderTaskContent();
+  });
+});
+
+// ============================================================================
+// MAIN CONTENT RENDERER
+// ============================================================================
+function renderTaskContent() {
+  const container = document.getElementById('taskContent');
+
+  switch(currentTask) {
+    case 'overview': container.innerHTML = renderOverview(); break;
+    case 'pre-infusion': container.innerHTML = renderPreInfusion(); break;
+    case 'day1': container.innerHTML = renderDay1(); break;
+    case 'crs': container.innerHTML = renderCRS(); break;
+    case 'icans': container.innerHTML = renderICANS(); break;
+    case 'hlh': container.innerHTML = renderHLH(); break;
+    case 'hematox': container.innerHTML = renderHematox(); break;
+    case 'discharge': container.innerHTML = renderDischarge(); break;
+    case 'visit': container.innerHTML = renderClinicalVisit(); break;
+    default: container.innerHTML = renderOverview();
+  }
+}
+
+// ============================================================================
+// OVERVIEW VIEW
+// ============================================================================
+function renderOverview() {
+  if (!currentPatient || !lastPrediction) {
+    return `
+      <div class="empty-state">
+        <div class="empty-icon">&#128203;</div>
+        <div class="empty-title">Select a Patient</div>
+        <div class="empty-desc">Choose a demo patient from the sidebar to see their risk assessment</div>
+      </div>
+    `;
+  }
+
+  const tp = currentPatient.timepoints[currentTimepoint];
+  const pred = lastPrediction;
+  const alerts = generateAlerts(tp, pred);
+
+  return `
+    ${alerts.map(a => `<div class="alert alert-${a.type}"><span class="alert-icon">${a.icon}</span><div><strong>${a.title}</strong><br>${a.message}</div></div>`).join('')}
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#127919; Composite Risk Assessment</div>
+        <span class="pc-risk ${riskClass(pred.risk_level)}" style="font-size:13px; padding:4px 12px;">${pred.risk_level.toUpperCase()}</span>
+      </div>
+      <div class="card-body">
+        <div class="risk-meter">
+          <div class="risk-meter-bar">
+            <div class="risk-meter-indicator" style="left: ${Math.min(pred.composite_score * 100, 98)}%;"></div>
+          </div>
+          <div class="risk-meter-labels">
+            <span>Low Risk</span><span>Moderate</span><span>High Risk</span>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:8px;">
+          <span style="font-family:var(--mono); font-size:24px; font-weight:700;">${(pred.composite_score * 100).toFixed(1)}%</span>
+          <span style="font-size:13px; color:var(--text-secondary); margin-left:8px;">composite score</span>
+          <span style="font-size:13px; color:var(--text-secondary); margin-left:16px;">${pred.models_run}/${pred.models_run + (pred.layers?.reduce((a,l) => a + l.models_skipped.length, 0) || 0)} models</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-grid">
+      ${(pred.individual_scores || []).map(s => `
+        <div class="score-card ${riskBorderClass(s.risk_level)}">
+          <div class="score-label">${s.model_name.replace(/_/g, ' ')}</div>
+          <div class="score-value">${formatScore(s.score)}</div>
+          <div class="score-risk ${riskClass(s.risk_level)}">${(s.risk_level || 'N/A').toUpperCase()}</div>
+          <div class="score-citation">${s.citation || ''}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:16px;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">&#129656; Laboratory Values</div></div>
+        <div class="card-body">
+          <table class="data-table">
+            <thead><tr><th>Test</th><th>Value</th><th>Normal</th></tr></thead>
+            <tbody>
+              ${Object.entries(tp.labs || {}).map(([k, v]) => {
+                const r = NORMAL_RANGES[k];
+                return r ? `<tr><td>${r.name}</td><td>${labValueDisplay(k, v)}</td><td>${r.low}-${r.high} ${r.unit}</td></tr>` : '';
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">&#128161; Anticipated Tests</div></div>
+        <div class="card-body">
+          <ul class="test-list">
+            ${getAnticipatedTests(tp, pred).map(t => `
+              <li class="test-item test-priority-${t.priority}">
+                <span class="test-name">${t.name}</span>
+                <span class="test-freq">${t.freq}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    ${currentPatient.teaching_points ? `
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header"><div class="card-title">&#128218; Teaching Points</div></div>
+        <div class="card-body">
+          ${currentPatient.teaching_points.map(tp => `
+            <div class="teaching-point"><span class="teaching-icon">&#128161;</span>${tp}</div>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+// ============================================================================
+// PRE-INFUSION VIEW
+// ============================================================================
+function renderPreInfusion() {
+  if (!currentPatient) return emptyState('Pre-Infusion Assessment', 'Select a patient to assess baseline risk');
+  const tp = currentPatient.timepoints[currentTimepoint];
+  const pred = lastPrediction;
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#128203; Pre-Infusion Risk Assessment</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Assess baseline risk before CAR-T infusion</span>
+      </div>
+      <div class="card-body">
+        <h4 style="margin-bottom:12px;">Baseline Risk Factors</h4>
+        <div class="form-grid">
+          <div class="form-group">
+            <div class="form-label">Tumor Burden<span class="unit">qualitative</span></div>
+            <select class="form-input" disabled>
+              <option ${(tp.clinical?.disease_burden || 0.5) < 0.3 ? 'selected' : ''}>Low</option>
+              <option ${(tp.clinical?.disease_burden || 0.5) >= 0.3 && (tp.clinical?.disease_burden || 0.5) < 0.7 ? 'selected' : ''}>Moderate</option>
+              <option ${(tp.clinical?.disease_burden || 0.5) >= 0.7 ? 'selected' : ''}>High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Prior Therapies<span class="unit">lines</span></div>
+            <input class="form-input" type="number" value="${tp.clinical?.prior_therapies || 3}" disabled>
+          </div>
+          <div class="form-group">
+            <div class="form-label">ECOG Status<span class="unit">0-4</span></div>
+            <input class="form-input" type="number" value="1" disabled>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Bridging Therapy</div>
+            <select class="form-input" disabled><option>None</option><option selected>Radiation</option><option>Chemo</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#129656; Baseline Laboratory Panel</div></div>
+      <div class="card-body">
+        <table class="data-table">
+          <thead><tr><th>Test</th><th>Value</th><th>Normal Range</th><th>Flag</th><th>Relevance</th></tr></thead>
+          <tbody>
+            ${renderLabRow('ldh', tp.labs?.ldh, 'Component of EASIX; elevated suggests high tumor burden')}
+            ${renderLabRow('creatinine', tp.labs?.creatinine, 'Component of EASIX; renal baseline')}
+            ${renderLabRow('platelets', tp.labs?.platelets, 'Component of EASIX and CAR-HEMATOTOX')}
+            ${renderLabRow('crp', tp.labs?.crp, 'Component of modified EASIX and CAR-HEMATOTOX')}
+            ${renderLabRow('ferritin', tp.labs?.ferritin, 'HLH marker; component of HScore and CAR-HEMATOTOX')}
+            ${renderLabRow('anc', tp.labs?.anc, 'Component of CAR-HEMATOTOX; neutropenia risk')}
+            ${renderLabRow('hemoglobin', tp.labs?.hemoglobin, 'Component of CAR-HEMATOTOX')}
+            ${renderLabRow('ast', tp.labs?.ast, 'Component of HScore; hepatic baseline')}
+            ${renderLabRow('fibrinogen', tp.labs?.fibrinogen, 'Component of HScore; DIC marker')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    ${pred ? `
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#127919; Baseline Scores</div></div>
+      <div class="card-body">
+        <div class="score-grid">
+          ${(pred.individual_scores || []).map(s => `
+            <div class="score-card ${riskBorderClass(s.risk_level)}">
+              <div class="score-label">${s.model_name.replace(/_/g, ' ')}</div>
+              <div class="score-value">${formatScore(s.score)}</div>
+              <div class="score-risk ${riskClass(s.risk_level)}">${(s.risk_level || 'N/A').toUpperCase()}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    ` : ''}
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128203; Pre-Infusion Checklist</div></div>
+      <div class="card-body">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          ${['Baseline labs drawn (CBC, CMP, CRP, ferritin, fibrinogen)', 'Neurological baseline documented', 'ICE score recorded (should be 10/10)', 'Tocilizumab available bedside', 'ICU bed availability confirmed', 'Leukapheresis product thawed and verified', 'Lymphodepletion completed per protocol', 'Consent for CAR-T verified', 'Emergency medications available', 'Monitoring plan reviewed with nursing'].map(item => `
+            <label style="display:flex; align-items:flex-start; gap:8px; font-size:13px; padding:6px 8px; border:1px solid var(--border); border-radius:var(--radius); cursor:pointer;">
+              <input type="checkbox" style="margin-top:2px;">
+              ${item}
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128161; Monitoring Plan Post-Infusion</div></div>
+      <div class="card-body">
+        <ul class="test-list">
+          <li class="test-item test-priority-stat"><span class="test-name">Temperature</span><span class="test-freq">q4h x 14 days</span></li>
+          <li class="test-item test-priority-stat"><span class="test-name">Vital signs (HR, BP, SpO2, RR)</span><span class="test-freq">q4h x 14 days</span></li>
+          <li class="test-item test-priority-urgent"><span class="test-name">CBC with differential</span><span class="test-freq">Daily</span></li>
+          <li class="test-item test-priority-urgent"><span class="test-name">CMP (including LDH, creatinine)</span><span class="test-freq">Daily</span></li>
+          <li class="test-item test-priority-urgent"><span class="test-name">CRP</span><span class="test-freq">Daily</span></li>
+          <li class="test-item test-priority-urgent"><span class="test-name">Ferritin</span><span class="test-freq">Daily if CRS develops</span></li>
+          <li class="test-item test-priority-routine"><span class="test-name">Fibrinogen</span><span class="test-freq">Daily if CRS >= Grade 2</span></li>
+          <li class="test-item test-priority-routine"><span class="test-name">IL-6</span><span class="test-freq">If fever >= 38.0C</span></li>
+          <li class="test-item test-priority-routine"><span class="test-name">ICE score (neurological)</span><span class="test-freq">q8-12h x 21 days</span></li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+function renderLabRow(key, value, relevance) {
+  const r = NORMAL_RANGES[key];
+  if (!r) return '';
+  let flag = '';
+  if (value != null) {
+    if (value > r.high) flag = '<span class="cell-high">HIGH</span>';
+    else if (value < r.low) flag = '<span class="cell-low">LOW</span>';
+    else flag = '<span style="color:var(--success)">Normal</span>';
+  }
+  return `<tr>
+    <td><strong>${r.name}</strong></td>
+    <td style="font-family:var(--mono);">${value != null ? value : '--'} ${r.unit}</td>
+    <td style="font-size:12px; color:var(--text-secondary);">${r.low}-${r.high}</td>
+    <td>${flag}</td>
+    <td style="font-size:12px; color:var(--text-secondary);">${relevance}</td>
+  </tr>`;
+}
+
+// ============================================================================
+// CRS MONITORING VIEW
+// ============================================================================
+function renderCRS() {
+  if (!currentPatient) return emptyState('CRS Monitoring', 'Select a patient to monitor CRS');
+  const tp = currentPatient.timepoints[currentTimepoint];
+  const pred = lastPrediction;
+  const temp = tp.vitals?.temperature || 37.0;
+  const hasFever = temp >= 38.0;
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#127777; CRS Assessment - ASTCT Consensus Grading</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Lee et al. Biol Blood Marrow Transplant 2019</span>
+      </div>
+      <div class="card-body">
+        <div class="crs-grade-strip">
+          ${Object.entries(CRS_GRADES).map(([grade, info]) => `
+            <div class="crs-grade-box crs-g${grade}" onclick="this.classList.toggle('selected')">
+              <div style="font-size:14px; font-weight:700;">${info.label}</div>
+              <div style="font-size:10px; margin-top:4px;">${info.criteria}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    ${hasFever ? `
+      <div class="alert alert-warning">
+        <span class="alert-icon">&#127777;</span>
+        <div><strong>Fever Detected: ${temp}C</strong><br>Temperature >= 38.0C is the defining feature of CRS. Evaluate for other causes of fever. Consider CRS grading assessment.</div>
+      </div>
+    ` : ''}
+
+    ${pred ? `
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#127919; CRS Risk Scores</div></div>
+      <div class="card-body">
+        <div class="score-grid">
+          ${(pred.individual_scores || []).filter(s => ['EASIX', 'Modified_EASIX', 'Pre_Modified_EASIX'].includes(s.model_name)).map(s => `
+            <div class="score-card ${riskBorderClass(s.risk_level)}">
+              <div class="score-label">${s.model_name.replace(/_/g, ' ')}</div>
+              <div class="score-value">${formatScore(s.score)}</div>
+              <div class="score-risk ${riskClass(s.risk_level)}">${(s.risk_level || 'N/A').toUpperCase()}</div>
+              <div class="score-citation">${s.citation || ''}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    ` : ''}
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">&#128137; CRS Management Algorithm</div></div>
+        <div class="card-body" style="font-size:13px;">
+          <div style="padding:8px; background:var(--success-bg); border-radius:var(--radius); margin-bottom:8px;">
+            <strong>Grade 1:</strong> Supportive care. Acetaminophen for fever. Monitor vitals q4h.
+          </div>
+          <div style="padding:8px; background:var(--warning-bg); border-radius:var(--radius); margin-bottom:8px;">
+            <strong>Grade 2:</strong> Consider Tocilizumab 8mg/kg IV (max 800mg). IV fluids. Monitor q2h.
+          </div>
+          <div style="padding:8px; background:var(--danger-bg); border-radius:var(--radius); margin-bottom:8px;">
+            <strong>Grade 3:</strong> Tocilizumab + Dexamethasone 10mg IV q6h. Vasopressor support. ICU transfer. Monitor q1h.
+          </div>
+          <div style="padding:8px; background:var(--danger-bg); border-radius:var(--radius);">
+            <strong>Grade 4:</strong> Tocilizumab + High-dose methylprednisolone 1g IV. Mechanical ventilation PRN. ICU mandatory.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">&#129656; Key Lab Trends for CRS</div></div>
+        <div class="card-body">
+          <div class="sparkline-row">
+            <span class="sparkline-label">CRP</span>
+            <span class="sparkline-value" style="color:${(tp.labs?.crp || 0) > 100 ? 'var(--danger)' : (tp.labs?.crp || 0) > 30 ? 'var(--warning)' : 'var(--success)'};">${tp.labs?.crp || '--'}</span>
+            <div class="sparkline-bar"><div class="sparkline-fill" style="width:${Math.min((tp.labs?.crp || 0) / 3, 100)}%; background:${(tp.labs?.crp || 0) > 100 ? 'var(--danger)' : 'var(--warning)'};"></div></div>
+          </div>
+          <div class="sparkline-row">
+            <span class="sparkline-label">Ferritin</span>
+            <span class="sparkline-value" style="color:${(tp.labs?.ferritin || 0) > 5000 ? 'var(--danger)' : (tp.labs?.ferritin || 0) > 1000 ? 'var(--warning)' : 'var(--success)'};">${tp.labs?.ferritin || '--'}</span>
+            <div class="sparkline-bar"><div class="sparkline-fill" style="width:${Math.min((tp.labs?.ferritin || 0) / 100, 100)}%; background:${(tp.labs?.ferritin || 0) > 5000 ? 'var(--danger)' : 'var(--warning)'};"></div></div>
+          </div>
+          <div class="sparkline-row">
+            <span class="sparkline-label">LDH</span>
+            <span class="sparkline-value" style="color:${(tp.labs?.ldh || 0) > 500 ? 'var(--danger)' : (tp.labs?.ldh || 0) > 280 ? 'var(--warning)' : 'var(--success)'};">${tp.labs?.ldh || '--'}</span>
+            <div class="sparkline-bar"><div class="sparkline-fill" style="width:${Math.min((tp.labs?.ldh || 0) / 10, 100)}%; background:${(tp.labs?.ldh || 0) > 500 ? 'var(--danger)' : 'var(--warning)'};"></div></div>
+          </div>
+          <div class="sparkline-row">
+            <span class="sparkline-label">Fibrinogen</span>
+            <span class="sparkline-value" style="color:${(tp.labs?.fibrinogen || 3) < 1.5 ? 'var(--danger)' : (tp.labs?.fibrinogen || 3) < 2.0 ? 'var(--warning)' : 'var(--success)'};">${tp.labs?.fibrinogen || '--'}</span>
+            <div class="sparkline-bar"><div class="sparkline-fill" style="width:${Math.min((tp.labs?.fibrinogen || 0) / 4 * 100, 100)}%; background:var(--success);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header"><div class="card-title">&#128161; Anticipatory Orders for CRS</div></div>
+      <div class="card-body">
+        <ul class="test-list">
+          ${getAnticipatedTests(tp, pred).filter(t => t.context === 'crs').map(t => `
+            <li class="test-item test-priority-${t.priority}">
+              <span class="test-name">${t.name}</span>
+              <span class="test-freq">${t.freq}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================================
+// DAY 1 VIEW
+// ============================================================================
+function renderDay1() {
+  if (!currentPatient) return emptyState('Day 1 Monitoring', 'Select a patient');
+  const tp = currentPatient.timepoints[currentTimepoint];
+  const temp = tp.vitals?.temperature || 37.0;
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#9201; Day 1 Post-Infusion Assessment</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Early detection with Hay Binary Classifier</span>
+      </div>
+      <div class="card-body">
+        <div class="alert ${temp >= 38.9 ? 'alert-danger' : temp >= 38.0 ? 'alert-warning' : 'alert-success'}">
+          <span class="alert-icon">${temp >= 38.9 ? '&#9888;' : temp >= 38.0 ? '&#9888;' : '&#9989;'}</span>
+          <div>
+            <strong>Temperature: ${temp}C</strong><br>
+            ${temp >= 38.9 ? 'ALERT: Fever >= 38.9C within 36h. Hay classifier trigger met. Obtain MCP-1 level STAT if available.' :
+              temp >= 38.0 ? 'Fever present. Monitor closely. CRS Grade 1 criteria met.' :
+              'No fever. Continue routine monitoring.'}
+          </div>
+        </div>
+
+        <h4 style="margin:16px 0 8px;">Hay Binary Classifier (Hay et al. Blood 2017)</h4>
+        <div style="padding:12px; background:var(--surface-hover); border-radius:var(--radius); font-size:13px;">
+          <p><strong>Rule:</strong> Fever >= 38.9C AND (MCP-1 > 1343 pg/mL OR tachycardia) within 36h of infusion</p>
+          <p style="margin-top:4px;"><strong>Performance:</strong> Sensitivity 100%, Specificity 95% for severe CRS</p>
+          <p style="margin-top:4px;"><strong>Current status:</strong>
+            Fever ${temp >= 38.9 ? '<span class="cell-high">YES</span>' : '<span style="color:var(--success)">NO</span>'} |
+            MCP-1 ${tp.labs?.mcp1 ? (tp.labs.mcp1 > 1343 ? '<span class="cell-high">' + tp.labs.mcp1 + ' pg/mL</span>' : tp.labs.mcp1 + ' pg/mL') : '<span style="color:var(--text-secondary)">Not ordered</span>'}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128203; Day 1 Monitoring Checklist</div></div>
+      <div class="card-body">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          ${['Vital signs documented q4h since infusion', 'Temperature trend reviewed', 'CBC drawn', 'CMP drawn (LDH, creatinine)', 'CRP level obtained', 'Neurological assessment (ICE score)', 'Infusion reactions documented', 'Fluid balance assessed', 'Patient educated on CRS symptoms to report'].map(item => `
+            <label style="display:flex; align-items:flex-start; gap:8px; font-size:13px; padding:6px 8px; border:1px solid var(--border); border-radius:var(--radius); cursor:pointer;">
+              <input type="checkbox" style="margin-top:2px;"> ${item}
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128161; Suggested Orders for Day 1</div></div>
+      <div class="card-body">
+        <ul class="test-list">
+          <li class="test-item test-priority-stat"><span class="test-name">Vital signs including temperature</span><span class="test-freq">q4h</span></li>
+          <li class="test-item test-priority-stat"><span class="test-name">CBC with differential</span><span class="test-freq">AM draw</span></li>
+          <li class="test-item test-priority-stat"><span class="test-name">CMP (includes LDH, creatinine)</span><span class="test-freq">AM draw</span></li>
+          <li class="test-item test-priority-urgent"><span class="test-name">CRP</span><span class="test-freq">AM draw</span></li>
+          ${temp >= 38.0 ? '<li class="test-item test-priority-stat"><span class="test-name">Blood cultures x2</span><span class="test-freq">STAT</span></li>' : ''}
+          ${temp >= 38.0 ? '<li class="test-item test-priority-stat"><span class="test-name">Ferritin</span><span class="test-freq">STAT</span></li>' : ''}
+          ${temp >= 38.9 ? '<li class="test-item test-priority-stat"><span class="test-name">MCP-1 (if available)</span><span class="test-freq">STAT - Hay classifier</span></li>' : ''}
+          <li class="test-item test-priority-routine"><span class="test-name">ICE score assessment</span><span class="test-freq">q12h</span></li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================================
+// ICANS VIEW
+// ============================================================================
+function renderICANS() {
+  if (!currentPatient) return emptyState('ICANS Assessment', 'Select a patient');
+  const tp = currentPatient.timepoints[currentTimepoint];
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#129504; ICANS Assessment - ICE Score</div>
+        <span style="font-size:12px; color:var(--text-secondary);">ASTCT Consensus Grading</span>
+      </div>
+      <div class="card-body">
+        <h4 style="margin-bottom:12px;">ICE Score Calculator (Immune Effector Cell-Associated Encephalopathy)</h4>
+        <div class="form-grid" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="form-group">
+            <div class="form-label">Orientation</div>
+            <select class="form-input" id="iceOrientation">
+              <option value="4">Year, Month, City, Hospital (4pts)</option>
+              <option value="3">3 correct (3pts)</option>
+              <option value="2">2 correct (2pts)</option>
+              <option value="1">1 correct (1pt)</option>
+              <option value="0">0 correct (0pts)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Naming</div>
+            <select class="form-input" id="iceNaming">
+              <option value="3">3 objects (3pts)</option>
+              <option value="2">2 objects (2pts)</option>
+              <option value="1">1 object (1pt)</option>
+              <option value="0">0 objects (0pts)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Following Commands</div>
+            <select class="form-input" id="iceCommands">
+              <option value="1">Able (1pt)</option>
+              <option value="0">Unable (0pts)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Writing</div>
+            <select class="form-input" id="iceWriting">
+              <option value="1">Able (1pt)</option>
+              <option value="0">Unable (0pts)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Attention</div>
+            <select class="form-input" id="iceAttention">
+              <option value="1">Counts backward from 100 by 10 (1pt)</option>
+              <option value="0">Unable (0pts)</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px; text-align:center;">
+          <button class="btn btn-primary" onclick="calculateICE()">Calculate ICE Score</button>
+          <div id="iceResult" style="margin-top:12px; font-size:18px; font-weight:700;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">ICANS Grading</div></div>
+      <div class="card-body">
+        <table class="data-table">
+          <thead><tr><th>Grade</th><th>ICE Score</th><th>Consciousness</th><th>Seizures</th><th>Motor</th><th>Cerebral Edema</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1</strong></td><td>7-9</td><td>Awakens spontaneously</td><td>--</td><td>--</td><td>--</td></tr>
+            <tr><td><strong>2</strong></td><td>3-6</td><td>Awakens to voice</td><td>--</td><td>--</td><td>--</td></tr>
+            <tr><td><strong>3</strong></td><td>0-2</td><td>Awakens to tactile stimulus</td><td>Any clinical seizure that resolves</td><td>--</td><td>Focal/local edema on imaging</td></tr>
+            <tr><td><strong>4</strong></td><td>0</td><td>Unarousable or requires vigorous stimuli</td><td>Status epilepticus or prolonged seizures</td><td>Deep focal motor weakness</td><td>Diffuse cerebral edema</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128137; ICANS Management</div></div>
+      <div class="card-body" style="font-size:13px;">
+        <div style="padding:8px; background:var(--success-bg); border-radius:var(--radius); margin-bottom:8px;">
+          <strong>Grade 1 (ICE 7-9):</strong> Observation. Non-sedating seizure prophylaxis (levetiracetam 750mg BID). Monitor q8h.
+        </div>
+        <div style="padding:8px; background:var(--warning-bg); border-radius:var(--radius); margin-bottom:8px;">
+          <strong>Grade 2 (ICE 3-6):</strong> Dexamethasone 10mg IV q6h. Consider MRI brain. Neurology consult. Monitor q4h.
+        </div>
+        <div style="padding:8px; background:var(--danger-bg); border-radius:var(--radius); margin-bottom:8px;">
+          <strong>Grade 3 (ICE 0-2):</strong> Dexamethasone 10mg IV q6h or methylprednisolone 1mg/kg. ICU transfer. Continuous EEG. MRI brain. Monitor q2h.
+        </div>
+        <div style="padding:8px; background:var(--danger-bg); border-radius:var(--radius);">
+          <strong>Grade 4 (ICE 0, obtunded):</strong> Methylprednisolone 1g IV daily x3 days. ICU mandatory. Consider intubation. Emergent MRI/CT. Continuous EEG. Neurosurgery consult if cerebral edema.
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================================
+// HLH SCREENING VIEW
+// ============================================================================
+function renderHLH() {
+  if (!currentPatient) return emptyState('HLH/IEC-HS Screening', 'Select a patient');
+  const tp = currentPatient.timepoints[currentTimepoint];
+  const pred = lastPrediction;
+  const hscoreResult = pred?.individual_scores?.find(s => s.model_name === 'HScore');
+  const ferritin = tp.labs?.ferritin || 0;
+  const fibrinogen = tp.labs?.fibrinogen || 3;
+
+  return `
+    ${ferritin > 10000 || fibrinogen < 1.5 ? `
+      <div class="alert alert-danger">
+        <span class="alert-icon">&#9888;</span>
+        <div><strong>HLH/IEC-HS Warning</strong><br>
+        ${ferritin > 10000 ? `Ferritin ${ferritin} ng/mL (>10,000 is highly suggestive of HLH). ` : ''}
+        ${fibrinogen < 1.5 ? `Fibrinogen ${fibrinogen} g/L (<1.5 suggests consumptive coagulopathy/HLH). ` : ''}
+        Urgent evaluation recommended.</div>
+      </div>
+    ` : ''}
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#9888; HScore Calculator</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Fardet et al. Arthritis Rheumatol 2014</span>
+      </div>
+      <div class="card-body">
+        ${hscoreResult ? `
+          <div style="text-align:center; margin-bottom:16px;">
+            <div style="font-size:48px; font-weight:700; font-family:var(--mono); color:${hscoreResult.score >= 169 ? 'var(--danger)' : hscoreResult.score >= 100 ? 'var(--warning)' : 'var(--success)'};">${formatScore(hscoreResult.score)}</div>
+            <div style="font-size:14px; color:var(--text-secondary);">/ 337 maximum</div>
+            <div style="font-size:13px; margin-top:4px;">
+              HLH Probability: <strong>${hscoreResult.metadata?.hlh_probability_estimate ? (hscoreResult.metadata.hlh_probability_estimate * 100).toFixed(1) + '%' : 'N/A'}</strong>
+            </div>
+            <div style="margin-top:8px;">
+              <span class="pc-risk ${hscoreResult.score >= 169 ? 'risk-high' : hscoreResult.score >= 100 ? 'risk-moderate' : 'risk-low'}" style="font-size:14px; padding:6px 16px;">
+                ${hscoreResult.score >= 169 ? 'HIGH PROBABILITY HLH (>93%)' : hscoreResult.score >= 100 ? 'INTERMEDIATE - MONITOR CLOSELY' : 'LOW PROBABILITY'}
+              </span>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom:8px;">HScore Component Breakdown</h4>
+          <table class="data-table">
+            <thead><tr><th>Variable</th><th>Value</th><th>Points</th></tr></thead>
+            <tbody>
+              ${Object.entries(hscoreResult.contributing_factors || {}).map(([k, v]) => `
+                <tr>
+                  <td>${k.replace(/_/g, ' ')}</td>
+                  <td>${typeof v === 'object' ? v.value : v}</td>
+                  <td style="font-weight:600; ${typeof v === 'object' && v.points > 0 ? 'color:var(--danger);' : ''}">${typeof v === 'object' ? v.points : '--'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        ` : '<p style="color:var(--text-secondary);">Run prediction to see HScore results</p>'}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Distinguishing CRS from IEC-HS/HLH</div></div>
+      <div class="card-body">
+        <table class="data-table">
+          <thead><tr><th>Feature</th><th>CRS</th><th>IEC-HS/HLH</th></tr></thead>
+          <tbody>
+            <tr><td>Ferritin</td><td>Elevated (500-5,000)</td><td class="cell-high">Markedly elevated (>10,000)</td></tr>
+            <tr><td>Fibrinogen</td><td>Normal or elevated</td><td class="cell-high">Decreased (<150 mg/dL or <1.5 g/L)</td></tr>
+            <tr><td>Triglycerides</td><td>Normal</td><td class="cell-high">Elevated (>265 mg/dL or >3.0 mmol/L)</td></tr>
+            <tr><td>Transaminases</td><td>Mildly elevated</td><td class="cell-high">Markedly elevated (>5x ULN)</td></tr>
+            <tr><td>Response to tocilizumab</td><td>Usually responsive</td><td>Often refractory</td></tr>
+            <tr><td>Timing</td><td>Day 1-7</td><td>Day 5-14 (often later)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================================
+// HEMATOLOGIC RECOVERY VIEW
+// ============================================================================
+function renderHematox() {
+  if (!currentPatient) return emptyState('Hematologic Recovery', 'Select a patient');
+  const tp = currentPatient.timepoints[currentTimepoint];
+  const pred = lastPrediction;
+  const hematoxResult = pred?.individual_scores?.find(s => s.model_name === 'CAR_HEMATOTOX');
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#129656; CAR-HEMATOTOX Score</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Rejeski et al. Blood 2021</span>
+      </div>
+      <div class="card-body">
+        ${hematoxResult ? `
+          <div style="text-align:center; margin-bottom:16px;">
+            <div style="font-size:48px; font-weight:700; font-family:var(--mono); color:${hematoxResult.score >= 3 ? 'var(--danger)' : 'var(--success)'};">${formatScore(hematoxResult.score)}</div>
+            <div style="font-size:14px; color:var(--text-secondary);">/ 10 maximum</div>
+            <div style="margin-top:8px;">
+              <span class="pc-risk ${hematoxResult.score >= 3 ? 'risk-high' : 'risk-low'}" style="font-size:14px; padding:6px 16px;">
+                ${hematoxResult.score >= 3 ? 'HIGH RISK - Prolonged cytopenias likely' : 'LOW RISK - Standard recovery expected'}
+              </span>
+            </div>
+          </div>
+
+          <table class="data-table">
+            <thead><tr><th>Component</th><th>Value</th><th>Points</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              ${Object.entries(hematoxResult.contributing_factors || {}).map(([k, v]) => {
+                const val = typeof v === 'object' ? v.value : v;
+                const pts = typeof v === 'object' ? v.points : '--';
+                let interp = '';
+                if (k.includes('anc')) interp = val < 1.0 ? 'Neutropenic' : 'Adequate';
+                if (k.includes('hemoglobin')) interp = val < 8 ? 'Severe anemia' : val < 10 ? 'Moderate anemia' : 'Adequate';
+                if (k.includes('platelet')) interp = val < 75 ? 'Thrombocytopenic' : 'Adequate';
+                if (k.includes('crp')) interp = val > 50 ? 'Highly elevated' : val > 10 ? 'Elevated' : 'Normal';
+                if (k.includes('ferritin')) interp = val > 1000 ? 'Elevated - inflammation' : 'Normal range';
+                return `<tr><td>${k.replace(/_/g, ' ')}</td><td style="font-family:var(--mono);">${val}</td><td style="font-weight:600; ${pts > 0 ? 'color:var(--danger);' : ''}">${pts}</td><td style="font-size:12px; color:var(--text-secondary);">${interp}</td></tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        ` : '<p style="color:var(--text-secondary);">Run prediction to see CAR-HEMATOTOX results</p>'}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128203; Hematologic Recovery Monitoring</div></div>
+      <div class="card-body">
+        <h4 style="margin-bottom:8px;">Expected Recovery Timeline</h4>
+        <table class="data-table">
+          <thead><tr><th>Parameter</th><th>Nadir</th><th>Expected Recovery</th><th>Action if Delayed</th></tr></thead>
+          <tbody>
+            <tr><td>ANC</td><td>Day 7-14</td><td>Day 21-28 (low risk) / Day 28-60 (high risk)</td><td>G-CSF if ANC <0.5 at Day 14+</td></tr>
+            <tr><td>Platelets</td><td>Day 7-14</td><td>Day 21-35 (low risk) / Day 28-90 (high risk)</td><td>Platelet transfusion if <10 or bleeding</td></tr>
+            <tr><td>Hemoglobin</td><td>Day 7-14</td><td>Gradual over 4-8 weeks</td><td>RBC transfusion if symptomatic or <7</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128161; Anticipatory Orders</div></div>
+      <div class="card-body">
+        <ul class="test-list">
+          <li class="test-item test-priority-stat"><span class="test-name">CBC with differential</span><span class="test-freq">Daily until ANC >1.0 x3 days</span></li>
+          <li class="test-item test-priority-urgent"><span class="test-name">Reticulocyte count</span><span class="test-freq">Weekly if anemia persists</span></li>
+          <li class="test-item test-priority-routine"><span class="test-name">Iron studies, B12, folate</span><span class="test-freq">If anemia persists >4 weeks</span></li>
+          ${(tp.labs?.anc || 5) < 0.5 ? '<li class="test-item test-priority-stat"><span class="test-name">G-CSF (filgrastim 5mcg/kg)</span><span class="test-freq">Daily until ANC >1.0</span></li>' : ''}
+          ${(tp.labs?.platelets || 150) < 20 ? '<li class="test-item test-priority-stat"><span class="test-name">Platelet transfusion</span><span class="test-freq">STAT if <10 or bleeding</span></li>' : ''}
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================================
+// DISCHARGE VIEW
+// ============================================================================
+function renderDischarge() {
+  if (!currentPatient) return emptyState('Discharge Planning', 'Select a patient');
+  const tp = currentPatient.timepoints[currentTimepoint];
+  const pred = lastPrediction;
+
+  const criteria = [
+    { name: 'Afebrile >= 24h (no antipyretics)', met: (tp.vitals?.temperature || 37) < 38.0 },
+    { name: 'No vasopressor requirement', met: true },
+    { name: 'No supplemental O2 requirement', met: true },
+    { name: 'CRS resolved or Grade <= 1', met: (pred?.risk_level || 'low') !== 'high' },
+    { name: 'ICANS resolved or Grade <= 1', met: true },
+    { name: 'ANC > 0.5 x 10^9/L (or safe for outpatient G-CSF)', met: (tp.labs?.anc || 5) > 0.5 },
+    { name: 'Platelets > 20 x 10^9/L (or transfusion plan)', met: (tp.labs?.platelets || 150) > 20 },
+    { name: 'Oral medications tolerated', met: true },
+    { name: 'Caregiver education completed', met: false },
+    { name: 'Follow-up appointment scheduled (Day 28-30)', met: false },
+    { name: 'REMS requirements reviewed', met: false },
+    { name: 'Lives within 2h of treating center for 4 weeks', met: true },
+  ];
+
+  const metCount = criteria.filter(c => c.met).length;
+  const readyPercent = (metCount / criteria.length * 100).toFixed(0);
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#127968; Discharge Readiness Assessment</div>
+        <span class="pc-risk ${metCount === criteria.length ? 'risk-low' : metCount >= criteria.length * 0.7 ? 'risk-moderate' : 'risk-high'}" style="font-size:13px; padding:4px 12px;">
+          ${readyPercent}% criteria met
+        </span>
+      </div>
+      <div class="card-body">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          ${criteria.map(c => `
+            <label style="display:flex; align-items:flex-start; gap:8px; font-size:13px; padding:8px; border:1px solid ${c.met ? 'var(--success)' : 'var(--border)'}; border-radius:var(--radius); background:${c.met ? 'var(--success-bg)' : 'transparent'}; cursor:pointer;">
+              <input type="checkbox" ${c.met ? 'checked' : ''} style="margin-top:2px;">
+              ${c.name}
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128203; Discharge Instructions</div></div>
+      <div class="card-body" style="font-size:13px;">
+        <div style="padding:10px; background:var(--warning-bg); border-radius:var(--radius); margin-bottom:8px;">
+          <strong>Return to ED immediately if:</strong> Fever >38.0C, confusion, difficulty speaking, seizure, difficulty breathing, new weakness, bleeding that won't stop.
+        </div>
+        <div style="padding:10px; background:var(--info-light); border-radius:var(--radius); margin-bottom:8px;">
+          <strong>Activity restrictions:</strong> No driving for 8 weeks post-infusion. Avoid contact sports until platelet recovery. Caregiver must be available 24/7 for 4 weeks.
+        </div>
+        <div style="padding:10px; background:var(--success-bg); border-radius:var(--radius);">
+          <strong>Follow-up schedule:</strong> Day 28-30 restaging. Weekly CBC until counts recover. Monthly for 3 months, then per protocol.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">&#128161; Outpatient Monitoring Plan</div></div>
+      <div class="card-body">
+        <ul class="test-list">
+          <li class="test-item test-priority-stat"><span class="test-name">CBC with differential</span><span class="test-freq">2-3x weekly until ANC recovery</span></li>
+          <li class="test-item test-priority-urgent"><span class="test-name">CMP</span><span class="test-freq">Weekly x 4 weeks</span></li>
+          <li class="test-item test-priority-urgent"><span class="test-name">Immunoglobulin levels (IgG)</span><span class="test-freq">Monthly - IVIG if IgG <400</span></li>
+          <li class="test-item test-priority-routine"><span class="test-name">PET/CT restaging</span><span class="test-freq">Day 28-30</span></li>
+          <li class="test-item test-priority-routine"><span class="test-name">B-cell aplasia monitoring</span><span class="test-freq">Monthly</span></li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================================
+// CLINICAL VISIT VIEW
+// ============================================================================
+function renderClinicalVisit() {
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#128105;&#8205;&#9877; Clinical Visit - Manual Entry</div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="runManualPrediction()">Run Risk Assessment</button>
+          <button class="btn btn-secondary" onclick="clearVisitForm()">Clear</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <h4 style="margin-bottom:12px;">Patient Information</h4>
+        <div class="form-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <div class="form-label">Patient ID</div>
+            <input class="form-input" id="visitPatientId" value="VISIT-001" placeholder="Patient ID">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Day Post-Infusion</div>
+            <input class="form-input" type="number" id="visitDay" value="3" placeholder="Day">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Product</div>
+            <select class="form-input" id="visitProduct">
+              <option>Axicabtagene ciloleucel</option>
+              <option>Tisagenlecleucel</option>
+              <option>Lisocabtagene maraleucel</option>
+              <option>Idecabtagene vicleucel</option>
+              <option>Ciltacabtagene autoleucel</option>
+            </select>
+          </div>
+        </div>
+
+        <h4 style="margin:16px 0 12px;">Laboratory Values</h4>
+        <div class="form-grid">
+          ${Object.entries(NORMAL_RANGES).map(([key, r]) => `
+            <div class="form-group">
+              <div class="form-label">${r.name}<span class="unit">${r.unit}</span></div>
+              <input class="form-input" type="number" step="any" id="visit_${key}" placeholder="${r.low}-${r.high}"
+                     oninput="flagVisitInput(this, '${key}')">
+            </div>
+          `).join('')}
+        </div>
+
+        <h4 style="margin:16px 0 12px;">Vital Signs</h4>
+        <div class="form-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="form-group">
+            <div class="form-label">Temperature<span class="unit">C</span></div>
+            <input class="form-input" type="number" step="0.1" id="visit_temperature" placeholder="36.0-38.0">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Heart Rate<span class="unit">bpm</span></div>
+            <input class="form-input" type="number" id="visit_hr" placeholder="60-100">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Blood Pressure<span class="unit">mmHg</span></div>
+            <input class="form-input" id="visit_bp" placeholder="120/80">
+          </div>
+          <div class="form-group">
+            <div class="form-label">SpO2<span class="unit">%</span></div>
+            <input class="form-input" type="number" id="visit_spo2" placeholder="95-100">
+          </div>
+        </div>
+
+        <h4 style="margin:16px 0 12px;">Clinical Assessment</h4>
+        <div class="form-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="form-group">
+            <div class="form-label">Organomegaly</div>
+            <select class="form-input" id="visit_organomegaly">
+              <option value="0">None</option>
+              <option value="1">Hepato- or Splenomegaly</option>
+              <option value="2">Both</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Cytopenias (lineages)</div>
+            <select class="form-input" id="visit_cytopenias">
+              <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Hemophagocytosis</div>
+            <select class="form-input" id="visit_hemophagocytosis">
+              <option value="false">No</option><option value="true">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Immunosuppression</div>
+            <select class="form-input" id="visit_immunosuppression">
+              <option value="false">No</option><option value="true">Yes (CAR-T = yes)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="visitResults"></div>
+  `;
+}
+
+async function runManualPrediction() {
+  const labs = {};
+  Object.keys(NORMAL_RANGES).forEach(key => {
+    const el = document.getElementById(`visit_${key}`);
+    if (el && el.value) labs[key] = parseFloat(el.value);
+  });
+
+  const temp = document.getElementById('visit_temperature')?.value;
+  const vitals = {};
+  if (temp) vitals.temperature = parseFloat(temp);
+
+  const reqData = {
+    patient_id: document.getElementById('visitPatientId')?.value || 'VISIT-001',
+    labs,
+    vitals,
+    clinical: {
+      organomegaly: parseInt(document.getElementById('visit_organomegaly')?.value || '0'),
+      cytopenias: parseInt(document.getElementById('visit_cytopenias')?.value || '0'),
+      hemophagocytosis: document.getElementById('visit_hemophagocytosis')?.value === 'true',
+      immunosuppression: document.getElementById('visit_immunosuppression')?.value === 'true',
+    },
+  };
+
+  const container = document.getElementById('visitResults');
+  container.innerHTML = '<div style="text-align:center; padding:24px;"><div class="loading-spinner"></div> Running prediction...</div>';
+
+  try {
+    const pred = await runPrediction(reqData);
+    lastPrediction = pred;
+    const alerts = generateAlertsFromPrediction(pred, labs, vitals);
+
+    container.innerHTML = `
+      ${alerts.map(a => `<div class="alert alert-${a.type}"><span class="alert-icon">${a.icon}</span><div><strong>${a.title}</strong><br>${a.message}</div></div>`).join('')}
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">&#127919; Risk Assessment Result</div>
+          <span class="pc-risk ${riskClass(pred.risk_level)}" style="font-size:14px; padding:6px 16px;">${pred.risk_level.toUpperCase()}</span>
+        </div>
+        <div class="card-body">
+          <div class="risk-meter">
+            <div class="risk-meter-bar">
+              <div class="risk-meter-indicator" style="left: ${Math.min(pred.composite_score * 100, 98)}%;"></div>
+            </div>
+            <div class="risk-meter-labels"><span>Low</span><span>Moderate</span><span>High</span></div>
+          </div>
+          <div style="text-align:center; margin-top:8px;">
+            <span style="font-family:var(--mono); font-size:28px; font-weight:700;">${(pred.composite_score * 100).toFixed(1)}%</span>
+            <span style="font-size:13px; color:var(--text-secondary); margin-left:8px;">${pred.models_run} models evaluated</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="score-grid">
+        ${(pred.individual_scores || []).map(s => `
+          <div class="score-card ${riskBorderClass(s.risk_level)}">
+            <div class="score-label">${s.model_name.replace(/_/g, ' ')}</div>
+            <div class="score-value">${formatScore(s.score)}</div>
+            <div class="score-risk ${riskClass(s.risk_level)}">${(s.risk_level || 'N/A').toUpperCase()}</div>
+            <div class="score-citation">${s.citation || ''}</div>
+            ${s.warnings?.length ? `<div style="font-size:11px; color:var(--warning); margin-top:4px;">${s.warnings.join('; ')}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header"><div class="card-title">&#128161; Recommended Next Steps</div></div>
+        <div class="card-body">
+          <ul class="test-list">
+            ${getAnticipatedTests({labs, vitals}, pred).map(t => `
+              <li class="test-item test-priority-${t.priority}">
+                <span class="test-name">${t.name}</span>
+                <span class="test-freq">${t.freq}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    container.innerHTML = `<div class="alert alert-danger"><span class="alert-icon">&#10060;</span><div><strong>Prediction Failed</strong><br>${e.message}</div></div>`;
+  }
+}
+
+function flagVisitInput(el, key) {
+  const val = parseFloat(el.value);
+  el.className = 'form-input';
+  if (!isNaN(val) && NORMAL_RANGES[key]) {
+    if (val > NORMAL_RANGES[key].high) el.classList.add('value-abnormal-high');
+    else if (val < NORMAL_RANGES[key].low) el.classList.add('value-abnormal-low');
+  }
+}
+
+function clearVisitForm() {
+  document.querySelectorAll('.form-input').forEach(el => {
+    if (el.tagName === 'INPUT' && el.type === 'number') el.value = '';
+    el.className = 'form-input';
+  });
+  document.getElementById('visitResults').innerHTML = '';
+}
+
+// ============================================================================
+// ICE SCORE CALCULATOR
+// ============================================================================
+function calculateICE() {
+  const orientation = parseInt(document.getElementById('iceOrientation').value);
+  const naming = parseInt(document.getElementById('iceNaming').value);
+  const commands = parseInt(document.getElementById('iceCommands').value);
+  const writing = parseInt(document.getElementById('iceWriting').value);
+  const attention = parseInt(document.getElementById('iceAttention').value);
+  const total = orientation + naming + commands + writing + attention;
+
+  let grade, color;
+  if (total === 10) { grade = 'Normal (No ICANS)'; color = 'var(--success)'; }
+  else if (total >= 7) { grade = 'Grade 1 ICANS'; color = 'var(--warning)'; }
+  else if (total >= 3) { grade = 'Grade 2 ICANS'; color = 'var(--moderate)'; }
+  else if (total >= 1) { grade = 'Grade 3 ICANS'; color = 'var(--danger)'; }
+  else { grade = 'Grade 4 ICANS'; color = 'var(--danger)'; }
+
+  document.getElementById('iceResult').innerHTML = `
+    ICE Score: <span style="color:${color};">${total}/10</span> - <span style="color:${color};">${grade}</span>
+  `;
+}
+
+// ============================================================================
+// ALERT GENERATION
+// ============================================================================
+function generateAlerts(tp, pred) {
+  const alerts = [];
+  if (!tp || !pred) return alerts;
+
+  const labs = tp.labs || {};
+  const vitals = tp.vitals || {};
+
+  if (pred.risk_level === 'high') {
+    alerts.push({ type: 'danger', icon: '&#9888;', title: 'HIGH RISK', message: `Composite score ${(pred.composite_score * 100).toFixed(1)}%. Multiple models indicate elevated risk. Consider escalation.` });
+  }
+  if (vitals.temperature >= 38.9) {
+    alerts.push({ type: 'danger', icon: '&#127777;', title: 'High Fever', message: `Temperature ${vitals.temperature}C. Meets Hay classifier fever criterion. Evaluate for severe CRS.` });
+  } else if (vitals.temperature >= 38.0) {
+    alerts.push({ type: 'warning', icon: '&#127777;', title: 'Fever', message: `Temperature ${vitals.temperature}C. CRS Grade >= 1 criteria met.` });
+  }
+  if (labs.ferritin > 10000) {
+    alerts.push({ type: 'danger', icon: '&#9888;', title: 'HLH Warning', message: `Ferritin ${labs.ferritin} ng/mL markedly elevated. Consider HScore assessment and HLH/IEC-HS evaluation.` });
+  }
+  if (labs.fibrinogen && labs.fibrinogen < 1.5) {
+    alerts.push({ type: 'danger', icon: '&#9888;', title: 'Low Fibrinogen', message: `Fibrinogen ${labs.fibrinogen} g/L. Suggests consumptive coagulopathy. Check for DIC/HLH.` });
+  }
+  if (labs.platelets && labs.platelets < 20) {
+    alerts.push({ type: 'danger', icon: '&#129656;', title: 'Severe Thrombocytopenia', message: `Platelets ${labs.platelets}. Bleeding risk. Consider platelet transfusion.` });
+  }
+  if (labs.anc && labs.anc < 0.5) {
+    alerts.push({ type: 'warning', icon: '&#129656;', title: 'Severe Neutropenia', message: `ANC ${labs.anc}. Infection risk. Consider G-CSF and fever workup if temp rises.` });
+  }
+
+  return alerts;
+}
+
+function generateAlertsFromPrediction(pred, labs, vitals) {
+  return generateAlerts({ labs, vitals }, pred);
+}
+
+// ============================================================================
+// ANTICIPATED TESTS
+// ============================================================================
+function getAnticipatedTests(tp, pred) {
+  const tests = [];
+  const labs = tp.labs || {};
+  const vitals = tp.vitals || {};
+  const riskHigh = pred?.risk_level === 'high';
+  const hasFever = (vitals.temperature || 37) >= 38.0;
+
+  // Always recommended
+  tests.push({ name: 'CBC with differential', freq: 'Daily', priority: 'stat', context: 'crs' });
+  tests.push({ name: 'CMP (LDH, Creatinine, AST)', freq: 'Daily', priority: 'stat', context: 'crs' });
+  tests.push({ name: 'CRP', freq: 'Daily', priority: 'urgent', context: 'crs' });
+  tests.push({ name: 'Vital signs (T, HR, BP, SpO2)', freq: 'q4h', priority: 'stat', context: 'crs' });
+
+  if (hasFever) {
+    tests.push({ name: 'Blood cultures x2', freq: 'STAT', priority: 'stat', context: 'crs' });
+    tests.push({ name: 'Ferritin', freq: 'STAT then daily', priority: 'stat', context: 'crs' });
+    tests.push({ name: 'Fibrinogen', freq: 'Daily', priority: 'urgent', context: 'crs' });
+  }
+  if ((vitals.temperature || 37) >= 38.9) {
+    tests.push({ name: 'IL-6', freq: 'STAT', priority: 'stat', context: 'crs' });
+    tests.push({ name: 'MCP-1 (if available)', freq: 'STAT - Hay classifier', priority: 'stat', context: 'crs' });
+  }
+  if (riskHigh || (labs.ferritin || 0) > 5000) {
+    tests.push({ name: 'Triglycerides', freq: 'Daily', priority: 'urgent', context: 'crs' });
+    tests.push({ name: 'Fibrinogen (if not ordered)', freq: 'q12h', priority: 'stat', context: 'crs' });
+    tests.push({ name: 'D-dimer', freq: 'Daily', priority: 'urgent', context: 'crs' });
+  }
+  if ((labs.anc || 5) < 0.5) {
+    tests.push({ name: 'G-CSF (filgrastim)', freq: 'Daily until ANC >1.0', priority: 'stat', context: 'crs' });
+  }
+
+  tests.push({ name: 'ICE score (neurological)', freq: 'q8-12h', priority: 'routine', context: 'crs' });
+  tests.push({ name: 'Immunoglobulins (IgG)', freq: 'Weekly', priority: 'routine', context: 'crs' });
+
+  return tests;
+}
+
+// ============================================================================
+// UTILITY
+// ============================================================================
+function emptyState(title, desc) {
+  return `<div class="empty-state"><div class="empty-icon">&#128203;</div><div class="empty-title">${title}</div><div class="empty-desc">${desc}</div></div>`;
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+  localStorage.setItem('theme', html.getAttribute('data-theme'));
+}
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clockDisplay').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+}
+
+// ============================================================================
+// INIT
+// ============================================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  // Theme
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
+  // Clock
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // API health check
+  await checkApiHealth();
+  setInterval(checkApiHealth, 30000);
+
+  // Render patient list
+  renderPatientList();
+
+  // Render initial content
+  renderTaskContent();
+
+  // Auto-select first patient if available
+  if (typeof DEMO_CASES !== 'undefined' && DEMO_CASES.length > 0) {
+    selectPatient(0);
+  }
+});
+</script>
+</body>
+</html>

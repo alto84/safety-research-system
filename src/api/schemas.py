@@ -11,7 +11,9 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator
+import math
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -48,6 +50,14 @@ class LabValues(BaseModel):
     mcp1: float | None = Field(None, description="MCP-1 / monocyte chemotactic protein-1 (pg/mL)", ge=0)
     il6: float | None = Field(None, description="IL-6 (pg/mL)", ge=0)
     tnf_alpha: float | None = Field(None, description="TNF-alpha (pg/mL)", ge=0)
+
+    @model_validator(mode="after")
+    def reject_inf_nan(self) -> "LabValues":
+        for field_name in self.model_fields:
+            val = getattr(self, field_name)
+            if isinstance(val, float) and (math.isinf(val) or math.isnan(val)):
+                raise ValueError(f"{field_name} must be a finite number, got {val}")
+        return self
 
 
 class VitalSigns(BaseModel):

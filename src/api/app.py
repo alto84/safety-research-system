@@ -28,8 +28,12 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any
 
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from src.api.middleware import (
     APIKeyMiddleware,
@@ -142,6 +146,27 @@ app = FastAPI(
         },
     ],
 )
+
+
+# ---------------------------------------------------------------------------
+# Static files and clinical dashboard
+# ---------------------------------------------------------------------------
+
+_static_dir = Path(__file__).parent / "static"
+if _static_dir.is_dir():
+    app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
+
+
+@app.get("/clinical", include_in_schema=False)
+async def clinical_dashboard():
+    """Redirect to the clinical dashboard."""
+    return RedirectResponse(url="/static/index.html")
+
+
+@app.get("/", include_in_schema=False)
+async def root_redirect():
+    """Redirect root to clinical dashboard."""
+    return RedirectResponse(url="/static/index.html")
 
 
 # ---------------------------------------------------------------------------
@@ -828,15 +853,15 @@ async def compute_easix(
     },
 )
 async def compute_hscore(
-    temperature: float = Query(37.0, description="Max temperature in Celsius", ge=30.0, le=45.0),
-    organomegaly: int = Query(0, description="0=none, 1=hepato- or spleno-, 2=both", ge=0, le=2),
-    cytopenias: int = Query(0, description="Number of lineages (0-3)", ge=0, le=3),
-    ferritin: float = Query(200.0, description="Ferritin in ng/mL", ge=0),
-    triglycerides: float = Query(1.0, description="Triglycerides in mmol/L", ge=0),
-    fibrinogen: float = Query(3.0, description="Fibrinogen in g/L", ge=0),
-    ast: float = Query(20.0, description="AST in U/L", ge=0),
-    hemophagocytosis: bool = Query(False, description="Hemophagocytosis on biopsy"),
-    immunosuppression: bool = Query(False, description="Known immunosuppression"),
+    temperature: float = Query(..., description="Max temperature in Celsius", ge=30.0, le=45.0),
+    organomegaly: int = Query(..., description="0=none, 1=hepato- or spleno-, 2=both", ge=0, le=2),
+    cytopenias: int = Query(..., description="Number of lineages (0-3)", ge=0, le=3),
+    ferritin: float = Query(..., description="Ferritin in ng/mL", ge=0),
+    triglycerides: float = Query(..., description="Triglycerides in mmol/L", ge=0),
+    fibrinogen: float = Query(..., description="Fibrinogen in g/L", ge=0),
+    ast: float = Query(..., description="AST in U/L", ge=0),
+    hemophagocytosis: bool = Query(..., description="Hemophagocytosis on biopsy"),
+    immunosuppression: bool = Query(..., description="Known immunosuppression"),
 ) -> ScoreResponse:
     """Compute HScore from query parameters."""
     request_id = str(uuid.uuid4())
