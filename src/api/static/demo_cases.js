@@ -20,6 +20,12 @@
  *   D-dimer: <0.5 mg/L FEU
  *   Total bilirubin: 0.1-1.2 mg/dL
  *   Albumin: 3.5-5.5 g/dL
+ *
+ * NOTE: The `scores` objects in each timepoint are illustrative/pre-computed
+ * reference values for documentation purposes only. The dashboard calls the
+ * API in real-time to calculate EASIX, HScore, and CAR-HEMATOTOX scores
+ * from the raw lab/clinical data. These pre-computed values may not exactly
+ * match the API's calculations.
  */
 
 const DEMO_CASES = [
@@ -2286,7 +2292,7 @@ const DEMO_CASES = [
           immunosuppression: false,
           neurologic_symptoms: "None",
           ice_score: 10,
-          crs_grade: 1,
+          crs_grade: 0,
           icans_grade: 0,
           oxygen_requirement: "None"
         },
@@ -2296,7 +2302,7 @@ const DEMO_CASES = [
           car_hematotox: 0
         },
         expected_risk: "low",
-        clinical_note: "Day 2: Very mild CRS onset. Low-grade temperature 37.8C (some define CRS threshold at 38.0C, but trending up). CRP mildly elevated. All other parameters excellent. Hemodynamically rock-solid. Counts holding up well - platelets only mildly decreased, Hb preserved. Liso-cel's defined CD4/CD8 composition contributing to controlled immune activation. Supportive care only."
+        clinical_note: "Day 2: Subclinical inflammation. Low-grade temperature 37.8C (below 38.0C ASTCT threshold for CRS Grade 1). CRP mildly elevated but no fever by criteria. All other parameters excellent. Hemodynamically rock-solid. Counts holding up well - platelets only mildly decreased, Hb preserved. Liso-cel's defined CD4/CD8 composition contributing to controlled immune activation. Supportive care only. Monitoring for progression."
       },
       {
         label: "Day 5 Post-Infusion",

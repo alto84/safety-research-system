@@ -110,9 +110,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Predictive Safety Platform API",
     description=(
-        "AI-powered adverse event prediction for cell therapy clinical trials. "
-        "Provides deterministic biomarker scoring (EASIX, HScore, CAR-HEMATOTOX, "
-        "Teachey, Hay) and ensemble prediction for CRS, ICANS, and HLH risk."
+        "Clinical decision support for cell therapy adverse event risk assessment. "
+        "Provides deterministic biomarker scoring based on published formulas (EASIX, "
+        "HScore, CAR-HEMATOTOX, Teachey, Hay) and ensemble risk stratification for "
+        "CRS, ICANS, and HLH. Not a substitute for clinical judgment."
     ),
     version="0.1.0",
     lifespan=lifespan,
