@@ -47,7 +47,10 @@ Thumbs.db
 Desktop.ini
 
 # ─── Patient Data and Clinical Files (NEVER commit) ──────────────────
-data/
+# data/ directory has synthetic cohort generators (code) - allow .py files
+data/*
+!data/*.py
+!data/__init__.py
 datasets/
 patient_data/
 clinical_data/
@@ -88,7 +91,10 @@ clinical_data/
 *.nrrd
 
 # ─── Model Artifacts ─────────────────────────────────────────────────
-models/
+# src/models/ contains scoring model code (not artifacts) - allow .py files
+models/*
+!models/*.py
+!models/__init__.py
 model_artifacts/
 checkpoints/
 *.pt
