@@ -1,0 +1,33 @@
+========================================================================================================================
+TABLE 1: Clinical Trial Characteristics by Indication
+========================================================================================================================
+
+Indication   Trial                          Product                          N Target         Year
+------------------------------------------------------------------------------------------------------------------------
+SLE          Mackensen et al. 2022          Anti-CD19 CAR-T (MB-CART19.      5 CD19           2022
+             Muller et al. 2024             Anti-CD19 CAR-T                 15 CD19           2024
+             CASTLE 2025                    Anti-CD19 CAR-T (YTB323)         8 CD19           2025
+             BCMA-CD19 cCAR SLE             BCMA-CD19 cCAR                   7 CD19           2024
+             Co-infusion SLE                CD19/BCMA co-infusion            6 CD19           2024
+             Cabaletta RESET-SLE            CABA-201 (desar-cel)             4 Dual           2024
+             BMS Breakfree-1                Anti-CD19 CAR-T                  2 CD19           2025
+             Subtotal                                                       47
+------------------------------------------------------------------------------------------------------------------------
+DLBCL        ZUMA-1                         Axi-cel (Yescarta)             101 CD19           2017
+             JULIET                         Tisa-cel (Kymriah)             111 CD19           2019
+             TRANSCEND                      Liso-cel (Breyanzi)            269 CD19           2020
+             Subtotal                                                      481
+------------------------------------------------------------------------------------------------------------------------
+ALL          ELIANA                         Tisa-cel (Kymriah)              75 CD19           2018
+             Subtotal                                                       75
+------------------------------------------------------------------------------------------------------------------------
+MM           KarMMa                         Ide-cel (Abecma)               128 Dual           2021
+             CARTITUDE-1                    Cilta-cel (Carvykti)            97 Dual           2021
+             Subtotal                                                      225
+------------------------------------------------------------------------------------------------------------------------
+       TOTAL                                                               828
+========================================================================================================================
+
+Notes: SLE trials include individual study cohorts only (pooled analysis excluded).
+Oncology comparators are pivotal registration trials with published data.
+All trial data from published peer-reviewed literature and public registries.

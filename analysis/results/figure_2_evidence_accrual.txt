@@ -1,0 +1,15 @@
+FIGURE: Evidence Accrual Curve - CRS Grade >= 3 Rate with CI Narrowing
+====================================================================================================
+
+Timepoint                          N  Events   Mean %                 95% CI    Width | CI Visualization
+----------------------------------------------------------------------------------------------------
+Mackensen et al.                   5       0     3.23            [0.0, 23.1]    23.13 | ====*==========================         
+Muller et al.                     20       0     0.98             [0.0, 7.2]     7.17 | =*========                              
+Jin / Co-infusion / Cabaletta     37       1     3.14            [0.1, 10.4]    10.28 | ====*=========                          
+CASTLE / BMS / Expanded           47       1     2.49             [0.1, 8.3]     8.21 | ===*========                            
+CASTLE Ph2 interim                77       2     2.82             [0.4, 7.4]     7.02 | ===*======                               *
+RESET-SLE Ph2                    127       3     2.50             [0.6, 5.8]     5.24 | ===*====                                 *
+Pooled Ph2 data                  200       4     2.09             [0.6, 4.5]     3.86 | ==*===                                   *
+----------------------------------------------------------------------------------------------------
+* = projected data point | Scale: 0-30% | = = CI range, * = posterior mean
+Prior: Beta(0.21, 1.29) - discounted from oncology CRS rate

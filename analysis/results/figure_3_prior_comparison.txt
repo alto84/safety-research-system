@@ -1,0 +1,28 @@
+FIGURE: Mechanistic vs Uninformative vs Empirical Prior Comparison
+====================================================================================================
+
+Posterior distributions for SLE CRS Grade >= 3 rate under three prior strategies:
+
+Prior Strategy            Prior                 Posterior Mean                 95% CI   CI Width
+----------------------------------------------------------------------------------------------------
+Uninformative             Beta(0.50, 0.50)                1.04%           [0.00, 5.18]       5.18 pp
+Mechanistic               Beta(0.29, 9.71)                0.51%           [0.00, 3.27]       3.27 pp
+Empirical                 Beta(0.21, 1.29)                0.43%           [0.00, 3.19]       3.19 pp
+----------------------------------------------------------------------------------------------------
+
+Visual comparison (posterior 95% CI on 0-20% scale):
+
+  uninformative   |===#============............................................|
+  mechanistic     |=#========..................................................|
+  empirical       |=#========..................................................|
+  Scale:          |0%                           10%                             20%|
+
+Prior sensitivity analysis (varying effective sample size):
+ n_eff  Prior Alpha   Prior Beta   Post. Mean   CI Width
+------------------------------------------------------------
+     1       0.0300       0.9700         0.06%       0.70 pp
+     2       0.0600       1.9400         0.12%       1.36 pp
+     5       0.1500       4.8500         0.29%       2.44 pp
+    10       0.3000       9.7000         0.53%       3.32 pp
+    20       0.6000      19.4000         0.90%       4.10 pp
+    50       1.5000      48.5000         1.55%       4.65 pp

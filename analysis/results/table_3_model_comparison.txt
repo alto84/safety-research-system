@@ -1,0 +1,29 @@
+==================================================================================================================================
+TABLE 3: Seven-Model Comparison for SLE CRS Grade >= 3 Rate Estimation
+==================================================================================================================================
+
+Model                                      Estimate (%)                 95% CI  CI Width (pp) Method Type         
+----------------------------------------------------------------------------------------------------------------------------------
+Bayesian Beta-Binomial (Jeffreys)                  1.04           [0.00, 5.18]           5.18 Bayesian            
+Clopper-Pearson Exact                              0.00           [0.00, 7.55]           7.55 Frequentist         
+Wilson Score                                       3.78           [0.00, 7.56]           7.56 Frequentist         
+DerSimonian-Laird Random Effects                   3.13           [0.16, 9.65]           9.49 Meta-analytic       
+Empirical Bayes Shrinkage                          0.00           [0.00, 0.00]           0.00 Empirical Bayes     
+Kaplan-Meier                                       0.00           [0.00, 0.00]           0.00 Time-to-event       
+Predictive Posterior (n=50)                        1.04           [0.00, 6.00]           6.00 Bayesian predictive 
+----------------------------------------------------------------------------------------------------------------------------------
+
+Leave-One-Study-Out Cross-Validation:
+Model                                       RMSE (pp)     MAE (pp)     Coverage
+--------------------------------------------------------------------------------
+Clopper-Pearson Exact                            0.00         0.00         1.00
+Bayesian Beta-Binomial                           1.23         1.22         0.00
+DerSimonian-Laird RE                             3.19         3.17         0.00
+Wilson Score                                     4.41         4.39         1.00
+==================================================================================================================================
+
+Data: 0 events in 47 patients from individual SLE CAR-T trials.
+Bayesian models use Jeffreys Beta(0.5, 0.5) uninformative prior unless otherwise specified.
+Random effects meta-analysis uses Freeman-Tukey double arcsine transformation.
+Predictive posterior predicts rate in a hypothetical next study of n=50 patients.
+Kaplan-Meier uses synthetic onset times based on published CRS kinetics (median day 2-3).

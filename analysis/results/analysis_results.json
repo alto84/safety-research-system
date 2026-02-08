@@ -1,0 +1,476 @@
+{
+  "data_summary": {
+    "SLE": {
+      "n_trials": 7,
+      "total_patients": 47,
+      "year_range": "2022-2025",
+      "targets": [
+        "CD19",
+        "Other"
+      ]
+    },
+    "DLBCL": {
+      "n_trials": 3,
+      "total_patients": 481,
+      "year_range": "2017-2020",
+      "targets": [
+        "Other"
+      ]
+    },
+    "ALL": {
+      "n_trials": 1,
+      "total_patients": 75,
+      "year_range": "2018-2018",
+      "targets": [
+        "Other"
+      ]
+    },
+    "MM": {
+      "n_trials": 2,
+      "total_patients": 225,
+      "year_range": "2021-2021",
+      "targets": [
+        "Other"
+      ]
+    }
+  },
+  "model_results": {
+    "Bayesian Beta-Binomial (Jeffreys)": {
+      "estimate_pct": 1.0417,
+      "ci_low_pct": 0.001,
+      "ci_high_pct": 5.1773,
+      "ci_width_pct": 5.1763,
+      "method": "Bayesian Beta-Binomial"
+    },
+    "Clopper-Pearson Exact": {
+      "estimate_pct": 0.0,
+      "ci_low_pct": 0.0,
+      "ci_high_pct": 7.5486,
+      "ci_width_pct": 7.5486,
+      "method": "Clopper-Pearson Exact"
+    },
+    "Wilson Score": {
+      "estimate_pct": 3.7779,
+      "ci_low_pct": 0.0,
+      "ci_high_pct": 7.5558,
+      "ci_width_pct": 7.5558,
+      "method": "Wilson Score"
+    },
+    "DerSimonian-Laird Random Effects": {
+      "estimate_pct": 3.1333,
+      "ci_low_pct": 0.1603,
+      "ci_high_pct": 9.6488,
+      "ci_width_pct": 9.4886,
+      "method": "DerSimonian-Laird Random Effects"
+    },
+    "Empirical Bayes Shrinkage": {
+      "estimate_pct": 0.0,
+      "ci_low_pct": 0.0,
+      "ci_high_pct": 0.0,
+      "ci_width_pct": 0.0,
+      "method": "Empirical Bayes Shrinkage"
+    },
+    "Kaplan-Meier": {
+      "estimate_pct": 0.0,
+      "ci_low_pct": 0.0,
+      "ci_high_pct": 0.0,
+      "ci_width_pct": 0.0,
+      "method": "Kaplan-Meier"
+    },
+    "Predictive Posterior (n=50)": {
+      "estimate_pct": 1.0417,
+      "ci_low_pct": 0.0,
+      "ci_high_pct": 6.0,
+      "ci_width_pct": 6.0,
+      "method": "Bayesian Predictive Posterior"
+    }
+  },
+  "cross_validation_summary": [
+    {
+      "model": "Clopper-Pearson Exact",
+      "rmse_pct": 0.0,
+      "mae_pct": 0.0,
+      "coverage": 1.0,
+      "n_folds": 7
+    },
+    {
+      "model": "Bayesian Beta-Binomial",
+      "rmse_pct": 1.2299,
+      "mae_pct": 1.2231,
+      "coverage": 0.0,
+      "n_folds": 7
+    },
+    {
+      "model": "DerSimonian-Laird RE",
+      "rmse_pct": 3.1883,
+      "mae_pct": 3.1698,
+      "coverage": 0.0,
+      "n_folds": 7
+    },
+    {
+      "model": "Wilson Score",
+      "rmse_pct": 4.4109,
+      "mae_pct": 4.39,
+      "coverage": 1.0,
+      "n_folds": 7
+    }
+  ],
+  "prior_comparison": {
+    "uninformative": {
+      "prior": {
+        "alpha": 0.5,
+        "beta": 0.5
+      },
+      "posterior_mean_pct": 1.0417,
+      "ci_low_pct": 0.001,
+      "ci_high_pct": 5.1773,
+      "ci_width_pct": 5.1762
+    },
+    "mechanistic": {
+      "prior": {
+        "alpha": 0.2918,
+        "beta": 9.7082
+      },
+      "posterior_mean_pct": 0.5119,
+      "ci_low_pct": 0.0,
+      "ci_high_pct": 3.2661,
+      "ci_width_pct": 3.2661
+    },
+    "empirical": {
+      "prior": {
+        "alpha": 0.21,
+        "beta": 1.29
+      },
+      "posterior_mean_pct": 0.433,
+      "ci_low_pct": 0.0,
+      "ci_high_pct": 3.1932,
+      "ci_width_pct": 3.1932
+    }
+  },
+  "pairwise_comparisons": {
+    "CRS Any Grade": {
+      "SLE_vs_DLBCL": {
+        "sle_rate_pct": 55.32,
+        "comparator_rate_pct": 56.34,
+        "difference_pp": -1.02,
+        "se_pp": 7.6,
+        "z_statistic": -0.135,
+        "p_value": 0.893,
+        "significant_at_005": "False"
+      },
+      "SLE_vs_ALL": {
+        "sle_rate_pct": 55.32,
+        "comparator_rate_pct": 77.33,
+        "difference_pp": -22.01,
+        "se_pp": 8.72,
+        "z_statistic": -2.526,
+        "p_value": 0.0115,
+        "significant_at_005": "True"
+      },
+      "SLE_vs_MM": {
+        "sle_rate_pct": 55.32,
+        "comparator_rate_pct": 91.56,
+        "difference_pp": -36.24,
+        "se_pp": 7.49,
+        "z_statistic": -4.841,
+        "p_value": 0.0,
+        "significant_at_005": "True"
+      }
+    },
+    "CRS Grade >= 3": {
+      "SLE_vs_DLBCL": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 7.07,
+        "difference_pp": -7.07,
+        "se_pp": 1.17,
+        "z_statistic": -6.049,
+        "p_value": 0.0,
+        "significant_at_005": "True"
+      },
+      "SLE_vs_ALL": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 48.0,
+        "difference_pp": -48.0,
+        "se_pp": 5.77,
+        "z_statistic": -8.321,
+        "p_value": 0.0,
+        "significant_at_005": "True"
+      },
+      "SLE_vs_MM": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 5.78,
+        "difference_pp": -5.78,
+        "se_pp": 1.56,
+        "z_statistic": -3.714,
+        "p_value": 0.0002,
+        "significant_at_005": "True"
+      }
+    },
+    "ICANS Any Grade": {
+      "SLE_vs_DLBCL": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 35.14,
+        "difference_pp": -35.14,
+        "se_pp": 2.18,
+        "z_statistic": -16.141,
+        "p_value": 0.0,
+        "significant_at_005": "True"
+      },
+      "SLE_vs_ALL": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 40.0,
+        "difference_pp": -40.0,
+        "se_pp": 5.66,
+        "z_statistic": -7.071,
+        "p_value": 0.0,
+        "significant_at_005": "True"
+      },
+      "SLE_vs_MM": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 31.56,
+        "difference_pp": -31.56,
+        "se_pp": 3.1,
+        "z_statistic": -10.185,
+        "p_value": 0.0,
+        "significant_at_005": "True"
+      }
+    },
+    "ICANS Grade >= 3": {
+      "SLE_vs_DLBCL": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 14.14,
+        "difference_pp": -14.14,
+        "se_pp": 1.59,
+        "z_statistic": -8.899,
+        "p_value": 0.0,
+        "significant_at_005": "True"
+      },
+      "SLE_vs_ALL": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 13.33,
+        "difference_pp": -13.33,
+        "se_pp": 3.93,
+        "z_statistic": -3.397,
+        "p_value": 0.0007,
+        "significant_at_005": "True"
+      },
+      "SLE_vs_MM": {
+        "sle_rate_pct": 0.0,
+        "comparator_rate_pct": 6.67,
+        "difference_pp": -6.67,
+        "se_pp": 1.66,
+        "z_statistic": -4.009,
+        "p_value": 0.0001,
+        "significant_at_005": "True"
+      }
+    }
+  },
+  "evidence_accrual": {
+    "CRS_grade3plus": [
+      {
+        "timepoint": "Mackensen et al.",
+        "year": 2022,
+        "quarter": "Q4 2022",
+        "n_cumulative": 5,
+        "events_cumulative": 0,
+        "posterior_mean_pct": 3.2308,
+        "ci_low_pct": 0.0,
+        "ci_high_pct": 23.1254,
+        "ci_width_pct": 23.1254,
+        "is_projected": false
+      },
+      {
+        "timepoint": "Muller et al.",
+        "year": 2024,
+        "quarter": "Q1 2024",
+        "n_cumulative": 20,
+        "events_cumulative": 0,
+        "posterior_mean_pct": 0.9767,
+        "ci_low_pct": 0.0,
+        "ci_high_pct": 7.1676,
+        "ci_width_pct": 7.1676,
+        "is_projected": false
+      },
+      {
+        "timepoint": "Jin / Co-infusion / Cabaletta",
+        "year": 2024,
+        "quarter": "Q3 2024",
+        "n_cumulative": 37,
+        "events_cumulative": 1,
+        "posterior_mean_pct": 3.1429,
+        "ci_low_pct": 0.1412,
+        "ci_high_pct": 10.426,
+        "ci_width_pct": 10.2848,
+        "is_projected": false
+      },
+      {
+        "timepoint": "CASTLE / BMS / Expanded",
+        "year": 2025,
+        "quarter": "Q1 2025",
+        "n_cumulative": 47,
+        "events_cumulative": 1,
+        "posterior_mean_pct": 2.4948,
+        "ci_low_pct": 0.1115,
+        "ci_high_pct": 8.3206,
+        "ci_width_pct": 8.2091,
+        "is_projected": false
+      },
+      {
+        "timepoint": "CASTLE Ph2 interim",
+        "year": 2026,
+        "quarter": "Q3 2026",
+        "n_cumulative": 77,
+        "events_cumulative": 2,
+        "posterior_mean_pct": 2.8153,
+        "ci_low_pct": 0.4035,
+        "ci_high_pct": 7.4245,
+        "ci_width_pct": 7.0209,
+        "is_projected": true
+      },
+      {
+        "timepoint": "RESET-SLE Ph2",
+        "year": 2027,
+        "quarter": "Q1 2027",
+        "n_cumulative": 127,
+        "events_cumulative": 3,
+        "posterior_mean_pct": 2.4981,
+        "ci_low_pct": 0.5611,
+        "ci_high_pct": 5.8032,
+        "ci_width_pct": 5.2421,
+        "is_projected": true
+      },
+      {
+        "timepoint": "Pooled Ph2 data",
+        "year": 2028,
+        "quarter": "Q1 2028",
+        "n_cumulative": 200,
+        "events_cumulative": 4,
+        "posterior_mean_pct": 2.0893,
+        "ci_low_pct": 0.6003,
+        "ci_high_pct": 4.4636,
+        "ci_width_pct": 3.8633,
+        "is_projected": true
+      }
+    ],
+    "ICANS_grade3plus": [
+      {
+        "timepoint": "Mackensen et al.",
+        "year": 2022,
+        "quarter": "Q4 2022",
+        "n_cumulative": 5,
+        "events_cumulative": 0,
+        "posterior_mean_pct": 2.269,
+        "ci_low_pct": 0.0,
+        "ci_high_pct": 19.5175,
+        "ci_width_pct": 19.5175,
+        "is_projected": false
+      },
+      {
+        "timepoint": "Muller et al.",
+        "year": 2024,
+        "quarter": "Q1 2024",
+        "n_cumulative": 20,
+        "events_cumulative": 0,
+        "posterior_mean_pct": 0.6613,
+        "ci_low_pct": 0.0,
+        "ci_high_pct": 5.7455,
+        "ci_width_pct": 5.7455,
+        "is_projected": false
+      },
+      {
+        "timepoint": "Jin / Co-infusion / Cabaletta",
+        "year": 2024,
+        "quarter": "Q3 2024",
+        "n_cumulative": 37,
+        "events_cumulative": 0,
+        "posterior_mean_pct": 0.3668,
+        "ci_low_pct": 0.0,
+        "ci_high_pct": 3.1903,
+        "ci_width_pct": 3.1903,
+        "is_projected": false
+      },
+      {
+        "timepoint": "CASTLE / BMS / Expanded",
+        "year": 2025,
+        "quarter": "Q1 2025",
+        "n_cumulative": 47,
+        "events_cumulative": 0,
+        "posterior_mean_pct": 0.2906,
+        "ci_low_pct": 0.0,
+        "ci_high_pct": 2.5287,
+        "ci_width_pct": 2.5287,
+        "is_projected": false
+      },
+      {
+        "timepoint": "CASTLE Ph2 interim",
+        "year": 2026,
+        "quarter": "Q3 2026",
+        "n_cumulative": 77,
+        "events_cumulative": 1,
+        "posterior_mean_pct": 1.4584,
+        "ci_low_pct": 0.0551,
+        "ci_high_pct": 5.0277,
+        "ci_width_pct": 4.9726,
+        "is_projected": true
+      },
+      {
+        "timepoint": "RESET-SLE Ph2",
+        "year": 2027,
+        "quarter": "Q1 2027",
+        "n_cumulative": 127,
+        "events_cumulative": 1,
+        "posterior_mean_pct": 0.8894,
+        "ci_low_pct": 0.0334,
+        "ci_high_pct": 3.0807,
+        "ci_width_pct": 3.0473,
+        "is_projected": true
+      },
+      {
+        "timepoint": "Pooled Ph2 data",
+        "year": 2028,
+        "quarter": "Q1 2028",
+        "n_cumulative": 200,
+        "events_cumulative": 2,
+        "posterior_mean_pct": 1.0638,
+        "ci_low_pct": 0.1438,
+        "ci_high_pct": 2.8701,
+        "ci_width_pct": 2.7263,
+        "is_projected": true
+      }
+    ]
+  },
+  "heterogeneity": {
+    "CRS Any Grade": {
+      "i_squared": 0.9442,
+      "cochran_q": 215.0653,
+      "tau_squared": 0.297902,
+      "n_studies": 13,
+      "q_df": 12,
+      "q_pvalue": 0.0
+    },
+    "CRS Grade >= 3": {
+      "i_squared": 0.885,
+      "cochran_q": 104.3847,
+      "tau_squared": 0.13553,
+      "n_studies": 13,
+      "q_df": 12,
+      "q_pvalue": 1.1102230246251565e-16
+    },
+    "ICANS Any Grade": {
+      "i_squared": 0.8796,
+      "cochran_q": 99.6743,
+      "tau_squared": 0.12862,
+      "n_studies": 13,
+      "q_df": 12,
+      "q_pvalue": 6.661338147750939e-16
+    },
+    "ICANS Grade >= 3": {
+      "i_squared": 0.6534,
+      "cochran_q": 34.6267,
+      "tau_squared": 0.033194,
+      "n_studies": 13,
+      "q_df": 12,
+      "q_pvalue": 0.0005368755829969762
+    }
+  }
+}

@@ -1,0 +1,46 @@
+FIGURE: Model Calibration Comparison (LOO Cross-Validation)
+====================================================================================================
+
+Leave-One-Study-Out Prediction Accuracy:
+
+Model                                   RMSE      MAE   Coverage   Rank
+----------------------------------------------------------------------
+Clopper-Pearson Exact                   0.00     0.00       1.00      1
+Bayesian Beta-Binomial                  1.23     1.22       0.00      2
+DerSimonian-Laird RE                    3.19     3.17       0.00      3
+Wilson Score                            4.41     4.39       1.00      4
+----------------------------------------------------------------------
+
+Best model: Clopper-Pearson Exact (lowest RMSE)
+
+Per-fold details (held-out study predictions):
+Model                     Fold                  True Rate  Predicted      Error    Covered
+------------------------------------------------------------------------------------------
+Bayesian Beta-Binomial    Mackensen et al. 2022       0.00       1.16       1.16         No
+Bayesian Beta-Binomial    Muller et al. 2024         0.00       1.52       1.52         No
+Bayesian Beta-Binomial    CASTLE 2025                0.00       1.25       1.25         No
+Bayesian Beta-Binomial    BCMA-CD19 cCAR SLE         0.00       1.22       1.22         No
+Bayesian Beta-Binomial    Co-infusion SLE            0.00       1.19       1.19         No
+Bayesian Beta-Binomial    Cabaletta RESET-SLE        0.00       1.14       1.14         No
+Bayesian Beta-Binomial    BMS Breakfree-1            0.00       1.09       1.09         No
+Clopper-Pearson Exact     Mackensen et al. 2022       0.00       0.00       0.00        Yes
+Clopper-Pearson Exact     Muller et al. 2024         0.00       0.00       0.00        Yes
+Clopper-Pearson Exact     CASTLE 2025                0.00       0.00       0.00        Yes
+Clopper-Pearson Exact     BCMA-CD19 cCAR SLE         0.00       0.00       0.00        Yes
+Clopper-Pearson Exact     Co-infusion SLE            0.00       0.00       0.00        Yes
+Clopper-Pearson Exact     Cabaletta RESET-SLE        0.00       0.00       0.00        Yes
+Clopper-Pearson Exact     BMS Breakfree-1            0.00       0.00       0.00        Yes
+Wilson Score              Mackensen et al. 2022       0.00       4.19       4.19        Yes
+Wilson Score              Muller et al. 2024         0.00       5.36       5.36        Yes
+Wilson Score              CASTLE 2025                0.00       4.48       4.48        Yes
+Wilson Score              BCMA-CD19 cCAR SLE         0.00       4.38       4.38        Yes
+Wilson Score              Co-infusion SLE            0.00       4.28       4.28        Yes
+Wilson Score              Cabaletta RESET-SLE        0.00       4.10       4.10        Yes
+Wilson Score              BMS Breakfree-1            0.00       3.93       3.93        Yes
+DerSimonian-Laird RE      Mackensen et al. 2022       0.00       3.00       3.00         No
+DerSimonian-Laird RE      Muller et al. 2024         0.00       3.98       3.98         No
+DerSimonian-Laird RE      CASTLE 2025                0.00       3.19       3.19         No
+DerSimonian-Laird RE      BCMA-CD19 cCAR SLE         0.00       3.12       3.12         No
+DerSimonian-Laird RE      Co-infusion SLE            0.00       3.05       3.05         No
+DerSimonian-Laird RE      Cabaletta RESET-SLE        0.00       2.95       2.95         No
+DerSimonian-Laird RE      BMS Breakfree-1            0.00       2.90       2.90         No

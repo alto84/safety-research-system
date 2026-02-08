@@ -1,0 +1,86 @@
+================================================================================
+STATISTICAL SUMMARY
+Comparative Analysis of Cell Therapy Safety Profiles
+================================================================================
+
+1. DATA OVERVIEW
+----------------------------------------
+   SLE: 7 trials, 47 patients, years 2022-2025, targets: CD19, Other
+   DLBCL: 3 trials, 481 patients, years 2017-2020, targets: Other
+   ALL: 1 trials, 75 patients, years 2018-2018, targets: Other
+   MM: 2 trials, 225 patients, years 2021-2021, targets: Other
+
+2. KEY FINDINGS
+----------------------------------------
+   CRS Any Grade SLE vs DLBCL: 55.3% vs 56.3%, diff = -1.0 pp (NS)
+   CRS Any Grade SLE vs ALL: 55.3% vs 77.3%, diff = -22.0 pp (p < 0.05)
+   CRS Any Grade SLE vs MM: 55.3% vs 91.6%, diff = -36.2 pp (p < 0.05)
+
+   CRS G>=3 SLE vs DLBCL: 0.0% vs 7.1%, diff = -7.1 pp (p < 0.05)
+   CRS G>=3 SLE vs ALL: 0.0% vs 48.0%, diff = -48.0 pp (p < 0.05)
+   CRS G>=3 SLE vs MM: 0.0% vs 5.8%, diff = -5.8 pp (p < 0.05)
+
+3. MODEL COMPARISON SUMMARY (SLE CRS Grade >= 3)
+----------------------------------------
+   Bayesian Beta-Binomial (Jeffreys): 1.04% [0.00, 5.18]
+   Clopper-Pearson Exact: 0.00% [0.00, 7.55]
+   Wilson Score: 3.78% [0.00, 7.56]
+   DerSimonian-Laird Random Effects: 3.13% [0.16, 9.65]
+   Empirical Bayes Shrinkage: 0.00% [0.00, 0.00]
+   Kaplan-Meier: 0.00% [0.00, 0.00]
+   Predictive Posterior (n=50): 1.04% [0.00, 6.00]
+
+4. MECHANISTIC PRIOR ANALYSIS
+----------------------------------------
+   Uninformative CI width: 5.18 pp
+   Mechanistic CI width:   3.27 pp
+   CI narrowing:           36.9% reduction
+   Pathway basis: 11 PubMed references
+
+5. EVIDENCE ACCRUAL PROJECTION
+----------------------------------------
+   Initial (n=5): CI width = 23.13 pp
+   Current (n=47): CI width = 8.21 pp
+   Projected (n=200): CI width = 3.86 pp
+
+6. LIMITATIONS
+----------------------------------------
+   - Small sample sizes in SLE trials (n=2-15 per study)
+   - Early-phase data; mature follow-up not yet available
+   - Heterogeneous CAR-T constructs across SLE trials
+   - No head-to-head randomized comparisons across indications
+   - Oncology comparator data from different eras (2017-2021 vs 2022-2025)
+   - CRS/ICANS grading may not be fully comparable across institutions
+   - Kaplan-Meier analysis uses synthetic onset times (not individual patient data)
+   - Publication bias cannot be fully assessed with available studies
+
+7. REFERENCES
+----------------------------------------
+   PMID:22158166: Di Stasi et al., N Engl J Med 2011. Inducible Apoptosis as a Safety Switch for Adoptive Cell Therapy
+   PMID:25389405: Di Stasi et al., Front Pharmacol 2014. The inducible caspase-9 suicide gene system as a safety switch to limi...
+   PMID:27455965: Teachey et al., Cancer Discov 2016. Identification of Predictive Biomarkers for Cytokine Release Syndrome ...
+   PMID:28854140: Fitzgerald et al., Crit Care Med 2017. Cytokine Release Syndrome After Chimeric Antigen Receptor T Cell Thera...
+   PMID:29025771: Gust et al., Cancer Discov 2017. Endothelial Activation and Blood-Brain Barrier Disruption in Neurotoxi...
+   PMID:29084955: Neelapu et al., Nat Rev Clin Oncol 2018. Chimeric antigen receptor T-cell therapy - assessment and management o...
+   PMID:29643511: Giavridis et al., Nat Med 2018. CAR T cell-induced cytokine release syndrome is mediated by macrophage...
+   PMID:29643512: Norelli et al., Nat Med 2018. Monocyte-derived IL-1 and IL-6 are differentially required for cytokin...
+   PMID:30154262: Santomasso et al., Cancer Discov 2018. Clinical and Biological Correlates of Neurotoxicity Associated with CA...
+   PMID:30275568: Lee et al., Biol Blood Marrow Transplant 2019. ASTCT Consensus Grading for Cytokine Release Syndrome and Neurologic T...
+   PMID:30442748: Frey et al., Blood Adv 2019. Cytokine release syndrome with novel therapeutics for acute lymphoblas...
+   PMID:31204436: Gust et al., Blood Adv 2019. Glial injury in neurotoxicity after pediatric CD19-directed chimeric a...
+   PMID:32433173: Liu et al., N Engl J Med 2020. Use of CAR-Transduced Natural Killer Cells in CD19-Positive Lymphoid T...
+   PMID:32666058: Le et al., Drug Des Devel Ther 2020. Spotlight on Tocilizumab in the Treatment of CAR-T-Cell-Induced Cytoki...
+   PMID:33082430: Parker et al., Blood 2020. Single-Cell Analyses Identify Brain Mural Cells Expressing CD19 as Pot...
+   PMID:33168950: Kang et al., Leukemia 2021. IL-6 trans-signaling promotes the expansion and anti-tumor activity of...
+   PMID:34263927: Lichtenstein et al., J Clin Invest 2021. Hemophagocytic lymphohistiocytosis-like toxicity (carHLH) after CD19-s...
+   PMID:34265098: Sandler et al., Leuk Lymphoma 2021. Management of hemophagocytic lymphohistiocytosis associated with chime...
+   PMID:36906275: Hines et al., Transplant Cell Ther 2023. Immune Effector Cell-Associated Hemophagocytic Lymphohistiocytosis-Lik...
+   PMID:37271625: Strati et al., Blood Adv 2023. Anakinra for refractory CRS or ICANS after CAR T-cell therapy
+   PMID:37798640: Morris et al., Int J Mol Sci 2024. The Mechanisms of Altered Blood-Brain Barrier Permeability in CD19 CAR...
+   PMID:37828045: Sterner et al., Cell Rep Med 2023. A major role for CD4+ T cells in driving cytokine release syndrome dur...
+   PMID:38123583: Butt et al., Nat Commun 2024. Neutrophil activation and clonal CAR-T re-expansion underpinning cytok...
+   PMID:38368579: Zhang et al., Exp Hematol Oncol 2024. The next frontier in immunotherapy: potential and challenges of CAR-ma...
+   PMID:39256221: Luft et al., Blood 2024. An EASIX-based predictive model for neurotoxicity and CRS after BCMA-d...
+   PMID:39277881: Luft et al., Blood 2024. EASIX and m-EASIX predict severe cytokine release syndrome and overall...
+   PMID:39338775: Chen et al., J Hematol Oncol 2024. Hemophagocytic lymphohistiocytosis: current treatment advances, emergi...
+   PMID:39352714: Liu et al., J Transl Med 2024. TCR-T cell therapy: current development approaches, preclinical evalua...
