@@ -1,116 +1,119 @@
-# Session State — PSP Build (2026-02-08, Overnight Complete)
+# Session State — PSP Build (2026-02-08, Expansion Complete)
 
-## Overnight Results Summary
+## Current Status
 
-**All 4 agents completed successfully. Dashboard, tests, and validation done.**
+**1183 tests passing. 14-tab dashboard with CDP/CSP. All features visually verified in Chrome.**
+
+### What's New This Session
+
+1. **Cell Therapy Registry** — 12 therapy types, 21 AE profiles (`data/cell_therapy_registry.py`)
+2. **Model Registry** — 7 statistical approaches, all validated on gpuserver1 (`src/models/model_registry.py`)
+3. **Model Validation Framework** — Calibration, Brier score, coverage probability (`src/models/model_validation.py`)
+4. **CDP/CSP API Endpoints** — 5 new endpoints for clinical development plan support
+5. **Treatment Type Selector** — Dropdown at top of dashboard for therapy type selection
+6. **Clinical Safety Plan Tab** — Full CSP with 5 sections (risk summary, monitoring, eligibility, stopping rules, protocol design)
+7. **Dashboard Bug Fixes** — CI display, forest plot, CSP risk table all fixed
+8. **Kaplan-Meier Key Fix** — Renamed `events` to `event_indicators` to avoid collision with Bayesian models
+9. **Complete AE Baseline Data** — Added any-grade CRS, ICANS, infection, cytopenias to baseline risk
 
 ### Test Results
-- **704 tests passing** (up from 421)
-- 226 new unit tests for population modules
-- 57 new integration tests for population API endpoints
-- All existing tests still pass
-- Runtime: 3.7 seconds
+- **1183 tests passing** (up from 704)
+- Stopping rules, CDP endpoints, model validation, cell therapy registry all tested
+- Runtime: ~7.5 seconds
 
-### Dashboard
-- 4 new population-level tabs added (Population Risk, Mitigation Explorer, Signal Detection, Executive Summary)
-- Evidence accrual SVG chart with CI band visualization
-- Interactive mitigation strategy selector with live combined RR calculation
-- FAERS signal detection with load-on-demand pattern
-- Executive summary with traffic light indicators
-- Dashboard: 3879 lines (up from 2853)
-- All API endpoints verified working
+### Dashboard (14 tabs total)
+- 9 patient-level tabs: Overview, Pre-Infusion, Day 1, CRS, ICANS, HLH, Hematologic, Discharge, Clinical Visit
+- 5 population-level tabs: Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, **Clinical Safety Plan**
+- Therapy type selector at top of dashboard
+- All tabs visually verified in Chrome via CDP
+
+### API Endpoints (13 total)
+Population:
+- GET `/api/v1/population/risk` — Baseline risk with mitigated estimates
+- POST `/api/v1/population/bayesian` — Custom Bayesian posterior
+- POST `/api/v1/population/mitigations` — Correlated mitigation analysis
+- GET `/api/v1/population/evidence-accrual` — Evidence accrual timeline
+- GET `/api/v1/population/trials` — Clinical trial registry
+- GET `/api/v1/signals/faers` — FAERS signal detection
+- GET `/api/v1/population/mitigations/strategies` — Strategy catalog
+- GET `/api/v1/population/comparison` — Cross-indication comparison
+
+CDP/CSP:
+- GET `/api/v1/cdp/monitoring-schedule` — Suggested monitoring schedule
+- GET `/api/v1/cdp/eligibility-criteria` — Inclusion/exclusion criteria
+- GET `/api/v1/cdp/stopping-rules` — Bayesian stopping boundaries
+- GET `/api/v1/cdp/sample-size` — Sample size considerations
+- GET `/api/v1/therapies` — Available therapy types
+
+### Model Registry (7 models, all validated on gpuserver1)
+| Model | CRS G3+ Estimate | 95% CI |
+|-------|-------------------|--------|
+| Bayesian Beta-Binomial | 3.12% | [0.23, 9.52] |
+| Clopper-Pearson Exact | 2.13% | [0.05, 11.29] |
+| Wilson Score | 5.74% | [0.38, 11.11] |
+| DerSimonian-Laird RE | 3.73% | [0.30, 10.77] |
+| Empirical Bayes Shrinkage | 0.54% | [0.00, 1.58] |
+| Kaplan-Meier | 2.13% | [0.00, 6.25] |
+| Predictive Posterior | 3.12% | [0.00, 12.00] |
 
 ### Commits (all pushed to GitHub)
-1. `d7b7cac` — Population API routes + expert review fixes (8 endpoints, 6 critical fixes)
-2. `48d613b` — CLAUDE.md persistent agent instructions
-3. `9fe6e19` — Session state + detailed system specification
-4. `c00bfb6` — Integration tests for population API endpoints
-5. `1aa974e` — Unit tests for population modules (226 tests)
-6. `761f232` — Population dashboard tabs with interactive visualizations
+1. `ecc63f9` — Fix forest plot and CI display bugs
+2. `93ddef9` — Cell therapy registry (12 types, 21 AE profiles)
+3. `b4e4c39` — CDP/CSP API endpoints, therapy selector, stopping rules
+4. `30c1124` — Therapy selector and Clinical Safety Plan dashboard tab
+5. `3d42956` — Fix Kaplan-Meier key collision
+6. `e9ff6c4` — Tests for stopping rules, CDP, model validation, cell therapy
+7. `0c2f067` — Fix CSP risk table CI display + complete AE baseline data
 
 ## What's Done (Complete)
 
 ### Phase 0: Core Python Modules
-- `src/models/bayesian_risk.py` — Beta-Binomial, evidence accrual, exact Beta quantiles
+- `src/models/bayesian_risk.py` — Beta-Binomial, evidence accrual, exact Beta quantiles, stopping boundaries
 - `src/models/mitigation_model.py` — Correlated RR, Monte Carlo, 5 strategies with caveats
 - `src/models/faers_signal.py` — PRR/ROR/EBGM, openFDA, signal classification
-- `data/sle_cart_studies.py` — 14 AE rates, 14 trials, 8 data sources
+- `src/models/model_registry.py` — 7 statistical approaches with compare_models()
+- `src/models/model_validation.py` — Calibration, Brier score, coverage probability
+- `data/sle_cart_studies.py` — 14 AE rates, 14 trials, 8 data sources, 8 baseline risk types
+- `data/cell_therapy_registry.py` — 12 therapy types, 21 AE profiles
 
-### Population API (8 endpoints)
-- `/api/v1/population/risk` — Baseline risk with mitigated estimates
-- `/api/v1/population/bayesian` — Custom Bayesian posterior
-- `/api/v1/population/mitigations` — Correlated mitigation analysis
-- `/api/v1/population/evidence-accrual` — Evidence accrual timeline
-- `/api/v1/population/trials` — Clinical trial registry
-- `/api/v1/signals/faers` — FAERS signal detection
-- `/api/v1/population/mitigations/strategies` — Strategy catalog
-- `/api/v1/population/comparison` — Cross-indication comparison
+### Phase 1: Architecture Expansion (Complete)
+- Cell therapy registry with 12 therapy types
+- Treatment type selector in dashboard
+- 7-model risk modeling registry
+- Model validation framework
 
-### Expert Review Fixes (6 critical issues resolved)
-1. Exact Beta quantiles (was normal approximation)
-2. ICANS G3+ rate corrected (1.5% → 0.0%)
-3. Schema validation (n_events <= n_patients)
-4. Anakinra evidence downgraded (Moderate → Limited)
-5. Oncology-extrapolation caveats on tocilizumab/corticosteroids
-6. Monte Carlo default reduced (10K → 5K)
+### Phase 2: CDP/CSP Dashboard (Complete)
+- Clinical Safety Plan tab with 5 sections
+- Monitoring schedule, eligibility criteria, stopping rules, protocol design
+- 5 new API endpoints
 
-### Dashboard (13 tabs total)
-- 9 patient-level tabs (existing): Overview, Pre-Infusion, Day 1, CRS, ICANS, HLH, Hematologic, Discharge, Clinical Visit
-- 4 population-level tabs (new): Population Risk, Mitigation Explorer, Signal Detection, Executive Summary
+### Phase 3: Bug Fixes & Chrome Testing (Complete)
+- Forest plot fixed to use actual API data format
+- CI display fixed across Population Risk, CSP tabs
+- All 14 tabs visually verified in Chrome
+- Kaplan-Meier key collision fixed
 
-### Infrastructure
-- `.claude/CLAUDE.md` — Persistent instructions for all agents
-- `SPECIFICATION.md` — Detailed system spec (also in Downloads)
-- 704 tests across unit, integration, safety, stress, validation
+## What's Next
 
-## What's Next (Priority Order)
+### 1. Iteration & Polish
+- Test interactive features (mitigation checkboxes, FAERS load button)
+- Improve therapy type selector to dynamically update data
+- Add model comparison visualization to dashboard
 
-### 1. User Review of Dashboard
-Start server: `python run_server.py` → http://localhost:8000/clinical
-Click new population tabs to review visualizations.
-
-### 2. Phase 3: Data Source Deep Dive
-For each of 8 data sources, brainstorm 3-5 integration strategies.
-Agent team review. Create upgrade plan ranked by patient impact.
-
-### 3. Phase 4: Implement Best Upgrades
+### 2. Data Integration
 - CIBMTR registry integration
 - ClinicalTrials.gov live API
 - Background rate estimation from RWD
-- Stopping rules with evidence accrual
 - Geographic signal analysis (FAERS vs EudraVigilance)
 
-### 4. Phase 5: Final Review + Iteration
-Agent teams testing, reviewing, iterating on dashboard and codebase.
-
-## User Direction
-> "Data agnostic, extensible to new adverse events, different timescales,
-> new treatments, starting with other cell therapies and expanding beyond."
-> "Use agent swarms. Have fun. I'm going to bed."
-
-## Currently Running (Expansion Agent Swarm)
-
-### Agent 1: Cell Therapy Registry Research (RUNNING)
-Deep web research on ALL cell therapy types (CAR-T, TCR-T, NK, TIL, gene therapy, MSC, Treg, gamma-delta).
-Creating `data/cell_therapy_registry.py` with TherapyType dataclasses and AE taxonomy.
-
-### Agent 2: Risk Model Registry (RUNNING)
-Building `src/models/model_registry.py` with 7 statistical approaches (Bayesian, frequentist, meta-analysis, etc.)
-and `src/models/model_validation.py` with calibration, Brier score, cross-validation framework.
-
-### Agent 3: Chrome Dashboard Testing (RUNNING)
-Testing every tab, button, and feature in the dashboard. Writing test report.
-
-## Expansion Plan
-See `EXPANSION-PLAN.md` for full roadmap:
-- Phase 1: Cell therapy landscape research
-- Phase 2: Architecture expansion (therapy selector, model registry, validation)
-- Phase 3: CDP/CSP dashboard (inclusion/exclusion criteria, monitoring schedule)
-- Phase 4: Testing and iteration
+### 3. gpuserver1 Heavy Computation
+- Full Monte Carlo validation across all 7 models
+- Cross-validation with leave-one-study-out
+- Model calibration plots
 
 ## Repo State
 - **GitHub:** https://github.com/alto84/safety-research-system.git
 - **Branch:** master
-- **Latest commit:** `1803637` (expansion plan)
-- **704 tests passing** in 3.7s
-- **Server:** `python run_server.py` → http://localhost:8000
+- **Latest commit:** `0c2f067`
+- **1183 tests passing** in 7.5s
+- **Server:** `python run_server.py` → http://localhost:8000/clinical
