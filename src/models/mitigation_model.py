@@ -189,9 +189,9 @@ MITIGATION_STRATEGIES: dict[str, MitigationStrategy] = {
         mechanism="Lower effector cell dose reduces peak cytokine release and "
                   "total inflammatory burden",
         target_aes=["CRS", "ICANS", "ICAHS"],
-        relative_risk=0.15,
-        confidence_interval=(0.08, 0.30),
-        evidence_level="Strong",
+        relative_risk=0.40,
+        confidence_interval=(0.15, 0.70),
+        evidence_level="Limited",
         dosing="Reduced from standard 1e8 to 1e6-1e7 CAR-T cells",
         timing="At manufacturing / infusion",
         limitations=[

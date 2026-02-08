@@ -403,10 +403,9 @@ def empirical_bayes(data: dict[str, Any]) -> dict[str, Any]:
     else:
         tau2 = 0.0
 
-    # Allow override
-    if "prior_weight" in data:
-        # Manual shrinkage override: B = prior_weight
-        manual_b = data["prior_weight"]
+    # Allow override (reserved for future manual shrinkage control)
+    # if "prior_weight" in data:
+    #     B = data["prior_weight"]
 
     # Find target AE type and compute shrunken estimate
     target_idx = None

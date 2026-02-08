@@ -1,18 +1,22 @@
 """
 Population-level API routes for Bayesian risk estimation, mitigation modeling,
-evidence accrual, clinical trials, and FAERS signal detection.
+evidence accrual, clinical trials, FAERS signal detection, and knowledge graph
+queries.
 
 These endpoints complement the patient-level biomarker scoring endpoints by
 providing population-level context: What is the baseline risk for CAR-T AEs
 in autoimmune indications?  How does that risk change with mitigation strategies?
 How does uncertainty narrow as trial evidence accrues?
+
+The knowledge graph endpoints expose mechanistic biology data: signaling pathways,
+mechanism chains, molecular targets, cell types, and PubMed references.
 """
 
 from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
@@ -30,6 +34,23 @@ from src.api.schemas import (
     EvidenceAccrualResponse,
     FAERSSignalResponse,
     FAERSSummaryResponse,
+    KnowledgeActivationState,
+    KnowledgeCellTypeListResponse,
+    KnowledgeCellTypeResponse,
+    KnowledgeMechanismListResponse,
+    KnowledgeMechanismResponse,
+    KnowledgeMechanismStep,
+    KnowledgeModulatorResponse,
+    KnowledgeOverviewResponse,
+    KnowledgePathwayEdge,
+    KnowledgePathwayListResponse,
+    KnowledgePathwayNode,
+    KnowledgePathwayResponse,
+    KnowledgePathwayStep,
+    KnowledgeReferenceListResponse,
+    KnowledgeReferenceResponse,
+    KnowledgeTargetListResponse,
+    KnowledgeTargetResponse,
     MitigationAnalysisRequest,
     MitigationAnalysisResponse,
     ModuleInfo,
@@ -110,7 +131,7 @@ _EVENT_FIELD_MAP = {
 async def population_risk() -> PopulationRiskResponse:
     """Return population-level risk summary for SLE CAR-T."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     baseline = get_sle_baseline_risk()
 
@@ -166,7 +187,7 @@ async def bayesian_posterior(
 ) -> BayesianPosteriorResponse:
     """Compute Bayesian posterior estimate."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     prior = _PRIOR_MAP.get(request.adverse_event)
     if prior is None:
@@ -224,7 +245,7 @@ async def mitigation_analysis(
 ) -> MitigationAnalysisResponse:
     """Run correlated mitigation combination analysis."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # Validate mitigation IDs
     unknown = [
@@ -352,7 +373,7 @@ async def mitigation_analysis(
 async def evidence_accrual() -> EvidenceAccrualResponse:
     """Compute evidence accrual timeline for CRS and ICANS."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # Compute CRS and ICANS accrual
     crs_posteriors = compute_evidence_accrual(
@@ -424,7 +445,7 @@ async def trial_registry(
 ) -> TrialSummaryResponse:
     """Return clinical trial summary with optional indication filter."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     summary = get_trial_summary()
 
@@ -492,7 +513,7 @@ async def faers_signals(
 ) -> FAERSSummaryResponse:
     """Run FAERS signal detection for CAR-T products."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     product_list = None
     if products:
@@ -1052,6 +1073,435 @@ async def cdp_sample_size(
     )
 
 
+# ===========================================================================
+# KNOWLEDGE GRAPH ENDPOINTS
+# ===========================================================================
+
+def _classify_node_type(entity: str) -> str:
+    """Classify a pathway node entity into a visual type category."""
+    entity_lower = entity.lower()
+    # Cells
+    cell_keywords = [
+        "cell", "monocyte", "macrophage", "neutrophil", "astrocyte",
+        "pericyte", "endothelial", "nk_cell", "dendritic",
+    ]
+    if any(kw in entity_lower for kw in cell_keywords):
+        return "cell"
+    # Receptors and signaling
+    receptor_keywords = [
+        "receptor", "gp130", "tie2", "tnfr", "ifngr", "il-6r",
+        "sil-6r", "nmda", "dimer",
+    ]
+    if any(kw in entity_lower for kw in receptor_keywords):
+        return "receptor"
+    # Kinases / transcription factors
+    kinase_keywords = [
+        "jak", "stat", "nf-kb", "nfkb", "kinase",
+    ]
+    if any(kw in entity_lower for kw in kinase_keywords):
+        return "kinase"
+    # Processes / clinical outcomes
+    process_keywords = [
+        "crs", "icans", "hlh", "mas", "coagulopathy",
+        "hemophagocytosis", "permeability", "infiltration",
+        "excitotoxicity", "expansion", "recruitment", "lysis",
+        "gene", "transcrib", "apoptosis", "leak",
+    ]
+    if any(kw in entity_lower for kw in process_keywords):
+        return "process"
+    # Biomarkers
+    biomarker_keywords = ["crp", "ferritin", "easix"]
+    if any(kw in entity_lower for kw in biomarker_keywords):
+        return "biomarker"
+    # Default: cytokine / molecule
+    return "cytokine"
+
+
+def _pathway_to_response(pw) -> KnowledgePathwayResponse:
+    """Convert a SignalingPathway dataclass to a KnowledgePathwayResponse."""
+    # Build unique nodes from step sources and targets
+    node_set: dict[str, str] = {}
+    edges = []
+    steps = []
+    for step in pw.steps:
+        if step.source not in node_set:
+            node_set[step.source] = _classify_node_type(step.source)
+        if step.target not in node_set:
+            node_set[step.target] = _classify_node_type(step.target)
+        edges.append(KnowledgePathwayEdge(
+            source=step.source,
+            target=step.target,
+            relation=step.relation.value,
+            mechanism=step.mechanism,
+            confidence=step.confidence,
+            is_feedback_loop=step.is_feedback_loop,
+            intervention_point=step.intervention_point,
+            references=list(step.references),
+        ))
+        steps.append(KnowledgePathwayStep(
+            source=step.source,
+            target=step.target,
+            relation=step.relation.value,
+            mechanism=step.mechanism,
+            confidence=step.confidence,
+            temporal_window=step.temporal_window.value,
+            is_feedback_loop=step.is_feedback_loop,
+            intervention_point=step.intervention_point,
+            intervention_agents=list(step.intervention_agents),
+            references=list(step.references),
+        ))
+    nodes = [
+        KnowledgePathwayNode(id=name, label=name.replace("_", " "), node_type=ntype)
+        for name, ntype in node_set.items()
+    ]
+    return KnowledgePathwayResponse(
+        pathway_id=pw.pathway_id,
+        name=pw.name,
+        description=pw.description,
+        nodes=nodes,
+        edges=edges,
+        steps=steps,
+        entry_points=pw.entry_points,
+        exit_points=pw.exit_points,
+        feedback_loops=pw.feedback_loops,
+        intervention_summary=pw.intervention_summary,
+        ae_outcomes=pw.ae_outcomes,
+        key_references=pw.key_references,
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/knowledge/pathways -- All signaling pathways
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/knowledge/pathways",
+    response_model=KnowledgePathwayListResponse,
+    tags=["Knowledge"],
+    summary="All signaling pathways as directed graphs",
+    description=(
+        "Returns all signaling pathways in the knowledge graph as directed "
+        "graphs with nodes, edges, feedback loops, and intervention points."
+    ),
+)
+async def knowledge_pathways() -> KnowledgePathwayListResponse:
+    """Return all signaling pathways as directed graph data."""
+    from src.data.knowledge.pathways import PATHWAY_REGISTRY
+
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    pathways = [_pathway_to_response(pw) for pw in PATHWAY_REGISTRY.values()]
+    return KnowledgePathwayListResponse(
+        request_id=request_id,
+        timestamp=now,
+        pathways=pathways,
+        total=len(pathways),
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/knowledge/pathways/{pathway_id} -- Single pathway detail
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/knowledge/pathways/{pathway_id}",
+    response_model=KnowledgePathwayResponse,
+    tags=["Knowledge"],
+    summary="Single pathway detail",
+    description="Returns a single signaling pathway by ID with full graph data.",
+)
+async def knowledge_pathway_detail(pathway_id: str) -> KnowledgePathwayResponse:
+    """Return a single pathway by ID."""
+    from src.data.knowledge.pathways import PATHWAY_REGISTRY
+
+    # Support both "PW:IL6_TRANS_SIGNALING" and "IL6_TRANS_SIGNALING" forms
+    lookup_id = pathway_id if pathway_id.startswith("PW:") else f"PW:{pathway_id}"
+    pw = PATHWAY_REGISTRY.get(lookup_id)
+    if pw is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Pathway '{pathway_id}' not found. "
+                   f"Available: {list(PATHWAY_REGISTRY.keys())}",
+        )
+    return _pathway_to_response(pw)
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/knowledge/mechanisms -- All mechanism chains
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/knowledge/mechanisms",
+    response_model=KnowledgeMechanismListResponse,
+    tags=["Knowledge"],
+    summary="All AE mechanism chains",
+    description=(
+        "Returns all therapy-to-AE mechanism chains with steps, risk factors, "
+        "branching points, and intervention opportunities."
+    ),
+)
+async def knowledge_mechanisms() -> KnowledgeMechanismListResponse:
+    """Return all mechanism chains."""
+    from src.data.knowledge.mechanisms import MECHANISM_REGISTRY
+
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    mechanisms = []
+    for mech in MECHANISM_REGISTRY.values():
+        steps = [
+            KnowledgeMechanismStep(
+                step_number=s.step_number,
+                entity=s.entity,
+                action=s.action,
+                detail=s.detail,
+                temporal_onset=s.temporal_onset,
+                biomarkers=list(s.biomarkers),
+                is_branching_point=s.is_branching_point,
+                branches=list(s.branches),
+                is_intervention_point=s.is_intervention_point,
+                interventions=list(s.interventions),
+            )
+            for s in mech.steps
+        ]
+        mechanisms.append(KnowledgeMechanismResponse(
+            mechanism_id=mech.mechanism_id,
+            therapy_modality=mech.therapy_modality.value,
+            ae_category=mech.ae_category.value,
+            name=mech.name,
+            description=mech.description,
+            steps=steps,
+            risk_factors=mech.risk_factors,
+            severity_determinants=mech.severity_determinants,
+            typical_onset=mech.typical_onset,
+            typical_duration=mech.typical_duration,
+            incidence_range=mech.incidence_range,
+            mortality_rate=mech.mortality_rate,
+            key_references=mech.key_references,
+        ))
+
+    return KnowledgeMechanismListResponse(
+        request_id=request_id,
+        timestamp=now,
+        mechanisms=mechanisms,
+        total=len(mechanisms),
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/knowledge/targets -- Molecular targets
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/knowledge/targets",
+    response_model=KnowledgeTargetListResponse,
+    tags=["Knowledge"],
+    summary="Molecular targets with modulators",
+    description=(
+        "Returns all molecular targets involved in cell therapy AE "
+        "pathophysiology, including drugs/agents that modulate each target."
+    ),
+)
+async def knowledge_targets() -> KnowledgeTargetListResponse:
+    """Return all molecular targets."""
+    from src.data.knowledge.molecular_targets import MOLECULAR_TARGET_REGISTRY
+
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    targets = []
+    for t in MOLECULAR_TARGET_REGISTRY.values():
+        modulators = [
+            KnowledgeModulatorResponse(
+                name=m.name,
+                mechanism=m.mechanism,
+                status=m.status.value,
+                route=m.route,
+                dose=m.dose,
+                evidence_refs=list(m.evidence_refs),
+            )
+            for m in t.modulators
+        ]
+        targets.append(KnowledgeTargetResponse(
+            target_id=t.target_id,
+            name=t.name,
+            gene_symbol=t.gene_symbol,
+            category=t.category.value,
+            pathways=list(t.pathways),
+            normal_range=t.normal_range,
+            ae_range=t.ae_range,
+            clinical_relevance=t.clinical_relevance,
+            modulators=modulators,
+            upstream_of=list(t.upstream_of),
+            downstream_of=list(t.downstream_of),
+            biomarker_utility=t.biomarker_utility,
+            references=list(t.references),
+        ))
+
+    return KnowledgeTargetListResponse(
+        request_id=request_id,
+        timestamp=now,
+        targets=targets,
+        total=len(targets),
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/knowledge/cells -- Cell type data
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/knowledge/cells",
+    response_model=KnowledgeCellTypeListResponse,
+    tags=["Knowledge"],
+    summary="Cell type data",
+    description=(
+        "Returns all cell populations involved in cell therapy AE pathogenesis, "
+        "including activation states, surface markers, and roles in each AE type."
+    ),
+)
+async def knowledge_cells() -> KnowledgeCellTypeListResponse:
+    """Return all cell type definitions."""
+    from src.data.knowledge.cell_types import CELL_TYPE_REGISTRY
+
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    cell_types = []
+    for ct in CELL_TYPE_REGISTRY.values():
+        states = [
+            KnowledgeActivationState(
+                name=s.name,
+                description=s.description,
+                triggers=list(s.triggers),
+                secreted_factors=list(s.secreted_factors),
+                surface_markers=list(s.surface_markers),
+                functional_outcome=s.functional_outcome,
+                references=list(s.references),
+            )
+            for s in ct.activation_states
+        ]
+        cell_types.append(KnowledgeCellTypeResponse(
+            cell_id=ct.cell_id,
+            name=ct.name,
+            lineage=ct.lineage,
+            tissue=ct.tissue,
+            surface_markers=list(ct.surface_markers),
+            activation_states=states,
+            roles_in_ae=ct.roles_in_ae,
+            secreted_factors_baseline=list(ct.secreted_factors_baseline),
+            references=list(ct.references),
+        ))
+
+    return KnowledgeCellTypeListResponse(
+        request_id=request_id,
+        timestamp=now,
+        cell_types=cell_types,
+        total=len(cell_types),
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/knowledge/references -- Full citation database
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/knowledge/references",
+    response_model=KnowledgeReferenceListResponse,
+    tags=["Knowledge"],
+    summary="Full citation database",
+    description=(
+        "Returns all 22 PubMed references supporting the knowledge graph, "
+        "with authors, journals, key findings, and evidence grades."
+    ),
+)
+async def knowledge_references() -> KnowledgeReferenceListResponse:
+    """Return the full reference database."""
+    from src.data.knowledge.references import REFERENCES
+
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    refs = [
+        KnowledgeReferenceResponse(
+            pmid=r.pmid,
+            first_author=r.first_author,
+            year=r.year,
+            journal=r.journal,
+            title=r.title,
+            doi=r.doi,
+            key_finding=r.key_finding,
+            evidence_grade=r.evidence_grade,
+            tags=list(r.tags),
+        )
+        for r in REFERENCES.values()
+    ]
+
+    return KnowledgeReferenceListResponse(
+        request_id=request_id,
+        timestamp=now,
+        references=refs,
+        total=len(refs),
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/knowledge/overview -- Summary stats
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/knowledge/overview",
+    response_model=KnowledgeOverviewResponse,
+    tags=["Knowledge"],
+    summary="Knowledge graph overview",
+    description=(
+        "Returns summary statistics across the entire knowledge graph: "
+        "counts of pathways, mechanisms, targets, cell types, and references."
+    ),
+)
+async def knowledge_overview() -> KnowledgeOverviewResponse:
+    """Return summary statistics for the knowledge graph."""
+    from src.data.knowledge.pathways import PATHWAY_REGISTRY
+    from src.data.knowledge.mechanisms import MECHANISM_REGISTRY
+    from src.data.knowledge.molecular_targets import (
+        MOLECULAR_TARGET_REGISTRY,
+        get_druggable_targets,
+    )
+    from src.data.knowledge.cell_types import CELL_TYPE_REGISTRY
+    from src.data.knowledge.references import REFERENCES
+
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    total_steps = sum(len(pw.steps) for pw in PATHWAY_REGISTRY.values())
+    ae_types = set()
+    for pw in PATHWAY_REGISTRY.values():
+        ae_types.update(pw.ae_outcomes)
+    for mech in MECHANISM_REGISTRY.values():
+        ae_types.add(mech.ae_category.value)
+
+    therapy_types = set()
+    for mech in MECHANISM_REGISTRY.values():
+        therapy_types.add(mech.therapy_modality.value)
+
+    return KnowledgeOverviewResponse(
+        request_id=request_id,
+        timestamp=now,
+        pathway_count=len(PATHWAY_REGISTRY),
+        pathway_names=[pw.name for pw in PATHWAY_REGISTRY.values()],
+        total_pathway_steps=total_steps,
+        mechanism_count=len(MECHANISM_REGISTRY),
+        mechanism_names=[m.name for m in MECHANISM_REGISTRY.values()],
+        target_count=len(MOLECULAR_TARGET_REGISTRY),
+        druggable_target_count=len(get_druggable_targets()),
+        cell_type_count=len(CELL_TYPE_REGISTRY),
+        reference_count=len(REFERENCES),
+        ae_types_covered=sorted(ae_types),
+        therapy_types_covered=sorted(therapy_types),
+    )
+
+
 # ---------------------------------------------------------------------------
 # GET /api/v1/system/architecture -- System architecture metadata
 # ---------------------------------------------------------------------------
@@ -1072,7 +1522,7 @@ async def system_architecture() -> ArchitectureResponse:
     import time as _time
 
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # --- Modules ---
     modules = [

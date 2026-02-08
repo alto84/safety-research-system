@@ -9,6 +9,11 @@ All SLE trial data sourced from published studies 2022-2025. Oncology comparator
 data from approved CAR-T product pivotal trials (ZUMA-1, JULIET, TRANSCEND,
 ELIANA, KarMMa, CARTITUDE-1).
 
+Data version: 1.1.0 (2026-02-08)
+Changelog:
+  1.0.0 (2026-02-07): Initial curated dataset — 14 AE rates, 14 trials, 8 data sources
+  1.1.0 (2026-02-08): Fixed ICANS G3+ pooled rate (1.5% → 0.0%), added extended baseline AEs
+
 Usage:
     from data.sle_cart_studies import (
         ADVERSE_EVENT_RATES,
@@ -98,7 +103,7 @@ ADVERSE_EVENT_RATES: list[AdverseEventRate] = [
         crs_any_grade=56.0,
         crs_grade3_plus=2.1,
         icans_any_grade=3.0,
-        icans_grade3_plus=1.5,
+        icans_grade3_plus=0.0,  # No grade 3+ ICANS in any individual SLE study
         icahs_rate=0.0,
         licats_rate=0.0,
         source="Pooled analysis of published SLE CAR-T studies 2022-2025",
