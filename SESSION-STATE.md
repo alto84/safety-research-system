@@ -1,33 +1,29 @@
-# Session State — PSP Build (2026-02-08, Expansion Complete)
+# Session State — PSP Build (2026-02-08, Knowledge Graph + Architecture)
 
 ## Current Status
 
-**1183 tests passing. 14-tab dashboard with CDP/CSP. All features visually verified in Chrome.**
+**1282 tests passing. 15-tab dashboard. Knowledge graph with 47 signaling steps. All interactive features tested in Chrome.**
 
 ### What's New This Session
 
-1. **Cell Therapy Registry** — 12 therapy types, 21 AE profiles (`data/cell_therapy_registry.py`)
-2. **Model Registry** — 7 statistical approaches, all validated on gpuserver1 (`src/models/model_registry.py`)
-3. **Model Validation Framework** — Calibration, Brier score, coverage probability (`src/models/model_validation.py`)
-4. **CDP/CSP API Endpoints** — 5 new endpoints for clinical development plan support
-5. **Treatment Type Selector** — Dropdown at top of dashboard for therapy type selection
-6. **Clinical Safety Plan Tab** — Full CSP with 5 sections (risk summary, monitoring, eligibility, stopping rules, protocol design)
-7. **Dashboard Bug Fixes** — CI display, forest plot, CSP risk table all fixed
-8. **Kaplan-Meier Key Fix** — Renamed `events` to `event_indicators` to avoid collision with Bayesian models
-9. **Complete AE Baseline Data** — Added any-grade CRS, ICANS, infection, cytopenias to baseline risk
+1. **System Architecture Tab** — New Tab 15 with data flow diagram, module dependency graph, API catalog, model registry cards, system health (`GET /api/v1/system/architecture`)
+2. **Deep Knowledge Graph** — 4 signaling pathways (CRS, ICANS, HLH, BBB), 47 directed steps, 15 molecular targets, 9 cell types, 22 PubMed references, 6 mechanism chains
+3. **Claude Integration Options** — 5 integration paths documented (API narratives, Agent SDK, MCP server, dashboard chat, report generation)
+4. **Interactive Feature Testing** — Mitigation calculator, FAERS live query, therapy selector, risk assessment all verified
+5. **Rate Limiter Fix** — Test client now bypasses rate limiting (was causing 19 test failures)
 
 ### Test Results
-- **1183 tests passing** (up from 704)
-- Stopping rules, CDP endpoints, model validation, cell therapy registry all tested
-- Runtime: ~7.5 seconds
+- **1282 tests passing** (up from 1183)
+- 79 knowledge graph tests, 20 architecture tests added
+- Runtime: ~8 seconds
 
-### Dashboard (14 tabs total)
+### Dashboard (15 tabs total)
 - 9 patient-level tabs: Overview, Pre-Infusion, Day 1, CRS, ICANS, HLH, Hematologic, Discharge, Clinical Visit
-- 5 population-level tabs: Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, **Clinical Safety Plan**
-- Therapy type selector at top of dashboard
+- 6 population/system tabs: Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, Clinical Safety Plan, **System Architecture**
 - All tabs visually verified in Chrome via CDP
+- Interactive features tested: mitigation checkboxes, FAERS load, therapy selector, risk assessment
 
-### API Endpoints (13 total)
+### API Endpoints (24 total)
 Population:
 - GET `/api/v1/population/risk` — Baseline risk with mitigated estimates
 - POST `/api/v1/population/bayesian` — Custom Bayesian posterior
@@ -45,25 +41,27 @@ CDP/CSP:
 - GET `/api/v1/cdp/sample-size` — Sample size considerations
 - GET `/api/v1/therapies` — Available therapy types
 
-### Model Registry (7 models, all validated on gpuserver1)
-| Model | CRS G3+ Estimate | 95% CI |
-|-------|-------------------|--------|
-| Bayesian Beta-Binomial | 3.12% | [0.23, 9.52] |
-| Clopper-Pearson Exact | 2.13% | [0.05, 11.29] |
-| Wilson Score | 5.74% | [0.38, 11.11] |
-| DerSimonian-Laird RE | 3.73% | [0.30, 10.77] |
-| Empirical Bayes Shrinkage | 0.54% | [0.00, 1.58] |
-| Kaplan-Meier | 2.13% | [0.00, 6.25] |
-| Predictive Posterior | 3.12% | [0.00, 12.00] |
+System:
+- GET `/api/v1/system/architecture` — Full system metadata, module graph, endpoint catalog
+
+### Knowledge Graph (`src/data/knowledge/`)
+| Module | Content |
+|--------|---------|
+| `references.py` | 22 publications with PubMed IDs, evidence grades |
+| `cell_types.py` | 9 cell populations (CAR-T, macrophages, endothelial, neurons, NK, pericytes...) |
+| `molecular_targets.py` | 15 druggable targets (IL-6, IL-1β, IFN-γ, Ang-2, iCasp9...) |
+| `pathways.py` | 4 cascades: CRS (IL-6 trans-signaling), ICANS (BBB disruption), HLH (IFN-γ/IL-18 feedback), general |
+| `mechanisms.py` | 6 therapy-to-AE chains (CAR-T CD19, TCR-T, CAR-NK, gene therapy...) |
+| `graph_queries.py` | 6 query functions for pathway lookup, intervention points, biomarker rationale |
 
 ### Commits (all pushed to GitHub)
-1. `ecc63f9` — Fix forest plot and CI display bugs
-2. `93ddef9` — Cell therapy registry (12 types, 21 AE profiles)
-3. `b4e4c39` — CDP/CSP API endpoints, therapy selector, stopping rules
-4. `30c1124` — Therapy selector and Clinical Safety Plan dashboard tab
-5. `3d42956` — Fix Kaplan-Meier key collision
-6. `e9ff6c4` — Tests for stopping rules, CDP, model validation, cell therapy
-7. `0c2f067` — Fix CSP risk table CI display + complete AE baseline data
+1. `b01a723` — Rate limiter fix for test client + Claude integration options doc
+2. `42cc008` — System Architecture dashboard tab with live system metadata
+3. `5ffa2f8` — Deep scientific knowledge graph for cell therapy pathophysiology
+
+### Documents
+- `docs/claude-integration-options.md` — 5 Claude AI integration paths with code sketches
+- `docs/knowledge-graph-design.md` — Knowledge graph architecture and integration plan
 
 ## What's Done (Complete)
 
@@ -88,25 +86,36 @@ CDP/CSP:
 - 5 new API endpoints
 
 ### Phase 3: Bug Fixes & Chrome Testing (Complete)
-- Forest plot fixed to use actual API data format
-- CI display fixed across Population Risk, CSP tabs
-- All 14 tabs visually verified in Chrome
+- Forest plot, CI display, CSP risk table all fixed
 - Kaplan-Meier key collision fixed
+- All interactive features verified
+
+### Phase 4: Knowledge & Architecture (Complete)
+- System Architecture tab with live metadata
+- Deep knowledge graph with mechanistic pathways
+- Claude AI integration research complete
+- Rate limiter bug fixed
 
 ## What's Next
 
-### 1. Iteration & Polish
-- Test interactive features (mitigation checkboxes, FAERS load button)
-- Improve therapy type selector to dynamically update data
-- Add model comparison visualization to dashboard
+### 1. Claude AI Integration (see docs/claude-integration-options.md)
+- Phase 1: API narrative module + dashboard chat (1 week)
+- Phase 2: Report generation (DSUR, IND narratives) (1 week)
+- Phase 3: MCP server exposing PSP as tools (1 week)
+- Phase 4: Autonomous safety monitoring agents (2 weeks)
 
-### 2. Data Integration
+### 2. Knowledge Graph Integration
+- Add API endpoints to expose graph data
+- Dashboard visualization of signaling pathways
+- Connect mechanistic understanding to risk predictions
+- Literature mining for automated updates
+
+### 3. Data Integration
 - CIBMTR registry integration
 - ClinicalTrials.gov live API
 - Background rate estimation from RWD
-- Geographic signal analysis (FAERS vs EudraVigilance)
 
-### 3. gpuserver1 Heavy Computation
+### 4. gpuserver1 Heavy Computation
 - Full Monte Carlo validation across all 7 models
 - Cross-validation with leave-one-study-out
 - Model calibration plots
@@ -114,6 +123,6 @@ CDP/CSP:
 ## Repo State
 - **GitHub:** https://github.com/alto84/safety-research-system.git
 - **Branch:** master
-- **Latest commit:** `0c2f067`
-- **1183 tests passing** in 7.5s
+- **Latest commit:** `5ffa2f8`
+- **1282 tests passing** in 8s
 - **Server:** `python run_server.py` → http://localhost:8000/clinical
