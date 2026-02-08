@@ -17,6 +17,13 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # ---------------------------------------------------------------------------
+# H3 fix: Unified AE validation set across all schemas
+# ---------------------------------------------------------------------------
+
+VALID_ADVERSE_EVENTS = {"CRS", "ICANS", "HLH", "ICAHS", "LICATS"}
+
+
+# ---------------------------------------------------------------------------
 # Request schemas
 # ---------------------------------------------------------------------------
 
@@ -77,7 +84,7 @@ class VitalSigns(BaseModel):
 class Demographics(BaseModel):
     """Patient demographics."""
 
-    age_years: int | None = Field(None, description="Patient age in years", ge=0, le=120)
+    age_years: int | None = Field(None, description="Patient age in years", ge=0, le=150)
     weight_kg: float | None = Field(None, description="Weight in kg", ge=0)
     bsa_m2: float | None = Field(None, description="Body surface area (m^2)", ge=0)
 
@@ -125,10 +132,11 @@ class PatientDataRequest(BaseModel):
     @classmethod
     def validate_adverse_events(cls, v: list[str] | None) -> list[str] | None:
         if v is not None:
-            valid = {"CRS", "ICANS", "HLH"}
             for ae in v:
-                if ae.upper() not in valid:
-                    raise ValueError(f"Invalid adverse event '{ae}'. Must be one of: {valid}")
+                if ae.upper() not in VALID_ADVERSE_EVENTS:
+                    raise ValueError(
+                        f"Invalid adverse event '{ae}'. Must be one of: {VALID_ADVERSE_EVENTS}"
+                    )
         return v
 
 
@@ -307,10 +315,11 @@ class BayesianPosteriorRequest(BaseModel):
     @field_validator("adverse_event")
     @classmethod
     def validate_ae(cls, v: str) -> str:
-        valid = {"CRS", "ICANS", "ICAHS"}
         v_upper = v.upper()
-        if v_upper not in valid:
-            raise ValueError(f"Invalid adverse event '{v}'. Must be one of: {valid}")
+        if v_upper not in VALID_ADVERSE_EVENTS:
+            raise ValueError(
+                f"Invalid adverse event '{v}'. Must be one of: {VALID_ADVERSE_EVENTS}"
+            )
         return v_upper
 
     @model_validator(mode="after")
@@ -327,16 +336,25 @@ class PosteriorEstimateResponse(BaseModel):
     """Bayesian posterior estimate."""
 
     adverse_event: str
-    prior_alpha: float
-    prior_beta: float
-    posterior_alpha: float
-    posterior_beta: float
-    n_patients: int
-    n_events: int
-    mean_pct: float = Field(description="Posterior mean as percentage")
-    ci_low_pct: float = Field(description="95% credible interval lower bound (%)")
-    ci_high_pct: float = Field(description="95% credible interval upper bound (%)")
-    ci_width_pct: float = Field(description="Width of 95% credible interval (pp)")
+    prior_alpha: float = Field(gt=0)
+    prior_beta: float = Field(gt=0)
+    posterior_alpha: float = Field(gt=0)
+    posterior_beta: float = Field(gt=0)
+    n_patients: int = Field(ge=1, description="Total patients observed (positive)")
+    n_events: int = Field(ge=0, description="Observed events (non-negative)")
+    mean_pct: float = Field(description="Posterior mean as percentage", ge=0.0, le=100.0)
+    ci_low_pct: float = Field(description="95% credible interval lower bound (%)", ge=0.0, le=100.0)
+    ci_high_pct: float = Field(description="95% credible interval upper bound (%)", ge=0.0, le=100.0)
+    ci_width_pct: float = Field(description="Width of 95% credible interval (pp)", ge=0.0)
+
+    # H3 fix: Validate confidence interval ordering (lower < upper)
+    @model_validator(mode="after")
+    def ci_lower_le_upper(self) -> "PosteriorEstimateResponse":
+        if self.ci_low_pct > self.ci_high_pct:
+            raise ValueError(
+                f"CI lower bound ({self.ci_low_pct}) must be <= upper bound ({self.ci_high_pct})"
+            )
+        return self
 
 
 class BayesianPosteriorResponse(BaseModel):
@@ -367,9 +385,9 @@ class CorrelationDetail(BaseModel):
 
     mitigation_a: str
     mitigation_b: str
-    rho: float
-    naive_rr: float
-    corrected_rr: float
+    rho: float = Field(ge=0.0, le=1.0, description="Correlation coefficient in [0, 1]")
+    naive_rr: float = Field(ge=0.0)
+    corrected_rr: float = Field(ge=0.0)
 
 
 class MitigationAnalysisResponse(BaseModel):
@@ -378,17 +396,27 @@ class MitigationAnalysisResponse(BaseModel):
     request_id: str
     timestamp: datetime
     target_ae: str
-    baseline_risk_pct: float
-    mitigated_risk_pct: float
-    mitigated_risk_ci_low_pct: float
-    mitigated_risk_ci_high_pct: float
-    combined_rr: float
-    naive_multiplicative_rr: float
+    baseline_risk_pct: float = Field(ge=0.0, le=100.0)
+    mitigated_risk_pct: float = Field(ge=0.0, le=100.0)
+    mitigated_risk_ci_low_pct: float = Field(ge=0.0, le=100.0)
+    mitigated_risk_ci_high_pct: float = Field(ge=0.0, le=100.0)
+    combined_rr: float = Field(ge=0.0, description="Combined relative risk (0-1 = protective)")
+    naive_multiplicative_rr: float = Field(ge=0.0)
     correction_factor: float = Field(
         description="Ratio of corrected RR to naive RR (>1 means less benefit than naive)",
     )
     mitigations_applied: list[str]
     correlations_applied: list[CorrelationDetail]
+
+    # H3 fix: Validate CI ordering for mitigated risk
+    @model_validator(mode="after")
+    def mitigated_ci_ordering(self) -> "MitigationAnalysisResponse":
+        if self.mitigated_risk_ci_low_pct > self.mitigated_risk_ci_high_pct:
+            raise ValueError(
+                f"Mitigated risk CI lower ({self.mitigated_risk_ci_low_pct}) "
+                f"must be <= upper ({self.mitigated_risk_ci_high_pct})"
+            )
+        return self
 
 
 class EvidenceAccrualPoint(BaseModel):
@@ -397,16 +425,16 @@ class EvidenceAccrualPoint(BaseModel):
     label: str
     year: int
     quarter: str
-    n_cumulative_patients: int
+    n_cumulative_patients: int = Field(ge=1, description="Cumulative patient count (positive)")
     is_projected: bool
-    crs_mean_pct: float
-    crs_ci_low_pct: float
-    crs_ci_high_pct: float
-    crs_ci_width_pct: float
-    icans_mean_pct: float
-    icans_ci_low_pct: float
-    icans_ci_high_pct: float
-    icans_ci_width_pct: float
+    crs_mean_pct: float = Field(ge=0.0, le=100.0)
+    crs_ci_low_pct: float = Field(ge=0.0, le=100.0)
+    crs_ci_high_pct: float = Field(ge=0.0, le=100.0)
+    crs_ci_width_pct: float = Field(ge=0.0)
+    icans_mean_pct: float = Field(ge=0.0, le=100.0)
+    icans_ci_low_pct: float = Field(ge=0.0, le=100.0)
+    icans_ci_high_pct: float = Field(ge=0.0, le=100.0)
+    icans_ci_width_pct: float = Field(ge=0.0)
 
 
 class EvidenceAccrualResponse(BaseModel):
@@ -439,7 +467,7 @@ class PopulationRiskResponse(BaseModel):
     request_id: str
     timestamp: datetime
     indication: str
-    n_patients_pooled: int
+    n_patients_pooled: int = Field(ge=1, description="Pooled sample size (positive)")
     baseline_risks: dict[str, dict[str, Any]]
     mitigated_risks: dict[str, dict[str, Any]]
     default_mitigations: list[str]
@@ -451,15 +479,15 @@ class FAERSSignalResponse(BaseModel):
 
     product: str
     adverse_event: str
-    n_cases: int
-    prr: float
-    prr_ci_low: float
-    prr_ci_high: float
-    ror: float
-    ror_ci_low: float
-    ror_ci_high: float
-    ebgm: float
-    ebgm05: float
+    n_cases: int = Field(ge=0, description="Event count (non-negative)")
+    prr: float = Field(ge=0.0)
+    prr_ci_low: float = Field(ge=0.0)
+    prr_ci_high: float = Field(ge=0.0)
+    ror: float = Field(ge=0.0)
+    ror_ci_low: float = Field(ge=0.0)
+    ror_ci_high: float = Field(ge=0.0)
+    ebgm: float = Field(ge=0.0)
+    ebgm05: float = Field(ge=0.0)
     is_signal: bool
     signal_strength: str
 
@@ -871,3 +899,279 @@ class KnowledgeOverviewResponse(BaseModel):
     reference_count: int
     ae_types_covered: list[str]
     therapy_types_covered: list[str]
+
+
+# ---------------------------------------------------------------------------
+# Publication analysis schemas
+# ---------------------------------------------------------------------------
+
+class PublicationStudyData(BaseModel):
+    """Data for a single study in a forest plot."""
+
+    name: str
+    rate_pct: float
+    ci_low_pct: float
+    ci_high_pct: float
+    n: int
+    events: int = 0
+    weight: float = 0.0
+    is_pooled: bool = False
+
+
+class PublicationForestPlotData(BaseModel):
+    """Forest plot data for one indication group."""
+
+    indication: str
+    studies: list[PublicationStudyData]
+
+
+class PublicationModelResult(BaseModel):
+    """Result from a single risk estimation model."""
+
+    model_name: str
+    estimate_pct: float
+    ci_low_pct: float
+    ci_high_pct: float
+    ci_width_pct: float
+    method_type: str
+
+
+class PublicationCrossValidation(BaseModel):
+    """Cross-validation result for a single model."""
+
+    model: str
+    rmse_pct: float
+    mae_pct: float
+    coverage: float
+    n_folds: int
+
+
+class PublicationPriorComparison(BaseModel):
+    """Prior comparison entry."""
+
+    strategy: str
+    prior_alpha: float
+    prior_beta: float
+    posterior_mean_pct: float
+    ci_low_pct: float
+    ci_high_pct: float
+    ci_width_pct: float
+
+
+class PublicationEvidenceAccrualPoint(BaseModel):
+    """A single timepoint in the publication evidence accrual."""
+
+    timepoint: str
+    year: int
+    n_cumulative: int
+    events_cumulative: int
+    posterior_mean_pct: float
+    ci_low_pct: float
+    ci_high_pct: float
+    ci_width_pct: float
+    is_projected: bool
+
+
+class PublicationAERateRow(BaseModel):
+    """A row in the AE rates comparison table."""
+
+    indication: str
+    n: int
+    crs_any: str
+    crs_g3: str
+    icans_any: str
+    icans_g3: str
+
+
+class PublicationDemographicRow(BaseModel):
+    """A row in the demographics table."""
+
+    indication: str
+    trial: str
+    product: str
+    n: int
+    target: str
+    year: int
+
+
+class PublicationPairwiseComparison(BaseModel):
+    """A pairwise statistical comparison."""
+
+    comparison: str
+    ae_type: str
+    sle_rate_pct: float
+    comparator_rate_pct: float
+    difference_pp: float
+    p_value: float
+    significant: bool
+
+
+class PublicationHeterogeneity(BaseModel):
+    """Heterogeneity statistics for one AE type."""
+
+    ae_type: str
+    i_squared: float
+    cochran_q: float
+    tau_squared: float
+    n_studies: int
+    q_pvalue: float
+
+
+class PublicationReference(BaseModel):
+    """A reference from the analysis."""
+
+    pmid: str
+    citation: str
+
+
+class PublicationAnalysisResponse(BaseModel):
+    """Full publication analysis response."""
+
+    request_id: str
+    timestamp: datetime
+    data_summary: dict[str, Any]
+    model_results: list[PublicationModelResult]
+    cross_validation: list[PublicationCrossValidation]
+    prior_comparison: list[PublicationPriorComparison]
+    pairwise_comparisons: list[PublicationPairwiseComparison]
+    heterogeneity: list[PublicationHeterogeneity]
+    ae_rates: list[PublicationAERateRow]
+    demographics: list[PublicationDemographicRow]
+    evidence_accrual_crs: list[PublicationEvidenceAccrualPoint]
+    evidence_accrual_icans: list[PublicationEvidenceAccrualPoint]
+    limitations: list[str]
+    references: list[PublicationReference]
+    key_findings: dict[str, Any]
+
+
+class PublicationFigureResponse(BaseModel):
+    """Response for a specific publication figure's data."""
+
+    request_id: str
+    timestamp: datetime
+    figure_name: str
+    figure_title: str
+    data: Any
+
+
+# ---------------------------------------------------------------------------
+# Narrative generation schemas
+# ---------------------------------------------------------------------------
+
+class NarrativeRequest(BaseModel):
+    """Request for AI narrative generation.
+
+    Specifies which patient to generate a narrative for and optional context
+    to focus the narrative on specific adverse events or scores.
+    """
+
+    patient_id: str = Field(
+        ..., description="Patient identifier", min_length=1,
+    )
+    therapy_type: str = Field(
+        "CAR-T (CD19)",
+        description="Therapy modality (e.g. 'CAR-T (CD19)', 'TCR-T', 'CAR-NK')",
+    )
+    ae_types: list[str] = Field(
+        default_factory=lambda: ["CRS", "ICANS"],
+        description="Adverse event types to include in narrative",
+    )
+    include_mechanisms: bool = Field(
+        True, description="Include mechanistic pathway context",
+    )
+    include_monitoring: bool = Field(
+        True, description="Include recommended monitoring schedule",
+    )
+    risk_scores: dict[str, Any] | None = Field(
+        None, description="Pre-computed risk scores to interpret (from /predict)",
+    )
+    lab_values: dict[str, float] | None = Field(
+        None, description="Current lab values for context",
+    )
+
+
+class NarrativeSection(BaseModel):
+    """A single section within a generated narrative."""
+
+    title: str
+    content: str
+    references: list[str] = Field(default_factory=list)
+
+
+class NarrativeResponse(BaseModel):
+    """Response containing a structured clinical narrative.
+
+    Generated from template-based rules with a clear interface for future
+    Claude API integration. Each section can be independently reviewed.
+    """
+
+    request_id: str
+    timestamp: datetime
+    patient_id: str
+    executive_summary: str = Field(
+        description="1-2 paragraph high-level summary of the patient's risk profile",
+    )
+    risk_narrative: str = Field(
+        description="Detailed interpretation of risk scores in clinical context",
+    )
+    mechanistic_context: str = Field(
+        description="Biological mechanism chains relevant to this patient's therapy",
+    )
+    recommended_monitoring: str = Field(
+        description="Monitoring recommendations based on risk profile and AE timing",
+    )
+    references: list[str] = Field(
+        default_factory=list,
+        description="PubMed citations supporting the narrative",
+    )
+    sections: list[NarrativeSection] = Field(
+        default_factory=list,
+        description="Additional structured sections",
+    )
+    generation_method: str = Field(
+        "template_rules_v1",
+        description="How the narrative was generated (template_rules_v1 or claude_api)",
+    )
+    disclaimer: str = Field(
+        default="AI-generated interpretation. Not a substitute for clinical judgment.",
+    )
+
+
+class ClinicalBriefingSection(BaseModel):
+    """A section within a clinical briefing document."""
+
+    heading: str
+    body: str
+    data_points: dict[str, Any] = Field(default_factory=dict)
+    references: list[str] = Field(default_factory=list)
+
+
+class ClinicalBriefing(BaseModel):
+    """Comprehensive clinical briefing for a specific patient.
+
+    Combines risk assessment, mechanistic context, population-level data,
+    and monitoring recommendations into a single briefing document suitable
+    for clinical team review.
+    """
+
+    request_id: str
+    timestamp: datetime
+    patient_id: str
+    therapy_type: str
+    briefing_title: str
+    risk_level: str
+    composite_score: float | None = None
+    sections: list[ClinicalBriefingSection] = Field(default_factory=list)
+    intervention_points: list[dict[str, Any]] = Field(
+        default_factory=list,
+        description="Druggable targets and intervention opportunities",
+    )
+    timing_expectations: dict[str, str] = Field(
+        default_factory=dict,
+        description="Expected AE onset timing for each AE type",
+    )
+    key_references: list[str] = Field(default_factory=list)
+    generation_method: str = "template_rules_v1"
+    disclaimer: str = Field(
+        default="AI-generated interpretation. Not a substitute for clinical judgment.",
+    )

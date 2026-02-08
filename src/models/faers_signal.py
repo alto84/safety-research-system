@@ -702,6 +702,18 @@ async def _get_total_ae_reports(adverse_event: str) -> int:
     return 0
 
 
+# H5 fix: FAERS database size estimation constants.
+# The NAUSEA multiplier (10x) is an empirical approximation based on NAUSEA
+# comprising ~10% of all FAERS reports as of Q4 2024 (~3M nausea / ~30M total).
+# The 20M fallback is a conservative lower bound.
+# Source: openFDA FAERS database quarterly snapshots (https://open.fda.gov/data/faers/).
+# TODO: Replace with direct total query (unrestricted search with limit=1 and
+# reading meta.results.total) for more reliable estimates. The NAUSEA proportion
+# may shift as reporting patterns change, especially for cell therapy products.
+_FAERS_NAUSEA_MULTIPLIER: int = 10
+_FAERS_FALLBACK_TOTAL: int = 20_000_000
+
+
 async def _get_total_database_reports() -> int:
     """Get approximate total FAERS database size.
 
@@ -709,8 +721,16 @@ async def _get_total_database_reports() -> int:
     to estimate the full database size.  The true FAERS database contains
     ~30 million reports.
 
+    The NAUSEA-based estimation is an approximation. NAUSEA typically represents
+    ~10% of all FAERS reports, so the count is multiplied by
+    ``_FAERS_NAUSEA_MULTIPLIER`` (default 10). If the NAUSEA proportion shifts
+    (e.g. different reporting patterns for cell therapy products), the estimate
+    will be biased. A more reliable approach would be to query the openFDA API
+    with no search filter and read ``meta.results.total``.
+
     Returns:
-        Estimated total report count.  Falls back to 20,000,000 on error.
+        Estimated total report count.  Falls back to ``_FAERS_FALLBACK_TOTAL``
+        on error.
     """
     cache_key = "faers_total_database"
     cached = _cache_get(cache_key)
@@ -724,12 +744,11 @@ async def _get_total_database_reports() -> int:
     data = await _http_get_json(OPENFDA_BASE, params)
     if data:
         total = data.get("meta", {}).get("results", {}).get("total", 0)
-        # Use a conservative multiplier; NAUSEA covers ~1/10 of all reports
-        estimated_total = max(total * 10, 20_000_000)
+        estimated_total = max(total * _FAERS_NAUSEA_MULTIPLIER, _FAERS_FALLBACK_TOTAL)
         _cache_set(cache_key, estimated_total)
         return estimated_total
 
-    return 20_000_000  # fallback
+    return _FAERS_FALLBACK_TOTAL
 
 
 async def _get_drug_ae_count(
