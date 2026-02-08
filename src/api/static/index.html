@@ -5201,23 +5201,30 @@ function renderSciPathwaySVG(pw) {
     if (inDeg[e.target] !== undefined) inDeg[e.target]++;
   });
 
-  // BFS layers
+  // BFS layers (with cycle protection for feedback loops)
   const layers = {};
   const queue = [];
+  const visited = {};
   const entrySet = new Set(pw.entry_points);
+  const maxIter = nodes.length * nodes.length + 100; // safety limit
   // Start from nodes with inDeg 0 or entry points
-  nodes.forEach(n => { if (inDeg[n.id] === 0 || entrySet.has(n.id)) { queue.push(n.id); layers[n.id] = 0; } });
+  nodes.forEach(n => { if (inDeg[n.id] === 0 || entrySet.has(n.id)) { queue.push(n.id); layers[n.id] = 0; visited[n.id] = 0; } });
   let maxLayer = 0;
-  while (queue.length) {
+  let iter = 0;
+  while (queue.length && iter < maxIter) {
+    iter++;
     const cur = queue.shift();
     const curLayer = layers[cur] || 0;
     (adj[cur] || []).forEach(tgt => {
       const newLayer = curLayer + 1;
-      if (layers[tgt] === undefined || newLayer > layers[tgt]) {
+      // Only re-enqueue if we haven't visited this node too many times
+      const visitCount = visited[tgt] || 0;
+      if (visitCount < 2 && (layers[tgt] === undefined || newLayer > layers[tgt])) {
         layers[tgt] = newLayer;
         if (newLayer > maxLayer) maxLayer = newLayer;
+        visited[tgt] = visitCount + 1;
+        queue.push(tgt);
       }
-      queue.push(tgt);
     });
   }
   // Ensure all nodes have a layer
