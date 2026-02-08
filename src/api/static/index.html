@@ -3065,7 +3065,7 @@ async function loadPopulationRisk(containerId) {
         <div class="pop-metric-card ${cls}">
           <div class="pop-metric-label">${ae.icon} ${ae.label}</div>
           <div class="pop-metric-value">${d.estimate}%</div>
-          <div class="pop-metric-sub">95% CI: ${d.ci_low !== undefined ? d.ci_low + '% - ' + d.ci_high + '%' : 'N/A'}</div>
+          <div class="pop-metric-sub">95% CI: ${d.ci95 ? d.ci95[0] + '% - ' + d.ci95[1] + '%' : (d.ci_low !== undefined ? d.ci_low + '% - ' + d.ci_high + '%' : 'N/A')}</div>
           <div class="pop-metric-sub" style="margin-top:4px;">
             ${d.evidence_grade ? '<em>Evidence: ' + d.evidence_grade + '</em>' : ''}
             ${d.source ? '<br>Source: ' + d.source : ''}
@@ -3630,12 +3630,13 @@ async function loadComparisonData() {
 }
 
 function buildForestPlot(data, note) {
-  const W = 700, rowH = 28, pad = { top: 30, right: 30, bottom: 30, left: 180 };
+  // Data format: [{label, category, crs_grade3_plus, icans_grade3_plus, n_patients, ...}]
+  const W = 700, rowH = 28, pad = { top: 40, right: 30, bottom: 30, left: 180 };
   const H = pad.top + data.length * rowH + pad.bottom;
   const cW = W - pad.left - pad.right;
 
-  // Find max rate for scale
-  const allRates = data.flatMap(d => [d.sle_rate || 0, d.oncology_rate || 0, d.sle_ci_high || 0, d.oncology_ci_high || 0]);
+  // Find max rate for scale across CRS and ICANS G3+
+  const allRates = data.flatMap(d => [d.crs_grade3_plus || 0, d.icans_grade3_plus || 0]);
   const maxRate = Math.max(...allRates, 10);
   const xMax = Math.ceil(maxRate / 10) * 10 + 10;
 
@@ -3651,34 +3652,32 @@ function buildForestPlot(data, note) {
   let rows = '';
   data.forEach((d, i) => {
     const y = yPos(i);
+    const isAutoimmune = d.category === 'Autoimmune';
+    const labelColor = isAutoimmune ? 'var(--primary)' : 'var(--text)';
     // Label
-    rows += `<text x="${pad.left - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--text)">${d.ae_type || d.label || 'AE ' + i}</text>`;
+    rows += `<text x="${pad.left - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="${labelColor}" font-weight="${isAutoimmune ? '600' : '400'}">${d.label || 'Unknown'}</text>`;
     // Row background
     if (i % 2 === 0) {
       rows += `<rect x="${pad.left}" y="${y - rowH / 2}" width="${cW}" height="${rowH}" fill="var(--surface-hover)" opacity="0.5" />`;
     }
-    // SLE bar (blue)
-    if (d.sle_rate !== undefined) {
-      rows += `<circle cx="${xPos(d.sle_rate)}" cy="${y - 4}" r="5" fill="var(--primary)" opacity="0.8" />`;
-      if (d.sle_ci_low !== undefined && d.sle_ci_high !== undefined) {
-        rows += `<line x1="${xPos(d.sle_ci_low)}" y1="${y - 4}" x2="${xPos(d.sle_ci_high)}" y2="${y - 4}" stroke="var(--primary)" stroke-width="1.5" />`;
-      }
+    // CRS G3+ dot (red/orange circle)
+    if (d.crs_grade3_plus !== undefined) {
+      const r = Math.max(4, Math.min(8, Math.sqrt(d.n_patients || 20) * 1.2));
+      rows += `<circle cx="${xPos(d.crs_grade3_plus)}" cy="${y - 3}" r="${r}" fill="var(--danger)" opacity="0.7" />`;
     }
-    // Oncology bar (orange)
-    if (d.oncology_rate !== undefined) {
-      rows += `<circle cx="${xPos(d.oncology_rate)}" cy="${y + 5}" r="5" fill="var(--moderate)" opacity="0.8" />`;
-      if (d.oncology_ci_low !== undefined && d.oncology_ci_high !== undefined) {
-        rows += `<line x1="${xPos(d.oncology_ci_low)}" y1="${y + 5}" x2="${xPos(d.oncology_ci_high)}" y2="${y + 5}" stroke="var(--moderate)" stroke-width="1.5" />`;
-      }
+    // ICANS G3+ dot (blue diamond)
+    if (d.icans_grade3_plus !== undefined && d.icans_grade3_plus > 0) {
+      const dx = xPos(d.icans_grade3_plus);
+      rows += `<polygon points="${dx},${y + 2} ${dx + 5},${y + 7} ${dx},${y + 12} ${dx - 5},${y + 7}" fill="var(--primary)" opacity="0.7" />`;
     }
   });
 
   // Legend
   let legend = `
-    <circle cx="${pad.left + 10}" cy="${pad.top - 14}" r="5" fill="var(--primary)" />
-    <text x="${pad.left + 20}" y="${pad.top - 10}" font-size="11" fill="var(--text)">SLE CAR-T</text>
-    <circle cx="${pad.left + 110}" cy="${pad.top - 14}" r="5" fill="var(--moderate)" />
-    <text x="${pad.left + 120}" y="${pad.top - 10}" font-size="11" fill="var(--text)">Oncology CAR-T</text>
+    <circle cx="${pad.left + 10}" cy="${pad.top - 18}" r="5" fill="var(--danger)" opacity="0.7" />
+    <text x="${pad.left + 20}" y="${pad.top - 14}" font-size="11" fill="var(--text)">CRS Grade 3+</text>
+    <polygon points="${pad.left + 130},${pad.top - 23} ${pad.left + 135},${pad.top - 18} ${pad.left + 130},${pad.top - 13} ${pad.left + 125},${pad.top - 18}" fill="var(--primary)" opacity="0.7" />
+    <text x="${pad.left + 142}" y="${pad.top - 14}" font-size="11" fill="var(--text)">ICANS Grade 3+</text>
   `;
 
   return `
