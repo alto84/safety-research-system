@@ -397,16 +397,24 @@ async def mitigation_analysis(
                 ))
 
     # Monte Carlo for uncertainty
-    # H2 fix: Derive posterior parameters dynamically from actual baseline data
-    # for the target AE, instead of hardcoding CRS-specific event counts.
+    # Derive posterior parameters dynamically from actual pooled baseline data
+    # for the target AE, using the rate fields from the pooled SLE entry.
     prior = _PRIOR_MAP.get(target_ae_upper, CRS_PRIOR)
     _pooled = ADVERSE_EVENT_RATES[0]  # Pooled SLE entry
-    _ae_event_map = {
-        "CRS": (1, _pooled.n_patients),       # 1 CRS G3+ event in 47 patients
-        "ICANS": (0, _pooled.n_patients),      # 0 ICANS G3+ events in 47 patients
-        "ICAHS": (0, _pooled.n_patients),      # 0 ICAHS events in 47 patients
+    _n_total = _pooled.n_patients
+
+    # Map AE type -> rate field on the pooled AdverseEventRate record.
+    # Events are derived from (rate_pct / 100) * n_patients, rounded to the
+    # nearest integer, so they stay in sync with the curated data rather
+    # than being hardcoded constants.
+    _ae_rate_field_map: dict[str, str] = {
+        "CRS": "crs_grade3_plus",
+        "ICANS": "icans_grade3_plus",
+        "ICAHS": "icahs_rate",
     }
-    _n_events, _n_total = _ae_event_map.get(target_ae_upper, (1, _pooled.n_patients))
+    _rate_field = _ae_rate_field_map.get(target_ae_upper, "crs_grade3_plus")
+    _rate_pct = getattr(_pooled, _rate_field, 0.0)
+    _n_events = round(_rate_pct / 100.0 * _n_total)
     mc_result = monte_carlo_mitigated_risk(
         baseline_alpha=prior.alpha + _n_events,
         baseline_beta=prior.beta + (_n_total - _n_events),
