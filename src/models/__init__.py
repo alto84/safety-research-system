@@ -17,6 +17,8 @@ Models:
 Population-level risk models:
     bayesian_risk:      Beta-Binomial Bayesian risk estimation
     mitigation_model:   Correlated mitigation combination model
+    model_registry:     Multi-method risk estimation registry (7 models)
+    model_validation:   Calibration, scoring, coverage, cross-validation
 
 FAERS signal detection:
     faers_signal:       Disproportionality analysis via openFDA API
@@ -57,6 +59,21 @@ from src.models.faers_signal import (
     classify_signal,
     get_faers_signals,
     get_faers_summary,
+)
+from src.models.model_registry import (
+    MODEL_REGISTRY,
+    RiskModel,
+    compare_models,
+    estimate_risk,
+    list_models,
+)
+from src.models.model_validation import (
+    brier_score,
+    calibration_check,
+    coverage_probability,
+    leave_one_out_cv,
+    model_comparison,
+    sequential_prediction_test,
 )
 from src.models.mitigation_model import (
     MITIGATION_CORRELATIONS,
@@ -107,6 +124,19 @@ __all__ = [
     "combine_multiple_rrs",
     "monte_carlo_mitigated_risk",
     "calculate_mitigated_risk",
+    # Model registry
+    "MODEL_REGISTRY",
+    "RiskModel",
+    "estimate_risk",
+    "compare_models",
+    "list_models",
+    # Model validation
+    "calibration_check",
+    "brier_score",
+    "coverage_probability",
+    "leave_one_out_cv",
+    "model_comparison",
+    "sequential_prediction_test",
     # FAERS signal detection
     "FAERSSignal",
     "FAERSSummary",
