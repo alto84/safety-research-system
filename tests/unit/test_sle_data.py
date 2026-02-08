@@ -232,10 +232,10 @@ class TestGetSLEBaselineRisk:
             assert entry["ci95"][0] >= 0.0
             assert entry["ci95"][1] >= 0.0
 
-    def test_crs_estimate_is_2_1(self):
-        """CRS grade 3+ point estimate from the pooled analysis is 2.1%."""
+    def test_crs_g3_estimate_is_0(self):
+        """CRS grade 3+ point estimate is 0.0% (0/47 events in all SLE studies)."""
         result = get_sle_baseline_risk()
-        assert result["crs_grade3_plus"]["estimate"] == pytest.approx(2.1)
+        assert result["crs_grade3_plus"]["estimate"] == pytest.approx(0.0)
 
     def test_zero_event_rates_have_rule_of_3_upper_bound(self):
         """For zero-event rates, the upper bound should reflect rule-of-3."""

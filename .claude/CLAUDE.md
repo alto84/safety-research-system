@@ -11,8 +11,8 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 - **Models:** `src/models/` — 7-model risk registry, Bayesian risk, correlated mitigation, FAERS signal detection, ensemble scoring, model validation
 - **Data:** `data/sle_cart_studies.py` — curated clinical data; `data/cell_therapy_registry.py` — 12 therapy types, 21 AE profiles
 - **Knowledge Graph:** `src/data/knowledge/` — 4 signaling pathways, 47 directed steps, 15 molecular targets, 9 cell types, 22 PubMed references
-- **Tests:** `tests/` — pytest, 1282+ tests, run with `python -m pytest tests/ -q`
-- **API:** `src/api/` — FastAPI app with 24+ endpoints, Pydantic schemas, rate-limiting middleware
+- **Tests:** `tests/` — pytest, 1400+ tests, run with `python -m pytest tests/ -q`
+- **API:** `src/api/` — FastAPI app with 33 endpoints, Pydantic schemas, rate-limiting middleware
 - **Analysis:** `analysis/` — Publication-ready risk model analyses
 
 ## Design Principles
@@ -42,8 +42,9 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 | `model_validation.py` | Scientific model testing | `calibration_check()`, `brier_score()`, `coverage_probability()` |
 | `sle_cart_studies.py` | Clinical trial data, AE rates, data sources | `get_sle_baseline_risk()`, `CLINICAL_TRIALS` |
 | `cell_therapy_registry.py` | 12 therapy types + AE taxonomy | `THERAPY_TYPES`, `AE_TAXONOMY` |
-| `population_routes.py` | Population + CDP + system API endpoints | 24+ routes |
-| `ensemble_model.py` | Multi-model patient-level scoring | `compute_safety_index()` |
+| `population_routes.py` | Population + CDP + knowledge + publication + narrative endpoints | 25 routes |
+| `ensemble_runner.py` | Two-layer biomarker scoring ensemble | `BiomarkerEnsembleRunner`, `EnsembleResult` |
+| `narrative_engine.py` | Template-based clinical narrative generation | `generate_narrative()`, `generate_briefing()` |
 
 ## Knowledge Graph (`src/data/knowledge/`)
 | Module | Content |
@@ -54,19 +55,22 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 | `pathways.py` | 4 cascades: CRS IL-6 trans-signaling, ICANS BBB disruption, HLH IFN-γ feedback, general |
 | `mechanisms.py` | 6 therapy-to-AE chains (CAR-T CD19, TCR-T, CAR-NK, gene therapy) |
 | `graph_queries.py` | Query API: `get_pathway_for_ae()`, `get_intervention_points()`, `get_mechanism_chain()` |
+| `integration.py` | Knowledge-to-model bridge: `get_mechanistic_context()`, `get_narrative_context()` |
 
-## Dashboard (15+ tabs)
+## Dashboard (17 tabs)
 - **Patient-level (9):** Overview, Pre-Infusion, Day 1 Monitor, CRS Monitor, ICANS, HLH Screen, Hematologic, Discharge, Clinical Visit
-- **Population-level (6+):** Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, Clinical Safety Plan, System Architecture, Scientific Basis
+- **Population-level (8):** Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, Clinical Safety Plan, System Architecture, Scientific Basis, Publication Analysis
 - Therapy type selector at top (8 therapy types)
 - All charts: vanilla SVG, data from API via `fetch()`
 
-## API Endpoints (24+)
-- Patient: `/api/v1/predict`, `/api/v1/scores/*`, `/api/v1/patient/*`
-- Population: `/api/v1/population/*` (risk, bayesian, mitigations, evidence-accrual, trials, comparison)
+## API Endpoints (33)
+- Patient: `/api/v1/predict`, `/api/v1/predict/batch`, `/api/v1/scores/easix`, `/api/v1/scores/hscore`, `/api/v1/scores/car-hematotox`, `/api/v1/patient/{patient_id}/timeline`, `/api/v1/models/status`
+- Population: `/api/v1/population/risk`, `/api/v1/population/bayesian`, `/api/v1/population/mitigations`, `/api/v1/population/mitigations/strategies`, `/api/v1/population/evidence-accrual`, `/api/v1/population/trials`, `/api/v1/population/comparison`
 - Signals: `/api/v1/signals/faers`
-- CDP/CSP: `/api/v1/cdp/*` (monitoring-schedule, eligibility-criteria, stopping-rules, sample-size)
-- Knowledge: `/api/v1/knowledge/*` (pathways, mechanisms, targets, cells, references)
+- CDP/CSP: `/api/v1/cdp/monitoring-schedule`, `/api/v1/cdp/eligibility-criteria`, `/api/v1/cdp/stopping-rules`, `/api/v1/cdp/sample-size`
+- Knowledge: `/api/v1/knowledge/pathways`, `/api/v1/knowledge/pathways/{pathway_id}`, `/api/v1/knowledge/mechanisms`, `/api/v1/knowledge/targets`, `/api/v1/knowledge/cells`, `/api/v1/knowledge/references`, `/api/v1/knowledge/overview`
+- Publication: `/api/v1/publication/analysis`, `/api/v1/publication/figures/{figure_name}`
+- Narratives: `/api/v1/narratives/generate`, `/api/v1/narratives/patient/{patient_id}/briefing`
 - System: `/api/v1/system/architecture`, `/api/v1/therapies`, `/api/v1/health`
 
 ## Claude AI Integration (see `docs/claude-integration-options.md`)

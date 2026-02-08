@@ -530,8 +530,11 @@ def kaplan_meier(data: dict[str, Any]) -> dict[str, Any]:
         censored_before = sum(
             1 for ti, ei in records if not ei and ti < t
         )
-        # Simple approach: count at risk and events at each distinct time
-        # At risk: those with time >= t
+        # At-risk recomputed per event time: O(n) per distinct time, giving
+        # O(n*k) total where k = number of distinct event times.  Acceptable
+        # for current dataset sizes (n < 1000).
+        # TODO: Optimise for larger datasets by maintaining a running at-risk
+        # count decremented at each step, achieving O(n log n) overall.
         at_risk = sum(1 for ti, _ in records if ti >= t)
         events_at_t = sum(1 for ti, ei in records if ti == t and ei)
 

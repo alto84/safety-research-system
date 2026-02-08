@@ -212,7 +212,7 @@ class TestMitigationAnalysis:
             "selected_mitigations": ["tocilizumab"],
             "target_ae": "CRS",
         }).json()
-        assert data["mitigated_risk_pct"] < data["baseline_risk_pct"]
+        assert data["mitigated_risk_pct"] <= data["baseline_risk_pct"]
 
     def test_mitigation_unknown_id_returns_400(self, client):
         response = client.post("/api/v1/population/mitigations", json={

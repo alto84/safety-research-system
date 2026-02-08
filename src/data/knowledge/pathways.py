@@ -636,6 +636,17 @@ TNF_NFKB_AMPLIFICATION = SignalingPathway(
 # Registry
 # ---------------------------------------------------------------------------
 
+# Known pathway coverage gaps (future work):
+#   - B-cell aplasia / hypogammaglobulinemia: the most common long-term
+#     CD19 CAR-T toxicity (100% incidence).  A mechanism chain exists
+#     (CART_CD19_B_CELL_APLASIA) but no signaling pathway is modelled yet.
+#   - Prolonged cytopenias: ~30% of SLE patients; mechanism involves
+#     hematopoietic stem cell niche disruption and sustained inflammation.
+#   - Infection complications: ~12.8% in SLE cohorts, secondary to B-cell
+#     aplasia and prolonged neutropenia.  Requires immunodeficiency pathway.
+#   - T-cell lymphoma: recently identified FDA safety signal (Nov 2023);
+#     monitored in FAERS but lacks a mechanistic pathway model.
+
 PATHWAY_REGISTRY: dict[str, SignalingPathway] = {
     pw.pathway_id: pw for pw in [
         IL6_TRANS_SIGNALING,

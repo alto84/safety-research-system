@@ -100,15 +100,15 @@ ADVERSE_EVENT_RATES: list[AdverseEventRate] = [
         product="Anti-CD19 CAR-T (pooled)",
         trial="SLE Pooled Analysis",
         n_patients=47,
-        crs_any_grade=56.0,
-        crs_grade3_plus=2.1,
-        icans_any_grade=3.0,
+        crs_any_grade=55.2,
+        crs_grade3_plus=0.0,
+        icans_any_grade=0.0,
         icans_grade3_plus=0.0,  # No grade 3+ ICANS in any individual SLE study
         icahs_rate=0.0,
         licats_rate=0.0,
         source="Pooled analysis of published SLE CAR-T studies 2022-2025",
         year=2025,
-        n_events=1,
+        n_events=0,
         source_table="Table 1 (pooled)",
     ),
     AdverseEventRate(
@@ -781,16 +781,16 @@ def get_sle_baseline_risk() -> dict:
     """
     return {
         "crs_any": {
-            "estimate": 56.0,
-            "ci95": [40.9, 70.4],  # Any-grade CRS from pooled SLE (n=47)
+            "estimate": 55.2,
+            "ci95": [40.1, 69.8],  # Any-grade CRS from pooled SLE (n=47), Clopper-Pearson
         },
         "crs_grade3_plus": {
-            "estimate": 2.1,
-            "ci95": [0.3, 7.4],
+            "estimate": 0.0,
+            "ci95": [0.0, 6.2],  # 0/47 events; upper bound from Clopper-Pearson: 6.2%
         },
         "icans_any": {
-            "estimate": 3.0,
-            "ci95": [0.4, 10.5],  # Any-grade ICANS from pooled SLE (n=47)
+            "estimate": 0.0,
+            "ci95": [0.0, 6.2],  # 0/47 events; no ICANS any grade in individual SLE studies
         },
         "icans_grade3_plus": {
             "estimate": 0.0,
