@@ -316,7 +316,27 @@ def compute_posterior(
         ci_low = beta_dist.ppf(0.025, a, b)
         ci_high = beta_dist.ppf(0.975, a, b)
     else:
-        # Fallback: normal approximation (less accurate for small samples)
+        # Fallback: normal approximation.
+        # WARNING (M1): The normal approximation to the Beta distribution is
+        # inappropriate for small effective sample sizes because the posterior
+        # can be severely skewed (e.g., Beta(0.21, 6.29) after 0 events in 5
+        # patients).  The approximation underestimates the upper CI bound and
+        # can produce negative lower bounds that get clipped to zero.  We
+        # require n >= 30 for this fallback; for smaller samples the exact
+        # Beta CDF (via scipy) is required.
+        effective_sample_size = a + b
+        if effective_sample_size < 30:
+            raise RuntimeError(
+                f"Normal approximation fallback is not appropriate for small "
+                f"effective sample sizes (alpha + beta = {effective_sample_size:.2f} "
+                f"< 30).  Install scipy for exact Beta quantiles: "
+                f"pip install scipy"
+            )
+        logger.warning(
+            "Using normal approximation for Beta(%.2f, %.2f) CI; "
+            "install scipy for exact quantiles.",
+            a, b,
+        )
         variance = (a * b) / ((a + b) ** 2 * (a + b + 1))
         std = math.sqrt(variance)
         ci_low = max(0.0, mean - 1.96 * std)

@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import logging
 import pathlib
+import time as _time
 import uuid
 from datetime import datetime, timezone
 from typing import Any
@@ -102,6 +103,7 @@ from src.models.bayesian_risk import (
 from src.models.mitigation_model import (
     MITIGATION_STRATEGIES,
     calculate_mitigated_risk,
+    combine_correlated_rr,
     combine_multiple_rrs,
     get_mitigation_correlation,
     monte_carlo_mitigated_risk,
@@ -115,6 +117,16 @@ from data.sle_cart_studies import (
     get_trial_summary,
 )
 from data.cell_therapy_registry import THERAPY_TYPES
+from src.models.model_registry import MODEL_REGISTRY as _mr
+from src.data.knowledge.pathways import PATHWAY_REGISTRY
+from src.data.knowledge.mechanisms import MECHANISM_REGISTRY
+from src.data.knowledge.molecular_targets import (
+    MOLECULAR_TARGET_REGISTRY,
+    get_druggable_targets,
+)
+from src.data.knowledge.cell_types import CELL_TYPE_REGISTRY
+from src.data.knowledge.references import REFERENCES
+from src.api.narrative_engine import generate_narrative, generate_briefing
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +144,6 @@ def _count_tests() -> tuple[int, int, int, int]:
         Tuple of (total_tests, test_files, unit_tests, integration_tests).
         Returns (0, 0, 0, 0) on any error.
     """
-    import pathlib
     try:
         tests_dir = pathlib.Path(__file__).resolve().parents[2] / "tests"
         if not tests_dir.is_dir():
@@ -383,7 +394,6 @@ async def mitigation_analysis(
             rho = get_mitigation_correlation(applicable_ids[i], applicable_ids[j])
             if rho > 0.0:
                 # Compute what this pair alone would give
-                from src.models.mitigation_model import combine_correlated_rr
                 pair_naive = applicable_rrs[i] * applicable_rrs[j]
                 pair_corrected = combine_correlated_rr(
                     applicable_rrs[i], applicable_rrs[j], rho,
@@ -1164,7 +1174,42 @@ async def cdp_sample_size(
 # ===========================================================================
 
 def _classify_node_type(entity: str) -> str:
-    """Classify a pathway node entity into a visual type category."""
+    """Classify a pathway node entity into a visual type category.
+
+    This function uses keyword-based heuristics to assign a visual category
+    to each node in a signaling pathway graph.  The categories drive
+    dashboard rendering (icon shape, color) and are not used for any
+    quantitative analysis.
+
+    Heuristic approach:
+        The entity name is checked against ordered keyword lists for each
+        category: cell, receptor, kinase, process, biomarker.  The first
+        matching category wins; if nothing matches the default is "cytokine".
+
+    Known limitations:
+        - Order-dependent: An entity matching keywords in multiple categories
+          is assigned to whichever category appears first in the if-chain.
+          For example, "STAT3_phosphorylation" would be classified as
+          "kinase" (matching "STAT") rather than "process" (matching
+          "phosphorylation") because the kinase check precedes the process
+          check.
+        - Fragile with new entities: Adding new pathway nodes requires
+          verifying that existing keyword lists produce the correct
+          classification.  There is no validation or unit test coverage
+          for classification correctness.
+        - Ideally, the node type should be stored as a field in the pathway
+          data structure (``PathwayStep``) rather than inferred at render
+          time from the entity name.  This is tracked as a future
+          improvement (see team-of-critics-review.md, item M9).
+
+    Args:
+        entity: The pathway node entity name (e.g. "IL-6", "macrophage",
+            "NF-kB_activation").
+
+    Returns:
+        One of: "cell", "receptor", "kinase", "process", "biomarker",
+        or "cytokine" (default).
+    """
     entity_lower = entity.lower()
     # Cells
     cell_keywords = [
@@ -1272,8 +1317,6 @@ def _pathway_to_response(pw) -> KnowledgePathwayResponse:
 )
 async def knowledge_pathways() -> KnowledgePathwayListResponse:
     """Return all signaling pathways as directed graph data."""
-    from src.data.knowledge.pathways import PATHWAY_REGISTRY
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
@@ -1299,8 +1342,6 @@ async def knowledge_pathways() -> KnowledgePathwayListResponse:
 )
 async def knowledge_pathway_detail(pathway_id: str) -> KnowledgePathwayResponse:
     """Return a single pathway by ID."""
-    from src.data.knowledge.pathways import PATHWAY_REGISTRY
-
     # Support both "PW:IL6_TRANS_SIGNALING" and "IL6_TRANS_SIGNALING" forms
     lookup_id = pathway_id if pathway_id.startswith("PW:") else f"PW:{pathway_id}"
     pw = PATHWAY_REGISTRY.get(lookup_id)
@@ -1329,8 +1370,6 @@ async def knowledge_pathway_detail(pathway_id: str) -> KnowledgePathwayResponse:
 )
 async def knowledge_mechanisms() -> KnowledgeMechanismListResponse:
     """Return all mechanism chains."""
-    from src.data.knowledge.mechanisms import MECHANISM_REGISTRY
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
@@ -1391,8 +1430,6 @@ async def knowledge_mechanisms() -> KnowledgeMechanismListResponse:
 )
 async def knowledge_targets() -> KnowledgeTargetListResponse:
     """Return all molecular targets."""
-    from src.data.knowledge.molecular_targets import MOLECULAR_TARGET_REGISTRY
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
@@ -1449,8 +1486,6 @@ async def knowledge_targets() -> KnowledgeTargetListResponse:
 )
 async def knowledge_cells() -> KnowledgeCellTypeListResponse:
     """Return all cell type definitions."""
-    from src.data.knowledge.cell_types import CELL_TYPE_REGISTRY
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
@@ -1504,8 +1539,6 @@ async def knowledge_cells() -> KnowledgeCellTypeListResponse:
 )
 async def knowledge_references() -> KnowledgeReferenceListResponse:
     """Return the full reference database."""
-    from src.data.knowledge.references import REFERENCES
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
@@ -1548,15 +1581,6 @@ async def knowledge_references() -> KnowledgeReferenceListResponse:
 )
 async def knowledge_overview() -> KnowledgeOverviewResponse:
     """Return summary statistics for the knowledge graph."""
-    from src.data.knowledge.pathways import PATHWAY_REGISTRY
-    from src.data.knowledge.mechanisms import MECHANISM_REGISTRY
-    from src.data.knowledge.molecular_targets import (
-        MOLECULAR_TARGET_REGISTRY,
-        get_druggable_targets,
-    )
-    from src.data.knowledge.cell_types import CELL_TYPE_REGISTRY
-    from src.data.knowledge.references import REFERENCES
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
@@ -1985,8 +2009,6 @@ async def publication_figure(figure_name: str) -> PublicationFigureResponse:
 )
 async def system_architecture() -> ArchitectureResponse:
     """Return system architecture as structured data for visualization."""
-    import time as _time
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
@@ -2367,7 +2389,6 @@ async def system_architecture() -> ArchitectureResponse:
     ]
 
     # --- Registry models ---
-    from src.models.model_registry import MODEL_REGISTRY as _mr
     registry_models = [
         RegistryModelInfo(
             id=m.id,
@@ -2392,7 +2413,10 @@ async def system_architecture() -> ArchitectureResponse:
     )
 
     # --- System health ---
-    from src.api.app import _start_time
+    # NOTE: This import must remain in-function to avoid a circular import.
+    # app.py imports population_routes (for the router), so importing app
+    # at module level here would create a cycle.
+    from src.api.app import _start_time  # noqa: E402 — circular import guard
     uptime = _time.monotonic() - _start_time if _start_time > 0 else 0.0
 
     system_health = SystemHealthInfo(
@@ -2440,8 +2464,6 @@ async def generate_narrative_endpoint(
     request: NarrativeRequest,
 ) -> NarrativeResponse:
     """Generate a structured clinical narrative."""
-    from src.api.narrative_engine import generate_narrative
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
@@ -2504,8 +2526,6 @@ async def generate_briefing_endpoint(
     ),
 ) -> ClinicalBriefing:
     """Generate a comprehensive clinical briefing for a patient."""
-    from src.api.narrative_engine import generate_briefing
-
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 

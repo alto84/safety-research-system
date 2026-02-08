@@ -106,6 +106,37 @@ MITIGATION_CORRELATIONS: dict[tuple[str, str], float] = {
     ("anakinra", "tocilizumab"): 0.4,
     ("corticosteroids", "tocilizumab"): 0.5,
 }
+"""Pairwise mechanistic correlation coefficients between mitigation strategies.
+
+Modeled correlations (non-zero):
+    - anakinra <-> corticosteroids (rho=0.3): Both suppress inflammatory
+      cascades but via distinct mechanisms (IL-1 blockade vs broad
+      glucocorticoid receptor activation).  Moderate overlap in downstream
+      cytokine suppression.
+    - anakinra <-> tocilizumab (rho=0.4): Both target the IL-6/IL-1
+      inflammatory axis.  Anakinra blocks IL-1R, tocilizumab blocks IL-6R;
+      these pathways converge on shared downstream effectors (NF-kB, STAT3).
+    - corticosteroids <-> tocilizumab (rho=0.5): Highest correlation.
+      Corticosteroids broadly suppress cytokine production including IL-6,
+      so their effect partially overlaps with tocilizumab's IL-6R blockade.
+
+Assumed independent (correlation=0, not explicitly modeled):
+    - dose-reduction <-> all other strategies: Dose reduction acts upstream
+      (fewer effector cells = less antigen-mediated activation) while the
+      pharmacologic agents act downstream on cytokine signaling.  In reality,
+      some correlation likely exists (both reduce CRS via the same pathway),
+      but no data is available to estimate the magnitude.
+    - lymphodepletion-modification <-> all other strategies: Altered
+      conditioning affects the pre-infusion inflammatory milieu, which is
+      mechanistically distinct from post-infusion cytokine blockade.
+
+Known limitation: The 7 unmodeled pairwise correlations (all involving
+dose-reduction or lymphodepletion-modification) default to 0.0, which
+assumes full independence and may overestimate the combined benefit of
+multi-strategy approaches that include these interventions.  Populating
+these correlations requires data from trials that systematically vary
+dose and conditioning alongside pharmacologic interventions.
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -207,6 +238,13 @@ MITIGATION_STRATEGIES: dict[str, MitigationStrategy] = {
             "Muller F et al. CD19-targeted CAR T cells in refractory antisynthetase syndrome. NEJM 2024",
         ],
     ),
+    # CAUTION (M5): The lymphodepletion-modification CI (0.65, 1.05) crosses
+    # 1.0, meaning the true effect could be protective (RR < 1) OR harmful
+    # (RR > 1).  This uncertainty MUST be communicated to users when
+    # displaying this mitigation.  API consumers and dashboard displays
+    # should flag this strategy as "uncertain benefit" and avoid presenting
+    # it as a reliable risk-reduction measure until narrower CI data are
+    # available.
     "lymphodepletion-modification": MitigationStrategy(
         id="lymphodepletion-modification",
         name="Lymphodepletion Modification",
@@ -222,7 +260,8 @@ MITIGATION_STRATEGIES: dict[str, MitigationStrategy] = {
         limitations=[
             "May reduce CAR-T expansion and engraftment",
             "Optimal LD regimen for autoimmune CAR-T not established",
-            "Confidence interval crosses 1.0 (uncertain benefit)",
+            "Confidence interval crosses 1.0 -- direction of effect is uncertain; "
+            "this intervention may increase rather than decrease risk",
         ],
         references=[
             "Turtle CJ et al. Immunotherapy of NHL with CD19 CAR-T. JCI 2016",
