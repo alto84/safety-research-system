@@ -158,7 +158,7 @@ MACROPHAGE = CellTypeDefinition(
             secreted_factors=("ferritin", "IL-6", "IL-18", "TNF-alpha", "IL-1beta", "CXCL9", "CXCL10"),
             surface_markers=("CD163_high", "CD25_soluble", "CD68"),
             functional_outcome="Hemophagocytosis (engulfing erythrocytes, platelets, leukocytes); ferritin hypersecretion (>10000 ng/mL); consumptive coagulopathy.",
-            references=("PMID:36906275", "PMID:39277881"),
+            references=("PMID:36906275", "PMID:39134524"),
         ),
     ),
     roles_in_ae={

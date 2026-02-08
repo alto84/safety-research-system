@@ -183,6 +183,9 @@ MITIGATION_STRATEGIES: dict[str, MitigationStrategy] = {
             "Sterner RM et al. GM-CSF inhibition reduces CRS. Blood 2019",
         ],
     ),
+    # NOTE: Dose-reduction RR=0.40 with "Limited" evidence is based on single-arm
+    # Phase 1 data (Mackensen 2022, n=5). No head-to-head randomized comparison
+    # exists. This estimate needs prospective validation in larger trials.
     "dose-reduction": MitigationStrategy(
         id="dose-reduction",
         name="CAR-T Dose Reduction",

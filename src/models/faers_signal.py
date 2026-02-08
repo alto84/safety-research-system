@@ -70,7 +70,9 @@ class FAERSSignal:
         ror_ci_low: ROR 95% CI lower bound.
         ror_ci_high: ROR 95% CI upper bound.
         ebgm: Empirical Bayesian Geometric Mean.
-        ebgm05: EBGM lower 5th percentile (conservative bound).
+        ebgm05: Approximate EBGM lower 5th percentile (conservative bound).
+            NOTE: This is a weighted-average approximation, not the true
+            mixture quantile.  See compute_ebgm() docstring for details.
         is_signal: True if the pair meets signal detection thresholds.
         signal_strength: One of "none", "weak", "moderate", "strong".
     """
@@ -308,7 +310,7 @@ def compute_ebgm(
     beta2: float = 4.0,
     p: float = 1 / 3,
 ) -> tuple[float, float]:
-    """Compute EBGM and EBGM05 using Multi-item Gamma Poisson Shrinker.
+    """Compute EBGM and approximate EBGM05 using Multi-item Gamma Poisson Shrinker.
 
     Implements the GPS (Gamma Poisson Shrinker) model from DuMouchel (1999).
     The prior on the Poisson rate lambda is a mixture of two Gamma distributions:
@@ -324,6 +326,36 @@ def compute_ebgm(
         E[ln(lambda) | n, E] for each component, weighted by posterior
         component probabilities, then exponentiated.
 
+    .. warning:: Known Limitation -- EBGM05 Approximation
+
+       The EBGM05 value returned by this function is an **approximation**, not
+       the true 5th percentile of the two-component Gamma mixture posterior.
+
+       The true 5th percentile requires solving the mixture CDF equation:
+
+           q1 * F_Gamma1(x) + q2 * F_Gamma2(x) = 0.05
+
+       which has no closed-form solution and requires numerical root-finding
+       (e.g., bisection on the mixture CDF) or Monte Carlo sampling.
+
+       Instead, this implementation computes a **weighted average of the
+       per-component 5th percentiles**:
+
+           approximate_ebgm05 = q1 * Q05_component1 + q2 * Q05_component2
+
+       This approximation tends to **overestimate** the true 5th percentile
+       when the two Gamma components are well-separated, making the
+       conservative bound **less conservative** than intended.  For most
+       drug-event pairs where the components overlap substantially, the
+       error is small.  For rare events with extreme posterior weights,
+       the discrepancy could be clinically relevant and may lead to
+       false-positive signal declarations when using the EBGM05 >= 2
+       threshold.
+
+       A proper implementation would use ``scipy.stats`` (if available) to
+       numerically invert the mixture CDF via bisection, or sample from the
+       mixture posterior.  This is tracked as a known improvement item.
+
     Args:
         observed: Observed count (n) for the drug-event pair.
         expected: Expected count (E) under independence assumption.
@@ -334,8 +366,9 @@ def compute_ebgm(
         p: Prior mixing weight for the first component.
 
     Returns:
-        Tuple of (ebgm, ebgm05).  Returns (0.0, 0.0) if expected <= 0 or
-        computation fails.
+        Tuple of (ebgm, approximate_ebgm05).  The second element is an
+        approximation of the true mixture 5th percentile (see warning above).
+        Returns (0.0, 0.0) if expected <= 0 or computation fails.
     """
     try:
         if expected <= 0.0 or observed < 0:
@@ -386,18 +419,25 @@ def compute_ebgm(
         e_ln_lambda = q1 * eln1 + q2 * eln2
         ebgm = math.exp(e_ln_lambda)
 
-        # EBGM05 -- 5th percentile of the posterior mixture
-        # Approximate using the weighted quantile approach.
-        # For each Gamma component, the 5th percentile can be approximated
-        # using the Wilson-Hilferty normal approximation to the Gamma quantile.
+        # EBGM05 -- approximate 5th percentile of the posterior mixture.
+        #
+        # KNOWN LIMITATION: This computes a weighted average of per-component
+        # 5th percentiles, NOT the true 5th percentile of the mixture
+        # distribution.  The true quantile requires solving
+        #     q1 * F_1(x) + q2 * F_2(x) = 0.05
+        # via numerical root-finding (bisection on mixture CDF).  The weighted
+        # average overestimates the true 5th percentile when components are
+        # well-separated.  See docstring for full discussion.
+        #
+        # Per-component quantiles use Wilson-Hilferty cube-root normal
+        # approximation to the Gamma quantile.
         q05_1 = _gamma_quantile_approx(a1_post, b1_post, 0.05)
         q05_2 = _gamma_quantile_approx(a2_post, b2_post, 0.05)
 
-        # Weighted 5th percentile (conservative: use the lower of the two
-        # weighted quantiles as a simple bound)
-        ebgm05 = q1 * q05_1 + q2 * q05_2
+        # Weighted average of component quantiles (approximation -- see above)
+        approximate_ebgm05 = q1 * q05_1 + q2 * q05_2
 
-        return (ebgm, ebgm05)
+        return (ebgm, approximate_ebgm05)
 
     except (ValueError, ZeroDivisionError, OverflowError):
         return (0.0, 0.0)

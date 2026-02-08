@@ -1856,8 +1856,9 @@ async def publication_analysis() -> PublicationAnalysisResponse:
         PublicationReference(pmid="37828045", citation="Sterner et al., Cell Rep Med 2023"),
         PublicationReference(pmid="38123583", citation="Butt et al., Nat Commun 2024"),
         PublicationReference(pmid="38368579", citation="Zhang et al., Exp Hematol Oncol 2024"),
+        PublicationReference(pmid="39134524", citation="Khurana et al., Blood Cancer J 2024"),
         PublicationReference(pmid="39256221", citation="Luft et al., Blood 2024"),
-        PublicationReference(pmid="39277881", citation="Luft et al., Blood 2024"),
+        PublicationReference(pmid="39277881", citation="Tomasik et al., Arch Immunol Ther Exp 2024"),
         PublicationReference(pmid="39338775", citation="Chen et al., J Hematol Oncol 2024"),
         PublicationReference(pmid="39352714", citation="Liu et al., J Transl Med 2024"),
     ]

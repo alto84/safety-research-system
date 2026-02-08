@@ -266,8 +266,8 @@ _HLH_REFS: list[Reference] = [
         tags=("HLH", "anakinra", "ruxolitinib", "management"),
     ),
     Reference(
-        pmid="PMID:39277881",
-        first_author="Shah",
+        pmid="PMID:39134524",
+        first_author="Khurana",
         year=2024,
         journal="Blood Cancer J",
         title="Chimeric antigen receptor T-cell therapy associated hemophagocytic lymphohistiocytosis syndrome: clinical presentation, outcomes, and management",

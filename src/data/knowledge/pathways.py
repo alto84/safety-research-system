@@ -442,7 +442,7 @@ HLH_MAS_PATHWAY = SignalingPathway(
             mechanism="Sustained, high-level IFN-gamma production from persistently activated CAR-T cells. Higher and more prolonged than in CRS alone.",
             confidence=0.90,
             temporal_window=TemporalWindow.SUSTAINED,
-            references=("PMID:39277881",),
+            references=("PMID:39134524",),
         ),
         PathwayStep(
             source="IFN-gamma",
@@ -460,7 +460,7 @@ HLH_MAS_PATHWAY = SignalingPathway(
             mechanism="Hyperactivated macrophages secrete IL-18 via inflammasome-mediated processing. IL-18 is a key differentiator of HLH from CRS.",
             confidence=0.85,
             temporal_window=TemporalWindow.SUSTAINED,
-            references=("PMID:39277881", "PMID:39338775"),
+            references=("PMID:39134524", "PMID:39338775"),
         ),
         PathwayStep(
             source="IL-18",
@@ -470,7 +470,7 @@ HLH_MAS_PATHWAY = SignalingPathway(
             confidence=0.85,
             temporal_window=TemporalWindow.SUSTAINED,
             is_feedback_loop=True,
-            references=("PMID:39277881",),
+            references=("PMID:39134524",),
         ),
         PathwayStep(
             source="macrophage",
@@ -543,7 +543,7 @@ HLH_MAS_PATHWAY = SignalingPathway(
         "Corticosteroids: broad immunosuppression but less effective alone."
     ),
     ae_outcomes=["HLH/MAS"],
-    key_references=["PMID:36906275", "PMID:34263927", "PMID:39277881", "PMID:39338775"],
+    key_references=["PMID:36906275", "PMID:34263927", "PMID:39134524", "PMID:39338775"],
 )
 
 

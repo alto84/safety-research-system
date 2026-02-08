@@ -362,7 +362,12 @@ GENE_THERAPY_INSERTIONAL = MechanismChain(
     typical_duration="Permanent",
     incidence_range="MDS/AML: up to 15% in Skysona trials; T-cell lymphoma: rare but reported after CAR-T",
     mortality_rate="Variable; MDS/AML carries significant mortality",
-    key_references=[],
+    key_references=[
+        "PMID:12529469",   # Hacein-Bey-Abina et al. 2003 - LMO2 insertional mutagenesis in X-SCID gene therapy
+        "PMID:10706547",   # Cavazzana-Calvo et al. 2000 - Gene therapy of human SCID-X1 disease
+        "PMID:25389405",   # Di Stasi et al. 2014 - iCasp9 safety switch
+        "PMID:38123583",   # FDA 2024 T-cell malignancy investigation after CAR-T
+    ],
 )
 
 
@@ -405,7 +410,12 @@ CART_CD19_B_CELL_APLASIA = MechanismChain(
     typical_duration="Months to years; can be permanent with persistent CAR-T",
     incidence_range="Nearly 100% with effective CD19 CAR-T",
     mortality_rate="<1% with IVIG support",
-    key_references=[],
+    key_references=[
+        "PMID:36519539",   # Mackensen et al. 2022 - Anti-CD19 CAR T cells for refractory SLE (B-cell depletion)
+        "PMID:38242083",   # Muller et al. 2024 - CD19 CAR-T in autoimmune disease, prolonged B-cell aplasia
+        "PMID:29643512",   # Neelapu et al. 2017 - Axi-cel ZUMA-1 (B-cell aplasia as on-target effect)
+        "PMID:30275568",   # Lee et al. 2019 - ASTCT consensus, B-cell aplasia management
+    ],
 )
 
 

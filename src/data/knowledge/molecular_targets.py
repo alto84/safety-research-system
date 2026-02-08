@@ -189,7 +189,7 @@ IFN_GAMMA = MolecularTarget(
     upstream_of=("monocyte_activation", "macrophage_activation", "IL-6", "TNF-alpha", "IL-1beta", "CXCL9", "CXCL10"),
     downstream_of=("CAR-T_activation", "NK_cell_activation", "IL-12", "IL-15"),
     biomarker_utility="Earliest cytokine to peak post-CAR-T infusion; IFN-gamma > 500 pg/mL at 24h predicts severe CRS.",
-    references=("PMID:27455965", "PMID:39277881"),
+    references=("PMID:27455965", "PMID:39134524"),
 )
 
 TNF_ALPHA = MolecularTarget(
@@ -230,7 +230,7 @@ IL18 = MolecularTarget(
     upstream_of=("IFN-gamma", "NK_cell_activation"),
     downstream_of=("inflammasome_NLRP3", "macrophage_activation"),
     biomarker_utility="Elevated IL-18 distinguishes HLH from CRS; free IL-18 (unbound by IL-18BP) is more specific.",
-    references=("PMID:39277881", "PMID:39338775"),
+    references=("PMID:39134524", "PMID:39338775"),
 )
 
 
