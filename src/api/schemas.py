@@ -286,3 +286,182 @@ class HealthResponse(BaseModel):
     timestamp: datetime
     models_available: int
     engine_initialized: bool
+
+
+# ---------------------------------------------------------------------------
+# Population-level risk schemas
+# ---------------------------------------------------------------------------
+
+class BayesianPosteriorRequest(BaseModel):
+    """Request for Bayesian posterior computation."""
+
+    adverse_event: str = Field(
+        ..., description="Adverse event type: CRS, ICANS, or ICAHS",
+    )
+    n_events: int = Field(..., description="Number of observed events", ge=0)
+    n_patients: int = Field(..., description="Total patients observed", ge=1)
+    use_informative_prior: bool = Field(
+        True, description="Use informative prior from discounted oncology data",
+    )
+
+    @field_validator("adverse_event")
+    @classmethod
+    def validate_ae(cls, v: str) -> str:
+        valid = {"CRS", "ICANS", "ICAHS"}
+        v_upper = v.upper()
+        if v_upper not in valid:
+            raise ValueError(f"Invalid adverse event '{v}'. Must be one of: {valid}")
+        return v_upper
+
+
+class PosteriorEstimateResponse(BaseModel):
+    """Bayesian posterior estimate."""
+
+    adverse_event: str
+    prior_alpha: float
+    prior_beta: float
+    posterior_alpha: float
+    posterior_beta: float
+    n_patients: int
+    n_events: int
+    mean_pct: float = Field(description="Posterior mean as percentage")
+    ci_low_pct: float = Field(description="95% credible interval lower bound (%)")
+    ci_high_pct: float = Field(description="95% credible interval upper bound (%)")
+    ci_width_pct: float = Field(description="Width of 95% credible interval (pp)")
+
+
+class BayesianPosteriorResponse(BaseModel):
+    """Response for Bayesian posterior computation."""
+
+    request_id: str
+    timestamp: datetime
+    estimate: PosteriorEstimateResponse
+
+
+class MitigationAnalysisRequest(BaseModel):
+    """Request for correlated mitigation analysis."""
+
+    selected_mitigations: list[str] = Field(
+        ..., description="List of mitigation IDs to apply",
+        min_length=1,
+    )
+    target_ae: str = Field(
+        "CRS", description="Target adverse event: CRS, ICANS, or ICAHS",
+    )
+    n_monte_carlo_samples: int = Field(
+        10000, description="Number of Monte Carlo samples", ge=100, le=100000,
+    )
+
+
+class CorrelationDetail(BaseModel):
+    """Detail about a pairwise correlation applied."""
+
+    mitigation_a: str
+    mitigation_b: str
+    rho: float
+    naive_rr: float
+    corrected_rr: float
+
+
+class MitigationAnalysisResponse(BaseModel):
+    """Response for correlated mitigation analysis."""
+
+    request_id: str
+    timestamp: datetime
+    target_ae: str
+    baseline_risk_pct: float
+    mitigated_risk_pct: float
+    mitigated_risk_ci_low_pct: float
+    mitigated_risk_ci_high_pct: float
+    combined_rr: float
+    naive_multiplicative_rr: float
+    correction_factor: float = Field(
+        description="Ratio of corrected RR to naive RR (>1 means less benefit than naive)",
+    )
+    mitigations_applied: list[str]
+    correlations_applied: list[CorrelationDetail]
+
+
+class EvidenceAccrualPoint(BaseModel):
+    """Single timepoint in the evidence accrual timeline."""
+
+    label: str
+    year: int
+    quarter: str
+    n_cumulative_patients: int
+    is_projected: bool
+    crs_mean_pct: float
+    crs_ci_low_pct: float
+    crs_ci_high_pct: float
+    crs_ci_width_pct: float
+    icans_mean_pct: float
+    icans_ci_low_pct: float
+    icans_ci_high_pct: float
+    icans_ci_width_pct: float
+
+
+class EvidenceAccrualResponse(BaseModel):
+    """Response for evidence accrual timeline."""
+
+    request_id: str
+    timestamp: datetime
+    timeline: list[EvidenceAccrualPoint]
+    current_ci_width_crs_pct: float
+    projected_ci_width_crs_pct: float
+    ci_narrowing_pct: float
+
+
+class TrialSummaryResponse(BaseModel):
+    """Response for clinical trial summary."""
+
+    request_id: str
+    timestamp: datetime
+    recruiting: int
+    active: int
+    completed: int
+    not_yet_recruiting: int
+    total: int
+    trials: list[dict[str, Any]]
+
+
+class PopulationRiskResponse(BaseModel):
+    """Population-level risk summary for SLE CAR-T."""
+
+    request_id: str
+    timestamp: datetime
+    indication: str
+    n_patients_pooled: int
+    baseline_risks: dict[str, dict[str, Any]]
+    mitigated_risks: dict[str, dict[str, Any]]
+    default_mitigations: list[str]
+    evidence_grade: str
+
+
+class FAERSSignalResponse(BaseModel):
+    """Single FAERS signal."""
+
+    product: str
+    adverse_event: str
+    n_cases: int
+    prr: float
+    prr_ci_low: float
+    prr_ci_high: float
+    ror: float
+    ror_ci_low: float
+    ror_ci_high: float
+    ebgm: float
+    ebgm05: float
+    is_signal: bool
+    signal_strength: str
+
+
+class FAERSSummaryResponse(BaseModel):
+    """Response for FAERS signal detection."""
+
+    request_id: str
+    timestamp: datetime
+    products_queried: list[str]
+    total_reports: int
+    signals_detected: int
+    strong_signals: int
+    signals: list[FAERSSignalResponse]
