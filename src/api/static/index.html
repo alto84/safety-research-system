@@ -492,21 +492,24 @@ body {
 .task-btn[data-task="mitigations"],
 .task-btn[data-task="signals"],
 .task-btn[data-task="executive"],
-.task-btn[data-task="cdp"] {
+.task-btn[data-task="cdp"],
+.task-btn[data-task="architecture"] {
   color: var(--info);
 }
 .task-btn[data-task="population"]:hover,
 .task-btn[data-task="mitigations"]:hover,
 .task-btn[data-task="signals"]:hover,
 .task-btn[data-task="executive"]:hover,
-.task-btn[data-task="cdp"]:hover {
+.task-btn[data-task="cdp"]:hover,
+.task-btn[data-task="architecture"]:hover {
   color: var(--text);
 }
 .task-btn[data-task="population"].active,
 .task-btn[data-task="mitigations"].active,
 .task-btn[data-task="signals"].active,
 .task-btn[data-task="executive"].active,
-.task-btn[data-task="cdp"].active {
+.task-btn[data-task="cdp"].active,
+.task-btn[data-task="architecture"].active {
   color: var(--primary); border-bottom-color: var(--primary);
 }
 
@@ -643,6 +646,83 @@ body {
   .pop-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .combo-panel, .btn { display: none !important; }
 }
+
+/* System Architecture tab styles */
+.arch-tab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+@media (max-width: 900px) { .arch-tab-grid { grid-template-columns: 1fr; } }
+.arch-health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.arch-health-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px; text-align: center; box-shadow: var(--shadow);
+}
+.arch-health-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+.arch-health-value { font-size: 24px; font-weight: 700; font-family: var(--mono); margin: 4px 0; color: var(--primary); }
+.arch-health-sub { font-size: 11px; color: var(--text-secondary); }
+.arch-module-list { list-style: none; }
+.arch-module-item {
+  padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 6px; cursor: pointer; transition: var(--transition);
+  background: var(--surface);
+}
+.arch-module-item:hover { border-color: var(--primary); background: var(--primary-light); }
+.arch-module-item.expanded { border-color: var(--primary); }
+.arch-module-name { font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+.arch-module-path { font-size: 11px; color: var(--text-secondary); font-family: var(--mono); margin-top: 2px; }
+.arch-module-desc { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.arch-module-detail { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.arch-module-item.expanded .arch-module-detail { display: block; }
+.arch-module-detail .detail-section { margin-bottom: 6px; }
+.arch-module-detail .detail-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 2px; }
+.arch-module-detail .detail-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.arch-module-detail .detail-tag {
+  display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px;
+  font-family: var(--mono); background: var(--bg); border: 1px solid var(--border); color: var(--text);
+}
+.arch-endpoint-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.arch-endpoint-table th {
+  background: var(--bg); text-align: left; padding: 8px 10px; font-weight: 600;
+  border-bottom: 2px solid var(--border); font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.3px; color: var(--text-secondary);
+}
+.arch-endpoint-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.arch-endpoint-table tr:hover { background: var(--surface-hover); }
+.arch-endpoint-table tr { cursor: pointer; }
+.arch-method-badge {
+  display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 10px;
+  font-weight: 700; font-family: var(--mono); min-width: 40px; text-align: center;
+}
+.method-GET { background: var(--success-light); color: #047857; }
+.method-POST { background: var(--primary-light); color: var(--primary); }
+.method-WS { background: var(--warning-light); color: #92400e; }
+.arch-schema-badge {
+  display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px;
+  font-family: var(--mono); background: var(--bg); border: 1px solid var(--border); color: var(--text-secondary);
+}
+.arch-tag-badge {
+  display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 10px;
+  background: var(--info-light); color: var(--info); font-weight: 500;
+}
+.arch-dep-svg { width: 100%; height: auto; }
+.arch-dep-svg .dep-node { cursor: pointer; transition: filter 0.2s; }
+.arch-dep-svg .dep-node:hover { filter: brightness(0.93) drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+.arch-dep-svg .dep-edge { fill: none; stroke-width: 1.5; }
+.arch-dep-svg .dep-arrow { fill: none; stroke-width: 1.5; }
+.arch-registry-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.arch-registry-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px; box-shadow: var(--shadow-sm); transition: var(--transition);
+}
+.arch-registry-card:hover { box-shadow: var(--shadow-md); }
+.arch-registry-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.arch-registry-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.4; }
+.arch-registry-meta { font-size: 11px; color: var(--text-secondary); }
+.arch-detail-panel {
+  background: var(--surface-hover); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px; font-size: 13px; line-height: 1.5; margin-bottom: 16px; display: none;
+}
+.arch-detail-panel.active { display: block; }
+.arch-detail-panel code { font-family: var(--mono); background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; }
+.arch-detail-title { font-weight: 600; margin-bottom: 6px; font-size: 14px; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -716,6 +796,7 @@ body {
     <button class="task-btn" data-task="signals" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128225;</span> Signal Detection</button>
     <button class="task-btn" data-task="executive" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128196;</span> Executive Summary</button>
     <button class="task-btn" data-task="cdp" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128203;</span> Clinical Safety Plan</button>
+    <button class="task-btn" data-task="architecture" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9881;</span> System Architecture</button>
   </div>
 </nav>
 
@@ -1031,7 +1112,7 @@ function activateTab(btn) {
   currentTask = btn.dataset.task;
 
   // Hide patient sidebar for population-level tabs
-  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp'];
+  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture'];
   const sidebar = document.querySelector('.patient-sidebar');
   const mainLayout = document.querySelector('.main-layout');
   if (populationTabs.includes(btn.dataset.task)) {
@@ -1079,6 +1160,7 @@ function renderTaskContent() {
     case 'signals': container.innerHTML = renderSignalDetection(); break;
     case 'executive': container.innerHTML = renderExecutiveSummary(); break;
     case 'cdp': container.innerHTML = renderClinicalSafetyPlan(); break;
+    case 'architecture': container.innerHTML = renderSystemArchitecture(); break;
     default: container.innerHTML = renderOverview();
   }
 }
@@ -4241,6 +4323,442 @@ async function loadClinicalSafetyPlan(containerId) {
   `;
 
   el.innerHTML = sectionA + sectionB + sectionC + sectionD + sectionE;
+}
+
+// ============================================================================
+// SYSTEM ARCHITECTURE TAB
+// ============================================================================
+
+function renderSystemArchitecture() {
+  const containerId = 'archTabContent';
+  setTimeout(() => loadSystemArchitecture(containerId), 0);
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#9881; System Architecture</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Predictive Safety Platform</span>
+      </div>
+      <div class="card-body" id="${containerId}">
+        ${popLoadingHtml('Loading architecture data...')}
+      </div>
+    </div>
+  `;
+}
+
+async function loadSystemArchitecture(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  const res = await popFetch('/api/v1/system/architecture');
+  if (res.error) {
+    el.innerHTML = popErrorHtml('Failed to load architecture data: ' + res.error);
+    return;
+  }
+  const arch = res.data;
+
+  // --- Section 1: System Health ---
+  const h = arch.system_health;
+  const healthHtml = `
+    <div style="margin-bottom:20px;">
+      <div style="font-size:14px; font-weight:700; margin-bottom:10px;">System Health</div>
+      <div class="arch-health-grid">
+        <div class="arch-health-card">
+          <div class="arch-health-label">Models Loaded</div>
+          <div class="arch-health-value">${h.models_loaded}</div>
+          <div class="arch-health-sub">scoring models</div>
+        </div>
+        <div class="arch-health-card">
+          <div class="arch-health-label">API Version</div>
+          <div class="arch-health-value" style="font-size:18px;">${h.api_version}</div>
+          <div class="arch-health-sub">FastAPI + Pydantic</div>
+        </div>
+        <div class="arch-health-card">
+          <div class="arch-health-label">Endpoints</div>
+          <div class="arch-health-value">${h.total_endpoints}</div>
+          <div class="arch-health-sub">REST + WebSocket</div>
+        </div>
+        <div class="arch-health-card">
+          <div class="arch-health-label">Source Modules</div>
+          <div class="arch-health-value">${h.total_modules}</div>
+          <div class="arch-health-sub">Python files</div>
+        </div>
+        <div class="arch-health-card">
+          <div class="arch-health-label">Tests</div>
+          <div class="arch-health-value">${h.test_count}</div>
+          <div class="arch-health-sub">${arch.test_summary.unit_tests} unit + ${arch.test_summary.integration_tests} integration</div>
+        </div>
+        <div class="arch-health-card">
+          <div class="arch-health-label">Uptime</div>
+          <div class="arch-health-value" style="font-size:18px;">${h.uptime_seconds > 0 ? (h.uptime_seconds / 60).toFixed(1) + 'm' : 'N/A'}</div>
+          <div class="arch-health-sub">server uptime</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // --- Section 2: Data Flow Diagram (SVG) ---
+  const dataFlowHtml = renderArchDataFlowSVG(arch);
+
+  // --- Section 3: Module List + Endpoint Table (side by side) ---
+  const modulesHtml = renderArchModuleList(arch.modules);
+  const endpointsHtml = renderArchEndpointTable(arch.endpoints);
+
+  // --- Section 4: Dependency Graph (SVG) ---
+  const depGraphHtml = renderArchDependencyGraph(arch.dependencies, arch.modules);
+
+  // --- Section 5: Model Registry ---
+  const registryHtml = renderArchRegistryModels(arch.registry_models);
+
+  // --- Detail panel (initially hidden) ---
+  const detailPanel = '<div class="arch-detail-panel" id="archDetailPanel"></div>';
+
+  el.innerHTML = healthHtml + detailPanel + dataFlowHtml +
+    '<div class="arch-tab-grid">' + modulesHtml + endpointsHtml + '</div>' +
+    depGraphHtml + registryHtml;
+}
+
+// ---- Data Flow Diagram SVG ----
+function renderArchDataFlowSVG(arch) {
+  const W = 1000, H = 320;
+  // 5 columns: Data Sources -> Models -> API -> Dashboard -> Output
+  const cols = [
+    { x: 20, label: 'DATA SOURCES', color: '#2563eb', bg: '#dbeafe', items: [
+      { name: 'Clinical Trial Data', sub: 'sle_cart_studies.py' },
+      { name: 'Cell Therapy Registry', sub: 'cell_therapy_registry.py' },
+      { name: 'Patient Lab/Vitals', sub: 'PatientDataRequest' },
+      { name: 'openFDA / FAERS', sub: 'faers_signal.py' },
+    ]},
+    { x: 220, label: 'MODELS', color: '#059669', bg: '#d1fae5', items: [
+      { name: 'Bayesian Risk', sub: 'Beta-Binomial' },
+      { name: 'Mitigation Model', sub: 'Correlated RR' },
+      { name: 'Biomarker Ensemble', sub: '7 scoring models' },
+      { name: 'Model Registry', sub: '7 stat methods' },
+    ]},
+    { x: 440, label: 'API LAYER', color: '#0284c7', bg: '#e0f2fe', items: [
+      { name: 'FastAPI Server', sub: 'app.py + routes' },
+      { name: 'Pydantic Schemas', sub: 'schemas.py' },
+      { name: 'Middleware', sub: 'auth, rate limit' },
+      { name: 'WebSocket', sub: 'real-time monitor' },
+    ]},
+    { x: 660, label: 'DASHBOARD', color: '#7c3aed', bg: '#f0e6ff', items: [
+      { name: '9 Patient Tabs', sub: 'clinical workflow' },
+      { name: '5 Population Tabs', sub: 'population analytics' },
+      { name: 'System Architecture', sub: 'this tab' },
+      { name: 'Alerts + Charts', sub: 'SVG visualizations' },
+    ]},
+    { x: 860, label: 'OUTPUTS', color: '#dc2626', bg: '#fee2e2', items: [
+      { name: 'Risk Scores', sub: '0-1 composite' },
+      { name: 'CI Estimates', sub: '95% credible' },
+      { name: 'Safety Signals', sub: 'PRR/ROR/EBGM' },
+      { name: 'Clinical Alerts', sub: 'threshold-based' },
+    ]},
+  ];
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="arch-dep-svg" style="margin-bottom:16px;">`;
+  svg += '<defs>';
+  svg += '<marker id="archArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#94a3b8"/></marker>';
+  svg += '</defs>';
+
+  // Draw columns
+  const itemH = 50, itemW = 130, gap = 12, startY = 40;
+  for (const col of cols) {
+    // Section label
+    svg += `<text x="${col.x + itemW/2}" y="20" text-anchor="middle" style="font-size:10px; font-weight:700; fill:#5a5a7a; letter-spacing:1.2px; font-family:var(--font)">${col.label}</text>`;
+    for (let i = 0; i < col.items.length; i++) {
+      const y = startY + i * (itemH + gap);
+      const item = col.items[i];
+      svg += `<rect x="${col.x}" y="${y}" width="${itemW}" height="${itemH}" rx="6" fill="${col.bg}" stroke="${col.color}" stroke-width="1.5" class="dep-node"/>`;
+      svg += `<text x="${col.x + itemW/2}" y="${y + 22}" text-anchor="middle" style="font-size:11px; font-weight:600; fill:#1a1a2e; font-family:var(--font)">${item.name}</text>`;
+      svg += `<text x="${col.x + itemW/2}" y="${y + 37}" text-anchor="middle" style="font-size:9px; fill:#5a5a7a; font-family:var(--mono)">${item.sub}</text>`;
+    }
+  }
+
+  // Draw flow arrows between columns
+  for (let c = 0; c < cols.length - 1; c++) {
+    const fromX = cols[c].x + itemW;
+    const toX = cols[c+1].x;
+    const midX = (fromX + toX) / 2;
+    for (let i = 0; i < 4; i++) {
+      const y = startY + i * (itemH + gap) + itemH / 2;
+      svg += `<path d="M${fromX},${y} C${midX},${y} ${midX},${y} ${toX},${y}" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#archArrow)" stroke-dasharray="4 3" opacity="0.6"/>`;
+    }
+  }
+
+  svg += '</svg>';
+
+  return `
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <div class="card-title">Data Flow Diagram</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Source to Output Pipeline</span>
+      </div>
+      <div class="card-body" style="overflow-x:auto;">${svg}</div>
+    </div>
+  `;
+}
+
+// ---- Module List ----
+function renderArchModuleList(modules) {
+  let items = '';
+  for (const m of modules) {
+    const fns = m.public_functions || [];
+    const cls = m.classes || [];
+    items += `
+      <li class="arch-module-item" onclick="toggleArchModule(this)">
+        <div class="arch-module-name">
+          ${m.name}
+          <span style="font-size:11px; color:var(--text-secondary); font-family:var(--mono);">${m.lines_of_code} LOC</span>
+        </div>
+        <div class="arch-module-path">${m.path}</div>
+        <div class="arch-module-desc">${m.description}</div>
+        <div class="arch-module-detail">
+          ${cls.length > 0 ? `
+            <div class="detail-section">
+              <div class="detail-label">Classes</div>
+              <div class="detail-tags">${cls.map(c => '<span class="detail-tag">' + c + '</span>').join('')}</div>
+            </div>
+          ` : ''}
+          ${fns.length > 0 ? `
+            <div class="detail-section">
+              <div class="detail-label">Public Functions</div>
+              <div class="detail-tags">${fns.map(f => '<span class="detail-tag">' + f + '()</span>').join('')}</div>
+            </div>
+          ` : ''}
+        </div>
+      </li>
+    `;
+  }
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Source Modules (${modules.length})</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Click to expand</span>
+      </div>
+      <div class="card-body" style="max-height:500px; overflow-y:auto;">
+        <ul class="arch-module-list">${items}</ul>
+      </div>
+    </div>
+  `;
+}
+
+function toggleArchModule(el) {
+  el.classList.toggle('expanded');
+}
+
+// ---- Endpoint Table ----
+function renderArchEndpointTable(endpoints) {
+  let rows = '';
+  for (const ep of endpoints) {
+    const methodCls = 'method-' + ep.method;
+    const tags = (ep.tags || []).map(t => '<span class="arch-tag-badge">' + t + '</span>').join(' ');
+    const reqSchema = ep.request_schema ? '<span class="arch-schema-badge">' + ep.request_schema + '</span>' : '';
+    const resSchema = ep.response_schema ? '<span class="arch-schema-badge">' + ep.response_schema + '</span>' : '';
+    rows += `
+      <tr onclick="showEndpointDetail(this, ${JSON.stringify(ep).replace(/"/g, '&quot;')})">
+        <td><span class="arch-method-badge ${methodCls}">${ep.method}</span></td>
+        <td style="font-family:var(--mono); font-size:11px;">${ep.path}</td>
+        <td>${ep.summary}</td>
+        <td>${tags}</td>
+        <td>${reqSchema} ${resSchema}</td>
+      </tr>
+    `;
+  }
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">API Endpoints (${endpoints.length})</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Click for details</span>
+      </div>
+      <div class="card-body" style="max-height:500px; overflow-y:auto;">
+        <table class="arch-endpoint-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Path</th>
+              <th>Summary</th>
+              <th>Tags</th>
+              <th>Schemas</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function showEndpointDetail(row, ep) {
+  const panel = document.getElementById('archDetailPanel');
+  if (!panel) return;
+  const reqInfo = ep.request_schema ? '<code>' + ep.request_schema + '</code>' : 'None (query parameters)';
+  const resInfo = ep.response_schema ? '<code>' + ep.response_schema + '</code>' : 'JSON dict';
+  panel.innerHTML = `
+    <div class="arch-detail-title">${ep.method} ${ep.path}</div>
+    <div style="margin-bottom:6px;">${ep.summary}</div>
+    <div style="font-size:12px; color:var(--text-secondary);">
+      <strong>Tags:</strong> ${(ep.tags || []).join(', ')}<br>
+      <strong>Request Schema:</strong> ${reqInfo}<br>
+      <strong>Response Schema:</strong> ${resInfo}
+    </div>
+  `;
+  panel.classList.add('active');
+}
+
+// ---- Dependency Graph SVG ----
+function renderArchDependencyGraph(deps, modules) {
+  const W = 1000, H = 400;
+  // Position modules in a layered layout
+  const positions = {
+    'app':                  { x: 480, y: 30 },
+    'population_routes':    { x: 480, y: 120 },
+    'schemas':              { x: 740, y: 75 },
+    'middleware':           { x: 740, y: 165 },
+    'ensemble_runner':      { x: 220, y: 30 },
+    'biomarker_scores':     { x: 30,  y: 120 },
+    'bayesian_risk':        { x: 220, y: 210 },
+    'mitigation_model':     { x: 430, y: 280 },
+    'faers_signal':         { x: 650, y: 280 },
+    'model_registry':       { x: 220, y: 350 },
+    'model_validation':     { x: 30,  y: 350 },
+    'sle_cart_studies':      { x: 650, y: 350 },
+    'cell_therapy_registry': { x: 850, y: 350 },
+    'knowledge_graph':      { x: 30,  y: 240 },
+  };
+  const nodeW = 150, nodeH = 44;
+
+  // Color by layer
+  const layerColors = {
+    'app': { fill: '#e0f2fe', stroke: '#0284c7' },
+    'population_routes': { fill: '#e0f2fe', stroke: '#0284c7' },
+    'schemas': { fill: '#f0e6ff', stroke: '#7c3aed' },
+    'middleware': { fill: '#f0e6ff', stroke: '#7c3aed' },
+    'ensemble_runner': { fill: '#d1fae5', stroke: '#059669' },
+    'biomarker_scores': { fill: '#d1fae5', stroke: '#059669' },
+    'bayesian_risk': { fill: '#fef3c7', stroke: '#d97706' },
+    'mitigation_model': { fill: '#fef3c7', stroke: '#d97706' },
+    'faers_signal': { fill: '#fef3c7', stroke: '#d97706' },
+    'model_registry': { fill: '#fef3c7', stroke: '#d97706' },
+    'model_validation': { fill: '#fef3c7', stroke: '#d97706' },
+    'sle_cart_studies': { fill: '#dbeafe', stroke: '#2563eb' },
+    'cell_therapy_registry': { fill: '#dbeafe', stroke: '#2563eb' },
+    'knowledge_graph': { fill: '#d1fae5', stroke: '#059669' },
+  };
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="arch-dep-svg">`;
+  svg += '<defs>';
+  svg += '<marker id="depArrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>';
+  svg += '</defs>';
+
+  // Draw edges first (behind nodes)
+  for (const dep of deps) {
+    const fromPos = positions[dep.source];
+    const toPos = positions[dep.target];
+    if (!fromPos || !toPos) continue;
+
+    const fx = fromPos.x + nodeW / 2;
+    const fy = fromPos.y + nodeH;
+    const tx = toPos.x + nodeW / 2;
+    const ty = toPos.y;
+
+    // Simple curved path
+    const my = (fy + ty) / 2;
+    svg += `<path d="M${fx},${fy} C${fx},${my} ${tx},${my} ${tx},${ty}" class="dep-edge" stroke="#94a3b8" marker-end="url(#depArrow)" opacity="0.5"/>`;
+  }
+
+  // Draw nodes
+  for (const [name, pos] of Object.entries(positions)) {
+    const colors = layerColors[name] || { fill: '#f0f1f5', stroke: '#94a3b8' };
+    svg += `<g class="dep-node" onclick="showModuleDetailFromGraph('${name}')">`;
+    svg += `<rect x="${pos.x}" y="${pos.y}" width="${nodeW}" height="${nodeH}" rx="6" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="1.5"/>`;
+    svg += `<text x="${pos.x + nodeW/2}" y="${pos.y + 18}" text-anchor="middle" style="font-size:11px; font-weight:600; fill:#1a1a2e; font-family:var(--font)">${name}</text>`;
+    // Find module for path info
+    const mod = modules.find(m => m.name === name);
+    if (mod) {
+      svg += `<text x="${pos.x + nodeW/2}" y="${pos.y + 33}" text-anchor="middle" style="font-size:9px; fill:#5a5a7a; font-family:var(--mono)">${mod.path.split('/').pop()}</text>`;
+    }
+    svg += '</g>';
+  }
+
+  // Legend
+  const legendItems = [
+    { fill: '#e0f2fe', stroke: '#0284c7', label: 'API Layer' },
+    { fill: '#d1fae5', stroke: '#059669', label: 'Scoring Models' },
+    { fill: '#fef3c7', stroke: '#d97706', label: 'Risk Models' },
+    { fill: '#dbeafe', stroke: '#2563eb', label: 'Data Sources' },
+    { fill: '#f0e6ff', stroke: '#7c3aed', label: 'Support' },
+  ];
+  let lx = 20;
+  for (const li of legendItems) {
+    svg += `<rect x="${lx}" y="${H - 20}" width="14" height="14" rx="3" fill="${li.fill}" stroke="${li.stroke}" stroke-width="1"/>`;
+    svg += `<text x="${lx + 20}" y="${H - 8}" style="font-size:10px; fill:#5a5a7a; font-family:var(--font)">${li.label}</text>`;
+    lx += li.label.length * 7 + 34;
+  }
+
+  svg += '</svg>';
+
+  return `
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <div class="card-title">Module Dependency Graph</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Click a node for details</span>
+      </div>
+      <div class="card-body" style="overflow-x:auto;">${svg}</div>
+    </div>
+  `;
+}
+
+function showModuleDetailFromGraph(moduleName) {
+  const panel = document.getElementById('archDetailPanel');
+  if (!panel) return;
+  // Find the module item and expand it
+  const items = document.querySelectorAll('.arch-module-item');
+  for (const item of items) {
+    const nameEl = item.querySelector('.arch-module-name');
+    if (nameEl && nameEl.textContent.trim().startsWith(moduleName)) {
+      item.classList.add('expanded');
+      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Brief highlight
+      item.style.boxShadow = '0 0 0 2px var(--primary)';
+      setTimeout(() => { item.style.boxShadow = ''; }, 2000);
+      return;
+    }
+  }
+  // Fallback: show in detail panel
+  panel.innerHTML = `<div class="arch-detail-title">${moduleName}</div><div style="font-size:12px;">Module details available in the Source Modules list.</div>`;
+  panel.classList.add('active');
+}
+
+// ---- Model Registry Cards ----
+function renderArchRegistryModels(models) {
+  let cards = '';
+  for (const m of models) {
+    const tags = (m.suitable_for || []).map(s => '<span class="arch-tag-badge" style="background:var(--success-light);color:#047857;">' + s.replace(/_/g, ' ') + '</span>').join(' ');
+    const requires = (m.requires || []).map(r => '<span class="detail-tag">' + r + '</span>').join(' ');
+    cards += `
+      <div class="arch-registry-card">
+        <div class="arch-registry-name">${m.name}</div>
+        <div class="arch-registry-desc">${m.description}</div>
+        <div class="arch-registry-meta">
+          <div style="margin-bottom:4px;"><strong>Suitable for:</strong> ${tags}</div>
+          <div><strong>Requires:</strong> ${requires}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <div class="card-title">Model Registry (${models.length} models)</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Population-level risk estimation methods</span>
+      </div>
+      <div class="card-body">
+        <div class="arch-registry-grid">${cards}</div>
+      </div>
+    </div>
+  `;
 }
 
 </script>

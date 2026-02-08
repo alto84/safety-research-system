@@ -571,3 +571,81 @@ class TherapyListResponse(BaseModel):
     """Response for therapy type listing."""
 
     therapies: list[TherapyListItem]
+
+
+# ---------------------------------------------------------------------------
+# System architecture schemas
+# ---------------------------------------------------------------------------
+
+class ModuleInfo(BaseModel):
+    """Metadata for a single source module."""
+
+    name: str
+    path: str
+    description: str
+    public_functions: list[str] = Field(default_factory=list)
+    classes: list[str] = Field(default_factory=list)
+    lines_of_code: int = 0
+
+
+class DependencyEdge(BaseModel):
+    """A directed dependency from one module to another."""
+
+    source: str
+    target: str
+    import_names: list[str] = Field(default_factory=list)
+
+
+class EndpointInfo(BaseModel):
+    """Metadata for a single API endpoint."""
+
+    method: str
+    path: str
+    summary: str
+    tags: list[str] = Field(default_factory=list)
+    request_schema: str | None = None
+    response_schema: str | None = None
+
+
+class RegistryModelInfo(BaseModel):
+    """Metadata for a model in the model registry."""
+
+    id: str
+    name: str
+    description: str
+    suitable_for: list[str] = Field(default_factory=list)
+    requires: list[str] = Field(default_factory=list)
+
+
+class TestSummary(BaseModel):
+    """Summary of test coverage."""
+
+    total_tests: int
+    test_files: int
+    unit_tests: int
+    integration_tests: int
+    other_tests: int
+
+
+class SystemHealthInfo(BaseModel):
+    """System health snapshot."""
+
+    models_loaded: int
+    api_version: str
+    uptime_seconds: float
+    test_count: int
+    total_endpoints: int
+    total_modules: int
+
+
+class ArchitectureResponse(BaseModel):
+    """Full system architecture response."""
+
+    request_id: str
+    timestamp: datetime
+    modules: list[ModuleInfo]
+    dependencies: list[DependencyEdge]
+    endpoints: list[EndpointInfo]
+    registry_models: list[RegistryModelInfo]
+    test_summary: TestSummary
+    system_health: SystemHealthInfo
