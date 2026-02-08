@@ -1,0 +1,4755 @@
+{
+  "metadata": {
+    "extraction_date": "2026-02-08T21:33:25.638026",
+    "source": "openFDA FAERS API",
+    "api_endpoint": "https://api.fda.gov/drug/event.json",
+    "products_queried": [
+      "Yescarta",
+      "Kymriah",
+      "Tecartus",
+      "Breyanzi",
+      "Abecma",
+      "Carvykti"
+    ],
+    "key_adverse_events_searched": [
+      "Cytokine release syndrome",
+      "Cytokine storm",
+      "Neurotoxicity",
+      "Immune effector cell-associated neurotoxicity syndrome",
+      "Encephalopathy",
+      "Cerebral oedema",
+      "Febrile neutropenia",
+      "Neutropenia",
+      "Thrombocytopenia",
+      "Anaemia",
+      "Hypogammaglobulinaemia",
+      "Infection",
+      "Sepsis",
+      "Pneumonia",
+      "Pyrexia",
+      "Hypotension",
+      "Hypoxia",
+      "Disseminated intravascular coagulation",
+      "Tumour lysis syndrome",
+      "Haemophagocytic lymphohistiocytosis",
+      "Macrophage activation syndrome",
+      "Graft versus host disease",
+      "Death",
+      "Cardiac arrest",
+      "Multiple organ dysfunction syndrome",
+      "Tremor",
+      "Aphasia",
+      "Seizure",
+      "Confusional state",
+      "Delirium",
+      "T-cell lymphoma",
+      "Myelodysplastic syndrome",
+      "Acute myeloid leukaemia"
+    ],
+    "runtime_seconds": 159.2
+  },
+  "product_profiles": {
+    "Yescarta": {
+      "product_name": "Yescarta",
+      "generic_name": "axicabtagene ciloleucel",
+      "brand_name": "YESCARTA",
+      "target": "CD19",
+      "manufacturer": "Kite/Gilead",
+      "approval_date": "2017-10-18",
+      "total_reports": 6410,
+      "top_adverse_events": [
+        {
+          "term": "CYTOKINE RELEASE SYNDROME",
+          "count": 3299
+        },
+        {
+          "term": "IMMUNE EFFECTOR CELL-ASSOCIATED NEUROTOXICITY SYNDROME",
+          "count": 1479
+        },
+        {
+          "term": "NEUROTOXICITY",
+          "count": 1117
+        },
+        {
+          "term": "DEATH",
+          "count": 657
+        },
+        {
+          "term": "PYREXIA",
+          "count": 600
+        },
+        {
+          "term": "DISEASE PROGRESSION",
+          "count": 568
+        },
+        {
+          "term": "NEUTROPENIA",
+          "count": 286
+        },
+        {
+          "term": "HYPOTENSION",
+          "count": 285
+        },
+        {
+          "term": "ENCEPHALOPATHY",
+          "count": 238
+        },
+        {
+          "term": "FEBRILE NEUTROPENIA",
+          "count": 230
+        },
+        {
+          "term": "CONFUSIONAL STATE",
+          "count": 222
+        },
+        {
+          "term": "FATIGUE",
+          "count": 210
+        },
+        {
+          "term": "DIFFUSE LARGE B-CELL LYMPHOMA",
+          "count": 202
+        },
+        {
+          "term": "PANCYTOPENIA",
+          "count": 194
+        },
+        {
+          "term": "TREMOR",
+          "count": 181
+        },
+        {
+          "term": "APHASIA",
+          "count": 177
+        },
+        {
+          "term": "THROMBOCYTOPENIA",
+          "count": 153
+        },
+        {
+          "term": "TACHYCARDIA",
+          "count": 149
+        },
+        {
+          "term": "HEADACHE",
+          "count": 141
+        },
+        {
+          "term": "HYPOXIA",
+          "count": 137
+        },
+        {
+          "term": "CYTOPENIA",
+          "count": 133
+        },
+        {
+          "term": "SOMNOLENCE",
+          "count": 119
+        },
+        {
+          "term": "INFECTION",
+          "count": 104
+        },
+        {
+          "term": "HAEMOPHAGOCYTIC LYMPHOHISTIOCYTOSIS",
+          "count": 98
+        },
+        {
+          "term": "SEPTIC SHOCK",
+          "count": 95
+        },
+        {
+          "term": "HYPOGAMMAGLOBULINAEMIA",
+          "count": 94
+        },
+        {
+          "term": "DRUG INEFFECTIVE",
+          "count": 91
+        },
+        {
+          "term": "MALAISE",
+          "count": 87
+        },
+        {
+          "term": "SEPSIS",
+          "count": 87
+        },
+        {
+          "term": "CAR T-CELL-RELATED ENCEPHALOPATHY SYNDROME",
+          "count": 85
+        },
+        {
+          "term": "DISORIENTATION",
+          "count": 85
+        },
+        {
+          "term": "PNEUMONIA",
+          "count": 85
+        },
+        {
+          "term": "MEMORY IMPAIRMENT",
+          "count": 83
+        },
+        {
+          "term": "NAUSEA",
+          "count": 82
+        },
+        {
+          "term": "ACUTE KIDNEY INJURY",
+          "count": 81
+        },
+        {
+          "term": "LYMPHOCYTE ADOPTIVE THERAPY",
+          "count": 80
+        },
+        {
+          "term": "OFF LABEL USE",
+          "count": 80
+        },
+        {
+          "term": "ATRIAL FIBRILLATION",
+          "count": 77
+        },
+        {
+          "term": "ASTHENIA",
+          "count": 76
+        },
+        {
+          "term": "MENTAL STATUS CHANGES",
+          "count": 76
+        },
+        {
+          "term": "DECREASED APPETITE",
+          "count": 74
+        },
+        {
+          "term": "DIARRHOEA",
+          "count": 74
+        },
+        {
+          "term": "SEIZURE",
+          "count": 73
+        },
+        {
+          "term": "ANAEMIA",
+          "count": 70
+        },
+        {
+          "term": "COVID-19",
+          "count": 70
+        },
+        {
+          "term": "DYSGRAPHIA",
+          "count": 68
+        },
+        {
+          "term": "AGITATION",
+          "count": 66
+        },
+        {
+          "term": "BONE MARROW FAILURE",
+          "count": 62
+        },
+        {
+          "term": "BRAIN OEDEMA",
+          "count": 61
+        },
+        {
+          "term": "DIFFUSE LARGE B-CELL LYMPHOMA RECURRENT",
+          "count": 61
+        },
+        {
+          "term": "PLEURAL EFFUSION",
+          "count": 60
+        },
+        {
+          "term": "MULTIPLE ORGAN DYSFUNCTION SYNDROME",
+          "count": 59
+        },
+        {
+          "term": "SERUM FERRITIN INCREASED",
+          "count": 57
+        },
+        {
+          "term": "ASPARTATE AMINOTRANSFERASE INCREASED",
+          "count": 55
+        },
+        {
+          "term": "CHILLS",
+          "count": 55
+        },
+        {
+          "term": "DISEASE RECURRENCE",
+          "count": 55
+        },
+        {
+          "term": "DYSPNOEA",
+          "count": 53
+        },
+        {
+          "term": "MYELODYSPLASTIC SYNDROME",
+          "count": 52
+        },
+        {
+          "term": "RESPIRATORY FAILURE",
+          "count": 52
+        },
+        {
+          "term": "C-REACTIVE PROTEIN INCREASED",
+          "count": 49
+        },
+        {
+          "term": "LYMPHOMA",
+          "count": 49
+        },
+        {
+          "term": "CARDIAC ARREST",
+          "count": 48
+        },
+        {
+          "term": "DEPRESSED LEVEL OF CONSCIOUSNESS",
+          "count": 48
+        },
+        {
+          "term": "CYTOMEGALOVIRUS INFECTION REACTIVATION",
+          "count": 47
+        },
+        {
+          "term": "VOMITING",
+          "count": 47
+        },
+        {
+          "term": "INFUSION RELATED REACTION",
+          "count": 43
+        },
+        {
+          "term": "NERVOUS SYSTEM DISORDER",
+          "count": 42
+        },
+        {
+          "term": "PLATELET COUNT DECREASED",
+          "count": 42
+        },
+        {
+          "term": "ACUTE MYELOID LEUKAEMIA",
+          "count": 41
+        },
+        {
+          "term": "HYPONATRAEMIA",
+          "count": 41
+        },
+        {
+          "term": "BLOOD LACTATE DEHYDROGENASE INCREASED",
+          "count": 40
+        },
+        {
+          "term": "HYPOALBUMINAEMIA",
+          "count": 39
+        },
+        {
+          "term": "CYTOKINE STORM",
+          "count": 38
+        },
+        {
+          "term": "DELIRIUM",
+          "count": 38
+        },
+        {
+          "term": "DYSPHAGIA",
+          "count": 38
+        },
+        {
+          "term": "MYALGIA",
+          "count": 38
+        },
+        {
+          "term": "PAIN",
+          "count": 37
+        },
+        {
+          "term": "ABDOMINAL PAIN",
+          "count": 36
+        },
+        {
+          "term": "BACTERAEMIA",
+          "count": 36
+        },
+        {
+          "term": "CARDIORENAL SYNDROME",
+          "count": 35
+        },
+        {
+          "term": "INCONTINENCE",
+          "count": 35
+        },
+        {
+          "term": "CEREBROVASCULAR ACCIDENT",
+          "count": 34
+        },
+        {
+          "term": "HYPERBILIRUBINAEMIA",
+          "count": 32
+        },
+        {
+          "term": "CONDITION AGGRAVATED",
+          "count": 31
+        },
+        {
+          "term": "GASTROINTESTINAL HAEMORRHAGE",
+          "count": 31
+        },
+        {
+          "term": "FALL",
+          "count": 30
+        },
+        {
+          "term": "RENAL FAILURE",
+          "count": 30
+        },
+        {
+          "term": "TACHYPNOEA",
+          "count": 30
+        },
+        {
+          "term": "DISSEMINATED INTRAVASCULAR COAGULATION",
+          "count": 29
+        },
+        {
+          "term": "AGRANULOCYTOSIS",
+          "count": 28
+        },
+        {
+          "term": "TRANSAMINASES INCREASED",
+          "count": 28
+        },
+        {
+          "term": "B-CELL APLASIA",
+          "count": 27
+        },
+        {
+          "term": "CLOSTRIDIUM DIFFICILE INFECTION",
+          "count": 27
+        },
+        {
+          "term": "NEUROLOGICAL SYMPTOM",
+          "count": 27
+        },
+        {
+          "term": "NEUTROPHIL COUNT DECREASED",
+          "count": 27
+        },
+        {
+          "term": "THERAPY NON-RESPONDER",
+          "count": 27
+        },
+        {
+          "term": "WHITE BLOOD CELL COUNT DECREASED",
+          "count": 27
+        },
+        {
+          "term": "SECOND PRIMARY MALIGNANCY",
+          "count": 26
+        },
+        {
+          "term": "UNRESPONSIVE TO STIMULI",
+          "count": 26
+        },
+        {
+          "term": "DEEP VEIN THROMBOSIS",
+          "count": 25
+        }
+      ],
+      "serious_outcomes": [
+        {
+          "term": 1,
+          "count": 6130
+        },
+        {
+          "term": 2,
+          "count": 280
+        }
+      ],
+      "outcome_types": {
+        "seriousnessdeath": [
+          {
+            "term": 2,
+            "count": 3054
+          },
+          {
+            "term": 1,
+            "count": 1552
+          }
+        ],
+        "seriousnesshospitalization": [
+          {
+            "term": 2,
+            "count": 2599
+          },
+          {
+            "term": 1,
+            "count": 2497
+          }
+        ],
+        "seriousnesslifethreatening": [
+          {
+            "term": 2,
+            "count": 3926
+          },
+          {
+            "term": 1,
+            "count": 470
+          }
+        ],
+        "seriousnessdisabling": [
+          {
+            "term": 2,
+            "count": 4201
+          },
+          {
+            "term": 1,
+            "count": 97
+          }
+        ]
+      },
+      "sex_distribution": [
+        {
+          "sex": "Male",
+          "count": 3208
+        },
+        {
+          "sex": "Female",
+          "count": 1993
+        },
+        {
+          "sex": "Unknown",
+          "count": 6
+        }
+      ],
+      "reporting_by_year": {
+        "2017": 4,
+        "2018": 462,
+        "2019": 635,
+        "2020": 575,
+        "2021": 541,
+        "2022": 716,
+        "2023": 1234,
+        "2024": 1302,
+        "2025": 941
+      },
+      "reporter_type": [
+        {
+          "qualification": "Other Health Professional",
+          "count": 3304
+        },
+        {
+          "qualification": "Physician",
+          "count": 2085
+        },
+        {
+          "qualification": "Consumer/Patient",
+          "count": 493
+        },
+        {
+          "qualification": "Pharmacist",
+          "count": 417
+        }
+      ],
+      "key_ae_counts": {
+        "Cytokine release syndrome": {
+          "count": 3299,
+          "rate_pct": 51.47
+        },
+        "Cytokine storm": {
+          "count": 38,
+          "rate_pct": 0.59
+        },
+        "Neurotoxicity": {
+          "count": 2526,
+          "rate_pct": 39.41
+        },
+        "Immune effector cell-associated neurotoxicity syndrome": {
+          "count": 1479,
+          "rate_pct": 23.07
+        },
+        "Encephalopathy": {
+          "count": 344,
+          "rate_pct": 5.37
+        },
+        "Febrile neutropenia": {
+          "count": 230,
+          "rate_pct": 3.59
+        },
+        "Neutropenia": {
+          "count": 511,
+          "rate_pct": 7.97
+        },
+        "Thrombocytopenia": {
+          "count": 154,
+          "rate_pct": 2.4
+        },
+        "Anaemia": {
+          "count": 78,
+          "rate_pct": 1.22
+        },
+        "Hypogammaglobulinaemia": {
+          "count": 94,
+          "rate_pct": 1.47
+        },
+        "Infection": {
+          "count": 399,
+          "rate_pct": 6.22
+        },
+        "Sepsis": {
+          "count": 132,
+          "rate_pct": 2.06
+        },
+        "Pneumonia": {
+          "count": 146,
+          "rate_pct": 2.28
+        },
+        "Pyrexia": {
+          "count": 600,
+          "rate_pct": 9.36
+        },
+        "Hypotension": {
+          "count": 302,
+          "rate_pct": 4.71
+        },
+        "Hypoxia": {
+          "count": 137,
+          "rate_pct": 2.14
+        },
+        "Disseminated intravascular coagulation": {
+          "count": 29,
+          "rate_pct": 0.45
+        },
+        "Tumour lysis syndrome": {
+          "count": 15,
+          "rate_pct": 0.23
+        },
+        "Haemophagocytic lymphohistiocytosis": {
+          "count": 98,
+          "rate_pct": 1.53
+        },
+        "Graft versus host disease": {
+          "count": 9,
+          "rate_pct": 0.14
+        },
+        "Death": {
+          "count": 664,
+          "rate_pct": 10.36
+        },
+        "Cardiac arrest": {
+          "count": 48,
+          "rate_pct": 0.75
+        },
+        "Multiple organ dysfunction syndrome": {
+          "count": 59,
+          "rate_pct": 0.92
+        },
+        "Tremor": {
+          "count": 187,
+          "rate_pct": 2.92
+        },
+        "Aphasia": {
+          "count": 177,
+          "rate_pct": 2.76
+        },
+        "Seizure": {
+          "count": 83,
+          "rate_pct": 1.29
+        },
+        "Confusional state": {
+          "count": 222,
+          "rate_pct": 3.46
+        },
+        "Delirium": {
+          "count": 38,
+          "rate_pct": 0.59
+        },
+        "T-cell lymphoma": {
+          "count": 20,
+          "rate_pct": 0.31
+        },
+        "Myelodysplastic syndrome": {
+          "count": 68,
+          "rate_pct": 1.06
+        },
+        "Acute myeloid leukaemia": {
+          "count": 41,
+          "rate_pct": 0.64
+        }
+      }
+    },
+    "Kymriah": {
+      "product_name": "Kymriah",
+      "generic_name": "tisagenlecleucel",
+      "brand_name": "KYMRIAH",
+      "target": "CD19",
+      "manufacturer": "Novartis",
+      "approval_date": "2017-08-30",
+      "total_reports": 3591,
+      "top_adverse_events": [
+        {
+          "term": "CYTOKINE RELEASE SYNDROME",
+          "count": 1412
+        },
+        {
+          "term": "PYREXIA",
+          "count": 938
+        },
+        {
+          "term": "MALIGNANT NEOPLASM PROGRESSION",
+          "count": 540
+        },
+        {
+          "term": "HYPOTENSION",
+          "count": 376
+        },
+        {
+          "term": "HYPOGAMMAGLOBULINAEMIA",
+          "count": 367
+        },
+        {
+          "term": "PLATELET COUNT DECREASED",
+          "count": 365
+        },
+        {
+          "term": "NEUROTOXICITY",
+          "count": 364
+        },
+        {
+          "term": "WHITE BLOOD CELL COUNT DECREASED",
+          "count": 356
+        },
+        {
+          "term": "LYMPHOCYTE COUNT DECREASED",
+          "count": 352
+        },
+        {
+          "term": "HAEMOGLOBIN DECREASED",
+          "count": 351
+        },
+        {
+          "term": "IMMUNE EFFECTOR CELL-ASSOCIATED NEUROTOXICITY SYNDROME",
+          "count": 350
+        },
+        {
+          "term": "ACUTE LYMPHOCYTIC LEUKAEMIA RECURRENT",
+          "count": 333
+        },
+        {
+          "term": "NEUTROPHIL COUNT DECREASED",
+          "count": 318
+        },
+        {
+          "term": "DIFFUSE LARGE B-CELL LYMPHOMA",
+          "count": 272
+        },
+        {
+          "term": "DEATH",
+          "count": 271
+        },
+        {
+          "term": "HAEMATOCRIT DECREASED",
+          "count": 263
+        },
+        {
+          "term": "HYPOXIA",
+          "count": 211
+        },
+        {
+          "term": "CYTOPENIA",
+          "count": 200
+        },
+        {
+          "term": "DIFFUSE LARGE B-CELL LYMPHOMA RECURRENT",
+          "count": 181
+        },
+        {
+          "term": "THROMBOCYTOPENIA",
+          "count": 167
+        },
+        {
+          "term": "DRUG INEFFECTIVE",
+          "count": 148
+        },
+        {
+          "term": "HEADACHE",
+          "count": 147
+        },
+        {
+          "term": "NEUTROPENIA",
+          "count": 141
+        },
+        {
+          "term": "SECOND PRIMARY MALIGNANCY",
+          "count": 135
+        },
+        {
+          "term": "TACHYCARDIA",
+          "count": 130
+        },
+        {
+          "term": "DISEASE PROGRESSION",
+          "count": 127
+        },
+        {
+          "term": "FEBRILE NEUTROPENIA",
+          "count": 109
+        },
+        {
+          "term": "FATIGUE",
+          "count": 108
+        },
+        {
+          "term": "OFF LABEL USE",
+          "count": 102
+        },
+        {
+          "term": "CONFUSIONAL STATE",
+          "count": 101
+        },
+        {
+          "term": "POST-DEPLETION B-CELL RECOVERY",
+          "count": 95
+        },
+        {
+          "term": "SERUM FERRITIN INCREASED",
+          "count": 89
+        },
+        {
+          "term": "DEPRESSED LEVEL OF CONSCIOUSNESS",
+          "count": 82
+        },
+        {
+          "term": "HAEMOPHAGOCYTIC LYMPHOHISTIOCYTOSIS",
+          "count": 82
+        },
+        {
+          "term": "INFECTION",
+          "count": 82
+        },
+        {
+          "term": "MULTIPLE ORGAN DYSFUNCTION SYNDROME",
+          "count": 80
+        },
+        {
+          "term": "C-REACTIVE PROTEIN INCREASED",
+          "count": 78
+        },
+        {
+          "term": "DIARRHOEA",
+          "count": 78
+        },
+        {
+          "term": "RESPIRATORY FAILURE",
+          "count": 77
+        },
+        {
+          "term": "TREATMENT FAILURE",
+          "count": 76
+        },
+        {
+          "term": "B-CELL APLASIA",
+          "count": 75
+        },
+        {
+          "term": "TREMOR",
+          "count": 75
+        },
+        {
+          "term": "ACUTE LYMPHOCYTIC LEUKAEMIA",
+          "count": 74
+        },
+        {
+          "term": "PANCYTOPENIA",
+          "count": 74
+        },
+        {
+          "term": "PNEUMONIA",
+          "count": 70
+        },
+        {
+          "term": "SEPSIS",
+          "count": 69
+        },
+        {
+          "term": "APHASIA",
+          "count": 68
+        },
+        {
+          "term": "B-CELL TYPE ACUTE LEUKAEMIA",
+          "count": 68
+        },
+        {
+          "term": "NAUSEA",
+          "count": 67
+        },
+        {
+          "term": "ANAEMIA",
+          "count": 63
+        },
+        {
+          "term": "COAGULOPATHY",
+          "count": 63
+        },
+        {
+          "term": "ENCEPHALOPATHY",
+          "count": 63
+        },
+        {
+          "term": "VOMITING",
+          "count": 63
+        },
+        {
+          "term": "SOMNOLENCE",
+          "count": 62
+        },
+        {
+          "term": "ACUTE KIDNEY INJURY",
+          "count": 61
+        },
+        {
+          "term": "CHILLS",
+          "count": 61
+        },
+        {
+          "term": "MINIMAL RESIDUAL DISEASE",
+          "count": 60
+        },
+        {
+          "term": "MYELODYSPLASTIC SYNDROME",
+          "count": 60
+        },
+        {
+          "term": "COVID-19",
+          "count": 55
+        },
+        {
+          "term": "DYSPNOEA",
+          "count": 55
+        },
+        {
+          "term": "OUT OF SPECIFICATION TEST RESULTS",
+          "count": 54
+        },
+        {
+          "term": "DISEASE RECURRENCE",
+          "count": 53
+        },
+        {
+          "term": "ASTHENIA",
+          "count": 52
+        },
+        {
+          "term": "STAPHYLOCOCCAL INFECTION",
+          "count": 52
+        },
+        {
+          "term": "SEIZURE",
+          "count": 50
+        },
+        {
+          "term": "BONE MARROW FAILURE",
+          "count": 47
+        },
+        {
+          "term": "NERVOUS SYSTEM DISORDER",
+          "count": 46
+        },
+        {
+          "term": "SEPTIC SHOCK",
+          "count": 45
+        },
+        {
+          "term": "TACHYPNOEA",
+          "count": 44
+        },
+        {
+          "term": "BLOOD LACTATE DEHYDROGENASE INCREASED",
+          "count": 43
+        },
+        {
+          "term": "ENTEROCOCCAL INFECTION",
+          "count": 43
+        },
+        {
+          "term": "TUMOUR LYSIS SYNDROME",
+          "count": 43
+        },
+        {
+          "term": "THERAPY NON-RESPONDER",
+          "count": 42
+        },
+        {
+          "term": "ACUTE MYELOID LEUKAEMIA",
+          "count": 41
+        },
+        {
+          "term": "WHITE BLOOD CELL COUNT INCREASED",
+          "count": 41
+        },
+        {
+          "term": "DISORIENTATION",
+          "count": 40
+        },
+        {
+          "term": "DISSEMINATED INTRAVASCULAR COAGULATION",
+          "count": 40
+        },
+        {
+          "term": "MALAISE",
+          "count": 40
+        },
+        {
+          "term": "COUGH",
+          "count": 39
+        },
+        {
+          "term": "B-LYMPHOCYTE COUNT ABNORMAL",
+          "count": 38
+        },
+        {
+          "term": "MENTAL STATUS CHANGES",
+          "count": 38
+        },
+        {
+          "term": "PAIN",
+          "count": 38
+        },
+        {
+          "term": "INFLUENZA",
+          "count": 37
+        },
+        {
+          "term": "PLEURAL EFFUSION",
+          "count": 37
+        },
+        {
+          "term": "RENAL FAILURE",
+          "count": 37
+        },
+        {
+          "term": "BLOOD PRESSURE DECREASED",
+          "count": 34
+        },
+        {
+          "term": "CLOSTRIDIUM DIFFICILE INFECTION",
+          "count": 34
+        },
+        {
+          "term": "DELIRIUM",
+          "count": 34
+        },
+        {
+          "term": "DIFFUSE LARGE B-CELL LYMPHOMA REFRACTORY",
+          "count": 34
+        },
+        {
+          "term": "OXYGEN SATURATION DECREASED",
+          "count": 33
+        },
+        {
+          "term": "RHINOVIRUS INFECTION",
+          "count": 33
+        },
+        {
+          "term": "AGITATION",
+          "count": 32
+        },
+        {
+          "term": "ATRIAL FIBRILLATION",
+          "count": 32
+        },
+        {
+          "term": "SINUSITIS",
+          "count": 32
+        },
+        {
+          "term": "ASPARTATE AMINOTRANSFERASE INCREASED",
+          "count": 30
+        },
+        {
+          "term": "FUNGAL INFECTION",
+          "count": 30
+        },
+        {
+          "term": "ABDOMINAL PAIN",
+          "count": 29
+        },
+        {
+          "term": "CANDIDA INFECTION",
+          "count": 29
+        },
+        {
+          "term": "BRAIN OEDEMA",
+          "count": 28
+        },
+        {
+          "term": "CARDIAC ARREST",
+          "count": 28
+        }
+      ],
+      "serious_outcomes": [
+        {
+          "term": 1,
+          "count": 3336
+        },
+        {
+          "term": 2,
+          "count": 255
+        }
+      ],
+      "outcome_types": {
+        "seriousnessdeath": [
+          {
+            "term": 2,
+            "count": 1269
+          },
+          {
+            "term": 1,
+            "count": 1073
+          }
+        ],
+        "seriousnesshospitalization": [
+          {
+            "term": 2,
+            "count": 1394
+          },
+          {
+            "term": 1,
+            "count": 967
+          }
+        ],
+        "seriousnesslifethreatening": [
+          {
+            "term": 2,
+            "count": 1737
+          },
+          {
+            "term": 1,
+            "count": 419
+          }
+        ],
+        "seriousnessdisabling": [
+          {
+            "term": 2,
+            "count": 1838
+          },
+          {
+            "term": 1,
+            "count": 55
+          }
+        ]
+      },
+      "sex_distribution": [
+        {
+          "sex": "Male",
+          "count": 1768
+        },
+        {
+          "sex": "Female",
+          "count": 1085
+        }
+      ],
+      "reporting_by_year": {
+        "2015": 2,
+        "2016": 1,
+        "2017": 21,
+        "2018": 215,
+        "2019": 675,
+        "2020": 590,
+        "2021": 572,
+        "2022": 442,
+        "2023": 446,
+        "2024": 382,
+        "2025": 245
+      },
+      "reporter_type": [
+        {
+          "qualification": "Physician",
+          "count": 2001
+        },
+        {
+          "qualification": "Other Health Professional",
+          "count": 1080
+        },
+        {
+          "qualification": "Consumer/Patient",
+          "count": 444
+        },
+        {
+          "qualification": "Pharmacist",
+          "count": 52
+        }
+      ],
+      "key_ae_counts": {
+        "Cytokine release syndrome": {
+          "count": 1412,
+          "rate_pct": 39.32
+        },
+        "Cytokine storm": {
+          "count": 9,
+          "rate_pct": 0.25
+        },
+        "Neurotoxicity": {
+          "count": 681,
+          "rate_pct": 18.96
+        },
+        "Immune effector cell-associated neurotoxicity syndrome": {
+          "count": 350,
+          "rate_pct": 9.75
+        },
+        "Encephalopathy": {
+          "count": 73,
+          "rate_pct": 2.03
+        },
+        "Cerebral oedema": {
+          "count": 1,
+          "rate_pct": 0.03
+        },
+        "Febrile neutropenia": {
+          "count": 109,
+          "rate_pct": 3.04
+        },
+        "Neutropenia": {
+          "count": 247,
+          "rate_pct": 6.88
+        },
+        "Thrombocytopenia": {
+          "count": 170,
+          "rate_pct": 4.73
+        },
+        "Anaemia": {
+          "count": 85,
+          "rate_pct": 2.37
+        },
+        "Hypogammaglobulinaemia": {
+          "count": 367,
+          "rate_pct": 10.22
+        },
+        "Infection": {
+          "count": 418,
+          "rate_pct": 11.64
+        },
+        "Sepsis": {
+          "count": 98,
+          "rate_pct": 2.73
+        },
+        "Pneumonia": {
+          "count": 127,
+          "rate_pct": 3.54
+        },
+        "Pyrexia": {
+          "count": 938,
+          "rate_pct": 26.12
+        },
+        "Hypotension": {
+          "count": 377,
+          "rate_pct": 10.5
+        },
+        "Hypoxia": {
+          "count": 211,
+          "rate_pct": 5.88
+        },
+        "Disseminated intravascular coagulation": {
+          "count": 40,
+          "rate_pct": 1.11
+        },
+        "Tumour lysis syndrome": {
+          "count": 43,
+          "rate_pct": 1.2
+        },
+        "Haemophagocytic lymphohistiocytosis": {
+          "count": 82,
+          "rate_pct": 2.28
+        },
+        "Graft versus host disease": {
+          "count": 48,
+          "rate_pct": 1.34
+        },
+        "Death": {
+          "count": 276,
+          "rate_pct": 7.69
+        },
+        "Cardiac arrest": {
+          "count": 28,
+          "rate_pct": 0.78
+        },
+        "Multiple organ dysfunction syndrome": {
+          "count": 80,
+          "rate_pct": 2.23
+        },
+        "Tremor": {
+          "count": 77,
+          "rate_pct": 2.14
+        },
+        "Aphasia": {
+          "count": 68,
+          "rate_pct": 1.89
+        },
+        "Seizure": {
+          "count": 62,
+          "rate_pct": 1.73
+        },
+        "Confusional state": {
+          "count": 101,
+          "rate_pct": 2.81
+        },
+        "Delirium": {
+          "count": 36,
+          "rate_pct": 1.0
+        },
+        "T-cell lymphoma": {
+          "count": 14,
+          "rate_pct": 0.39
+        },
+        "Myelodysplastic syndrome": {
+          "count": 60,
+          "rate_pct": 1.67
+        },
+        "Acute myeloid leukaemia": {
+          "count": 54,
+          "rate_pct": 1.5
+        }
+      }
+    },
+    "Tecartus": {
+      "product_name": "Tecartus",
+      "generic_name": "brexucabtagene autoleucel",
+      "brand_name": "TECARTUS",
+      "target": "CD19",
+      "manufacturer": "Kite/Gilead",
+      "approval_date": "2020-07-24",
+      "total_reports": 1262,
+      "top_adverse_events": [
+        {
+          "term": "CYTOKINE RELEASE SYNDROME",
+          "count": 665
+        },
+        {
+          "term": "IMMUNE EFFECTOR CELL-ASSOCIATED NEUROTOXICITY SYNDROME",
+          "count": 439
+        },
+        {
+          "term": "NEUROTOXICITY",
+          "count": 164
+        },
+        {
+          "term": "DEATH",
+          "count": 140
+        },
+        {
+          "term": "PYREXIA",
+          "count": 79
+        },
+        {
+          "term": "FATIGUE",
+          "count": 67
+        },
+        {
+          "term": "HYPOTENSION",
+          "count": 64
+        },
+        {
+          "term": "DISEASE PROGRESSION",
+          "count": 62
+        },
+        {
+          "term": "CONFUSIONAL STATE",
+          "count": 48
+        },
+        {
+          "term": "TACHYCARDIA",
+          "count": 39
+        },
+        {
+          "term": "TREMOR",
+          "count": 39
+        },
+        {
+          "term": "ENCEPHALOPATHY",
+          "count": 37
+        },
+        {
+          "term": "PANCYTOPENIA",
+          "count": 37
+        },
+        {
+          "term": "FEBRILE NEUTROPENIA",
+          "count": 36
+        },
+        {
+          "term": "APHASIA",
+          "count": 28
+        },
+        {
+          "term": "HEADACHE",
+          "count": 28
+        },
+        {
+          "term": "HYPOXIA",
+          "count": 28
+        },
+        {
+          "term": "ACUTE KIDNEY INJURY",
+          "count": 27
+        },
+        {
+          "term": "HAEMOPHAGOCYTIC LYMPHOHISTIOCYTOSIS",
+          "count": 26
+        },
+        {
+          "term": "NEUTROPENIA",
+          "count": 26
+        },
+        {
+          "term": "DECREASED APPETITE",
+          "count": 25
+        },
+        {
+          "term": "MALAISE",
+          "count": 24
+        },
+        {
+          "term": "SOMNOLENCE",
+          "count": 24
+        },
+        {
+          "term": "THROMBOCYTOPENIA",
+          "count": 24
+        },
+        {
+          "term": "NAUSEA",
+          "count": 23
+        },
+        {
+          "term": "SEIZURE",
+          "count": 23
+        },
+        {
+          "term": "SEPSIS",
+          "count": 23
+        },
+        {
+          "term": "CYTOPENIA",
+          "count": 22
+        },
+        {
+          "term": "MANTLE CELL LYMPHOMA",
+          "count": 22
+        },
+        {
+          "term": "MEMORY IMPAIRMENT",
+          "count": 22
+        },
+        {
+          "term": "INFECTION",
+          "count": 21
+        },
+        {
+          "term": "ASPARTATE AMINOTRANSFERASE INCREASED",
+          "count": 20
+        },
+        {
+          "term": "DEPRESSED LEVEL OF CONSCIOUSNESS",
+          "count": 20
+        },
+        {
+          "term": "SERUM FERRITIN INCREASED",
+          "count": 20
+        },
+        {
+          "term": "INFUSION RELATED REACTION",
+          "count": 19
+        },
+        {
+          "term": "AGITATION",
+          "count": 18
+        },
+        {
+          "term": "DRUG INEFFECTIVE",
+          "count": 18
+        },
+        {
+          "term": "ATRIAL FIBRILLATION",
+          "count": 17
+        },
+        {
+          "term": "DIARRHOEA",
+          "count": 17
+        },
+        {
+          "term": "MENTAL STATUS CHANGES",
+          "count": 17
+        },
+        {
+          "term": "LYMPHOCYTE ADOPTIVE THERAPY",
+          "count": 16
+        },
+        {
+          "term": "RESPIRATORY FAILURE",
+          "count": 16
+        },
+        {
+          "term": "SEPTIC SHOCK",
+          "count": 16
+        },
+        {
+          "term": "ASTHENIA",
+          "count": 15
+        },
+        {
+          "term": "MULTIPLE ORGAN DYSFUNCTION SYNDROME",
+          "count": 15
+        },
+        {
+          "term": "PLEURAL EFFUSION",
+          "count": 15
+        },
+        {
+          "term": "ACUTE LYMPHOCYTIC LEUKAEMIA RECURRENT",
+          "count": 14
+        },
+        {
+          "term": "BRAIN OEDEMA",
+          "count": 14
+        },
+        {
+          "term": "COVID-19",
+          "count": 14
+        },
+        {
+          "term": "CHILLS",
+          "count": 13
+        },
+        {
+          "term": "LETHARGY",
+          "count": 13
+        },
+        {
+          "term": "MYALGIA",
+          "count": 13
+        },
+        {
+          "term": "OFF LABEL USE",
+          "count": 13
+        },
+        {
+          "term": "CYTOMEGALOVIRUS INFECTION REACTIVATION",
+          "count": 12
+        },
+        {
+          "term": "DELIRIUM",
+          "count": 12
+        },
+        {
+          "term": "HYPOFIBRINOGENAEMIA",
+          "count": 12
+        },
+        {
+          "term": "TACHYPNOEA",
+          "count": 12
+        },
+        {
+          "term": "ANAL SQUAMOUS CELL CARCINOMA",
+          "count": 11
+        },
+        {
+          "term": "BACTERAEMIA",
+          "count": 11
+        },
+        {
+          "term": "DYSPNOEA",
+          "count": 11
+        },
+        {
+          "term": "GENERAL PHYSICAL HEALTH DETERIORATION",
+          "count": 11
+        },
+        {
+          "term": "PNEUMONIA",
+          "count": 11
+        },
+        {
+          "term": "VOMITING",
+          "count": 11
+        },
+        {
+          "term": "ANAEMIA",
+          "count": 10
+        },
+        {
+          "term": "ARTHRALGIA",
+          "count": 10
+        },
+        {
+          "term": "BONE MARROW FAILURE",
+          "count": 10
+        },
+        {
+          "term": "DISORIENTATION",
+          "count": 10
+        },
+        {
+          "term": "DYSPHAGIA",
+          "count": 10
+        },
+        {
+          "term": "HYPONATRAEMIA",
+          "count": 10
+        },
+        {
+          "term": "MANTLE CELL LYMPHOMA RECURRENT",
+          "count": 10
+        },
+        {
+          "term": "UNRESPONSIVE TO STIMULI",
+          "count": 10
+        },
+        {
+          "term": "ALANINE AMINOTRANSFERASE INCREASED",
+          "count": 9
+        },
+        {
+          "term": "ARRHYTHMIA",
+          "count": 9
+        },
+        {
+          "term": "INCONTINENCE",
+          "count": 9
+        },
+        {
+          "term": "SHOCK",
+          "count": 9
+        },
+        {
+          "term": "BRADYCARDIA",
+          "count": 8
+        },
+        {
+          "term": "C-REACTIVE PROTEIN INCREASED",
+          "count": 8
+        },
+        {
+          "term": "CEREBROVASCULAR ACCIDENT",
+          "count": 8
+        },
+        {
+          "term": "HYPERBILIRUBINAEMIA",
+          "count": 8
+        },
+        {
+          "term": "HYPOGAMMAGLOBULINAEMIA",
+          "count": 8
+        },
+        {
+          "term": "MYELODYSPLASTIC SYNDROME",
+          "count": 8
+        },
+        {
+          "term": "ALANINE AMINOTRANSFERASE ABNORMAL",
+          "count": 7
+        },
+        {
+          "term": "BLOOD LACTATE DEHYDROGENASE INCREASED",
+          "count": 7
+        },
+        {
+          "term": "DUODENAL ULCER",
+          "count": 7
+        },
+        {
+          "term": "HYPOALBUMINAEMIA",
+          "count": 7
+        },
+        {
+          "term": "LOSS OF CONSCIOUSNESS",
+          "count": 7
+        },
+        {
+          "term": "OXYGEN SATURATION DECREASED",
+          "count": 7
+        },
+        {
+          "term": "UNEVALUABLE EVENT",
+          "count": 7
+        },
+        {
+          "term": "HYPERTENSION",
+          "count": 6
+        },
+        {
+          "term": "ISCHAEMIC STROKE",
+          "count": 6
+        },
+        {
+          "term": "NERVOUS SYSTEM DISORDER",
+          "count": 6
+        },
+        {
+          "term": "STATUS EPILEPTICUS",
+          "count": 6
+        },
+        {
+          "term": "TOXIC EPIDERMAL NECROLYSIS",
+          "count": 6
+        },
+        {
+          "term": "ACUTE LYMPHOCYTIC LEUKAEMIA",
+          "count": 5
+        },
+        {
+          "term": "ACUTE MYELOID LEUKAEMIA",
+          "count": 5
+        },
+        {
+          "term": "ATELECTASIS",
+          "count": 5
+        },
+        {
+          "term": "B-CELL APLASIA",
+          "count": 5
+        },
+        {
+          "term": "BLOOD PRESSURE DECREASED",
+          "count": 5
+        },
+        {
+          "term": "CARDIAC ARREST",
+          "count": 5
+        },
+        {
+          "term": "COVID-19 PNEUMONIA",
+          "count": 5
+        }
+      ],
+      "serious_outcomes": [
+        {
+          "term": 1,
+          "count": 1184
+        },
+        {
+          "term": 2,
+          "count": 78
+        }
+      ],
+      "outcome_types": {
+        "seriousnessdeath": [
+          {
+            "term": 2,
+            "count": 841
+          },
+          {
+            "term": 1,
+            "count": 320
+          }
+        ],
+        "seriousnesshospitalization": [
+          {
+            "term": 2,
+            "count": 647
+          },
+          {
+            "term": 1,
+            "count": 543
+          }
+        ],
+        "seriousnesslifethreatening": [
+          {
+            "term": 2,
+            "count": 1043
+          },
+          {
+            "term": 1,
+            "count": 103
+          }
+        ],
+        "seriousnessdisabling": [
+          {
+            "term": 2,
+            "count": 1114
+          },
+          {
+            "term": 1,
+            "count": 23
+          }
+        ]
+      },
+      "sex_distribution": [
+        {
+          "sex": "Male",
+          "count": 748
+        },
+        {
+          "sex": "Female",
+          "count": 309
+        }
+      ],
+      "reporting_by_year": {
+        "2020": 23,
+        "2021": 148,
+        "2022": 231,
+        "2023": 295,
+        "2024": 340,
+        "2025": 225
+      },
+      "reporter_type": [
+        {
+          "qualification": "Other Health Professional",
+          "count": 745
+        },
+        {
+          "qualification": "Physician",
+          "count": 334
+        },
+        {
+          "qualification": "Consumer/Patient",
+          "count": 120
+        },
+        {
+          "qualification": "Pharmacist",
+          "count": 36
+        }
+      ],
+      "key_ae_counts": {
+        "Cytokine release syndrome": {
+          "count": 665,
+          "rate_pct": 52.69
+        },
+        "Cytokine storm": {
+          "count": 3,
+          "rate_pct": 0.24
+        },
+        "Neurotoxicity": {
+          "count": 580,
+          "rate_pct": 45.96
+        },
+        "Immune effector cell-associated neurotoxicity syndrome": {
+          "count": 439,
+          "rate_pct": 34.79
+        },
+        "Encephalopathy": {
+          "count": 45,
+          "rate_pct": 3.57
+        },
+        "Febrile neutropenia": {
+          "count": 36,
+          "rate_pct": 2.85
+        },
+        "Neutropenia": {
+          "count": 61,
+          "rate_pct": 4.83
+        },
+        "Thrombocytopenia": {
+          "count": 25,
+          "rate_pct": 1.98
+        },
+        "Anaemia": {
+          "count": 11,
+          "rate_pct": 0.87
+        },
+        "Hypogammaglobulinaemia": {
+          "count": 8,
+          "rate_pct": 0.63
+        },
+        "Infection": {
+          "count": 77,
+          "rate_pct": 6.1
+        },
+        "Sepsis": {
+          "count": 29,
+          "rate_pct": 2.3
+        },
+        "Pneumonia": {
+          "count": 21,
+          "rate_pct": 1.66
+        },
+        "Pyrexia": {
+          "count": 79,
+          "rate_pct": 6.26
+        },
+        "Hypotension": {
+          "count": 66,
+          "rate_pct": 5.23
+        },
+        "Hypoxia": {
+          "count": 28,
+          "rate_pct": 2.22
+        },
+        "Disseminated intravascular coagulation": {
+          "count": 5,
+          "rate_pct": 0.4
+        },
+        "Tumour lysis syndrome": {
+          "count": 4,
+          "rate_pct": 0.32
+        },
+        "Haemophagocytic lymphohistiocytosis": {
+          "count": 26,
+          "rate_pct": 2.06
+        },
+        "Graft versus host disease": {
+          "count": 3,
+          "rate_pct": 0.24
+        },
+        "Death": {
+          "count": 142,
+          "rate_pct": 11.25
+        },
+        "Cardiac arrest": {
+          "count": 5,
+          "rate_pct": 0.4
+        },
+        "Multiple organ dysfunction syndrome": {
+          "count": 15,
+          "rate_pct": 1.19
+        },
+        "Tremor": {
+          "count": 40,
+          "rate_pct": 3.17
+        },
+        "Aphasia": {
+          "count": 28,
+          "rate_pct": 2.22
+        },
+        "Seizure": {
+          "count": 25,
+          "rate_pct": 1.98
+        },
+        "Confusional state": {
+          "count": 48,
+          "rate_pct": 3.8
+        },
+        "Delirium": {
+          "count": 12,
+          "rate_pct": 0.95
+        },
+        "Myelodysplastic syndrome": {
+          "count": 8,
+          "rate_pct": 0.63
+        },
+        "Acute myeloid leukaemia": {
+          "count": 5,
+          "rate_pct": 0.4
+        }
+      }
+    },
+    "Breyanzi": {
+      "product_name": "Breyanzi",
+      "generic_name": "lisocabtagene maraleucel",
+      "brand_name": "BREYANZI",
+      "target": "CD19",
+      "manufacturer": "Bristol Myers Squibb",
+      "approval_date": "2021-02-05",
+      "total_reports": 523,
+      "top_adverse_events": [
+        {
+          "term": "CYTOKINE RELEASE SYNDROME",
+          "count": 237
+        },
+        {
+          "term": "IMMUNE EFFECTOR CELL-ASSOCIATED NEUROTOXICITY SYNDROME",
+          "count": 103
+        },
+        {
+          "term": "NEUROTOXICITY",
+          "count": 77
+        },
+        {
+          "term": "PYREXIA",
+          "count": 39
+        },
+        {
+          "term": "FATIGUE",
+          "count": 35
+        },
+        {
+          "term": "HYPOTENSION",
+          "count": 35
+        },
+        {
+          "term": "PLATELET COUNT DECREASED",
+          "count": 25
+        },
+        {
+          "term": "LYMPHOCYTE ADOPTIVE THERAPY",
+          "count": 22
+        },
+        {
+          "term": "MALIGNANT NEOPLASM PROGRESSION",
+          "count": 22
+        },
+        {
+          "term": "DEATH",
+          "count": 21
+        },
+        {
+          "term": "CONFUSIONAL STATE",
+          "count": 20
+        },
+        {
+          "term": "HYPOGAMMAGLOBULINAEMIA",
+          "count": 18
+        },
+        {
+          "term": "APHASIA",
+          "count": 17
+        },
+        {
+          "term": "HEADACHE",
+          "count": 17
+        },
+        {
+          "term": "DISEASE PROGRESSION",
+          "count": 16
+        },
+        {
+          "term": "TREMOR",
+          "count": 16
+        },
+        {
+          "term": "DECREASED APPETITE",
+          "count": 15
+        },
+        {
+          "term": "HAEMOGLOBIN DECREASED",
+          "count": 15
+        },
+        {
+          "term": "LYMPHOCYTE COUNT DECREASED",
+          "count": 14
+        },
+        {
+          "term": "NEUTROPHIL COUNT DECREASED",
+          "count": 13
+        },
+        {
+          "term": "WHITE BLOOD CELL COUNT DECREASED",
+          "count": 13
+        },
+        {
+          "term": "NAUSEA",
+          "count": 12
+        },
+        {
+          "term": "PLEURAL EFFUSION",
+          "count": 11
+        },
+        {
+          "term": "DIARRHOEA",
+          "count": 10
+        },
+        {
+          "term": "MEMORY IMPAIRMENT",
+          "count": 10
+        },
+        {
+          "term": "FULL BLOOD COUNT DECREASED",
+          "count": 9
+        },
+        {
+          "term": "NEUTROPENIA",
+          "count": 9
+        },
+        {
+          "term": "ASTHENIA",
+          "count": 8
+        },
+        {
+          "term": "ENCEPHALOPATHY",
+          "count": 8
+        },
+        {
+          "term": "MALAISE",
+          "count": 8
+        },
+        {
+          "term": "SEIZURE",
+          "count": 8
+        },
+        {
+          "term": "SEPTIC SHOCK",
+          "count": 8
+        },
+        {
+          "term": "SERUM FERRITIN INCREASED",
+          "count": 8
+        },
+        {
+          "term": "CHILLS",
+          "count": 7
+        },
+        {
+          "term": "DYSPNOEA",
+          "count": 7
+        },
+        {
+          "term": "FEBRILE NEUTROPENIA",
+          "count": 7
+        },
+        {
+          "term": "HYPOXIA",
+          "count": 7
+        },
+        {
+          "term": "INFUSION RELATED REACTION",
+          "count": 7
+        },
+        {
+          "term": "PANCYTOPENIA",
+          "count": 7
+        },
+        {
+          "term": "PNEUMONIA",
+          "count": 7
+        },
+        {
+          "term": "RESPIRATORY FAILURE",
+          "count": 7
+        },
+        {
+          "term": "SOMNOLENCE",
+          "count": 7
+        },
+        {
+          "term": "ACUTE KIDNEY INJURY",
+          "count": 6
+        },
+        {
+          "term": "ANAEMIA",
+          "count": 6
+        },
+        {
+          "term": "ASPARTATE AMINOTRANSFERASE INCREASED",
+          "count": 6
+        },
+        {
+          "term": "C-REACTIVE PROTEIN INCREASED",
+          "count": 6
+        },
+        {
+          "term": "CARDIAC ARREST",
+          "count": 6
+        },
+        {
+          "term": "COVID-19",
+          "count": 6
+        },
+        {
+          "term": "DEPRESSED LEVEL OF CONSCIOUSNESS",
+          "count": 6
+        },
+        {
+          "term": "DIZZINESS",
+          "count": 6
+        },
+        {
+          "term": "HAEMOPHAGOCYTIC LYMPHOHISTIOCYTOSIS",
+          "count": 6
+        },
+        {
+          "term": "HYPERKALAEMIA",
+          "count": 6
+        },
+        {
+          "term": "HYPOALBUMINAEMIA",
+          "count": 6
+        },
+        {
+          "term": "INCONTINENCE",
+          "count": 6
+        },
+        {
+          "term": "MENTAL STATUS CHANGES",
+          "count": 6
+        },
+        {
+          "term": "MULTIPLE ORGAN DYSFUNCTION SYNDROME",
+          "count": 6
+        },
+        {
+          "term": "SEPSIS",
+          "count": 6
+        },
+        {
+          "term": "AGITATION",
+          "count": 5
+        },
+        {
+          "term": "ATRIAL FIBRILLATION",
+          "count": 5
+        },
+        {
+          "term": "BLOOD LACTATE DEHYDROGENASE INCREASED",
+          "count": 5
+        },
+        {
+          "term": "CYTOMEGALOVIRUS INFECTION",
+          "count": 5
+        },
+        {
+          "term": "CYTOMEGALOVIRUS VIRAEMIA",
+          "count": 5
+        },
+        {
+          "term": "DIFFUSE LARGE B-CELL LYMPHOMA",
+          "count": 5
+        },
+        {
+          "term": "ORGANISING PNEUMONIA",
+          "count": 5
+        },
+        {
+          "term": "PNEUMONIA ASPIRATION",
+          "count": 5
+        },
+        {
+          "term": "TACHYCARDIA",
+          "count": 5
+        },
+        {
+          "term": "UNRESPONSIVE TO STIMULI",
+          "count": 5
+        },
+        {
+          "term": "ALANINE AMINOTRANSFERASE INCREASED",
+          "count": 4
+        },
+        {
+          "term": "CEREBROVASCULAR ACCIDENT",
+          "count": 4
+        },
+        {
+          "term": "COAGULOPATHY",
+          "count": 4
+        },
+        {
+          "term": "CYTOPENIA",
+          "count": 4
+        },
+        {
+          "term": "DIPLOPIA",
+          "count": 4
+        },
+        {
+          "term": "ELECTROENCEPHALOGRAM ABNORMAL",
+          "count": 4
+        },
+        {
+          "term": "HYPERGLYCAEMIA",
+          "count": 4
+        },
+        {
+          "term": "HYPERVOLAEMIA",
+          "count": 4
+        },
+        {
+          "term": "MYELODYSPLASTIC SYNDROME",
+          "count": 4
+        },
+        {
+          "term": "PERIPHERAL T-CELL LYMPHOMA UNSPECIFIED",
+          "count": 4
+        },
+        {
+          "term": "PHARYNGEAL OEDEMA",
+          "count": 4
+        },
+        {
+          "term": "PULMONARY EMBOLISM",
+          "count": 4
+        },
+        {
+          "term": "RENAL IMPAIRMENT",
+          "count": 4
+        },
+        {
+          "term": "TUMOUR LYSIS SYNDROME",
+          "count": 4
+        },
+        {
+          "term": "ABDOMINAL PAIN",
+          "count": 3
+        },
+        {
+          "term": "ACUTE RESPIRATORY FAILURE",
+          "count": 3
+        },
+        {
+          "term": "ATELECTASIS",
+          "count": 3
+        },
+        {
+          "term": "BLINDNESS",
+          "count": 3
+        },
+        {
+          "term": "BLOOD CREATININE INCREASED",
+          "count": 3
+        },
+        {
+          "term": "DEEP VEIN THROMBOSIS",
+          "count": 3
+        },
+        {
+          "term": "DEPRESSION",
+          "count": 3
+        },
+        {
+          "term": "DIALYSIS",
+          "count": 3
+        },
+        {
+          "term": "DRUG INEFFECTIVE",
+          "count": 3
+        },
+        {
+          "term": "DYSARTHRIA",
+          "count": 3
+        },
+        {
+          "term": "DYSPHAGIA",
+          "count": 3
+        },
+        {
+          "term": "ENTEROCOCCAL BACTERAEMIA",
+          "count": 3
+        },
+        {
+          "term": "FALL",
+          "count": 3
+        },
+        {
+          "term": "GAIT INABILITY",
+          "count": 3
+        },
+        {
+          "term": "GENERAL PHYSICAL HEALTH DETERIORATION",
+          "count": 3
+        },
+        {
+          "term": "HALLUCINATION",
+          "count": 3
+        },
+        {
+          "term": "HYPOAESTHESIA",
+          "count": 3
+        },
+        {
+          "term": "INFECTION",
+          "count": 3
+        },
+        {
+          "term": "JAUNDICE CHOLESTATIC",
+          "count": 3
+        }
+      ],
+      "serious_outcomes": [
+        {
+          "term": 1,
+          "count": 460
+        },
+        {
+          "term": 2,
+          "count": 62
+        }
+      ],
+      "outcome_types": {
+        "seriousnessdeath": [
+          {
+            "term": 2,
+            "count": 374
+          },
+          {
+            "term": 1,
+            "count": 101
+          }
+        ],
+        "seriousnesshospitalization": [
+          {
+            "term": 1,
+            "count": 254
+          },
+          {
+            "term": 2,
+            "count": 236
+          }
+        ],
+        "seriousnesslifethreatening": [
+          {
+            "term": 2,
+            "count": 428
+          },
+          {
+            "term": 1,
+            "count": 40
+          }
+        ],
+        "seriousnessdisabling": [
+          {
+            "term": 2,
+            "count": 461
+          },
+          {
+            "term": 1,
+            "count": 3
+          }
+        ]
+      },
+      "sex_distribution": [
+        {
+          "sex": "Male",
+          "count": 279
+        },
+        {
+          "sex": "Female",
+          "count": 186
+        },
+        {
+          "sex": "Unknown",
+          "count": 2
+        }
+      ],
+      "reporting_by_year": {
+        "2021": 54,
+        "2022": 90,
+        "2023": 99,
+        "2024": 137,
+        "2025": 143
+      },
+      "reporter_type": [
+        {
+          "qualification": "Other Health Professional",
+          "count": 246
+        },
+        {
+          "qualification": "Physician",
+          "count": 187
+        },
+        {
+          "qualification": "Consumer/Patient",
+          "count": 67
+        },
+        {
+          "qualification": "Pharmacist",
+          "count": 9
+        }
+      ],
+      "key_ae_counts": {
+        "Cytokine release syndrome": {
+          "count": 237,
+          "rate_pct": 45.32
+        },
+        "Neurotoxicity": {
+          "count": 179,
+          "rate_pct": 34.23
+        },
+        "Immune effector cell-associated neurotoxicity syndrome": {
+          "count": 103,
+          "rate_pct": 19.69
+        },
+        "Encephalopathy": {
+          "count": 10,
+          "rate_pct": 1.91
+        },
+        "Febrile neutropenia": {
+          "count": 7,
+          "rate_pct": 1.34
+        },
+        "Neutropenia": {
+          "count": 16,
+          "rate_pct": 3.06
+        },
+        "Thrombocytopenia": {
+          "count": 3,
+          "rate_pct": 0.57
+        },
+        "Anaemia": {
+          "count": 7,
+          "rate_pct": 1.34
+        },
+        "Hypogammaglobulinaemia": {
+          "count": 18,
+          "rate_pct": 3.44
+        },
+        "Infection": {
+          "count": 24,
+          "rate_pct": 4.59
+        },
+        "Sepsis": {
+          "count": 9,
+          "rate_pct": 1.72
+        },
+        "Pneumonia": {
+          "count": 21,
+          "rate_pct": 4.02
+        },
+        "Pyrexia": {
+          "count": 39,
+          "rate_pct": 7.46
+        },
+        "Hypotension": {
+          "count": 36,
+          "rate_pct": 6.88
+        },
+        "Hypoxia": {
+          "count": 7,
+          "rate_pct": 1.34
+        },
+        "Disseminated intravascular coagulation": {
+          "count": 2,
+          "rate_pct": 0.38
+        },
+        "Tumour lysis syndrome": {
+          "count": 4,
+          "rate_pct": 0.76
+        },
+        "Haemophagocytic lymphohistiocytosis": {
+          "count": 6,
+          "rate_pct": 1.15
+        },
+        "Graft versus host disease": {
+          "count": 2,
+          "rate_pct": 0.38
+        },
+        "Death": {
+          "count": 21,
+          "rate_pct": 4.02
+        },
+        "Cardiac arrest": {
+          "count": 6,
+          "rate_pct": 1.15
+        },
+        "Multiple organ dysfunction syndrome": {
+          "count": 6,
+          "rate_pct": 1.15
+        },
+        "Tremor": {
+          "count": 16,
+          "rate_pct": 3.06
+        },
+        "Aphasia": {
+          "count": 17,
+          "rate_pct": 3.25
+        },
+        "Seizure": {
+          "count": 10,
+          "rate_pct": 1.91
+        },
+        "Confusional state": {
+          "count": 20,
+          "rate_pct": 3.82
+        },
+        "Delirium": {
+          "count": 2,
+          "rate_pct": 0.38
+        },
+        "T-cell lymphoma": {
+          "count": 6,
+          "rate_pct": 1.15
+        },
+        "Myelodysplastic syndrome": {
+          "count": 4,
+          "rate_pct": 0.76
+        },
+        "Acute myeloid leukaemia": {
+          "count": 2,
+          "rate_pct": 0.38
+        }
+      }
+    },
+    "Abecma": {
+      "product_name": "Abecma",
+      "generic_name": "idecabtagene vicleucel",
+      "brand_name": "ABECMA",
+      "target": "BCMA",
+      "manufacturer": "Bristol Myers Squibb",
+      "approval_date": "2021-03-26",
+      "total_reports": 879,
+      "top_adverse_events": [
+        {
+          "term": "CYTOKINE RELEASE SYNDROME",
+          "count": 537
+        },
+        {
+          "term": "FATIGUE",
+          "count": 159
+        },
+        {
+          "term": "IMMUNE EFFECTOR CELL-ASSOCIATED NEUROTOXICITY SYNDROME",
+          "count": 133
+        },
+        {
+          "term": "NEUROTOXICITY",
+          "count": 63
+        },
+        {
+          "term": "PYREXIA",
+          "count": 62
+        },
+        {
+          "term": "DECREASED APPETITE",
+          "count": 54
+        },
+        {
+          "term": "HEADACHE",
+          "count": 54
+        },
+        {
+          "term": "HYPOGAMMAGLOBULINAEMIA",
+          "count": 54
+        },
+        {
+          "term": "NAUSEA",
+          "count": 53
+        },
+        {
+          "term": "ASPARTATE AMINOTRANSFERASE INCREASED",
+          "count": 48
+        },
+        {
+          "term": "DIARRHOEA",
+          "count": 44
+        },
+        {
+          "term": "ACUTE KIDNEY INJURY",
+          "count": 41
+        },
+        {
+          "term": "DEATH",
+          "count": 41
+        },
+        {
+          "term": "HYPOTENSION",
+          "count": 41
+        },
+        {
+          "term": "NEUTROPENIA",
+          "count": 38
+        },
+        {
+          "term": "ANAEMIA",
+          "count": 36
+        },
+        {
+          "term": "PLASMA CELL MYELOMA",
+          "count": 35
+        },
+        {
+          "term": "SOMNOLENCE",
+          "count": 34
+        },
+        {
+          "term": "THROMBOCYTOPENIA",
+          "count": 31
+        },
+        {
+          "term": "CYTOPENIA",
+          "count": 30
+        },
+        {
+          "term": "TREMOR",
+          "count": 29
+        },
+        {
+          "term": "WHITE BLOOD CELL COUNT DECREASED",
+          "count": 29
+        },
+        {
+          "term": "TACHYCARDIA",
+          "count": 25
+        },
+        {
+          "term": "PANCYTOPENIA",
+          "count": 24
+        },
+        {
+          "term": "ALANINE AMINOTRANSFERASE ABNORMAL",
+          "count": 23
+        },
+        {
+          "term": "CHILLS",
+          "count": 22
+        },
+        {
+          "term": "HYPOALBUMINAEMIA",
+          "count": 22
+        },
+        {
+          "term": "IMMUNODEFICIENCY",
+          "count": 22
+        },
+        {
+          "term": "MALAISE",
+          "count": 22
+        },
+        {
+          "term": "HEART RATE INCREASED",
+          "count": 21
+        },
+        {
+          "term": "MYALGIA",
+          "count": 21
+        },
+        {
+          "term": "ALTERED STATE OF CONSCIOUSNESS",
+          "count": 20
+        },
+        {
+          "term": "BALANCE DISORDER",
+          "count": 20
+        },
+        {
+          "term": "HAEMOPHAGOCYTIC LYMPHOHISTIOCYTOSIS",
+          "count": 20
+        },
+        {
+          "term": "HYPERTENSION",
+          "count": 19
+        },
+        {
+          "term": "MYELODYSPLASTIC SYNDROME",
+          "count": 19
+        },
+        {
+          "term": "SEIZURE",
+          "count": 19
+        },
+        {
+          "term": "DRUG INEFFECTIVE",
+          "count": 18
+        },
+        {
+          "term": "CONFUSIONAL STATE",
+          "count": 16
+        },
+        {
+          "term": "ADVERSE EVENT",
+          "count": 14
+        },
+        {
+          "term": "ARTHRALGIA",
+          "count": 14
+        },
+        {
+          "term": "INFUSION RELATED REACTION",
+          "count": 14
+        },
+        {
+          "term": "PLATELET COUNT DECREASED",
+          "count": 14
+        },
+        {
+          "term": "SEPSIS",
+          "count": 13
+        },
+        {
+          "term": "VOMITING",
+          "count": 13
+        },
+        {
+          "term": "FEBRILE BONE MARROW APLASIA",
+          "count": 12
+        },
+        {
+          "term": "HAEMATOTOXICITY",
+          "count": 12
+        },
+        {
+          "term": "LYMPHOCYTE ADOPTIVE THERAPY",
+          "count": 12
+        },
+        {
+          "term": "ALANINE AMINOTRANSFERASE INCREASED",
+          "count": 11
+        },
+        {
+          "term": "DISEASE PROGRESSION",
+          "count": 11
+        },
+        {
+          "term": "NEUTROPHIL COUNT DECREASED",
+          "count": 11
+        },
+        {
+          "term": "RASH",
+          "count": 11
+        },
+        {
+          "term": "AGITATION",
+          "count": 10
+        },
+        {
+          "term": "FEBRILE NEUTROPENIA",
+          "count": 10
+        },
+        {
+          "term": "HYPOXIA",
+          "count": 10
+        },
+        {
+          "term": "MUCOSAL INFLAMMATION",
+          "count": 10
+        },
+        {
+          "term": "PLASMA CELL MYELOMA RECURRENT",
+          "count": 10
+        },
+        {
+          "term": "THERAPY NON-RESPONDER",
+          "count": 10
+        },
+        {
+          "term": "ALANINE AMINOTRANSFERASE",
+          "count": 9
+        },
+        {
+          "term": "BONE MARROW FAILURE",
+          "count": 9
+        },
+        {
+          "term": "DYSGEUSIA",
+          "count": 9
+        },
+        {
+          "term": "PARKINSONISM",
+          "count": 9
+        },
+        {
+          "term": "SKIN EXFOLIATION",
+          "count": 9
+        },
+        {
+          "term": "SKIN REACTION",
+          "count": 9
+        },
+        {
+          "term": "FALL",
+          "count": 8
+        },
+        {
+          "term": "FULL BLOOD COUNT DECREASED",
+          "count": 8
+        },
+        {
+          "term": "LARYNGEAL OEDEMA",
+          "count": 8
+        },
+        {
+          "term": "PLEURAL EFFUSION",
+          "count": 8
+        },
+        {
+          "term": "ARRHYTHMIA",
+          "count": 7
+        },
+        {
+          "term": "CYTOMEGALOVIRUS VIRAEMIA",
+          "count": 7
+        },
+        {
+          "term": "ENCEPHALOPATHY",
+          "count": 7
+        },
+        {
+          "term": "HAEMOGLOBIN DECREASED",
+          "count": 7
+        },
+        {
+          "term": "LABORATORY TEST ABNORMAL",
+          "count": 7
+        },
+        {
+          "term": "LEUKOPENIA",
+          "count": 7
+        },
+        {
+          "term": "APHASIA",
+          "count": 6
+        },
+        {
+          "term": "COMA",
+          "count": 6
+        },
+        {
+          "term": "COVID-19",
+          "count": 6
+        },
+        {
+          "term": "DISSEMINATED INTRAVASCULAR COAGULATION",
+          "count": 6
+        },
+        {
+          "term": "HYPERBILIRUBINAEMIA",
+          "count": 6
+        },
+        {
+          "term": "INFECTION",
+          "count": 6
+        },
+        {
+          "term": "LYMPHOCYTE COUNT DECREASED",
+          "count": 6
+        },
+        {
+          "term": "ACUTE MYELOID LEUKAEMIA",
+          "count": 5
+        },
+        {
+          "term": "CYTOMEGALOVIRUS CHORIORETINITIS",
+          "count": 5
+        },
+        {
+          "term": "DYSPNOEA",
+          "count": 5
+        },
+        {
+          "term": "HEPATOTOXICITY",
+          "count": 5
+        },
+        {
+          "term": "INCONTINENCE",
+          "count": 5
+        },
+        {
+          "term": "MALNUTRITION",
+          "count": 5
+        },
+        {
+          "term": "MULTIPLE ORGAN DYSFUNCTION SYNDROME",
+          "count": 5
+        },
+        {
+          "term": "MUSCULAR WEAKNESS",
+          "count": 5
+        },
+        {
+          "term": "MYELOSUPPRESSION",
+          "count": 5
+        },
+        {
+          "term": "OFF LABEL USE",
+          "count": 5
+        },
+        {
+          "term": "TACHYPNOEA",
+          "count": 5
+        },
+        {
+          "term": "TORSADE DE POINTES",
+          "count": 5
+        },
+        {
+          "term": "ATRIAL FIBRILLATION",
+          "count": 4
+        },
+        {
+          "term": "BLOOD LACTATE DEHYDROGENASE INCREASED",
+          "count": 4
+        },
+        {
+          "term": "CLOSTRIDIUM DIFFICILE COLITIS",
+          "count": 4
+        },
+        {
+          "term": "FEMUR FRACTURE",
+          "count": 4
+        },
+        {
+          "term": "HYPONATRAEMIA",
+          "count": 4
+        },
+        {
+          "term": "MENTAL STATUS CHANGES",
+          "count": 4
+        },
+        {
+          "term": "PAIN IN EXTREMITY",
+          "count": 4
+        }
+      ],
+      "serious_outcomes": [
+        {
+          "term": 1,
+          "count": 776
+        },
+        {
+          "term": 2,
+          "count": 103
+        }
+      ],
+      "outcome_types": {
+        "seriousnessdeath": [
+          {
+            "term": 2,
+            "count": 653
+          },
+          {
+            "term": 1,
+            "count": 114
+          }
+        ],
+        "seriousnesshospitalization": [
+          {
+            "term": 2,
+            "count": 469
+          },
+          {
+            "term": 1,
+            "count": 323
+          }
+        ],
+        "seriousnesslifethreatening": [
+          {
+            "term": 2,
+            "count": 694
+          },
+          {
+            "term": 1,
+            "count": 62
+          }
+        ],
+        "seriousnessdisabling": [
+          {
+            "term": 2,
+            "count": 740
+          },
+          {
+            "term": 1,
+            "count": 11
+          }
+        ]
+      },
+      "sex_distribution": [
+        {
+          "sex": "Male",
+          "count": 463
+        },
+        {
+          "sex": "Female",
+          "count": 318
+        },
+        {
+          "sex": "Unknown",
+          "count": 1
+        }
+      ],
+      "reporting_by_year": {
+        "2021": 101,
+        "2022": 286,
+        "2023": 210,
+        "2024": 146,
+        "2025": 136
+      },
+      "reporter_type": [
+        {
+          "qualification": "Other Health Professional",
+          "count": 389
+        },
+        {
+          "qualification": "Physician",
+          "count": 358
+        },
+        {
+          "qualification": "Consumer/Patient",
+          "count": 109
+        },
+        {
+          "qualification": "Pharmacist",
+          "count": 16
+        }
+      ],
+      "key_ae_counts": {
+        "Cytokine release syndrome": {
+          "count": 537,
+          "rate_pct": 61.09
+        },
+        "Neurotoxicity": {
+          "count": 193,
+          "rate_pct": 21.96
+        },
+        "Immune effector cell-associated neurotoxicity syndrome": {
+          "count": 133,
+          "rate_pct": 15.13
+        },
+        "Encephalopathy": {
+          "count": 8,
+          "rate_pct": 0.91
+        },
+        "Febrile neutropenia": {
+          "count": 10,
+          "rate_pct": 1.14
+        },
+        "Neutropenia": {
+          "count": 48,
+          "rate_pct": 5.46
+        },
+        "Thrombocytopenia": {
+          "count": 32,
+          "rate_pct": 3.64
+        },
+        "Anaemia": {
+          "count": 38,
+          "rate_pct": 4.32
+        },
+        "Hypogammaglobulinaemia": {
+          "count": 54,
+          "rate_pct": 6.14
+        },
+        "Infection": {
+          "count": 43,
+          "rate_pct": 4.89
+        },
+        "Sepsis": {
+          "count": 14,
+          "rate_pct": 1.59
+        },
+        "Pneumonia": {
+          "count": 11,
+          "rate_pct": 1.25
+        },
+        "Pyrexia": {
+          "count": 62,
+          "rate_pct": 7.05
+        },
+        "Hypotension": {
+          "count": 41,
+          "rate_pct": 4.66
+        },
+        "Hypoxia": {
+          "count": 10,
+          "rate_pct": 1.14
+        },
+        "Disseminated intravascular coagulation": {
+          "count": 6,
+          "rate_pct": 0.68
+        },
+        "Tumour lysis syndrome": {
+          "count": 4,
+          "rate_pct": 0.46
+        },
+        "Haemophagocytic lymphohistiocytosis": {
+          "count": 20,
+          "rate_pct": 2.28
+        },
+        "Death": {
+          "count": 41,
+          "rate_pct": 4.66
+        },
+        "Cardiac arrest": {
+          "count": 3,
+          "rate_pct": 0.34
+        },
+        "Multiple organ dysfunction syndrome": {
+          "count": 5,
+          "rate_pct": 0.57
+        },
+        "Tremor": {
+          "count": 29,
+          "rate_pct": 3.3
+        },
+        "Aphasia": {
+          "count": 6,
+          "rate_pct": 0.68
+        },
+        "Seizure": {
+          "count": 19,
+          "rate_pct": 2.16
+        },
+        "Confusional state": {
+          "count": 16,
+          "rate_pct": 1.82
+        },
+        "T-cell lymphoma": {
+          "count": 1,
+          "rate_pct": 0.11
+        },
+        "Myelodysplastic syndrome": {
+          "count": 20,
+          "rate_pct": 2.28
+        },
+        "Acute myeloid leukaemia": {
+          "count": 6,
+          "rate_pct": 0.68
+        }
+      }
+    },
+    "Carvykti": {
+      "product_name": "Carvykti",
+      "generic_name": "ciltacabtagene autoleucel",
+      "brand_name": "CARVYKTI",
+      "target": "BCMA",
+      "manufacturer": "Janssen/Legend",
+      "approval_date": "2022-02-28",
+      "total_reports": 3767,
+      "top_adverse_events": [
+        {
+          "term": "CYTOKINE RELEASE SYNDROME",
+          "count": 518
+        },
+        {
+          "term": "PYREXIA",
+          "count": 248
+        },
+        {
+          "term": "HOSPITALISATION",
+          "count": 235
+        },
+        {
+          "term": "PARKINSONISM",
+          "count": 206
+        },
+        {
+          "term": "IMMUNE EFFECTOR CELL-ASSOCIATED NEUROTOXICITY SYNDROME",
+          "count": 184
+        },
+        {
+          "term": "ADVERSE EVENT",
+          "count": 165
+        },
+        {
+          "term": "MALAISE",
+          "count": 144
+        },
+        {
+          "term": "NEUROTOXICITY",
+          "count": 139
+        },
+        {
+          "term": "DEATH",
+          "count": 135
+        },
+        {
+          "term": "FATIGUE",
+          "count": 128
+        },
+        {
+          "term": "CRANIAL NERVE PARALYSIS",
+          "count": 124
+        },
+        {
+          "term": "BELL^S PALSY",
+          "count": 93
+        },
+        {
+          "term": "FACIAL PARALYSIS",
+          "count": 88
+        },
+        {
+          "term": "ADVERSE DRUG REACTION",
+          "count": 85
+        },
+        {
+          "term": "ASTHENIA",
+          "count": 85
+        },
+        {
+          "term": "ILLNESS",
+          "count": 85
+        },
+        {
+          "term": "HAEMOPHAGOCYTIC LYMPHOHISTIOCYTOSIS",
+          "count": 78
+        },
+        {
+          "term": "COVID-19",
+          "count": 73
+        },
+        {
+          "term": "NEUTROPENIA",
+          "count": 70
+        },
+        {
+          "term": "COLITIS",
+          "count": 67
+        },
+        {
+          "term": "DIARRHOEA",
+          "count": 64
+        },
+        {
+          "term": "PAIN",
+          "count": 64
+        },
+        {
+          "term": "PLATELET COUNT DECREASED",
+          "count": 63
+        },
+        {
+          "term": "PNEUMONIA",
+          "count": 63
+        },
+        {
+          "term": "CYTOPENIA",
+          "count": 62
+        },
+        {
+          "term": "INFECTION",
+          "count": 53
+        },
+        {
+          "term": "INFUSION RELATED REACTION",
+          "count": 52
+        },
+        {
+          "term": "PLASMA CELL MYELOMA",
+          "count": 52
+        },
+        {
+          "term": "IMMUNE-MEDIATED ENTEROCOLITIS",
+          "count": 49
+        },
+        {
+          "term": "LABORATORY TEST ABNORMAL",
+          "count": 48
+        },
+        {
+          "term": "DISEASE PROGRESSION",
+          "count": 45
+        },
+        {
+          "term": "LYMPHOCYTE ADOPTIVE THERAPY",
+          "count": 41
+        },
+        {
+          "term": "THROMBOCYTOPENIA",
+          "count": 41
+        },
+        {
+          "term": "HYPOTENSION",
+          "count": 40
+        },
+        {
+          "term": "FULL BLOOD COUNT ABNORMAL",
+          "count": 39
+        },
+        {
+          "term": "SEPSIS",
+          "count": 38
+        },
+        {
+          "term": "FALL",
+          "count": 35
+        },
+        {
+          "term": "DRUG INEFFECTIVE",
+          "count": 33
+        },
+        {
+          "term": "NASOPHARYNGITIS",
+          "count": 33
+        },
+        {
+          "term": "CONFUSIONAL STATE",
+          "count": 32
+        },
+        {
+          "term": "GUILLAIN-BARRE SYNDROME",
+          "count": 32
+        },
+        {
+          "term": "NAUSEA",
+          "count": 32
+        },
+        {
+          "term": "GAIT DISTURBANCE",
+          "count": 31
+        },
+        {
+          "term": "WHITE BLOOD CELL COUNT DECREASED",
+          "count": 31
+        },
+        {
+          "term": "ARTHRALGIA",
+          "count": 30
+        },
+        {
+          "term": "DECREASED APPETITE",
+          "count": 30
+        },
+        {
+          "term": "HEADACHE",
+          "count": 29
+        },
+        {
+          "term": "ANAEMIA",
+          "count": 28
+        },
+        {
+          "term": "NEUROPATHY PERIPHERAL",
+          "count": 27
+        },
+        {
+          "term": "TREMOR",
+          "count": 27
+        },
+        {
+          "term": "IMMUNE EFFECTOR CELL-ASSOCIATED HLH-LIKE SYNDROME",
+          "count": 26
+        },
+        {
+          "term": "LYMPHOCYTE COUNT INCREASED",
+          "count": 25
+        },
+        {
+          "term": "PANCYTOPENIA",
+          "count": 25
+        },
+        {
+          "term": "TOXICITY TO VARIOUS AGENTS",
+          "count": 25
+        },
+        {
+          "term": "TRANSFUSION",
+          "count": 25
+        },
+        {
+          "term": "BRAIN FOG",
+          "count": 24
+        },
+        {
+          "term": "WEIGHT DECREASED",
+          "count": 24
+        },
+        {
+          "term": "INFLUENZA",
+          "count": 23
+        },
+        {
+          "term": "UNEVALUABLE EVENT",
+          "count": 23
+        },
+        {
+          "term": "ACUTE KIDNEY INJURY",
+          "count": 22
+        },
+        {
+          "term": "COUGH",
+          "count": 22
+        },
+        {
+          "term": "VIRAL INFECTION",
+          "count": 22
+        },
+        {
+          "term": "BACK PAIN",
+          "count": 21
+        },
+        {
+          "term": "FEBRILE NEUTROPENIA",
+          "count": 21
+        },
+        {
+          "term": "NERVOUS SYSTEM DISORDER",
+          "count": 21
+        },
+        {
+          "term": "DYSPNOEA",
+          "count": 20
+        },
+        {
+          "term": "ENTEROCOLITIS",
+          "count": 20
+        },
+        {
+          "term": "MEMORY IMPAIRMENT",
+          "count": 20
+        },
+        {
+          "term": "SEPTIC SHOCK",
+          "count": 20
+        },
+        {
+          "term": "FEELING ABNORMAL",
+          "count": 19
+        },
+        {
+          "term": "SEIZURE",
+          "count": 19
+        },
+        {
+          "term": "DIPLOPIA",
+          "count": 18
+        },
+        {
+          "term": "GASTROINTESTINAL DISORDER",
+          "count": 18
+        },
+        {
+          "term": "T-CELL LYMPHOMA",
+          "count": 18
+        },
+        {
+          "term": "GENERAL PHYSICAL HEALTH DETERIORATION",
+          "count": 17
+        },
+        {
+          "term": "AGEUSIA",
+          "count": 16
+        },
+        {
+          "term": "BACTERIAL INFECTION",
+          "count": 16
+        },
+        {
+          "term": "IMMUNE EFFECTOR CELL-ASSOCIATED HAEMATOTOXICITY",
+          "count": 16
+        },
+        {
+          "term": "INTENSIVE CARE",
+          "count": 16
+        },
+        {
+          "term": "OFF LABEL USE",
+          "count": 16
+        },
+        {
+          "term": "CEREBROVASCULAR ACCIDENT",
+          "count": 15
+        },
+        {
+          "term": "CLOSTRIDIUM DIFFICILE INFECTION",
+          "count": 15
+        },
+        {
+          "term": "COGNITIVE DISORDER",
+          "count": 15
+        },
+        {
+          "term": "HYPERTENSION",
+          "count": 15
+        },
+        {
+          "term": "VOMITING",
+          "count": 15
+        },
+        {
+          "term": "HYPOXIA",
+          "count": 14
+        },
+        {
+          "term": "MUSCULAR WEAKNESS",
+          "count": 14
+        },
+        {
+          "term": "PRODUCT DOSE OMISSION ISSUE",
+          "count": 14
+        },
+        {
+          "term": "RASH",
+          "count": 14
+        },
+        {
+          "term": "SPEECH DISORDER",
+          "count": 14
+        },
+        {
+          "term": "VISUAL IMPAIRMENT",
+          "count": 14
+        },
+        {
+          "term": "BACTERAEMIA",
+          "count": 13
+        },
+        {
+          "term": "ENCEPHALOPATHY",
+          "count": 13
+        },
+        {
+          "term": "HYPOAESTHESIA",
+          "count": 13
+        },
+        {
+          "term": "RESPIRATORY FAILURE",
+          "count": 13
+        },
+        {
+          "term": "ACUTE MYELOID LEUKAEMIA",
+          "count": 12
+        },
+        {
+          "term": "CYTOMEGALOVIRUS VIRAEMIA",
+          "count": 12
+        },
+        {
+          "term": "FUNGAL INFECTION",
+          "count": 12
+        },
+        {
+          "term": "HAEMOGLOBIN DECREASED",
+          "count": 12
+        },
+        {
+          "term": "PARALYSIS",
+          "count": 12
+        }
+      ],
+      "serious_outcomes": [
+        {
+          "term": 1,
+          "count": 2554
+        },
+        {
+          "term": 2,
+          "count": 1188
+        }
+      ],
+      "outcome_types": {
+        "seriousnessdeath": [
+          {
+            "term": 2,
+            "count": 3406
+          },
+          {
+            "term": 1,
+            "count": 326
+          }
+        ],
+        "seriousnesshospitalization": [
+          {
+            "term": 2,
+            "count": 2382
+          },
+          {
+            "term": 1,
+            "count": 1354
+          }
+        ],
+        "seriousnesslifethreatening": [
+          {
+            "term": 2,
+            "count": 3675
+          },
+          {
+            "term": 1,
+            "count": 57
+          }
+        ],
+        "seriousnessdisabling": [
+          {
+            "term": 2,
+            "count": 3694
+          },
+          {
+            "term": 1,
+            "count": 34
+          }
+        ]
+      },
+      "sex_distribution": [
+        {
+          "sex": "Male",
+          "count": 1123
+        },
+        {
+          "sex": "Female",
+          "count": 923
+        },
+        {
+          "sex": "Unknown",
+          "count": 5
+        }
+      ],
+      "reporting_by_year": {
+        "2022": 101,
+        "2023": 519,
+        "2024": 1244,
+        "2025": 1903
+      },
+      "reporter_type": [
+        {
+          "qualification": "Consumer/Patient",
+          "count": 2024
+        },
+        {
+          "qualification": "Other Health Professional",
+          "count": 1010
+        },
+        {
+          "qualification": "Physician",
+          "count": 660
+        },
+        {
+          "qualification": "Pharmacist",
+          "count": 61
+        }
+      ],
+      "key_ae_counts": {
+        "Cytokine release syndrome": {
+          "count": 518,
+          "rate_pct": 13.75
+        },
+        "Cytokine storm": {
+          "count": 4,
+          "rate_pct": 0.11
+        },
+        "Neurotoxicity": {
+          "count": 305,
+          "rate_pct": 8.1
+        },
+        "Immune effector cell-associated neurotoxicity syndrome": {
+          "count": 184,
+          "rate_pct": 4.88
+        },
+        "Encephalopathy": {
+          "count": 19,
+          "rate_pct": 0.5
+        },
+        "Cerebral oedema": {
+          "count": 2,
+          "rate_pct": 0.05
+        },
+        "Febrile neutropenia": {
+          "count": 21,
+          "rate_pct": 0.56
+        },
+        "Neutropenia": {
+          "count": 89,
+          "rate_pct": 2.36
+        },
+        "Thrombocytopenia": {
+          "count": 42,
+          "rate_pct": 1.11
+        },
+        "Anaemia": {
+          "count": 29,
+          "rate_pct": 0.77
+        },
+        "Hypogammaglobulinaemia": {
+          "count": 10,
+          "rate_pct": 0.27
+        },
+        "Infection": {
+          "count": 192,
+          "rate_pct": 5.1
+        },
+        "Sepsis": {
+          "count": 44,
+          "rate_pct": 1.17
+        },
+        "Pneumonia": {
+          "count": 77,
+          "rate_pct": 2.04
+        },
+        "Pyrexia": {
+          "count": 248,
+          "rate_pct": 6.58
+        },
+        "Hypotension": {
+          "count": 42,
+          "rate_pct": 1.11
+        },
+        "Hypoxia": {
+          "count": 14,
+          "rate_pct": 0.37
+        },
+        "Disseminated intravascular coagulation": {
+          "count": 1,
+          "rate_pct": 0.03
+        },
+        "Tumour lysis syndrome": {
+          "count": 2,
+          "rate_pct": 0.05
+        },
+        "Haemophagocytic lymphohistiocytosis": {
+          "count": 78,
+          "rate_pct": 2.07
+        },
+        "Death": {
+          "count": 137,
+          "rate_pct": 3.64
+        },
+        "Cardiac arrest": {
+          "count": 7,
+          "rate_pct": 0.19
+        },
+        "Multiple organ dysfunction syndrome": {
+          "count": 2,
+          "rate_pct": 0.05
+        },
+        "Tremor": {
+          "count": 28,
+          "rate_pct": 0.74
+        },
+        "Aphasia": {
+          "count": 10,
+          "rate_pct": 0.27
+        },
+        "Seizure": {
+          "count": 21,
+          "rate_pct": 0.56
+        },
+        "Confusional state": {
+          "count": 32,
+          "rate_pct": 0.85
+        },
+        "Delirium": {
+          "count": 5,
+          "rate_pct": 0.13
+        },
+        "T-cell lymphoma": {
+          "count": 34,
+          "rate_pct": 0.9
+        },
+        "Myelodysplastic syndrome": {
+          "count": 11,
+          "rate_pct": 0.29
+        },
+        "Acute myeloid leukaemia": {
+          "count": 12,
+          "rate_pct": 0.32
+        }
+      }
+    }
+  },
+  "comparison": {
+    "total_reports_by_product": {
+      "Yescarta": 6410,
+      "Kymriah": 3591,
+      "Tecartus": 1262,
+      "Breyanzi": 523,
+      "Abecma": 879,
+      "Carvykti": 3767
+    },
+    "top_ae_comparison_matrix": {
+      "CYTOKINE RELEASE SYNDROME": {
+        "Yescarta": {
+          "count": 3299,
+          "rate_pct": 51.5
+        },
+        "Kymriah": {
+          "count": 1412,
+          "rate_pct": 39.3
+        },
+        "Tecartus": {
+          "count": 665,
+          "rate_pct": 52.7
+        },
+        "Breyanzi": {
+          "count": 237,
+          "rate_pct": 45.3
+        },
+        "Abecma": {
+          "count": 537,
+          "rate_pct": 61.1
+        },
+        "Carvykti": {
+          "count": 518,
+          "rate_pct": 13.8
+        }
+      },
+      "IMMUNE EFFECTOR CELL-ASSOCIATED NEUROTOXICITY SYNDROME": {
+        "Yescarta": {
+          "count": 1479,
+          "rate_pct": 23.1
+        },
+        "Kymriah": {
+          "count": 350,
+          "rate_pct": 9.7
+        },
+        "Tecartus": {
+          "count": 439,
+          "rate_pct": 34.8
+        },
+        "Breyanzi": {
+          "count": 103,
+          "rate_pct": 19.7
+        },
+        "Abecma": {
+          "count": 133,
+          "rate_pct": 15.1
+        },
+        "Carvykti": {
+          "count": 184,
+          "rate_pct": 4.9
+        }
+      },
+      "PYREXIA": {
+        "Yescarta": {
+          "count": 600,
+          "rate_pct": 9.4
+        },
+        "Kymriah": {
+          "count": 938,
+          "rate_pct": 26.1
+        },
+        "Tecartus": {
+          "count": 79,
+          "rate_pct": 6.3
+        },
+        "Breyanzi": {
+          "count": 39,
+          "rate_pct": 7.5
+        },
+        "Abecma": {
+          "count": 62,
+          "rate_pct": 7.1
+        },
+        "Carvykti": {
+          "count": 248,
+          "rate_pct": 6.6
+        }
+      },
+      "NEUROTOXICITY": {
+        "Yescarta": {
+          "count": 1117,
+          "rate_pct": 17.4
+        },
+        "Kymriah": {
+          "count": 364,
+          "rate_pct": 10.1
+        },
+        "Tecartus": {
+          "count": 164,
+          "rate_pct": 13.0
+        },
+        "Breyanzi": {
+          "count": 77,
+          "rate_pct": 14.7
+        },
+        "Abecma": {
+          "count": 63,
+          "rate_pct": 7.2
+        },
+        "Carvykti": {
+          "count": 139,
+          "rate_pct": 3.7
+        }
+      },
+      "DEATH": {
+        "Yescarta": {
+          "count": 657,
+          "rate_pct": 10.2
+        },
+        "Kymriah": {
+          "count": 271,
+          "rate_pct": 7.5
+        },
+        "Tecartus": {
+          "count": 140,
+          "rate_pct": 11.1
+        },
+        "Breyanzi": {
+          "count": 21,
+          "rate_pct": 4.0
+        },
+        "Abecma": {
+          "count": 41,
+          "rate_pct": 4.7
+        },
+        "Carvykti": {
+          "count": 135,
+          "rate_pct": 3.6
+        }
+      },
+      "HYPOTENSION": {
+        "Yescarta": {
+          "count": 285,
+          "rate_pct": 4.4
+        },
+        "Kymriah": {
+          "count": 376,
+          "rate_pct": 10.5
+        },
+        "Tecartus": {
+          "count": 64,
+          "rate_pct": 5.1
+        },
+        "Breyanzi": {
+          "count": 35,
+          "rate_pct": 6.7
+        },
+        "Abecma": {
+          "count": 41,
+          "rate_pct": 4.7
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "DISEASE PROGRESSION": {
+        "Yescarta": {
+          "count": 568,
+          "rate_pct": 8.9
+        },
+        "Kymriah": {
+          "count": 127,
+          "rate_pct": 3.5
+        },
+        "Tecartus": {
+          "count": 62,
+          "rate_pct": 4.9
+        },
+        "Breyanzi": {
+          "count": 16,
+          "rate_pct": 3.1
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "FATIGUE": {
+        "Yescarta": {
+          "count": 210,
+          "rate_pct": 3.3
+        },
+        "Kymriah": {
+          "count": 108,
+          "rate_pct": 3.0
+        },
+        "Tecartus": {
+          "count": 67,
+          "rate_pct": 5.3
+        },
+        "Breyanzi": {
+          "count": 35,
+          "rate_pct": 6.7
+        },
+        "Abecma": {
+          "count": 159,
+          "rate_pct": 18.1
+        },
+        "Carvykti": {
+          "count": 128,
+          "rate_pct": 3.4
+        }
+      },
+      "NEUTROPENIA": {
+        "Yescarta": {
+          "count": 286,
+          "rate_pct": 4.5
+        },
+        "Kymriah": {
+          "count": 141,
+          "rate_pct": 3.9
+        },
+        "Tecartus": {
+          "count": 26,
+          "rate_pct": 2.1
+        },
+        "Breyanzi": {
+          "count": 9,
+          "rate_pct": 1.7
+        },
+        "Abecma": {
+          "count": 38,
+          "rate_pct": 4.3
+        },
+        "Carvykti": {
+          "count": 70,
+          "rate_pct": 1.9
+        }
+      },
+      "MALIGNANT NEOPLASM PROGRESSION": {
+        "Yescarta": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Kymriah": {
+          "count": 540,
+          "rate_pct": 15.0
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 22,
+          "rate_pct": 4.2
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "HYPOGAMMAGLOBULINAEMIA": {
+        "Yescarta": {
+          "count": 94,
+          "rate_pct": 1.5
+        },
+        "Kymriah": {
+          "count": 367,
+          "rate_pct": 10.2
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 18,
+          "rate_pct": 3.4
+        },
+        "Abecma": {
+          "count": 54,
+          "rate_pct": 6.1
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "DIFFUSE LARGE B-CELL LYMPHOMA": {
+        "Yescarta": {
+          "count": 202,
+          "rate_pct": 3.2
+        },
+        "Kymriah": {
+          "count": 272,
+          "rate_pct": 7.6
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "PLATELET COUNT DECREASED": {
+        "Yescarta": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Kymriah": {
+          "count": 365,
+          "rate_pct": 10.2
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 25,
+          "rate_pct": 4.8
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 63,
+          "rate_pct": 1.7
+        }
+      },
+      "CYTOPENIA": {
+        "Yescarta": {
+          "count": 133,
+          "rate_pct": 2.1
+        },
+        "Kymriah": {
+          "count": 200,
+          "rate_pct": 5.6
+        },
+        "Tecartus": {
+          "count": 22,
+          "rate_pct": 1.7
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 30,
+          "rate_pct": 3.4
+        },
+        "Carvykti": {
+          "count": 62,
+          "rate_pct": 1.6
+        }
+      },
+      "WHITE BLOOD CELL COUNT DECREASED": {
+        "Yescarta": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Kymriah": {
+          "count": 356,
+          "rate_pct": 9.9
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 13,
+          "rate_pct": 2.5
+        },
+        "Abecma": {
+          "count": 29,
+          "rate_pct": 3.3
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "CONFUSIONAL STATE": {
+        "Yescarta": {
+          "count": 222,
+          "rate_pct": 3.5
+        },
+        "Kymriah": {
+          "count": 101,
+          "rate_pct": 2.8
+        },
+        "Tecartus": {
+          "count": 48,
+          "rate_pct": 3.8
+        },
+        "Breyanzi": {
+          "count": 20,
+          "rate_pct": 3.8
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "HEADACHE": {
+        "Yescarta": {
+          "count": 141,
+          "rate_pct": 2.2
+        },
+        "Kymriah": {
+          "count": 147,
+          "rate_pct": 4.1
+        },
+        "Tecartus": {
+          "count": 28,
+          "rate_pct": 2.2
+        },
+        "Breyanzi": {
+          "count": 17,
+          "rate_pct": 3.3
+        },
+        "Abecma": {
+          "count": 54,
+          "rate_pct": 6.1
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "HYPOXIA": {
+        "Yescarta": {
+          "count": 137,
+          "rate_pct": 2.1
+        },
+        "Kymriah": {
+          "count": 211,
+          "rate_pct": 5.9
+        },
+        "Tecartus": {
+          "count": 28,
+          "rate_pct": 2.2
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "FEBRILE NEUTROPENIA": {
+        "Yescarta": {
+          "count": 230,
+          "rate_pct": 3.6
+        },
+        "Kymriah": {
+          "count": 109,
+          "rate_pct": 3.0
+        },
+        "Tecartus": {
+          "count": 36,
+          "rate_pct": 2.9
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "THROMBOCYTOPENIA": {
+        "Yescarta": {
+          "count": 153,
+          "rate_pct": 2.4
+        },
+        "Kymriah": {
+          "count": 167,
+          "rate_pct": 4.7
+        },
+        "Tecartus": {
+          "count": 24,
+          "rate_pct": 1.9
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 31,
+          "rate_pct": 3.5
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "LYMPHOCYTE COUNT DECREASED": {
+        "Yescarta": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Kymriah": {
+          "count": 352,
+          "rate_pct": 9.8
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 14,
+          "rate_pct": 2.7
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "HAEMOGLOBIN DECREASED": {
+        "Yescarta": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Kymriah": {
+          "count": 351,
+          "rate_pct": 9.8
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 15,
+          "rate_pct": 2.9
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "TACHYCARDIA": {
+        "Yescarta": {
+          "count": 149,
+          "rate_pct": 2.3
+        },
+        "Kymriah": {
+          "count": 130,
+          "rate_pct": 3.6
+        },
+        "Tecartus": {
+          "count": 39,
+          "rate_pct": 3.1
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 25,
+          "rate_pct": 2.8
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "ACUTE LYMPHOCYTIC LEUKAEMIA RECURRENT": {
+        "Yescarta": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Kymriah": {
+          "count": 333,
+          "rate_pct": 9.3
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "NEUTROPHIL COUNT DECREASED": {
+        "Yescarta": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Kymriah": {
+          "count": 318,
+          "rate_pct": 8.9
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 13,
+          "rate_pct": 2.5
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "MALAISE": {
+        "Yescarta": {
+          "count": 87,
+          "rate_pct": 1.4
+        },
+        "Kymriah": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Tecartus": {
+          "count": 24,
+          "rate_pct": 1.9
+        },
+        "Breyanzi": {
+          "count": 8,
+          "rate_pct": 1.5
+        },
+        "Abecma": {
+          "count": 22,
+          "rate_pct": 2.5
+        },
+        "Carvykti": {
+          "count": 144,
+          "rate_pct": 3.8
+        }
+      },
+      "ENCEPHALOPATHY": {
+        "Yescarta": {
+          "count": 238,
+          "rate_pct": 3.7
+        },
+        "Kymriah": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Tecartus": {
+          "count": 37,
+          "rate_pct": 2.9
+        },
+        "Breyanzi": {
+          "count": 8,
+          "rate_pct": 1.5
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "TREMOR": {
+        "Yescarta": {
+          "count": 181,
+          "rate_pct": 2.8
+        },
+        "Kymriah": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Tecartus": {
+          "count": 39,
+          "rate_pct": 3.1
+        },
+        "Breyanzi": {
+          "count": 16,
+          "rate_pct": 3.1
+        },
+        "Abecma": {
+          "count": 29,
+          "rate_pct": 3.3
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "HAEMATOCRIT DECREASED": {
+        "Yescarta": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Kymriah": {
+          "count": 263,
+          "rate_pct": 7.3
+        },
+        "Tecartus": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      },
+      "PANCYTOPENIA": {
+        "Yescarta": {
+          "count": 194,
+          "rate_pct": 3.0
+        },
+        "Kymriah": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Tecartus": {
+          "count": 37,
+          "rate_pct": 2.9
+        },
+        "Breyanzi": {
+          "count": 0,
+          "rate_pct": 0
+        },
+        "Abecma": {
+          "count": 24,
+          "rate_pct": 2.7
+        },
+        "Carvykti": {
+          "count": 0,
+          "rate_pct": 0
+        }
+      }
+    },
+    "crs_comparison": {
+      "Yescarta": {
+        "count": 3337,
+        "rate_pct": 52.06
+      },
+      "Kymriah": {
+        "count": 1421,
+        "rate_pct": 39.57
+      },
+      "Tecartus": {
+        "count": 668,
+        "rate_pct": 52.93
+      },
+      "Breyanzi": {
+        "count": 237,
+        "rate_pct": 45.32
+      },
+      "Abecma": {
+        "count": 537,
+        "rate_pct": 61.09
+      },
+      "Carvykti": {
+        "count": 522,
+        "rate_pct": 13.86
+      }
+    },
+    "neurotoxicity_comparison": {
+      "Yescarta": {
+        "count": 4349,
+        "rate_pct": 67.85
+      },
+      "Kymriah": {
+        "count": 1104,
+        "rate_pct": 30.74
+      },
+      "Tecartus": {
+        "count": 1064,
+        "rate_pct": 84.31
+      },
+      "Breyanzi": {
+        "count": 292,
+        "rate_pct": 55.83
+      },
+      "Abecma": {
+        "count": 334,
+        "rate_pct": 38.0
+      },
+      "Carvykti": {
+        "count": 508,
+        "rate_pct": 13.49
+      }
+    },
+    "secondary_malignancy_comparison": {
+      "Yescarta": {
+        "count": 129,
+        "rate_pct": 2.01
+      },
+      "Kymriah": {
+        "count": 128,
+        "rate_pct": 3.56
+      },
+      "Tecartus": {
+        "count": 13,
+        "rate_pct": 1.03
+      },
+      "Breyanzi": {
+        "count": 12,
+        "rate_pct": 2.29
+      },
+      "Abecma": {
+        "count": 27,
+        "rate_pct": 3.07
+      },
+      "Carvykti": {
+        "count": 57,
+        "rate_pct": 1.51
+      }
+    },
+    "mortality_comparison": {
+      "Yescarta": {
+        "count": 664,
+        "rate_pct": 10.36
+      },
+      "Kymriah": {
+        "count": 276,
+        "rate_pct": 7.69
+      },
+      "Tecartus": {
+        "count": 142,
+        "rate_pct": 11.25
+      },
+      "Breyanzi": {
+        "count": 21,
+        "rate_pct": 4.02
+      },
+      "Abecma": {
+        "count": 41,
+        "rate_pct": 4.66
+      },
+      "Carvykti": {
+        "count": 137,
+        "rate_pct": 3.64
+      }
+    },
+    "infection_comparison": {
+      "Yescarta": {
+        "count": 677,
+        "rate_pct": 10.56
+      },
+      "Kymriah": {
+        "count": 643,
+        "rate_pct": 17.91
+      },
+      "Tecartus": {
+        "count": 127,
+        "rate_pct": 10.06
+      },
+      "Breyanzi": {
+        "count": 54,
+        "rate_pct": 10.33
+      },
+      "Abecma": {
+        "count": 68,
+        "rate_pct": 7.74
+      },
+      "Carvykti": {
+        "count": 313,
+        "rate_pct": 8.31
+      }
+    },
+    "cytopenia_comparison": {
+      "Yescarta": {
+        "count": 973,
+        "rate_pct": 15.18
+      },
+      "Kymriah": {
+        "count": 611,
+        "rate_pct": 17.01
+      },
+      "Tecartus": {
+        "count": 133,
+        "rate_pct": 10.54
+      },
+      "Breyanzi": {
+        "count": 33,
+        "rate_pct": 6.31
+      },
+      "Abecma": {
+        "count": 128,
+        "rate_pct": 14.56
+      },
+      "Carvykti": {
+        "count": 181,
+        "rate_pct": 4.8
+      }
+    }
+  }
+}
