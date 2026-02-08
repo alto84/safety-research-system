@@ -257,10 +257,23 @@ def _render_risk_narrative(
             )
 
     # Individual score interpretation
-    individual_scores = risk_scores.get("individual_scores", [])
+    raw_scores = risk_scores.get("individual_scores", [])
+    # Handle both dict format {name: value} and list format [{model_name, score, ...}]
+    individual_scores = []
+    if isinstance(raw_scores, dict):
+        for name, val in raw_scores.items():
+            if isinstance(val, dict):
+                individual_scores.append(val)
+            else:
+                individual_scores.append({"model_name": name, "score": val, "risk_level": "unknown"})
+    elif isinstance(raw_scores, list):
+        individual_scores = raw_scores
     if individual_scores:
         lines.append("\nIndividual Model Scores:")
         for score in individual_scores:
+            if isinstance(score, str):
+                lines.append(f"- {score}")
+                continue
             model_name = score.get("model_name", "Unknown")
             score_val = score.get("score")
             score_risk = score.get("risk_level", "unknown")
@@ -274,7 +287,13 @@ def _render_risk_narrative(
                 )
 
     # Contributing factors
-    factors = risk_scores.get("contributing_factors", [])
+    raw_factors = risk_scores.get("contributing_factors", [])
+    factors = []
+    for f in raw_factors:
+        if isinstance(f, str):
+            factors.append(f)
+        elif isinstance(f, dict):
+            factors.append(f.get("factor", f.get("name", str(f))))
     if factors:
         lines.append(
             f"\nKey contributing factors: {'; '.join(factors)}."

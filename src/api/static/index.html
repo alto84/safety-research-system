@@ -965,7 +965,7 @@ body {
     <!-- Dynamic content rendered by JS -->
     <div id="taskContent"></div>
     <div style="text-align:center; padding:16px; font-size:11px; color:var(--text-secondary); border-top:1px solid var(--border); margin-top:24px;">
-      <strong>IMPORTANT:</strong> This software is <strong>NOT</strong> an FDA-cleared or approved medical device. Not intended to diagnose, treat, cure, or prevent any disease. All clinical decisions must be made by qualified healthcare providers exercising independent clinical judgment. Scoring algorithms are deterministic calculations from published formulas (EASIX, HScore, CAR-HEMATOTOX, Teachey, Hay). The composite risk index is <strong>NOT</strong> a validated clinical prediction. <a href="#" onclick="event.preventDefault();alert('Version 0.2.0 | Algorithms: EASIX (Pennisi 2021), Modified EASIX, HScore (Fardet 2014), CAR-HEMATOTOX (Rejeski 2021), Hay Binary (2017), Teachey 3-Cytokine (2016). Not validated in prospective clinical trials.');" style="color:var(--primary);">Software v0.2.0 details</a>
+      <strong>IMPORTANT:</strong> This software is <strong>NOT</strong> an FDA-cleared or approved medical device. Not intended to diagnose, treat, cure, or prevent any disease. All clinical decisions must be made by qualified healthcare providers exercising independent clinical judgment. Scoring algorithms are deterministic calculations from published formulas (EASIX, HScore, CAR-HEMATOTOX, Teachey, Hay). The composite risk index is <strong>NOT</strong> a validated clinical prediction. <a href="#" onclick="event.preventDefault();var d=document.createElement('div');d.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 20px;border-radius:8px;z-index:10001;font-size:12px;max-width:600px;text-align:left;';d.textContent='Version 0.2.0 | Algorithms: EASIX (Pennisi 2021), Modified EASIX, HScore (Fardet 2014), CAR-HEMATOTOX (Rejeski 2021), Hay Binary (2017), Teachey 3-Cytokine (2016). Not validated in prospective clinical trials.';document.body.appendChild(d);setTimeout(function(){d.remove()},8000);" style="color:var(--primary);">Software v0.2.0 details</a>
     </div>
   </main>
 </div>
@@ -1036,7 +1036,9 @@ async function apiFetch(endpoint, options = {}) {
     });
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({ detail: resp.statusText }));
-      throw new Error(err.detail || err.error || `HTTP ${resp.status}`);
+      const detail = err.detail;
+      const msg = Array.isArray(detail) ? detail.map(d => d.msg || JSON.stringify(d)).join('; ') : (typeof detail === 'string' ? detail : JSON.stringify(detail));
+      throw new Error(msg || err.error || `HTTP ${resp.status}`);
     }
     return await resp.json();
   } catch (e) {
@@ -2738,7 +2740,7 @@ async function generateNarrative() {
   }
 
   const payload = {
-    patient_id: currentPatient.patient_id,
+    patient_id: currentPatient.id || currentPatient.patient_id || 'unknown',
     therapy_type: 'CAR-T (CD19)',
     ae_types: ['CRS', 'ICANS'],
     include_mechanisms: true,
@@ -2761,7 +2763,12 @@ async function generateNarrative() {
     });
     showNarrativeModal(data);
   } catch (err) {
-    alert('Narrative generation failed: ' + (err.message || err));
+    console.error('Narrative generation failed:', err);
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'position:fixed;top:16px;right:16px;background:#dc3545;color:#fff;padding:12px 20px;border-radius:8px;z-index:10001;font-size:14px;max-width:400px;';
+    errDiv.textContent = 'Narrative generation failed: ' + (err.message || (typeof err === 'object' ? JSON.stringify(err) : err));
+    document.body.appendChild(errDiv);
+    setTimeout(() => errDiv.remove(), 6000);
   } finally {
     if (btn) { btn.classList.remove('loading'); btn.disabled = false; }
   }
