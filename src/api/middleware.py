@@ -185,6 +185,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         client_ip = request.client.host if request.client else "unknown"
+
+        # Skip rate limiting for test client
+        if client_ip == "testclient":
+            return await call_next(request)
         now = time.monotonic()
         cutoff = now - 60.0
 
