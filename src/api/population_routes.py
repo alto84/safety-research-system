@@ -21,14 +21,25 @@ from src.api.schemas import (
     BayesianPosteriorRequest,
     BayesianPosteriorResponse,
     CorrelationDetail,
+    EligibilityCriteriaResponse,
+    EligibilityCriterion,
     EvidenceAccrualPoint,
     EvidenceAccrualResponse,
     FAERSSignalResponse,
     FAERSSummaryResponse,
     MitigationAnalysisRequest,
     MitigationAnalysisResponse,
+    MonitoringActivity,
+    MonitoringScheduleResponse,
     PopulationRiskResponse,
     PosteriorEstimateResponse,
+    SampleSizeResponse,
+    SampleSizeScenario,
+    StoppingBoundary,
+    StoppingRule,
+    StoppingRulesResponse,
+    TherapyListItem,
+    TherapyListResponse,
     TrialSummaryResponse,
 )
 from src.models.bayesian_risk import (
@@ -38,6 +49,7 @@ from src.models.bayesian_risk import (
     STUDY_TIMELINE,
     compute_evidence_accrual,
     compute_posterior,
+    compute_stopping_boundaries,
 )
 from src.models.mitigation_model import (
     MITIGATION_STRATEGIES,
@@ -53,6 +65,7 @@ from data.sle_cart_studies import (
     get_sle_baseline_risk,
     get_trial_summary,
 )
+from data.cell_therapy_registry import THERAPY_TYPES
 
 logger = logging.getLogger(__name__)
 
@@ -569,3 +582,464 @@ async def ae_comparison() -> dict:
         "comparison_data": get_comparison_chart_data(),
         "note": "SLE data from pooled analysis (n=47); oncology from pivotal trials",
     }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/therapies -- Available therapy types
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/therapies",
+    response_model=TherapyListResponse,
+    tags=["Population"],
+    summary="List available therapy types",
+    description=(
+        "Returns all cell/gene therapy types from the registry with their "
+        "category and data availability status."
+    ),
+)
+async def list_therapies() -> TherapyListResponse:
+    """Return available therapy types from the cell therapy registry."""
+    # Therapy types with SLE-specific clinical data available
+    _DATA_AVAILABLE_IDS = {"cart_cd19"}
+
+    therapies = []
+    for tid, therapy in THERAPY_TYPES.items():
+        therapies.append(TherapyListItem(
+            id=tid,
+            name=therapy.name,
+            category=therapy.category,
+            data_available=tid in _DATA_AVAILABLE_IDS,
+        ))
+
+    return TherapyListResponse(therapies=therapies)
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/cdp/monitoring-schedule -- Suggested monitoring schedule
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/cdp/monitoring-schedule",
+    response_model=MonitoringScheduleResponse,
+    tags=["Population"],
+    summary="CDP monitoring schedule",
+    description=(
+        "Returns a suggested monitoring schedule based on AE onset profiles "
+        "for the specified therapy type. Default is CAR-T CD19 in SLE."
+    ),
+)
+async def cdp_monitoring_schedule(
+    therapy_type: str = Query(
+        "car-t-cd19-sle",
+        description="Therapy type identifier (e.g. 'car-t-cd19-sle')",
+    ),
+) -> MonitoringScheduleResponse:
+    """Return suggested monitoring schedule based on AE onset timing."""
+    schedule = [
+        MonitoringActivity(
+            time_window="Pre-infusion",
+            days="D-7 to D-1",
+            activities=[
+                "Baseline CBC",
+                "CRP",
+                "Ferritin",
+                "IL-6",
+                "Cardiac assessment",
+                "Neurological assessment",
+            ],
+            frequency="Once",
+            rationale="Establish baseline for post-infusion monitoring",
+        ),
+        MonitoringActivity(
+            time_window="Acute (D0-D3)",
+            days="D0 to D3",
+            activities=[
+                "CRS grading (ASTCT)",
+                "Vitals q4h",
+                "CRP/Ferritin daily",
+                "ICE assessment q12h",
+            ],
+            frequency="Per protocol",
+            rationale="Peak CRS onset window",
+        ),
+        MonitoringActivity(
+            time_window="Early post-infusion (D4-D14)",
+            days="D4 to D14",
+            activities=[
+                "CRS grading daily",
+                "ICE assessment daily",
+                "CBC with differential q2d",
+                "CRP q2d",
+                "Ferritin q2d",
+                "LDH",
+                "Fibrinogen",
+            ],
+            frequency="Daily to q2d",
+            rationale="Continued CRS/ICANS monitoring; onset of delayed neurotoxicity",
+        ),
+        MonitoringActivity(
+            time_window="Post-acute (D15-D28)",
+            days="D15 to D28",
+            activities=[
+                "CBC with differential twice weekly",
+                "CRP weekly",
+                "Immunoglobulin levels",
+                "B-cell counts (CD19+)",
+                "Infection surveillance",
+            ],
+            frequency="Twice weekly to weekly",
+            rationale="Prolonged cytopenia monitoring; B-cell aplasia onset",
+        ),
+        MonitoringActivity(
+            time_window="Recovery (D29-D90)",
+            days="D29 to D90",
+            activities=[
+                "CBC weekly then biweekly",
+                "Immunoglobulin levels monthly",
+                "B-cell recovery assessment",
+                "SLE disease activity (SLEDAI-2K)",
+                "Complement (C3/C4)",
+                "Anti-dsDNA antibodies",
+            ],
+            frequency="Weekly to monthly",
+            rationale="Hematologic recovery; early efficacy assessment; infection risk",
+        ),
+        MonitoringActivity(
+            time_window="Long-term (D91-Y1)",
+            days="D91 to Y1",
+            activities=[
+                "CBC monthly",
+                "Immunoglobulin levels monthly",
+                "SLE disease activity quarterly",
+                "IVIG requirement assessment",
+                "Secondary malignancy screening",
+                "T-cell subset analysis",
+            ],
+            frequency="Monthly to quarterly",
+            rationale="Long-term safety; B-cell reconstitution; sustained remission",
+        ),
+        MonitoringActivity(
+            time_window="Extended follow-up (Y1-Y5)",
+            days="Y1 to Y5",
+            activities=[
+                "CBC quarterly",
+                "Immunoglobulin levels quarterly",
+                "SLE disease activity biannually",
+                "Secondary malignancy screening annually",
+                "Replication-competent lentivirus (RCL) testing annually",
+            ],
+            frequency="Quarterly to annually",
+            rationale="FDA-required long-term follow-up; secondary malignancy surveillance",
+        ),
+    ]
+
+    return MonitoringScheduleResponse(
+        therapy_type=therapy_type,
+        schedule=schedule,
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/cdp/eligibility-criteria -- Suggested inclusion/exclusion
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/cdp/eligibility-criteria",
+    response_model=EligibilityCriteriaResponse,
+    tags=["Population"],
+    summary="CDP eligibility criteria",
+    description=(
+        "Returns suggested inclusion and exclusion criteria for a cell therapy "
+        "clinical development plan."
+    ),
+)
+async def cdp_eligibility_criteria(
+    therapy_type: str = Query(
+        "car-t-cd19-sle",
+        description="Therapy type identifier (e.g. 'car-t-cd19-sle')",
+    ),
+) -> EligibilityCriteriaResponse:
+    """Return suggested inclusion/exclusion criteria."""
+    inclusion = [
+        EligibilityCriterion(
+            criterion="Age >= 18 years",
+            rationale="Adult population for initial safety assessment",
+            category="Demographics",
+        ),
+        EligibilityCriterion(
+            criterion="Confirmed SLE diagnosis (ACR/EULAR 2019 criteria)",
+            rationale="Target population definition",
+            category="Disease",
+        ),
+        EligibilityCriterion(
+            criterion="Active disease (SLEDAI-2K >= 6) despite standard of care",
+            rationale="Refractory population with unmet medical need",
+            category="Disease",
+        ),
+        EligibilityCriterion(
+            criterion="Failed >= 2 prior standard therapies",
+            rationale="Ensure adequate prior treatment before cell therapy",
+            category="Treatment History",
+        ),
+        EligibilityCriterion(
+            criterion="Positive anti-dsDNA antibodies or low complement",
+            rationale="Serologically active disease confirmation",
+            category="Disease",
+        ),
+        EligibilityCriterion(
+            criterion="ECOG performance status 0-1",
+            rationale="Adequate functional status for lymphodepletion and CAR-T infusion",
+            category="General Health",
+        ),
+        EligibilityCriterion(
+            criterion="Adequate organ function (hepatic, renal, pulmonary)",
+            rationale="Tolerate lymphodepletion conditioning and potential CRS",
+            category="Organ Function",
+        ),
+        EligibilityCriterion(
+            criterion="LVEF >= 45% by echocardiography",
+            rationale="Cardiac reserve for CRS-related hemodynamic stress",
+            category="Cardiac",
+        ),
+    ]
+
+    exclusion = [
+        EligibilityCriterion(
+            criterion="Active uncontrolled infection",
+            rationale="Lymphodepletion increases infection risk",
+            category="Safety",
+        ),
+        EligibilityCriterion(
+            criterion="Prior Grade >= 3 CRS with any CAR-T product",
+            rationale="Elevated re-treatment risk",
+            category="Safety",
+        ),
+        EligibilityCriterion(
+            criterion="LVEF < 45%",
+            rationale="CRS-related hemodynamic stress risk",
+            category="Cardiac",
+        ),
+        EligibilityCriterion(
+            criterion="Active CNS lupus or history of seizures within 12 months",
+            rationale="Increased ICANS risk with baseline neurological involvement",
+            category="Neurological",
+        ),
+        EligibilityCriterion(
+            criterion="Active or prior malignancy within 5 years (except non-melanoma skin cancer)",
+            rationale="Secondary malignancy concern with gene-modified cells",
+            category="Safety",
+        ),
+        EligibilityCriterion(
+            criterion="HIV, active HBV, or active HCV infection",
+            rationale="Immunosuppression risk with lymphodepletion; viral reactivation concern",
+            category="Infections",
+        ),
+        EligibilityCriterion(
+            criterion="Prior allogeneic stem cell transplant",
+            rationale="Altered immune reconstitution and GVHD risk",
+            category="Treatment History",
+        ),
+        EligibilityCriterion(
+            criterion="eGFR < 30 mL/min/1.73m2 or dialysis-dependent",
+            rationale="Impaired drug clearance; tocilizumab and conditioning agent handling",
+            category="Renal",
+        ),
+        EligibilityCriterion(
+            criterion="Pregnancy or breastfeeding",
+            rationale="Unknown teratogenic risk of gene-modified cells",
+            category="Reproductive",
+        ),
+        EligibilityCriterion(
+            criterion="Live vaccine within 4 weeks of lymphodepletion",
+            rationale="Risk of vaccine-strain infection during immunosuppression",
+            category="Safety",
+        ),
+    ]
+
+    return EligibilityCriteriaResponse(
+        therapy_type=therapy_type,
+        inclusion=inclusion,
+        exclusion=exclusion,
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/cdp/stopping-rules -- Bayesian stopping rule boundaries
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/cdp/stopping-rules",
+    response_model=StoppingRulesResponse,
+    tags=["Population"],
+    summary="CDP Bayesian stopping rules",
+    description=(
+        "Returns Bayesian stopping rule boundaries for key adverse events. "
+        "For each AE type, provides the maximum number of events tolerable "
+        "at each sample size before enrollment should be paused."
+    ),
+)
+async def cdp_stopping_rules(
+    therapy_type: str = Query(
+        "car-t-cd19-sle",
+        description="Therapy type identifier (e.g. 'car-t-cd19-sle')",
+    ),
+) -> StoppingRulesResponse:
+    """Return Bayesian stopping rule boundaries for key AEs."""
+    ae_configs = [
+        {
+            "ae_type": "CRS Grade 3+",
+            "target_rate": 0.05,
+            "threshold": 0.8,
+            "description": (
+                "Pause enrollment if posterior probability that CRS G3+ "
+                "rate > 5% exceeds 0.8"
+            ),
+        },
+        {
+            "ae_type": "ICANS Grade 3+",
+            "target_rate": 0.05,
+            "threshold": 0.8,
+            "description": (
+                "Pause enrollment if posterior probability that ICANS G3+ "
+                "rate > 5% exceeds 0.8"
+            ),
+        },
+        {
+            "ae_type": "ICAHS Grade 3+",
+            "target_rate": 0.03,
+            "threshold": 0.8,
+            "description": (
+                "Pause enrollment if posterior probability that ICAHS G3+ "
+                "rate > 3% exceeds 0.8"
+            ),
+        },
+    ]
+
+    # Key sample sizes to report
+    key_ns = [10, 20, 30, 50, 75, 100]
+
+    rules = []
+    for cfg in ae_configs:
+        all_boundaries = compute_stopping_boundaries(
+            target_rate=cfg["target_rate"],
+            posterior_threshold=cfg["threshold"],
+            max_n=100,
+            prior_alpha=0.5,
+            prior_beta=0.5,
+        )
+
+        # Build a lookup from full boundaries
+        boundary_lookup: dict[int, int] = {}
+        last_max = 0
+        for bd in all_boundaries:
+            last_max = bd["max_events"]
+            boundary_lookup[bd["n_patients"]] = last_max
+        # Fill in intermediate values
+        current_max = 0
+        filled: dict[int, int] = {}
+        for n in range(1, 101):
+            if n in boundary_lookup:
+                current_max = boundary_lookup[n]
+            filled[n] = current_max
+
+        # Extract boundaries at key sample sizes
+        compact_boundaries = [
+            StoppingBoundary(n_patients=n, max_events=filled.get(n, 0))
+            for n in key_ns
+        ]
+
+        rules.append(StoppingRule(
+            ae_type=cfg["ae_type"],
+            target_rate_pct=cfg["target_rate"] * 100,
+            posterior_threshold=cfg["threshold"],
+            description=cfg["description"],
+            boundaries=compact_boundaries,
+        ))
+
+    return StoppingRulesResponse(
+        therapy_type=therapy_type,
+        rules=rules,
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/cdp/sample-size -- Sample size considerations
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/cdp/sample-size",
+    response_model=SampleSizeResponse,
+    tags=["Population"],
+    summary="CDP sample size considerations",
+    description=(
+        "Returns sample size scenarios for key precision targets, showing "
+        "how many additional patients are needed to achieve target CI widths."
+    ),
+)
+async def cdp_sample_size(
+    therapy_type: str = Query(
+        "car-t-cd19-sle",
+        description="Therapy type identifier (e.g. 'car-t-cd19-sle')",
+    ),
+) -> SampleSizeResponse:
+    """Return sample size considerations for the therapy type."""
+    current_n = 47  # Current pooled SLE data
+
+    scenarios = [
+        SampleSizeScenario(
+            target_precision="CI width < 10%",
+            estimated_n=60,
+            current_n=current_n,
+            additional_needed=max(0, 60 - current_n),
+            notes=(
+                "For CRS G3+ rate estimation with 95% CI width under "
+                "10 percentage points"
+            ),
+        ),
+        SampleSizeScenario(
+            target_precision="CI width < 7%",
+            estimated_n=120,
+            current_n=current_n,
+            additional_needed=max(0, 120 - current_n),
+            notes=(
+                "For CRS G3+ rate estimation with 95% CI width under "
+                "7 percentage points, enabling regulatory-grade precision"
+            ),
+        ),
+        SampleSizeScenario(
+            target_precision="CI width < 5%",
+            estimated_n=200,
+            current_n=current_n,
+            additional_needed=max(0, 200 - current_n),
+            notes=(
+                "For CRS G3+ rate estimation with 95% CI width under "
+                "5 percentage points, suitable for label claim"
+            ),
+        ),
+        SampleSizeScenario(
+            target_precision="Detect 3% rate with 80% power",
+            estimated_n=150,
+            current_n=current_n,
+            additional_needed=max(0, 150 - current_n),
+            notes=(
+                "Power to detect a 3% AE rate as significantly different "
+                "from zero using one-sided exact binomial test at alpha=0.05"
+            ),
+        ),
+        SampleSizeScenario(
+            target_precision="Rule of 3: exclude 5% rate",
+            estimated_n=60,
+            current_n=current_n,
+            additional_needed=max(0, 60 - current_n),
+            notes=(
+                "If 0 events in 60 patients, upper 95% CI bound is ~5% "
+                "(rule of 3: 3/n), sufficient to exclude a 5% rate"
+            ),
+        ),
+    ]
+
+    return SampleSizeResponse(
+        therapy_type=therapy_type,
+        scenarios=scenarios,
+    )

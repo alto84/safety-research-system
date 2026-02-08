@@ -304,3 +304,74 @@ def compute_evidence_accrual(
         )
 
     return posteriors
+
+
+def compute_stopping_boundaries(
+    target_rate: float,
+    posterior_threshold: float = 0.8,
+    max_n: int = 100,
+    prior_alpha: float = 0.5,
+    prior_beta: float = 0.5,
+) -> list[dict]:
+    """Compute Bayesian stopping boundaries for a clinical trial.
+
+    For each sample size n from 1 to max_n, finds the maximum number of
+    events k such that the posterior probability that the true rate exceeds
+    target_rate remains below posterior_threshold.  When the number of
+    observed events exceeds the boundary, enrollment should be paused.
+
+    Uses the Beta posterior: after observing k events in n patients with a
+    Beta(prior_alpha, prior_beta) prior, the posterior is
+    Beta(prior_alpha + k, prior_beta + n - k).  The probability that the
+    rate exceeds target_rate is 1 - CDF(target_rate) = SF(target_rate).
+
+    Args:
+        target_rate: Maximum tolerable AE rate (as a proportion, 0-1).
+        posterior_threshold: Posterior probability threshold above which to
+            stop.  Default 0.8.
+        max_n: Maximum sample size to compute boundaries for.
+        prior_alpha: Beta prior alpha parameter.
+        prior_beta: Beta prior beta parameter.
+
+    Returns:
+        List of dicts with keys ``n_patients`` and ``max_events``.  Only
+        sample sizes where the boundary changes are included to keep the
+        output compact.
+    """
+    if not _HAS_SCIPY:
+        raise RuntimeError(
+            "scipy is required for compute_stopping_boundaries"
+        )
+
+    if not (0 < target_rate < 1):
+        raise ValueError(f"target_rate must be in (0, 1), got {target_rate}")
+    if not (0 < posterior_threshold < 1):
+        raise ValueError(
+            f"posterior_threshold must be in (0, 1), got {posterior_threshold}"
+        )
+
+    boundaries: list[dict] = []
+    prev_max_k: int | None = None
+
+    for n in range(1, max_n + 1):
+        max_k = -1  # Start with no events allowed
+        for k in range(n + 1):
+            # Posterior: Beta(prior_alpha + k, prior_beta + n - k)
+            a = prior_alpha + k
+            b = prior_beta + (n - k)
+            # P(rate > target_rate | data) = sf(target_rate, a, b)
+            prob_exceeds = beta_dist.sf(target_rate, a, b)
+            if prob_exceeds < posterior_threshold:
+                max_k = k
+            else:
+                break
+
+        # Only record when boundary changes (or at key sample sizes)
+        if max_k != prev_max_k:
+            boundaries.append({
+                "n_patients": n,
+                "max_events": max(max_k, 0),
+            })
+            prev_max_k = max_k
+
+    return boundaries

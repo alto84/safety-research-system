@@ -474,3 +474,100 @@ class FAERSSummaryResponse(BaseModel):
     signals_detected: int
     strong_signals: int
     signals: list[FAERSSignalResponse]
+
+
+# ---------------------------------------------------------------------------
+# CDP/CSP schemas
+# ---------------------------------------------------------------------------
+
+class MonitoringActivity(BaseModel):
+    """Single monitoring window in a CDP monitoring schedule."""
+
+    time_window: str
+    days: str
+    activities: list[str]
+    frequency: str
+    rationale: str
+
+
+class MonitoringScheduleResponse(BaseModel):
+    """Response for CDP monitoring schedule."""
+
+    therapy_type: str
+    schedule: list[MonitoringActivity]
+
+
+class EligibilityCriterion(BaseModel):
+    """Single inclusion or exclusion criterion."""
+
+    criterion: str
+    rationale: str
+    category: str
+
+
+class EligibilityCriteriaResponse(BaseModel):
+    """Response for CDP eligibility criteria."""
+
+    therapy_type: str
+    inclusion: list[EligibilityCriterion]
+    exclusion: list[EligibilityCriterion]
+
+
+class StoppingBoundary(BaseModel):
+    """A single boundary point in a stopping rule."""
+
+    n_patients: int
+    max_events: int
+
+
+class StoppingRule(BaseModel):
+    """Bayesian stopping rule for a specific AE type."""
+
+    ae_type: str
+    target_rate_pct: float
+    posterior_threshold: float
+    description: str
+    boundaries: list[StoppingBoundary]
+
+
+class StoppingRulesResponse(BaseModel):
+    """Response for CDP stopping rules."""
+
+    therapy_type: str
+    rules: list[StoppingRule]
+
+
+class SampleSizeScenario(BaseModel):
+    """A single sample size scenario."""
+
+    target_precision: str
+    estimated_n: int
+    current_n: int
+    additional_needed: int
+    notes: str
+
+
+class SampleSizeResponse(BaseModel):
+    """Response for CDP sample size considerations."""
+
+    therapy_type: str
+    scenarios: list[SampleSizeScenario]
+
+
+# ---------------------------------------------------------------------------
+# Therapy selector schemas
+# ---------------------------------------------------------------------------
+
+class TherapyListItem(BaseModel):
+    """Single therapy type in the therapy list."""
+
+    id: str
+    name: str
+    category: str
+    data_available: bool
+
+
+class TherapyListResponse(BaseModel):
+    """Response for therapy type listing."""
+
+    therapies: list[TherapyListItem]
