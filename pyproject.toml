@@ -189,6 +189,7 @@ markers = [
 filterwarnings = [
     "error",
     "ignore::DeprecationWarning:pkg_resources",
+    "ignore:datetime.datetime.utcnow:DeprecationWarning",
 ]
 
 [tool.coverage.run]
