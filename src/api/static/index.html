@@ -491,21 +491,90 @@ body {
 .task-btn[data-task="population"],
 .task-btn[data-task="mitigations"],
 .task-btn[data-task="signals"],
-.task-btn[data-task="executive"] {
+.task-btn[data-task="executive"],
+.task-btn[data-task="cdp"] {
   color: var(--info);
 }
 .task-btn[data-task="population"]:hover,
 .task-btn[data-task="mitigations"]:hover,
 .task-btn[data-task="signals"]:hover,
-.task-btn[data-task="executive"]:hover {
+.task-btn[data-task="executive"]:hover,
+.task-btn[data-task="cdp"]:hover {
   color: var(--text);
 }
 .task-btn[data-task="population"].active,
 .task-btn[data-task="mitigations"].active,
 .task-btn[data-task="signals"].active,
-.task-btn[data-task="executive"].active {
+.task-btn[data-task="executive"].active,
+.task-btn[data-task="cdp"].active {
   color: var(--primary); border-bottom-color: var(--primary);
 }
+
+/* Therapy selector bar */
+.therapy-selector-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.therapy-selector-bar label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.therapy-selector-bar select {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 32px 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235a5a7a' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+.therapy-selector-bar select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px var(--primary-light); }
+.therapy-selector-bar .therapy-badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+.therapy-notice {
+  margin: 16px 0;
+  padding: 14px 18px;
+  background: var(--info-light);
+  border: 1px solid var(--info);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* CDP-specific styles */
+.cdp-section { margin-bottom: 20px; }
+.cdp-section-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.cdp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.cdp-table th { background: var(--bg); text-align: left; padding: 8px 10px; font-weight: 600; border-bottom: 2px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-secondary); }
+.cdp-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.cdp-table tr:hover { background: var(--surface-hover); }
+.cdp-check-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cdp-check-item { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; padding: 6px 0; }
+.cdp-check-item input[type="checkbox"] { margin-top: 2px; accent-color: var(--primary); }
 
 /* Population-level dashboard cards */
 .pop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px; }
@@ -603,6 +672,22 @@ body {
   </div>
 </header>
 
+<!-- Therapy Type Selector -->
+<div class="therapy-selector-bar">
+  <label for="therapySelector">Therapy Type:</label>
+  <select id="therapySelector" onchange="onTherapyChange(this.value)">
+    <option value="sle_cart_cd19" selected>SLE CAR-T (CD19)</option>
+    <option value="dlbcl_cart_cd19">DLBCL CAR-T (CD19)</option>
+    <option value="all_cart_cd19">ALL CAR-T (CD19)</option>
+    <option value="mm_cart_bcma">Multiple Myeloma CAR-T (BCMA)</option>
+    <option value="car_nk">CAR-NK Cell Therapy</option>
+    <option value="til">TIL Therapy</option>
+    <option value="tcr_t">TCR-T Therapy</option>
+    <option value="gene_therapy">Gene Therapy</option>
+  </select>
+  <span class="therapy-badge" id="therapyBadge">SLE CAR-T (CD19)</span>
+</div>
+
 <!-- Architecture Diagram Overlay -->
 <div class="arch-overlay" id="archOverlay" onclick="if(event.target===this)closeArchDiagram()">
   <div class="arch-container">
@@ -630,6 +715,7 @@ body {
     <button class="task-btn" data-task="mitigations" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128737;</span> Mitigation Explorer</button>
     <button class="task-btn" data-task="signals" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128225;</span> Signal Detection</button>
     <button class="task-btn" data-task="executive" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128196;</span> Executive Summary</button>
+    <button class="task-btn" data-task="cdp" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128203;</span> Clinical Safety Plan</button>
   </div>
 </nav>
 
@@ -945,7 +1031,7 @@ function activateTab(btn) {
   currentTask = btn.dataset.task;
 
   // Hide patient sidebar for population-level tabs
-  const populationTabs = ['population', 'mitigations', 'signals', 'executive'];
+  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp'];
   const sidebar = document.querySelector('.patient-sidebar');
   const mainLayout = document.querySelector('.main-layout');
   if (populationTabs.includes(btn.dataset.task)) {
@@ -992,6 +1078,7 @@ function renderTaskContent() {
     case 'mitigations': container.innerHTML = renderMitigationExplorer(); break;
     case 'signals': container.innerHTML = renderSignalDetection(); break;
     case 'executive': container.innerHTML = renderExecutiveSummary(); break;
+    case 'cdp': container.innerHTML = renderClinicalSafetyPlan(); break;
     default: container.innerHTML = renderOverview();
   }
 }
@@ -3871,6 +3958,289 @@ async function loadExecutiveSummary(containerId) {
   }
 
   el.innerHTML = trafficHtml + findingsHtml + decisionHtml + gaugeHtml;
+}
+
+// ============================================================================
+// THERAPY TYPE SELECTOR
+// ============================================================================
+let selectedTherapy = 'sle_cart_cd19';
+const THERAPY_LABELS = {
+  sle_cart_cd19: 'SLE CAR-T (CD19)',
+  dlbcl_cart_cd19: 'DLBCL CAR-T (CD19)',
+  all_cart_cd19: 'ALL CAR-T (CD19)',
+  mm_cart_bcma: 'Multiple Myeloma CAR-T (BCMA)',
+  car_nk: 'CAR-NK Cell Therapy',
+  til: 'TIL Therapy',
+  tcr_t: 'TCR-T Therapy',
+  gene_therapy: 'Gene Therapy',
+};
+
+function onTherapyChange(value) {
+  selectedTherapy = value;
+  document.getElementById('therapyBadge').textContent = THERAPY_LABELS[value] || value;
+  renderTaskContent();
+}
+
+function therapyNoticeHtml() {
+  if (selectedTherapy === 'sle_cart_cd19') return '';
+  const label = THERAPY_LABELS[selectedTherapy] || selectedTherapy;
+  return `<div class="therapy-notice">&#9432; Data for <strong>${label}</strong> coming soon. Currently showing SLE CAR-T reference data.</div>`;
+}
+
+// -----------------------------------------------------------------------
+// CLINICAL SAFETY PLAN (CDP/CSP) TAB
+// -----------------------------------------------------------------------
+function renderClinicalSafetyPlan() {
+  const containerId = 'cdpContent';
+  setTimeout(() => loadClinicalSafetyPlan(containerId), 0);
+  return `
+    <div style="max-width:960px; margin:0 auto;">
+      ${therapyNoticeHtml()}
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">&#128203; Clinical Safety Plan (CDP/CSP)</div>
+          <button class="btn btn-secondary btn-sm" onclick="window.print()">&#128424; Print</button>
+        </div>
+        <div class="card-body" id="${containerId}">
+          ${popLoadingHtml('Generating clinical safety plan...')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadClinicalSafetyPlan(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  const [riskRes, compRes] = await Promise.all([
+    popFetch('/api/v1/population/risk'),
+    popFetch('/api/v1/population/comparison'),
+  ]);
+
+  if (riskRes.error) {
+    el.innerHTML = popErrorHtml('Failed to load risk data: ' + riskRes.error);
+    return;
+  }
+
+  const risk = riskRes.data;
+  const br = risk.baseline_risks;
+
+  // --- Section A: Risk Summary Table ---
+  const aeTypes = [
+    { key: 'crs_any', label: 'CRS (Any Grade)', onset: 'Day 1-7', peak: 'Day 2-5' },
+    { key: 'crs_grade3_plus', label: 'CRS Grade 3+', onset: 'Day 1-5', peak: 'Day 3-4' },
+    { key: 'icans_any', label: 'ICANS (Any Grade)', onset: 'Day 3-10', peak: 'Day 5-8' },
+    { key: 'icans_grade3_plus', label: 'ICANS Grade 3+', onset: 'Day 4-10', peak: 'Day 5-8' },
+    { key: 'icahs', label: 'ICAHS/HLH', onset: 'Day 3-14', peak: 'Day 7-10' },
+    { key: 'infection', label: 'Infection', onset: 'Day 7-90', peak: 'Day 14-30' },
+    { key: 'cytopenias', label: 'Prolonged Cytopenias', onset: 'Day 7-28', peak: 'Day 14-21' },
+  ];
+  let riskTableRows = '';
+  for (const ae of aeTypes) {
+    const d = br[ae.key];
+    const rate = d ? d.estimate : 'N/A';
+    const ci = d ? `${d.ci_lower}-${d.ci_upper}%` : '-';
+    const cls = d ? trafficClass(d.estimate) : 'traffic-green';
+    const riskLabel = d ? (d.estimate >= 15 ? 'HIGH' : d.estimate >= 5 ? 'MODERATE' : 'LOW') : 'LOW';
+    riskTableRows += `<tr>
+      <td><strong>${ae.label}</strong></td>
+      <td style="font-family:var(--mono);">${rate}%</td>
+      <td style="font-size:11px;">${ci}</td>
+      <td><span class="traffic-badge ${cls}">${riskLabel}</span></td>
+      <td>${ae.onset}</td>
+      <td>${ae.peak}</td>
+    </tr>`;
+  }
+
+  const sectionA = `
+    <div class="cdp-section">
+      <div class="cdp-section-title">&#127308; Section A: Risk Summary</div>
+      <table class="cdp-table">
+        <thead><tr><th>Adverse Event</th><th>Rate</th><th>95% CI</th><th>Risk Level</th><th>Onset Window</th><th>Peak</th></tr></thead>
+        <tbody>${riskTableRows}</tbody>
+      </table>
+      <div class="teaching-point" style="margin-top:10px;">
+        <span class="teaching-icon">&#128161;</span>
+        <div style="font-size:12px;">Rates derived from pooled analysis of ${risk.n_patients_pooled} patients. Evidence grade: ${risk.evidence_grade}.</div>
+      </div>
+    </div>
+  `;
+
+  // --- Section B: Monitoring Schedule ---
+  const monitoringData = [
+    { window: 'Pre-infusion (Day -7 to -1)', activities: [
+      { activity: 'Baseline labs (CBC, CMP, CRP, ferritin, fibrinogen, LDH)', freq: 'Once', rationale: 'Establish baseline for AE attribution' },
+      { activity: 'Cardiac assessment (ECG, echo if indicated)', freq: 'Once', rationale: 'Screen for cardiac risk factors' },
+      { activity: 'Neurological baseline (ICE, handwriting)', freq: 'Once', rationale: 'Baseline for ICANS monitoring' },
+    ]},
+    { window: 'Acute (Day 0-3)', activities: [
+      { activity: 'CRS grading (ASTCT consensus)', freq: 'q6h', rationale: 'Median CRS onset Day 1-3; early detection enables graded intervention' },
+      { activity: 'Vitals (temp, BP, HR, SpO2)', freq: 'q4h', rationale: 'Hemodynamic instability is key CRS severity marker' },
+      { activity: 'CRP, ferritin', freq: 'Daily', rationale: 'Rising inflammatory markers precede clinical CRS escalation' },
+    ]},
+    { window: 'Sub-acute (Day 4-14)', activities: [
+      { activity: 'ICE assessment', freq: 'q12h', rationale: 'Peak ICANS incidence Day 5-8' },
+      { activity: 'CBC with differential', freq: 'Daily', rationale: 'Monitor cytopenia onset and nadir' },
+      { activity: 'Ferritin, fibrinogen, triglycerides', freq: 'q48h', rationale: 'HLH/ICAHS surveillance' },
+    ]},
+    { window: 'Recovery (Day 15-30)', activities: [
+      { activity: 'CBC with differential', freq: '2x/week', rationale: 'Track hematopoietic recovery' },
+      { activity: 'Immunoglobulin levels', freq: 'Weekly', rationale: 'B-cell aplasia monitoring' },
+      { activity: 'Infection screening', freq: 'As needed', rationale: 'Neutropenic infection risk window' },
+    ]},
+    { window: 'Long-term (Day 30+)', activities: [
+      { activity: 'CBC, immunoglobulins', freq: 'Monthly x6', rationale: 'Prolonged B-cell aplasia risk' },
+      { activity: 'Disease response assessment', freq: 'Monthly x3', rationale: 'Efficacy-safety correlation' },
+      { activity: 'Secondary malignancy screening', freq: 'Annually', rationale: 'Long-term safety surveillance per FDA guidance' },
+    ]},
+  ];
+  let monitorRows = '';
+  for (const phase of monitoringData) {
+    const rowspan = phase.activities.length;
+    phase.activities.forEach((a, i) => {
+      monitorRows += `<tr>
+        ${i === 0 ? `<td rowspan="${rowspan}" style="font-weight:600; background:var(--bg); vertical-align:middle;">${phase.window}</td>` : ''}
+        <td>${a.activity}</td><td>${a.freq}</td><td style="font-size:11px; color:var(--text-secondary);">${a.rationale}</td>
+      </tr>`;
+    });
+  }
+  const sectionB = `
+    <div class="cdp-section">
+      <div class="cdp-section-title">&#128197; Section B: Suggested Monitoring Schedule</div>
+      <table class="cdp-table">
+        <thead><tr><th>Time Window</th><th>Monitoring Activity</th><th>Frequency</th><th>Rationale</th></tr></thead>
+        <tbody>${monitorRows}</tbody>
+      </table>
+    </div>
+  `;
+
+  // --- Section C: Inclusion/Exclusion Criteria ---
+  const exclusions = [
+    'Significant cardiac disease (LVEF <45%, uncontrolled arrhythmia, recent MI within 6 months)',
+    'Active uncontrolled infection (bacterial, viral, or fungal)',
+    'Prior severe (Grade 4) CRS to any cellular therapy',
+    'Hepatic dysfunction (ALT/AST >5x ULN, total bilirubin >3x ULN)',
+    'Active CNS involvement or uncontrolled seizure disorder',
+    'Prior solid organ transplant',
+    'Active autoimmune condition requiring high-dose immunosuppression (prednisone >20mg/day)',
+  ];
+  const inclusions = [
+    'Confirmed SLE diagnosis (ACR/EULAR 2019 criteria) refractory to standard therapy',
+    'Age 18-70 years (or 2-25 for pediatric protocols)',
+    'Adequate organ function: creatinine clearance >40 mL/min',
+    'ECOG performance status 0-2',
+    'Adequate hematologic function (ANC >1.0, Plt >50, Hgb >8)',
+    'Negative pregnancy test (if applicable) with contraception commitment',
+    'Ability to provide informed consent and comply with monitoring schedule',
+  ];
+  const sectionC = `
+    <div class="cdp-section">
+      <div class="cdp-section-title">&#9989; Section C: Suggested Inclusion/Exclusion Criteria</div>
+      <div class="cdp-check-col">
+        <div>
+          <div style="font-weight:600; color:var(--success); margin-bottom:8px; font-size:13px;">Inclusion Criteria</div>
+          ${inclusions.map(c => `<div class="cdp-check-item"><input type="checkbox" checked disabled><span>${c}</span></div>`).join('')}
+        </div>
+        <div>
+          <div style="font-weight:600; color:var(--danger); margin-bottom:8px; font-size:13px;">Exclusion Criteria</div>
+          ${exclusions.map(c => `<div class="cdp-check-item"><input type="checkbox" checked disabled><span>${c}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // --- Section D: Stopping Rules ---
+  const W = 400, H = 200, pad = 40;
+  const plotW = W - 2 * pad, plotH = H - 2 * pad;
+  const nPoints = 20;
+  let boundaryPath = '', observedPath = '';
+  for (let i = 0; i <= nPoints; i++) {
+    const n = 5 + i * 5;
+    const x = pad + (i / nPoints) * plotW;
+    // Bayesian boundary: posterior P(rate>threshold) > 0.8 triggers review
+    const boundaryRate = 25 - (n / 105) * 10;
+    const by = pad + plotH - (boundaryRate / 30) * plotH;
+    boundaryPath += (i === 0 ? 'M' : 'L') + `${x.toFixed(1)},${by.toFixed(1)}`;
+    // Simulated observed rate
+    const obsRate = 4 + Math.sin(i * 0.5) * 2;
+    const oy = pad + plotH - (obsRate / 30) * plotH;
+    observedPath += (i === 0 ? 'M' : 'L') + `${x.toFixed(1)},${oy.toFixed(1)}`;
+  }
+  const sectionD = `
+    <div class="cdp-section">
+      <div class="cdp-section-title">&#128680; Section D: Stopping Rules</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div>
+          <svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto; font-family:var(--font); background:var(--bg); border-radius:var(--radius);">
+            <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${pad + plotH}" stroke="var(--border)" stroke-width="1"/>
+            <line x1="${pad}" y1="${pad + plotH}" x2="${pad + plotW}" y2="${pad + plotH}" stroke="var(--border)" stroke-width="1"/>
+            <text x="${W / 2}" y="${H - 5}" text-anchor="middle" font-size="9" fill="var(--text-secondary)">Cumulative Patients Enrolled</text>
+            <text x="12" y="${H / 2}" text-anchor="middle" font-size="9" fill="var(--text-secondary)" transform="rotate(-90,12,${H / 2})">CRS 3+ Rate (%)</text>
+            <path d="${boundaryPath}" fill="none" stroke="var(--danger)" stroke-width="2" stroke-dasharray="6 3"/>
+            <path d="${observedPath}" fill="none" stroke="var(--primary)" stroke-width="2"/>
+            <rect x="${pad + 5}" y="${pad + 2}" width="10" height="3" fill="var(--danger)"/>
+            <text x="${pad + 18}" y="${pad + 6}" font-size="8" fill="var(--text-secondary)">Stop boundary</text>
+            <rect x="${pad + 5}" y="${pad + 12}" width="10" height="3" fill="var(--primary)"/>
+            <text x="${pad + 18}" y="${pad + 16}" font-size="8" fill="var(--text-secondary)">Observed rate</text>
+          </svg>
+        </div>
+        <div style="font-size:12px;">
+          <div style="font-weight:600; margin-bottom:8px;">Bayesian Monitoring Boundaries</div>
+          <ul style="padding-left:16px; line-height:1.8;">
+            <li><strong>Trigger:</strong> CRS Grade 3+ rate exceeds 15% with posterior probability &gt;0.80</li>
+            <li><strong>Action:</strong> Pause enrollment, convene DSMB within 72 hours</li>
+            <li><strong>ICANS trigger:</strong> Grade 3+ rate &gt;10% (posterior P &gt;0.80)</li>
+            <li><strong>Mortality trigger:</strong> Any treatment-related death triggers immediate pause</li>
+            <li><strong>Resumption:</strong> Requires DSMB recommendation + sponsor agreement</li>
+          </ul>
+          <div class="teaching-point" style="margin-top:8px;">
+            <span class="teaching-icon">&#128161;</span>
+            <div style="font-size:11px;">Bayesian boundaries adapt with accruing data, unlike fixed frequentist rules. Early stopping is conservative (wide priors), relaxing as evidence accumulates.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // --- Section E: Protocol Design Summary ---
+  const compData = compRes.data;
+  let benchmarkHtml = '';
+  if (compData && compData.comparisons) {
+    benchmarkHtml = '<div style="margin-top:10px;"><table class="cdp-table"><thead><tr><th>Indication</th><th>CRS Any</th><th>CRS 3+</th><th>ICANS Any</th><th>ICANS 3+</th></tr></thead><tbody>';
+    for (const c of compData.comparisons.slice(0, 4)) {
+      benchmarkHtml += `<tr><td>${c.indication || c.name}</td><td>${c.crs_any_pct ?? '-'}%</td><td>${c.crs_grade3_pct ?? '-'}%</td><td>${c.icans_any_pct ?? '-'}%</td><td>${c.icans_grade3_pct ?? '-'}%</td></tr>`;
+    }
+    benchmarkHtml += '</tbody></table></div>';
+  }
+  const sectionE = `
+    <div class="cdp-section">
+      <div class="cdp-section-title">&#128220; Section E: Protocol Design Summary</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:12px;">
+        <div>
+          <div style="font-weight:600; margin-bottom:8px;">Sample Size Considerations</div>
+          <ul style="padding-left:16px; line-height:1.8;">
+            <li><strong>Primary goal:</strong> Bayesian precision — posterior 95% CrI width &lt;10% for CRS Grade 3+</li>
+            <li><strong>Minimum enrollment:</strong> ~60 patients (Beta-Binomial, assuming ~5% rate)</li>
+            <li><strong>Recommended Phase II:</strong> 80-120 patients for adequate subgroup analysis</li>
+            <li><strong>Current pooled N:</strong> ${risk.n_patients_pooled} patients</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:600; margin-bottom:8px;">DSMB Charter Recommendations</div>
+          <ul style="padding-left:16px; line-height:1.8;">
+            <li>Independent DSMB with cell therapy + autoimmune expertise</li>
+            <li>Review schedule: after every 10 patients in dose-escalation, then every 20</li>
+            <li>Unblinded safety review access within 24h for SAEs</li>
+            <li>Pre-specified stopping boundaries (Section D) embedded in charter</li>
+          </ul>
+        </div>
+      </div>
+      ${benchmarkHtml ? `<div style="margin-top:12px;"><div style="font-weight:600; margin-bottom:6px; font-size:12px;">Comparator Benchmarks (Cross-Indication)</div>${benchmarkHtml}</div>` : ''}
+    </div>
+  `;
+
+  el.innerHTML = sectionA + sectionB + sectionC + sectionD + sectionE;
 }
 
 </script>
