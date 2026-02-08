@@ -140,31 +140,32 @@ body {
 .task-nav {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  display: flex;
-  overflow-x: auto;
-  scrollbar-width: none;
+  padding: 0 16px;
+  position: relative;
 }
-.task-nav::-webkit-scrollbar { display: none; }
-.task-nav [role="tablist"] { display: flex; overflow-x: auto; scrollbar-width: none; }
+.task-nav [role="tablist"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
 .task-btn {
-  padding: 12px 20px;
+  padding: 8px 12px;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   transition: var(--transition);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
-.task-btn:hover { color: var(--text); background: var(--surface-hover); }
+.task-btn:hover { color: var(--text); background: var(--surface-hover); border-radius: 6px 6px 0 0; }
 .task-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
-.task-btn .task-icon { font-size: 16px; }
+.task-btn .task-icon { font-size: 14px; }
 
 /* Main Layout */
 .main-layout {
@@ -504,20 +505,19 @@ body {
 
 /* Population Tab Separator & Styles */
 .tab-separator {
-  display: flex; align-items: center; padding: 0 4px; color: var(--border);
-  font-size: 20px; user-select: none; flex-shrink: 0;
+  flex-basis: 100%; height: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
 }
-.tab-separator::after {
-  content: ''; display: block; width: 1px; height: 24px;
-  background: var(--border); border-radius: 1px;
-}
+.tab-separator::after { display: none; }
 .task-btn[data-task="population"],
 .task-btn[data-task="mitigations"],
 .task-btn[data-task="signals"],
 .task-btn[data-task="executive"],
 .task-btn[data-task="cdp"],
 .task-btn[data-task="architecture"],
-.task-btn[data-task="science"] {
+.task-btn[data-task="science"],
+.task-btn[data-task="publication"] {
   color: var(--info);
 }
 .task-btn[data-task="population"]:hover,
@@ -526,7 +526,8 @@ body {
 .task-btn[data-task="executive"]:hover,
 .task-btn[data-task="cdp"]:hover,
 .task-btn[data-task="architecture"]:hover,
-.task-btn[data-task="science"]:hover {
+.task-btn[data-task="science"]:hover,
+.task-btn[data-task="publication"]:hover {
   color: var(--text);
 }
 .task-btn[data-task="population"].active,
@@ -535,7 +536,8 @@ body {
 .task-btn[data-task="executive"].active,
 .task-btn[data-task="cdp"].active,
 .task-btn[data-task="architecture"].active,
-.task-btn[data-task="science"].active {
+.task-btn[data-task="science"].active,
+.task-btn[data-task="publication"].active {
   color: var(--primary); border-bottom-color: var(--primary);
 }
 
