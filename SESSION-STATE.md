@@ -88,9 +88,29 @@ Agent teams testing, reviewing, iterating on dashboard and codebase.
 > new treatments, starting with other cell therapies and expanding beyond."
 > "Use agent swarms. Have fun. I'm going to bed."
 
+## Currently Running (Expansion Agent Swarm)
+
+### Agent 1: Cell Therapy Registry Research (RUNNING)
+Deep web research on ALL cell therapy types (CAR-T, TCR-T, NK, TIL, gene therapy, MSC, Treg, gamma-delta).
+Creating `data/cell_therapy_registry.py` with TherapyType dataclasses and AE taxonomy.
+
+### Agent 2: Risk Model Registry (RUNNING)
+Building `src/models/model_registry.py` with 7 statistical approaches (Bayesian, frequentist, meta-analysis, etc.)
+and `src/models/model_validation.py` with calibration, Brier score, cross-validation framework.
+
+### Agent 3: Chrome Dashboard Testing (RUNNING)
+Testing every tab, button, and feature in the dashboard. Writing test report.
+
+## Expansion Plan
+See `EXPANSION-PLAN.md` for full roadmap:
+- Phase 1: Cell therapy landscape research
+- Phase 2: Architecture expansion (therapy selector, model registry, validation)
+- Phase 3: CDP/CSP dashboard (inclusion/exclusion criteria, monitoring schedule)
+- Phase 4: Testing and iteration
+
 ## Repo State
 - **GitHub:** https://github.com/alto84/safety-research-system.git
 - **Branch:** master
-- **Latest commit:** `761f232`
+- **Latest commit:** `1803637` (expansion plan)
 - **704 tests passing** in 3.7s
 - **Server:** `python run_server.py` → http://localhost:8000
