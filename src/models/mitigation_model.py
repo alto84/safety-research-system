@@ -125,6 +125,8 @@ MITIGATION_STRATEGIES: dict[str, MitigationStrategy] = {
         dosing="8 mg/kg IV (max 800 mg), up to 3 doses",
         timing="At onset of Grade >= 2 CRS or prophylactically in high-risk patients",
         limitations=[
+            "RR derived from oncology CAR-T CRS management; autoimmune CAR-T "
+            "CRS is generally milder and may respond differently",
             "May mask early CRS symptoms",
             "Limited efficacy for ICANS",
             "Transient elevation of serum IL-6 after administration",
@@ -146,6 +148,8 @@ MITIGATION_STRATEGIES: dict[str, MitigationStrategy] = {
         dosing="Dexamethasone 10 mg IV q6h or methylprednisolone 1-2 mg/kg/day",
         timing="At onset of Grade >= 2 ICANS; taper over 3-7 days",
         limitations=[
+            "RR from therapeutic use in oncology ICANS; prophylactic corticosteroid "
+            "use in autoimmune CAR-T is unproven and may interfere with engraftment",
             "May reduce CAR-T efficacy and persistence",
             "Risk of opportunistic infections",
             "Dose-dependent side effects with prolonged use",
@@ -164,10 +168,12 @@ MITIGATION_STRATEGIES: dict[str, MitigationStrategy] = {
         target_aes=["CRS", "ICANS"],
         relative_risk=0.65,
         confidence_interval=(0.45, 0.85),
-        evidence_level="Moderate",
+        evidence_level="Limited",
         dosing="100 mg SC daily or 200-400 mg IV for severe cases",
         timing="Prophylactically from Day 0 or at CRS onset",
         limitations=[
+            "RR estimate extrapolated from preclinical models and case series; "
+            "no randomized CAR-T trial data available",
             "Limited Phase 3 data in CAR-T setting",
             "Injection site reactions with SC administration",
             "Short half-life requires daily dosing",

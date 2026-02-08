@@ -66,6 +66,7 @@ from src.models.biomarker_scores import (
     ValidationError,
 )
 from src.models.ensemble_runner import BiomarkerEnsembleRunner
+from src.api.population_routes import router as population_router
 
 logger = logging.getLogger(__name__)
 
@@ -130,6 +131,15 @@ app = FastAPI(
             "These endpoints use only deterministic formulas and require no ML models.",
         },
         {
+            "name": "Population",
+            "description": "Population-level Bayesian risk estimation, mitigation modeling, "
+            "evidence accrual, and clinical trial data for CAR-T in autoimmune indications.",
+        },
+        {
+            "name": "Signals",
+            "description": "Post-marketing safety signal detection from FAERS and other sources.",
+        },
+        {
             "name": "Timeline",
             "description": "Patient risk timeline endpoints.",
         },
@@ -191,6 +201,13 @@ app.add_middleware(RateLimitMiddleware, requests_per_minute=100)
 app.add_middleware(APIKeyMiddleware)
 # Request timing and ID (innermost -- runs first)
 app.add_middleware(RequestTimingMiddleware)
+
+
+# ---------------------------------------------------------------------------
+# Population-level routes
+# ---------------------------------------------------------------------------
+
+app.include_router(population_router)
 
 
 # ---------------------------------------------------------------------------

@@ -26,6 +26,12 @@ import logging
 import math
 from dataclasses import dataclass, field
 
+try:
+    from scipy.stats import beta as beta_dist
+    _HAS_SCIPY = True
+except ImportError:
+    _HAS_SCIPY = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -216,11 +222,17 @@ def compute_posterior(
     b = prior.beta + (n - events)
 
     mean = a / (a + b)
-    variance = (a * b) / ((a + b) ** 2 * (a + b + 1))
-    std = math.sqrt(variance)
 
-    ci_low = max(0.0, mean - 1.96 * std)
-    ci_high = min(1.0, mean + 1.96 * std)
+    if _HAS_SCIPY:
+        # Exact Beta quantiles (preferred over normal approximation)
+        ci_low = beta_dist.ppf(0.025, a, b)
+        ci_high = beta_dist.ppf(0.975, a, b)
+    else:
+        # Fallback: normal approximation (less accurate for small samples)
+        variance = (a * b) / ((a + b) ** 2 * (a + b + 1))
+        std = math.sqrt(variance)
+        ci_low = max(0.0, mean - 1.96 * std)
+        ci_high = min(1.0, mean + 1.96 * std)
 
     # Convert to percentages
     mean_pct = mean * 100.0

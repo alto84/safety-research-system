@@ -780,8 +780,8 @@ def get_sle_baseline_risk() -> dict:
             "ci95": [0.3, 7.4],
         },
         "icans_grade3_plus": {
-            "estimate": 1.5,
-            "ci95": [0.2, 5.8],
+            "estimate": 0.0,
+            "ci95": [0.0, 6.4],  # 0/47 events; upper bound from rule-of-3: 3/47 = 6.4%
         },
         "icahs": {
             "estimate": 0.0,

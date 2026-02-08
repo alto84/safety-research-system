@@ -313,6 +313,15 @@ class BayesianPosteriorRequest(BaseModel):
             raise ValueError(f"Invalid adverse event '{v}'. Must be one of: {valid}")
         return v_upper
 
+    @model_validator(mode="after")
+    def events_le_patients(self) -> "BayesianPosteriorRequest":
+        if self.n_events > self.n_patients:
+            raise ValueError(
+                f"n_events ({self.n_events}) cannot exceed "
+                f"n_patients ({self.n_patients})"
+            )
+        return self
+
 
 class PosteriorEstimateResponse(BaseModel):
     """Bayesian posterior estimate."""
@@ -349,7 +358,7 @@ class MitigationAnalysisRequest(BaseModel):
         "CRS", description="Target adverse event: CRS, ICANS, or ICAHS",
     )
     n_monte_carlo_samples: int = Field(
-        10000, description="Number of Monte Carlo samples", ge=100, le=100000,
+        5000, description="Number of Monte Carlo samples", ge=100, le=100000,
     )
 
 
