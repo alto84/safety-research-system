@@ -478,6 +478,102 @@ body {
 .trend-badge-down { color: var(--info); }
 .trend-badge-stable { color: var(--text-secondary); }
 @media (max-width: 900px) { .trend-grid { grid-template-columns: 1fr; } }
+
+/* Population Tab Separator & Styles */
+.tab-separator {
+  display: flex; align-items: center; padding: 0 4px; color: var(--border);
+  font-size: 20px; user-select: none; flex-shrink: 0;
+}
+.tab-separator::after {
+  content: ''; display: block; width: 1px; height: 24px;
+  background: var(--border); border-radius: 1px;
+}
+.task-btn[data-task="population"],
+.task-btn[data-task="mitigations"],
+.task-btn[data-task="signals"],
+.task-btn[data-task="executive"] {
+  color: var(--info);
+}
+.task-btn[data-task="population"]:hover,
+.task-btn[data-task="mitigations"]:hover,
+.task-btn[data-task="signals"]:hover,
+.task-btn[data-task="executive"]:hover {
+  color: var(--text);
+}
+.task-btn[data-task="population"].active,
+.task-btn[data-task="mitigations"].active,
+.task-btn[data-task="signals"].active,
+.task-btn[data-task="executive"].active {
+  color: var(--primary); border-bottom-color: var(--primary);
+}
+
+/* Population-level dashboard cards */
+.pop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px; }
+.pop-metric-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px; box-shadow: var(--shadow);
+}
+.pop-metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+.pop-metric-value { font-size: 26px; font-weight: 700; font-family: var(--mono); margin: 4px 0; }
+.pop-metric-sub { font-size: 12px; color: var(--text-secondary); }
+.pop-metric-card.grade-low { border-left: 4px solid var(--success); }
+.pop-metric-card.grade-moderate { border-left: 4px solid var(--warning); }
+.pop-metric-card.grade-high { border-left: 4px solid var(--danger); }
+
+/* Traffic light badges */
+.traffic-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;
+}
+.traffic-green { background: var(--success-light); color: #047857; }
+.traffic-yellow { background: var(--warning-light); color: #92400e; }
+.traffic-red { background: var(--danger-light); color: #b91c1c; }
+
+/* Strategy cards */
+.strategy-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px; box-shadow: var(--shadow); margin-bottom: 12px;
+}
+.strategy-card .strategy-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.strategy-card .strategy-detail { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.strategy-card .rr-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 600; font-family: var(--mono);
+  background: var(--success-light); color: #047857;
+}
+.strategy-check { margin-right: 8px; accent-color: var(--primary); }
+
+/* Combo panel */
+.combo-panel {
+  background: var(--surface-hover); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 18px; margin-top: 16px;
+}
+.combo-result { margin-top: 14px; padding: 14px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); }
+
+/* Signal table color coding */
+.signal-none { background: var(--success-light); color: #047857; }
+.signal-weak { background: var(--warning-light); color: #92400e; }
+.signal-moderate { background: var(--moderate-light); color: #9a3412; }
+.signal-strong { background: var(--danger-light); color: #b91c1c; }
+
+/* Loading overlay for population tabs */
+.pop-loading {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 48px; color: var(--text-secondary); font-size: 14px;
+}
+.pop-error {
+  padding: 18px; background: var(--danger-bg); border: 1px solid var(--danger-light);
+  border-radius: var(--radius); color: var(--danger); font-size: 14px; margin-bottom: 16px;
+}
+
+/* Gauge */
+.data-gauge { position: relative; width: 160px; height: 90px; margin: 12px auto; }
+
+/* Executive print-friendly */
+@media print {
+  .pop-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .combo-panel, .btn { display: none !important; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -529,6 +625,11 @@ body {
     <button class="task-btn" data-task="hematox" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#129656;</span> Hematologic</button>
     <button class="task-btn" data-task="discharge" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#127968;</span> Discharge</button>
     <button class="task-btn" data-task="visit" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128105;&#8205;&#9877;</span> Clinical Visit</button>
+    <div class="tab-separator" aria-hidden="true"></div>
+    <button class="task-btn" data-task="population" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128202;</span> Population Risk</button>
+    <button class="task-btn" data-task="mitigations" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128737;</span> Mitigation Explorer</button>
+    <button class="task-btn" data-task="signals" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128225;</span> Signal Detection</button>
+    <button class="task-btn" data-task="executive" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128196;</span> Executive Summary</button>
   </div>
 </nav>
 
@@ -842,6 +943,19 @@ function activateTab(btn) {
   btn.tabIndex = 0;
   btn.focus();
   currentTask = btn.dataset.task;
+
+  // Hide patient sidebar for population-level tabs
+  const populationTabs = ['population', 'mitigations', 'signals', 'executive'];
+  const sidebar = document.querySelector('.patient-sidebar');
+  const mainLayout = document.querySelector('.main-layout');
+  if (populationTabs.includes(btn.dataset.task)) {
+    sidebar.style.display = 'none';
+    mainLayout.style.gridTemplateColumns = '1fr';
+  } else {
+    sidebar.style.display = '';
+    mainLayout.style.gridTemplateColumns = '320px 1fr';
+  }
+
   renderTaskContent();
 }
 tabButtons.forEach(btn => {
@@ -874,6 +988,10 @@ function renderTaskContent() {
     case 'hematox': container.innerHTML = renderHematox(); break;
     case 'discharge': container.innerHTML = renderDischarge(); break;
     case 'visit': container.innerHTML = renderClinicalVisit(); break;
+    case 'population': container.innerHTML = renderPopulationRisk(); break;
+    case 'mitigations': container.innerHTML = renderMitigationExplorer(); break;
+    case 'signals': container.innerHTML = renderSignalDetection(); break;
+    case 'executive': container.innerHTML = renderExecutiveSummary(); break;
     default: container.innerHTML = renderOverview();
   }
 }
@@ -2846,6 +2964,914 @@ function escHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+// ============================================================================
+// POPULATION-LEVEL TAB RENDERERS
+// ============================================================================
+
+// Shared: fetch with error handling, returns {data, error}
+async function popFetch(url, options) {
+  try {
+    const resp = await fetch(url, options);
+    if (!resp.ok) {
+      const detail = await resp.text();
+      return { data: null, error: `HTTP ${resp.status}: ${detail}` };
+    }
+    return { data: await resp.json(), error: null };
+  } catch (e) {
+    return { data: null, error: e.message };
+  }
+}
+
+// Shared: loading placeholder
+function popLoadingHtml(msg) {
+  return `<div class="pop-loading"><div class="loading-spinner"></div> ${msg || 'Loading data...'}</div>`;
+}
+
+// Shared: error display
+function popErrorHtml(msg) {
+  return `<div class="pop-error">&#9888; ${msg}</div>`;
+}
+
+// Shared: evidence grade to CSS class
+function gradeClass(grade) {
+  if (!grade) return 'grade-low';
+  const g = grade.toLowerCase();
+  if (g.includes('high') || g.includes('strong')) return 'grade-high';
+  if (g.includes('moderate') || g.includes('medium')) return 'grade-moderate';
+  return 'grade-low';
+}
+
+// Shared: traffic light class based on rate
+function trafficClass(ratePct) {
+  if (ratePct >= 15) return 'traffic-red';
+  if (ratePct >= 5) return 'traffic-yellow';
+  return 'traffic-green';
+}
+
+// -----------------------------------------------------------------------
+// POPULATION RISK TAB
+// -----------------------------------------------------------------------
+function renderPopulationRisk() {
+  const containerId = 'popRiskContent';
+  setTimeout(() => loadPopulationRisk(containerId), 0);
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#128202; Population-Level Baseline Risk</div>
+        <span style="font-size:12px; color:var(--text-secondary);">SLE CAR-T Pooled Analysis</span>
+      </div>
+      <div class="card-body" id="${containerId}">
+        ${popLoadingHtml('Fetching population risk data...')}
+      </div>
+    </div>
+  `;
+}
+
+async function loadPopulationRisk(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  const [riskRes, accrualRes] = await Promise.all([
+    popFetch('/api/v1/population/risk'),
+    popFetch('/api/v1/population/evidence-accrual'),
+  ]);
+
+  if (riskRes.error && accrualRes.error) {
+    el.innerHTML = popErrorHtml('Failed to load population data: ' + riskRes.error);
+    return;
+  }
+
+  const risk = riskRes.data;
+  const accrual = accrualRes.data;
+
+  // Build baseline risk cards
+  let cardsHtml = '';
+  if (risk) {
+    const br = risk.baseline_risks;
+    const aeTypes = [
+      { key: 'crs_grade3_plus', label: 'CRS Grade 3+', icon: '&#127777;' },
+      { key: 'icans_grade3_plus', label: 'ICANS Grade 3+', icon: '&#129504;' },
+      { key: 'icahs', label: 'ICAHS', icon: '&#9888;' },
+      { key: 'licats', label: 'LICATS', icon: '&#128200;' },
+    ];
+    cardsHtml = '<div class="pop-grid">';
+    for (const ae of aeTypes) {
+      const d = br[ae.key];
+      if (!d) continue;
+      const cls = d.estimate >= 15 ? 'grade-high' : d.estimate >= 5 ? 'grade-moderate' : 'grade-low';
+      cardsHtml += `
+        <div class="pop-metric-card ${cls}">
+          <div class="pop-metric-label">${ae.icon} ${ae.label}</div>
+          <div class="pop-metric-value">${d.estimate}%</div>
+          <div class="pop-metric-sub">95% CI: ${d.ci_low !== undefined ? d.ci_low + '% - ' + d.ci_high + '%' : 'N/A'}</div>
+          <div class="pop-metric-sub" style="margin-top:4px;">
+            ${d.evidence_grade ? '<em>Evidence: ' + d.evidence_grade + '</em>' : ''}
+            ${d.source ? '<br>Source: ' + d.source : ''}
+          </div>
+        </div>
+      `;
+    }
+    cardsHtml += '</div>';
+
+    // Summary info
+    cardsHtml += `
+      <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px;">
+        <div class="teaching-point" style="flex:1; min-width:200px;">
+          <span class="teaching-icon">&#128101;</span>
+          <div><strong>${risk.n_patients_pooled}</strong> patients pooled &mdash; ${risk.indication} indication<br>
+          <span style="font-size:11px; color:var(--text-secondary);">Evidence grade: ${risk.evidence_grade}</span></div>
+        </div>
+        ${risk.mitigated_risks ? `
+          <div class="teaching-point" style="flex:1; min-width:200px;">
+            <span class="teaching-icon">&#128737;</span>
+            <div><strong>Default Mitigation:</strong> ${risk.default_mitigations.join(' + ')}<br>
+            <span style="font-size:12px;">CRS mitigated: ${risk.mitigated_risks.crs ? risk.mitigated_risks.crs.mitigated_risk_pct + '%' : 'N/A'}
+            | ICANS mitigated: ${risk.mitigated_risks.icans ? risk.mitigated_risks.icans.mitigated_risk_pct + '%' : 'N/A'}</span></div>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  // Evidence accrual chart
+  let chartHtml = '';
+  if (accrual && accrual.timeline && accrual.timeline.length > 0) {
+    chartHtml = buildEvidenceAccrualChart(accrual);
+  }
+
+  // Key metrics from accrual
+  let metricsHtml = '';
+  if (accrual) {
+    metricsHtml = `
+      <div class="pop-grid" style="margin-top:16px;">
+        <div class="pop-metric-card grade-low">
+          <div class="pop-metric-label">CI Width Narrowing</div>
+          <div class="pop-metric-value">${accrual.ci_narrowing_pct}%</div>
+          <div class="pop-metric-sub">Projected reduction in CRS uncertainty</div>
+        </div>
+        <div class="pop-metric-card grade-low">
+          <div class="pop-metric-label">Current CRS CI Width</div>
+          <div class="pop-metric-value">${accrual.current_ci_width_crs_pct}%</div>
+          <div class="pop-metric-sub">95% credible interval span</div>
+        </div>
+        <div class="pop-metric-card grade-low">
+          <div class="pop-metric-label">Projected CRS CI Width</div>
+          <div class="pop-metric-value">${accrual.projected_ci_width_crs_pct}%</div>
+          <div class="pop-metric-sub">After additional trial enrollment</div>
+        </div>
+      </div>
+    `;
+  }
+
+  el.innerHTML = cardsHtml + chartHtml + metricsHtml;
+}
+
+function buildEvidenceAccrualChart(accrual) {
+  const pts = accrual.timeline;
+  const W = 750, H = 300, pad = { top: 30, right: 30, bottom: 50, left: 55 };
+  const cW = W - pad.left - pad.right;
+  const cH = H - pad.top - pad.bottom;
+
+  // Compute scales
+  const maxRate = Math.max(
+    ...pts.map(p => Math.max(p.crs_ci_high_pct || 0, p.icans_ci_high_pct || 0)),
+    10
+  );
+  const yMax = Math.ceil(maxRate / 5) * 5 + 5;
+
+  function x(i) { return pad.left + (i / (pts.length - 1)) * cW; }
+  function y(v) { return pad.top + cH - (v / yMax) * cH; }
+
+  // CRS CI band (shaded)
+  let crsBand = '';
+  let upper = pts.map((p, i) => `${x(i)},${y(p.crs_ci_high_pct)}`).join(' ');
+  let lower = pts.map((p, i) => `${x(pts.length - 1 - i)},${y(pts[pts.length - 1 - i].crs_ci_low_pct)}`).join(' ');
+  crsBand = `<polygon points="${upper} ${lower}" fill="var(--primary)" opacity="0.12" />`;
+
+  // CRS mean line
+  let crsLine = '';
+  let crsPoints = pts.map((p, i) => `${x(i)},${y(p.crs_mean_pct)}`);
+  // Split into observed and projected
+  const lastObsIdx = pts.reduce((acc, p, i) => !p.is_projected ? i : acc, 0);
+  let obsLine = crsPoints.slice(0, lastObsIdx + 1).join(' ');
+  let projLine = crsPoints.slice(lastObsIdx).join(' ');
+  crsLine = `<polyline points="${obsLine}" fill="none" stroke="var(--primary)" stroke-width="2.5" />`;
+  if (lastObsIdx < pts.length - 1) {
+    crsLine += `<polyline points="${projLine}" fill="none" stroke="var(--primary)" stroke-width="2" stroke-dasharray="6 4" />`;
+  }
+
+  // ICANS mean line
+  let icansLine = '';
+  let icansPoints = pts.map((p, i) => `${x(i)},${y(p.icans_mean_pct)}`);
+  let icansObs = icansPoints.slice(0, lastObsIdx + 1).join(' ');
+  let icansProj = icansPoints.slice(lastObsIdx).join(' ');
+  icansLine = `<polyline points="${icansObs}" fill="none" stroke="var(--moderate)" stroke-width="2" />`;
+  if (lastObsIdx < pts.length - 1) {
+    icansLine += `<polyline points="${icansProj}" fill="none" stroke="var(--moderate)" stroke-width="1.5" stroke-dasharray="6 4" />`;
+  }
+
+  // Projected region shading
+  let projShade = '';
+  if (lastObsIdx < pts.length - 1) {
+    const px1 = x(lastObsIdx);
+    projShade = `<rect x="${px1}" y="${pad.top}" width="${x(pts.length - 1) - px1}" height="${cH}" fill="var(--text-secondary)" opacity="0.04" />`;
+    projShade += `<text x="${(px1 + x(pts.length - 1)) / 2}" y="${pad.top + 14}" text-anchor="middle" font-size="10" fill="var(--text-secondary)" font-style="italic">Projected</text>`;
+  }
+
+  // Y-axis gridlines and labels
+  let yGrid = '';
+  for (let v = 0; v <= yMax; v += 5) {
+    const yp = y(v);
+    yGrid += `<line x1="${pad.left}" y1="${yp}" x2="${W - pad.right}" y2="${yp}" stroke="var(--border)" stroke-width="0.5" />`;
+    yGrid += `<text x="${pad.left - 8}" y="${yp + 4}" text-anchor="end" font-size="11" fill="var(--text-secondary)">${v}%</text>`;
+  }
+
+  // X-axis labels
+  let xLabels = '';
+  const step = Math.max(1, Math.floor(pts.length / 8));
+  for (let i = 0; i < pts.length; i += step) {
+    xLabels += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--text-secondary)">${pts[i].label}</text>`;
+  }
+  // Always show last
+  if ((pts.length - 1) % step !== 0) {
+    xLabels += `<text x="${x(pts.length - 1)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--text-secondary)">${pts[pts.length - 1].label}</text>`;
+  }
+
+  // Data point dots for CRS
+  let crsDots = pts.map((p, i) => {
+    const cx = x(i), cy = y(p.crs_mean_pct);
+    return `<circle cx="${cx}" cy="${cy}" r="3" fill="${p.is_projected ? 'var(--surface)' : 'var(--primary)'}" stroke="var(--primary)" stroke-width="1.5" />`;
+  }).join('');
+
+  // Axis labels
+  let axisLabels = `
+    <text x="${pad.left - 40}" y="${pad.top + cH / 2}" text-anchor="middle" font-size="11" fill="var(--text-secondary)" transform="rotate(-90, ${pad.left - 40}, ${pad.top + cH / 2})">Rate (%)</text>
+    <text x="${pad.left + cW / 2}" y="${H - 0}" text-anchor="middle" font-size="11" fill="var(--text-secondary)">Evidence Accrual Timeline</text>
+  `;
+
+  // Legend
+  let legend = `
+    <rect x="${W - pad.right - 200}" y="${pad.top}" width="195" height="52" rx="4" fill="var(--surface)" stroke="var(--border)" opacity="0.9" />
+    <line x1="${W - pad.right - 188}" y1="${pad.top + 16}" x2="${W - pad.right - 160}" y2="${pad.top + 16}" stroke="var(--primary)" stroke-width="2.5" />
+    <text x="${W - pad.right - 155}" y="${pad.top + 20}" font-size="11" fill="var(--text)">CRS Grade 3+ (mean)</text>
+    <line x1="${W - pad.right - 188}" y1="${pad.top + 36}" x2="${W - pad.right - 160}" y2="${pad.top + 36}" stroke="var(--moderate)" stroke-width="2" />
+    <text x="${W - pad.right - 155}" y="${pad.top + 40}" font-size="11" fill="var(--text)">ICANS Grade 3+ (mean)</text>
+  `;
+
+  return `
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title">&#128200; Evidence Accrual Chart</div>
+        <span style="font-size:11px; color:var(--text-secondary);">Bayesian posterior with 95% CI band (CRS)</span>
+      </div>
+      <div class="card-body" style="overflow-x:auto;">
+        <svg viewBox="0 0 ${W} ${H}" style="width:100%; max-width:${W}px; height:auto; font-family:var(--font);">
+          ${yGrid}
+          ${projShade}
+          ${crsBand}
+          ${crsLine}
+          ${icansLine}
+          ${crsDots}
+          ${xLabels}
+          ${axisLabels}
+          ${legend}
+        </svg>
+      </div>
+    </div>
+  `;
+}
+
+// -----------------------------------------------------------------------
+// MITIGATION EXPLORER TAB
+// -----------------------------------------------------------------------
+function renderMitigationExplorer() {
+  const containerId = 'mitigationContent';
+  setTimeout(() => loadMitigationExplorer(containerId), 0);
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#128737; Mitigation Strategy Explorer</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Correlated risk reduction analysis</span>
+      </div>
+      <div class="card-body" id="${containerId}">
+        ${popLoadingHtml('Fetching mitigation strategies...')}
+      </div>
+    </div>
+  `;
+}
+
+async function loadMitigationExplorer(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  const res = await popFetch('/api/v1/population/mitigations/strategies');
+  if (res.error) {
+    el.innerHTML = popErrorHtml('Failed to load mitigation strategies: ' + res.error);
+    return;
+  }
+
+  const strategies = res.data.strategies || [];
+
+  // Strategy cards with checkboxes
+  let cardsHtml = '<div style="margin-bottom:16px;"><strong>Available Mitigation Strategies</strong></div>';
+  for (const s of strategies) {
+    cardsHtml += `
+      <div class="strategy-card">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input type="checkbox" class="strategy-check mitigation-cb" value="${s.id}" id="mit_${s.id}">
+          <div style="flex:1;">
+            <div class="strategy-name">${s.name}</div>
+            <div class="strategy-detail">${s.mechanism}</div>
+          </div>
+          <span class="rr-badge">RR ${s.relative_risk.toFixed(2)}</span>
+        </div>
+        <div style="margin-top:8px; display:grid; grid-template-columns: 1fr 1fr; gap:6px; font-size:12px;">
+          <div><strong>Evidence:</strong> ${s.evidence_level}</div>
+          <div><strong>Targets:</strong> ${s.target_aes.join(', ')}</div>
+          <div><strong>Dosing:</strong> ${s.dosing || 'See protocol'}</div>
+          <div><strong>Timing:</strong> ${s.timing || 'Per guidelines'}</div>
+        </div>
+        ${s.limitations && s.limitations.length ? `
+          <div style="margin-top:6px; font-size:11px; color:var(--warning);">
+            <strong>Limitations:</strong> ${s.limitations.join('; ')}
+          </div>
+        ` : ''}
+        ${s.confidence_interval ? `
+          <div style="margin-top:4px; font-size:11px; color:var(--text-secondary);">
+            95% CI: ${s.confidence_interval[0].toFixed(2)} - ${s.confidence_interval[1].toFixed(2)}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  // Combo panel
+  cardsHtml += `
+    <div class="combo-panel">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <div>
+          <strong>&#9881; Interactive Combination Analysis</strong>
+          <div style="font-size:12px; color:var(--text-secondary);">Select strategies above, then click Calculate to see combined risk reduction with correlation correction.</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <label style="font-size:12px;">Target AE:
+            <select id="mitigationTargetAE" class="form-input" style="padding:4px 8px; font-size:12px; width:auto;">
+              <option value="CRS">CRS</option>
+              <option value="ICANS">ICANS</option>
+            </select>
+          </label>
+          <button class="btn btn-primary" onclick="calculateMitigationCombo()">Calculate</button>
+        </div>
+      </div>
+      <div id="mitigationComboResult"></div>
+    </div>
+  `;
+
+  el.innerHTML = cardsHtml;
+}
+
+async function calculateMitigationCombo() {
+  const resultEl = document.getElementById('mitigationComboResult');
+  if (!resultEl) return;
+
+  const checked = document.querySelectorAll('.mitigation-cb:checked');
+  if (checked.length === 0) {
+    resultEl.innerHTML = '<div style="padding:12px; font-size:13px; color:var(--warning);">Please select at least one mitigation strategy.</div>';
+    return;
+  }
+
+  const selectedIds = Array.from(checked).map(cb => cb.value);
+  const targetAE = document.getElementById('mitigationTargetAE')?.value || 'CRS';
+
+  resultEl.innerHTML = popLoadingHtml('Running Monte Carlo simulation...');
+
+  const res = await popFetch('/api/v1/population/mitigations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      selected_mitigations: selectedIds,
+      target_ae: targetAE,
+      n_monte_carlo_samples: 10000,
+    }),
+  });
+
+  if (res.error) {
+    resultEl.innerHTML = popErrorHtml('Mitigation analysis failed: ' + res.error);
+    return;
+  }
+
+  const d = res.data;
+
+  // Waterfall chart
+  const waterfallHtml = buildWaterfallChart(d);
+
+  resultEl.innerHTML = `
+    <div class="combo-result">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:12px; margin-bottom:14px;">
+        <div class="pop-metric-card grade-moderate">
+          <div class="pop-metric-label">Baseline Risk</div>
+          <div class="pop-metric-value">${d.baseline_risk_pct}%</div>
+          <div class="pop-metric-sub">${d.target_ae} Grade 3+</div>
+        </div>
+        <div class="pop-metric-card grade-low">
+          <div class="pop-metric-label">Mitigated Risk</div>
+          <div class="pop-metric-value">${d.mitigated_risk_pct.toFixed(2)}%</div>
+          <div class="pop-metric-sub">95% CI: ${d.mitigated_risk_ci_low_pct.toFixed(2)}% - ${d.mitigated_risk_ci_high_pct.toFixed(2)}%</div>
+        </div>
+        <div class="pop-metric-card grade-low">
+          <div class="pop-metric-label">Combined RR</div>
+          <div class="pop-metric-value">${d.combined_rr.toFixed(3)}</div>
+          <div class="pop-metric-sub">Correlated combination</div>
+        </div>
+        <div class="pop-metric-card">
+          <div class="pop-metric-label">Naive vs Corrected</div>
+          <div class="pop-metric-value">${d.correction_factor.toFixed(3)}</div>
+          <div class="pop-metric-sub">Naive RR: ${d.naive_multiplicative_rr.toFixed(3)} | Correction: ${d.correction_factor.toFixed(3)}</div>
+        </div>
+      </div>
+
+      ${d.correlations_applied && d.correlations_applied.length > 0 ? `
+        <div style="margin-bottom:12px;">
+          <strong style="font-size:13px;">Correlation Details</strong>
+          <table class="data-table" style="margin-top:6px;">
+            <thead><tr><th>Mitigation A</th><th>Mitigation B</th><th>&rho;</th><th>Naive RR</th><th>Corrected RR</th></tr></thead>
+            <tbody>
+              ${d.correlations_applied.map(c => `
+                <tr>
+                  <td>${c.mitigation_a}</td>
+                  <td>${c.mitigation_b}</td>
+                  <td>${c.rho.toFixed(2)}</td>
+                  <td>${c.naive_rr.toFixed(4)}</td>
+                  <td>${c.corrected_rr.toFixed(4)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      ` : ''}
+
+      ${waterfallHtml}
+
+      <div class="teaching-point" style="margin-top:12px;">
+        <span class="teaching-icon">&#128161;</span>
+        <div style="font-size:12px;">Mitigations applied: <strong>${d.mitigations_applied.join(', ') || 'None applicable for ' + d.target_ae}</strong>.
+        Correlation correction accounts for shared mechanisms between interventions, preventing over-estimation of combined benefit.</div>
+      </div>
+    </div>
+  `;
+}
+
+function buildWaterfallChart(mitigationData) {
+  const d = mitigationData;
+  if (!d.mitigations_applied || d.mitigations_applied.length === 0) return '';
+
+  const W = 500, H = 200, pad = { top: 20, right: 20, bottom: 40, left: 50 };
+  const cW = W - pad.left - pad.right;
+  const cH = H - pad.top - pad.bottom;
+
+  const baseline = d.baseline_risk_pct;
+  const mitigated = d.mitigated_risk_pct;
+  const steps = [{ label: 'Baseline', value: baseline }];
+
+  // Intermediate steps (approximate — divide reduction equally among mitigations for visualization)
+  const totalReduction = baseline - mitigated;
+  const nMit = d.mitigations_applied.length;
+  let running = baseline;
+  for (let i = 0; i < nMit; i++) {
+    const stepReduction = totalReduction / nMit;
+    running -= stepReduction;
+    steps.push({ label: d.mitigations_applied[i], value: Math.max(running, mitigated) });
+  }
+  // Ensure last step matches mitigated exactly
+  steps[steps.length - 1].value = mitigated;
+  steps.push({ label: 'Final Risk', value: mitigated });
+
+  const yMax = Math.ceil(baseline / 5) * 5 + 5;
+  const barW = Math.min(60, (cW / steps.length) - 10);
+
+  function xPos(i) { return pad.left + (i + 0.5) * (cW / steps.length); }
+  function yPos(v) { return pad.top + cH - (v / yMax) * cH; }
+
+  let bars = '';
+  for (let i = 0; i < steps.length; i++) {
+    const bx = xPos(i) - barW / 2;
+    const by = yPos(steps[i].value);
+    const bh = cH - (by - pad.top);
+    const color = i === 0 ? 'var(--warning)' : i === steps.length - 1 ? 'var(--success)' : 'var(--primary)';
+    bars += `<rect x="${bx}" y="${by}" width="${barW}" height="${bh}" fill="${color}" rx="3" opacity="0.85" />`;
+    bars += `<text x="${xPos(i)}" y="${by - 5}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text)">${steps[i].value.toFixed(1)}%</text>`;
+    bars += `<text x="${xPos(i)}" y="${H - 5}" text-anchor="middle" font-size="9" fill="var(--text-secondary)">${steps[i].label.length > 12 ? steps[i].label.slice(0, 11) + '...' : steps[i].label}</text>`;
+
+    // Connecting lines between bars
+    if (i > 0 && i < steps.length) {
+      const prevTop = yPos(steps[i - 1].value);
+      const prevRight = xPos(i - 1) + barW / 2;
+      bars += `<line x1="${prevRight}" y1="${prevTop}" x2="${bx}" y2="${prevTop}" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2" />`;
+    }
+  }
+
+  // Y-axis
+  let yAxis = '';
+  for (let v = 0; v <= yMax; v += 5) {
+    yAxis += `<text x="${pad.left - 6}" y="${yPos(v) + 4}" text-anchor="end" font-size="10" fill="var(--text-secondary)">${v}%</text>`;
+    yAxis += `<line x1="${pad.left}" y1="${yPos(v)}" x2="${W - pad.right}" y2="${yPos(v)}" stroke="var(--border)" stroke-width="0.3" />`;
+  }
+
+  return `
+    <div style="margin-top:12px;">
+      <strong style="font-size:13px;">Waterfall: Baseline to Mitigated Risk</strong>
+      <div style="overflow-x:auto;">
+        <svg viewBox="0 0 ${W} ${H}" style="width:100%; max-width:${W}px; height:auto; font-family:var(--font);">
+          ${yAxis}
+          ${bars}
+        </svg>
+      </div>
+    </div>
+  `;
+}
+
+// -----------------------------------------------------------------------
+// SIGNAL DETECTION TAB
+// -----------------------------------------------------------------------
+function renderSignalDetection() {
+  setTimeout(() => loadComparisonData(), 0);
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#128225; FAERS Signal Detection</div>
+        <span style="font-size:12px; color:var(--text-secondary);">FDA Adverse Event Reporting System</span>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info" style="margin-bottom:16px;">
+          <span class="alert-icon">&#8505;</span>
+          <div>FAERS data is fetched from the live openFDA API and may take 30-60 seconds. Results are not cached.
+          This queries real-world post-market safety data for approved CAR-T products.</div>
+        </div>
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="loadFAERSData()">&#128269; Load FAERS Data</button>
+          <span style="font-size:12px; color:var(--text-secondary);">Click to query openFDA for disproportionality signals</span>
+        </div>
+        <div id="faersResult" style="margin-top:16px;"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title">&#128200; Cross-Indication AE Comparison</div>
+        <span style="font-size:12px; color:var(--text-secondary);">SLE vs Oncology CAR-T</span>
+      </div>
+      <div class="card-body" id="comparisonContent">
+        ${popLoadingHtml('Loading comparison data...')}
+      </div>
+    </div>
+  `;
+}
+
+async function loadFAERSData() {
+  const el = document.getElementById('faersResult');
+  if (!el) return;
+
+  el.innerHTML = popLoadingHtml('Querying openFDA... this may take 30-60 seconds.');
+
+  const res = await popFetch('/api/v1/signals/faers');
+  if (res.error) {
+    el.innerHTML = popErrorHtml('FAERS query failed: ' + res.error + '. The openFDA API may be temporarily unavailable.');
+    return;
+  }
+
+  const d = res.data;
+  const signals = d.signals || [];
+
+  // Summary stats
+  let summaryHtml = `
+    <div class="pop-grid" style="margin-bottom:16px;">
+      <div class="pop-metric-card grade-low">
+        <div class="pop-metric-label">Total Reports</div>
+        <div class="pop-metric-value">${(d.total_reports || 0).toLocaleString()}</div>
+        <div class="pop-metric-sub">Products: ${(d.products_queried || []).join(', ')}</div>
+      </div>
+      <div class="pop-metric-card ${d.signals_detected > 0 ? 'grade-moderate' : 'grade-low'}">
+        <div class="pop-metric-label">Signals Detected</div>
+        <div class="pop-metric-value">${d.signals_detected || 0}</div>
+        <div class="pop-metric-sub">Disproportionality signals</div>
+      </div>
+      <div class="pop-metric-card ${d.strong_signals > 0 ? 'grade-high' : 'grade-low'}">
+        <div class="pop-metric-label">Strong Signals</div>
+        <div class="pop-metric-value">${d.strong_signals || 0}</div>
+        <div class="pop-metric-sub">PRR>2, ROR>2, EBGM05>1</div>
+      </div>
+    </div>
+  `;
+
+  // Signal table
+  if (signals.length > 0) {
+    summaryHtml += `
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Adverse Event</th>
+              <th>Cases</th>
+              <th>PRR</th>
+              <th>ROR</th>
+              <th>EBGM</th>
+              <th>Signal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${signals.map(s => {
+              const cls = !s.is_signal ? 'signal-none' :
+                s.signal_strength === 'strong' ? 'signal-strong' :
+                s.signal_strength === 'moderate' ? 'signal-moderate' : 'signal-weak';
+              return `
+                <tr>
+                  <td>${s.product}</td>
+                  <td>${s.adverse_event}</td>
+                  <td style="font-family:var(--mono);">${s.n_cases}</td>
+                  <td style="font-family:var(--mono);">${s.prr.toFixed(2)} <span style="font-size:10px; color:var(--text-secondary);">(${s.prr_ci_low.toFixed(1)}-${s.prr_ci_high.toFixed(1)})</span></td>
+                  <td style="font-family:var(--mono);">${s.ror.toFixed(2)} <span style="font-size:10px; color:var(--text-secondary);">(${s.ror_ci_low.toFixed(1)}-${s.ror_ci_high.toFixed(1)})</span></td>
+                  <td style="font-family:var(--mono);">${s.ebgm.toFixed(2)} <span style="font-size:10px; color:var(--text-secondary);">(EB05: ${s.ebgm05.toFixed(2)})</span></td>
+                  <td><span class="traffic-badge ${cls}" style="font-size:11px;">${s.is_signal ? (s.signal_strength || 'yes').toUpperCase() : 'NONE'}</span></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else {
+    summaryHtml += '<div style="padding:12px; color:var(--text-secondary);">No signals returned from the query.</div>';
+  }
+
+  el.innerHTML = summaryHtml;
+}
+
+async function loadComparisonData() {
+  const el = document.getElementById('comparisonContent');
+  if (!el) return;
+
+  const res = await popFetch('/api/v1/population/comparison');
+  if (res.error) {
+    el.innerHTML = popErrorHtml('Failed to load comparison data: ' + res.error);
+    return;
+  }
+
+  const data = res.data.comparison_data || [];
+  if (data.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-secondary); padding:12px;">No comparison data available.</div>';
+    return;
+  }
+
+  // Build forest-plot style horizontal bar chart
+  el.innerHTML = buildForestPlot(data, res.data.note);
+}
+
+function buildForestPlot(data, note) {
+  const W = 700, rowH = 28, pad = { top: 30, right: 30, bottom: 30, left: 180 };
+  const H = pad.top + data.length * rowH + pad.bottom;
+  const cW = W - pad.left - pad.right;
+
+  // Find max rate for scale
+  const allRates = data.flatMap(d => [d.sle_rate || 0, d.oncology_rate || 0, d.sle_ci_high || 0, d.oncology_ci_high || 0]);
+  const maxRate = Math.max(...allRates, 10);
+  const xMax = Math.ceil(maxRate / 10) * 10 + 10;
+
+  function xPos(v) { return pad.left + (v / xMax) * cW; }
+  function yPos(i) { return pad.top + i * rowH + rowH / 2; }
+
+  let gridLines = '';
+  for (let v = 0; v <= xMax; v += 10) {
+    gridLines += `<line x1="${xPos(v)}" y1="${pad.top}" x2="${xPos(v)}" y2="${H - pad.bottom}" stroke="var(--border)" stroke-width="0.5" />`;
+    gridLines += `<text x="${xPos(v)}" y="${H - 10}" text-anchor="middle" font-size="10" fill="var(--text-secondary)">${v}%</text>`;
+  }
+
+  let rows = '';
+  data.forEach((d, i) => {
+    const y = yPos(i);
+    // Label
+    rows += `<text x="${pad.left - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--text)">${d.ae_type || d.label || 'AE ' + i}</text>`;
+    // Row background
+    if (i % 2 === 0) {
+      rows += `<rect x="${pad.left}" y="${y - rowH / 2}" width="${cW}" height="${rowH}" fill="var(--surface-hover)" opacity="0.5" />`;
+    }
+    // SLE bar (blue)
+    if (d.sle_rate !== undefined) {
+      rows += `<circle cx="${xPos(d.sle_rate)}" cy="${y - 4}" r="5" fill="var(--primary)" opacity="0.8" />`;
+      if (d.sle_ci_low !== undefined && d.sle_ci_high !== undefined) {
+        rows += `<line x1="${xPos(d.sle_ci_low)}" y1="${y - 4}" x2="${xPos(d.sle_ci_high)}" y2="${y - 4}" stroke="var(--primary)" stroke-width="1.5" />`;
+      }
+    }
+    // Oncology bar (orange)
+    if (d.oncology_rate !== undefined) {
+      rows += `<circle cx="${xPos(d.oncology_rate)}" cy="${y + 5}" r="5" fill="var(--moderate)" opacity="0.8" />`;
+      if (d.oncology_ci_low !== undefined && d.oncology_ci_high !== undefined) {
+        rows += `<line x1="${xPos(d.oncology_ci_low)}" y1="${y + 5}" x2="${xPos(d.oncology_ci_high)}" y2="${y + 5}" stroke="var(--moderate)" stroke-width="1.5" />`;
+      }
+    }
+  });
+
+  // Legend
+  let legend = `
+    <circle cx="${pad.left + 10}" cy="${pad.top - 14}" r="5" fill="var(--primary)" />
+    <text x="${pad.left + 20}" y="${pad.top - 10}" font-size="11" fill="var(--text)">SLE CAR-T</text>
+    <circle cx="${pad.left + 110}" cy="${pad.top - 14}" r="5" fill="var(--moderate)" />
+    <text x="${pad.left + 120}" y="${pad.top - 10}" font-size="11" fill="var(--text)">Oncology CAR-T</text>
+  `;
+
+  return `
+    <div style="overflow-x:auto;">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%; max-width:${W}px; height:auto; font-family:var(--font);">
+        ${gridLines}
+        ${rows}
+        ${legend}
+      </svg>
+      ${note ? `<div style="font-size:11px; color:var(--text-secondary); margin-top:6px; font-style:italic;">${note}</div>` : ''}
+    </div>
+  `;
+}
+
+// -----------------------------------------------------------------------
+// EXECUTIVE SUMMARY TAB
+// -----------------------------------------------------------------------
+function renderExecutiveSummary() {
+  const containerId = 'execSummaryContent';
+  setTimeout(() => loadExecutiveSummary(containerId), 0);
+  return `
+    <div style="max-width:900px; margin:0 auto;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">&#128196; Executive Safety Summary</div>
+          <button class="btn btn-secondary btn-sm" onclick="window.print()">&#128424; Print</button>
+        </div>
+        <div class="card-body" id="${containerId}">
+          ${popLoadingHtml('Generating executive summary...')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadExecutiveSummary(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  const [riskRes, accrualRes] = await Promise.all([
+    popFetch('/api/v1/population/risk'),
+    popFetch('/api/v1/population/evidence-accrual'),
+  ]);
+
+  if (riskRes.error) {
+    el.innerHTML = popErrorHtml('Failed to load risk data: ' + riskRes.error);
+    return;
+  }
+
+  const risk = riskRes.data;
+  const accrual = accrualRes.data;
+  const br = risk.baseline_risks;
+
+  // Traffic light summary
+  const aeTypes = [
+    { key: 'crs_grade3_plus', label: 'CRS Grade 3+', icon: '&#127777;' },
+    { key: 'icans_grade3_plus', label: 'ICANS Grade 3+', icon: '&#129504;' },
+    { key: 'icahs', label: 'ICAHS', icon: '&#9888;' },
+    { key: 'licats', label: 'LICATS', icon: '&#128200;' },
+  ];
+
+  let trafficHtml = '<div style="margin-bottom:20px;"><strong style="font-size:14px;">Adverse Event Risk Status</strong></div>';
+  trafficHtml += '<div class="pop-grid">';
+  for (const ae of aeTypes) {
+    const d = br[ae.key];
+    if (!d) continue;
+    const rate = d.estimate;
+    const cls = rate >= 15 ? 'traffic-red' : rate >= 5 ? 'traffic-yellow' : 'traffic-green';
+    const riskLabel = rate >= 15 ? 'HIGH' : rate >= 5 ? 'MODERATE' : 'LOW';
+    trafficHtml += `
+      <div class="pop-metric-card" style="text-align:center;">
+        <div style="font-size:20px; margin-bottom:4px;">${ae.icon}</div>
+        <div class="pop-metric-label">${ae.label}</div>
+        <div class="pop-metric-value">${rate}%</div>
+        <span class="traffic-badge ${cls}">${riskLabel}</span>
+      </div>
+    `;
+  }
+  trafficHtml += '</div>';
+
+  // Key findings
+  let findingsHtml = `
+    <div class="card" style="margin-top:20px; border:none; box-shadow:none;">
+      <div style="font-size:14px; font-weight:600; margin-bottom:10px;">&#128270; Key Findings</div>
+      <ul style="list-style:none; padding:0;">
+        <li class="teaching-point" style="margin-bottom:8px;">
+          <span class="teaching-icon">1.</span>
+          <div><strong>Current Risk Profile:</strong> SLE CAR-T shows a favorable safety profile with low rates of severe CRS (${br.crs_grade3_plus ? br.crs_grade3_plus.estimate + '%' : 'N/A'}) and ICANS (${br.icans_grade3_plus ? br.icans_grade3_plus.estimate + '%' : 'N/A'}) compared to oncology indications.</div>
+        </li>
+        <li class="teaching-point" style="margin-bottom:8px;">
+          <span class="teaching-icon">2.</span>
+          <div><strong>Mitigation Impact:</strong> Standard tocilizumab + corticosteroid prophylaxis further reduces residual CRS risk to ${risk.mitigated_risks?.crs ? risk.mitigated_risks.crs.mitigated_risk_pct + '%' : 'N/A'}.</div>
+        </li>
+        <li class="teaching-point" style="margin-bottom:8px;">
+          <span class="teaching-icon">3.</span>
+          <div><strong>Data Maturity:</strong> Current evidence is based on ${risk.n_patients_pooled} patients from early-phase trials. ${accrual ? 'CI width narrowing of ' + accrual.ci_narrowing_pct + '% is projected with additional enrollment.' : ''}</div>
+        </li>
+        <li class="teaching-point" style="margin-bottom:8px;">
+          <span class="teaching-icon">4.</span>
+          <div><strong>Evidence Grade:</strong> ${risk.evidence_grade}. Larger confirmatory trials are needed for definitive risk quantification.</div>
+        </li>
+        <li class="teaching-point" style="margin-bottom:8px;">
+          <span class="teaching-icon">5.</span>
+          <div><strong>Monitoring Signal:</strong> FAERS post-market surveillance is available for approved oncology CAR-T products. SLE-specific post-market data will emerge as products gain approval.</div>
+        </li>
+      </ul>
+    </div>
+  `;
+
+  // Decision support
+  let decisionHtml = `
+    <div class="card" style="margin-top:16px; border:none; box-shadow:none;">
+      <div style="font-size:14px; font-weight:600; margin-bottom:10px;">&#128161; Decision Support</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+        <div style="padding:14px; background:var(--success-bg); border:1px solid var(--success-light); border-radius:var(--radius);">
+          <div style="font-weight:600; color:var(--success); margin-bottom:6px;">&#9989; Recommended Monitoring</div>
+          <ul style="font-size:12px; padding-left:16px; color:var(--text);">
+            <li>CRS grading q6h for first 72 hours post-infusion</li>
+            <li>ICE assessment q12h for 7 days</li>
+            <li>Ferritin, CRP, IL-6 daily during acute period</li>
+            <li>CBC with differential daily for 14 days</li>
+          </ul>
+        </div>
+        <div style="padding:14px; background:var(--danger-bg); border:1px solid var(--danger-light); border-radius:var(--radius);">
+          <div style="font-weight:600; color:var(--danger); margin-bottom:6px;">&#9888; Escalation Triggers</div>
+          <ul style="font-size:12px; padding-left:16px; color:var(--text);">
+            <li>CRS Grade 2 persisting >24h despite tocilizumab</li>
+            <li>Any ICANS Grade 3+ (ICE &le;3)</li>
+            <li>Ferritin >10,000 ng/mL or rising &gt;3x in 24h</li>
+            <li>Hemodynamic instability requiring vasopressors</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Data maturity gauge
+  let gaugeHtml = '';
+  if (accrual) {
+    const currentN = risk.n_patients_pooled;
+    const targetN = 200; // approximate target for reasonable CI
+    const pct = Math.min(100, (currentN / targetN) * 100);
+    const W = 260, H = 140;
+    const cx = W / 2, cy = H - 20;
+    const r = 80;
+    // Semi-circle gauge
+    const startAngle = Math.PI;
+    const endAngle = 0;
+    const fillAngle = startAngle - (pct / 100) * Math.PI;
+
+    // Background arc
+    const bgArcEnd = { x: cx + r * Math.cos(endAngle), y: cy - r * Math.sin(endAngle) };
+    const bgArcStart = { x: cx + r * Math.cos(startAngle), y: cy - r * Math.sin(startAngle) };
+
+    // Filled arc
+    const fillEnd = { x: cx + r * Math.cos(fillAngle), y: cy - r * Math.sin(fillAngle) };
+    const largeArc = pct > 50 ? 1 : 0;
+
+    const color = pct >= 75 ? 'var(--success)' : pct >= 40 ? 'var(--warning)' : 'var(--danger)';
+
+    gaugeHtml = `
+      <div class="card" style="margin-top:16px; border:none; box-shadow:none;">
+        <div style="font-size:14px; font-weight:600; margin-bottom:10px;">&#128202; Data Maturity</div>
+        <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
+          <div class="data-gauge" style="width:${W}px; height:${H}px;">
+            <svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto; font-family:var(--font);">
+              <path d="M ${bgArcStart.x},${bgArcStart.y} A ${r},${r} 0 1,1 ${bgArcEnd.x},${bgArcEnd.y}"
+                fill="none" stroke="var(--border)" stroke-width="16" stroke-linecap="round" />
+              <path d="M ${bgArcStart.x},${bgArcStart.y} A ${r},${r} 0 ${largeArc},1 ${fillEnd.x},${fillEnd.y}"
+                fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round" />
+              <text x="${cx}" y="${cy - 15}" text-anchor="middle" font-size="24" font-weight="700" fill="var(--text)" font-family="var(--mono)">${currentN}</text>
+              <text x="${cx}" y="${cy + 2}" text-anchor="middle" font-size="11" fill="var(--text-secondary)">of ~${targetN} target patients</text>
+              <text x="${bgArcStart.x + 5}" y="${cy + 16}" text-anchor="start" font-size="10" fill="var(--text-secondary)">0</text>
+              <text x="${bgArcEnd.x - 5}" y="${cy + 16}" text-anchor="end" font-size="10" fill="var(--text-secondary)">${targetN}</text>
+            </svg>
+          </div>
+          <div style="flex:1; min-width:200px;">
+            <div style="font-size:13px; margin-bottom:8px;">
+              <strong>Current:</strong> ${currentN} patients from early-phase trials<br>
+              <strong>Confidence level:</strong> ${pct < 30 ? 'Preliminary' : pct < 60 ? 'Emerging' : pct < 80 ? 'Moderate' : 'Substantial'}<br>
+              <strong>CRS CI width:</strong> ${accrual.current_ci_width_crs_pct}% (current) &rarr; ${accrual.projected_ci_width_crs_pct}% (projected)
+            </div>
+            <div class="teaching-point">
+              <span class="teaching-icon">&#128161;</span>
+              <div style="font-size:12px;">Approximately ${targetN - currentN} additional patients needed to achieve clinically meaningful precision in risk estimates. Ongoing Phase I/II trials are expected to contribute data over the next 12-24 months.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  el.innerHTML = trafficHtml + findingsHtml + decisionHtml + gaugeHtml;
 }
 
 </script>
