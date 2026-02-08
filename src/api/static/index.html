@@ -4040,7 +4040,7 @@ async function loadClinicalSafetyPlan(containerId) {
   for (const ae of aeTypes) {
     const d = br[ae.key];
     const rate = d ? d.estimate : 'N/A';
-    const ci = d ? `${d.ci_lower}-${d.ci_upper}%` : '-';
+    const ci = d && d.ci95 ? `${d.ci95[0]}-${d.ci95[1]}%` : '-';
     const cls = d ? trafficClass(d.estimate) : 'traffic-green';
     const riskLabel = d ? (d.estimate >= 15 ? 'HIGH' : d.estimate >= 5 ? 'MODERATE' : 'LOW') : 'LOW';
     riskTableRows += `<tr>

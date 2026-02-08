@@ -205,10 +205,12 @@ class TestGetSLEBaselineRisk:
     """Tests for the baseline risk estimation function."""
 
     def test_returns_expected_keys(self):
-        """Result should contain risk estimates for CRS, ICANS, ICAHS, LICATS."""
+        """Result should contain risk estimates for all tracked AE types."""
         result = get_sle_baseline_risk()
-        expected_keys = {"crs_grade3_plus", "icans_grade3_plus", "icahs", "licats"}
-        assert set(result.keys()) == expected_keys
+        required_keys = {"crs_grade3_plus", "icans_grade3_plus", "icahs", "licats"}
+        assert required_keys.issubset(set(result.keys()))
+        extended_keys = {"crs_any", "icans_any", "infection", "cytopenias"}
+        assert extended_keys.issubset(set(result.keys()))
 
     def test_all_estimates_non_negative(self):
         """All point estimates should be >= 0."""

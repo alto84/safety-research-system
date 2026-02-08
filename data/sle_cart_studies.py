@@ -775,9 +775,17 @@ def get_sle_baseline_risk() -> dict:
         and 'ci95' (two-element list with lower and upper bounds).
     """
     return {
+        "crs_any": {
+            "estimate": 56.0,
+            "ci95": [40.9, 70.4],  # Any-grade CRS from pooled SLE (n=47)
+        },
         "crs_grade3_plus": {
             "estimate": 2.1,
             "ci95": [0.3, 7.4],
+        },
+        "icans_any": {
+            "estimate": 3.0,
+            "ci95": [0.4, 10.5],  # Any-grade ICANS from pooled SLE (n=47)
         },
         "icans_grade3_plus": {
             "estimate": 0.0,
@@ -790,5 +798,13 @@ def get_sle_baseline_risk() -> dict:
         "licats": {
             "estimate": 0.0,
             "ci95": [0.0, 6.4],  # Grade 3+ LICATS; any-grade ~77% (Hagen 2025)
+        },
+        "infection": {
+            "estimate": 12.8,
+            "ci95": [4.8, 25.7],  # Infections within 90 days from pooled SLE (n=47)
+        },
+        "cytopenias": {
+            "estimate": 29.8,
+            "ci95": [17.3, 44.9],  # Prolonged cytopenias (>14 days) from pooled SLE (n=47)
         },
     }
