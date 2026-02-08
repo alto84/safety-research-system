@@ -475,7 +475,7 @@ class TestKaplanMeier:
     def standard_km_data(self):
         return {
             "times": [3, 7, 14, 21, 28, 30, 30, 30, 30, 30],
-            "events": [True, True, True, False, False, False, False, False, False, False],
+            "event_indicators": [True, True, True, False, False, False, False, False, False, False],
             "time_horizon": 30,
         }
 
@@ -488,7 +488,7 @@ class TestKaplanMeier:
     def test_no_events_gives_zero_incidence(self):
         data = {
             "times": [10, 20, 30, 40, 50],
-            "events": [False, False, False, False, False],
+            "event_indicators": [False, False, False, False, False],
         }
         result = kaplan_meier(data)
         assert result["estimate_pct"] == 0.0
@@ -496,18 +496,18 @@ class TestKaplanMeier:
     def test_all_events_gives_100_incidence(self):
         data = {
             "times": [1, 2, 3, 4, 5],
-            "events": [True, True, True, True, True],
+            "event_indicators": [True, True, True, True, True],
         }
         result = kaplan_meier(data)
         assert result["estimate_pct"] == 100.0
 
     def test_empty_data_raises(self):
         with pytest.raises(ValueError, match="At least one"):
-            kaplan_meier({"times": [], "events": []})
+            kaplan_meier({"times": [], "event_indicators": []})
 
     def test_mismatched_lengths_raises(self):
         with pytest.raises(ValueError, match="same length"):
-            kaplan_meier({"times": [1, 2, 3], "events": [True, False]})
+            kaplan_meier({"times": [1, 2, 3], "event_indicators": [True, False]})
 
     def test_early_horizon_gives_lower_incidence(self, standard_km_data):
         early = dict(standard_km_data)
@@ -517,14 +517,14 @@ class TestKaplanMeier:
         assert result_early["estimate_pct"] <= result_late["estimate_pct"]
 
     def test_single_patient_event(self):
-        data = {"times": [5], "events": [True]}
+        data = {"times": [5], "event_indicators": [True]}
         result = kaplan_meier(data)
         assert result["estimate_pct"] == 100.0
         assert result["n_patients"] == 1
         assert result["n_events"] == 1
 
     def test_single_patient_censored(self):
-        data = {"times": [5], "events": [False]}
+        data = {"times": [5], "event_indicators": [False]}
         result = kaplan_meier(data)
         assert result["estimate_pct"] == 0.0
 

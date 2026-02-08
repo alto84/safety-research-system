@@ -487,8 +487,9 @@ def kaplan_meier(data: dict[str, Any]) -> dict[str, Any]:
 
     Required data keys:
         times (list[float]): Event or censoring times for each patient.
-        events (list[bool]): True if the patient had the event, False if
-            censored.
+        event_indicators (list[bool]): True if the patient had the event,
+            False if censored.  Uses a distinct key name to avoid collision
+            with the integer ``events`` key used by other models.
 
     Optional data keys:
         time_horizon (float): Time at which to report cumulative incidence.
@@ -496,7 +497,7 @@ def kaplan_meier(data: dict[str, Any]) -> dict[str, Any]:
         alpha (float): Significance level.  Default 0.05.
     """
     times = data["times"]
-    observed = data["events"]
+    observed = data["event_indicators"]
     alpha = data.get("alpha", 0.05)
 
     n_total = len(times)
@@ -787,7 +788,7 @@ MODEL_REGISTRY: dict[str, RiskModel] = {
             "formula with Greenwood variance"
         ),
         suitable_for=["time_to_event", "censored_data", "onset_timing"],
-        requires=["times", "events"],
+        requires=["times", "event_indicators"],
         compute_fn=kaplan_meier,
     ),
     "predictive_posterior": RiskModel(
