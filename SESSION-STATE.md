@@ -1,93 +1,96 @@
-# Session State — PSP Build (2026-02-07, Evening)
+# Session State — PSP Build (2026-02-08, Overnight Complete)
 
-## What's Done
+## Overnight Results Summary
 
-### Phase 0: Core Python Modules (COMPLETE)
-All committed at `2dc86d8`, pushed to GitHub, verified on both Rocinante and gpuserver1.
-- `src/models/bayesian_risk.py` — Beta-Binomial, evidence accrual, exact Beta quantiles (scipy)
-- `src/models/mitigation_model.py` — Correlated RR formula, Monte Carlo, 5 mitigations
+**All 4 agents completed successfully. Dashboard, tests, and validation done.**
+
+### Test Results
+- **704 tests passing** (up from 421)
+- 226 new unit tests for population modules
+- 57 new integration tests for population API endpoints
+- All existing tests still pass
+- Runtime: 3.7 seconds
+
+### Dashboard
+- 4 new population-level tabs added (Population Risk, Mitigation Explorer, Signal Detection, Executive Summary)
+- Evidence accrual SVG chart with CI band visualization
+- Interactive mitigation strategy selector with live combined RR calculation
+- FAERS signal detection with load-on-demand pattern
+- Executive summary with traffic light indicators
+- Dashboard: 3879 lines (up from 2853)
+- All API endpoints verified working
+
+### Commits (all pushed to GitHub)
+1. `d7b7cac` — Population API routes + expert review fixes (8 endpoints, 6 critical fixes)
+2. `48d613b` — CLAUDE.md persistent agent instructions
+3. `9fe6e19` — Session state + detailed system specification
+4. `c00bfb6` — Integration tests for population API endpoints
+5. `1aa974e` — Unit tests for population modules (226 tests)
+6. `761f232` — Population dashboard tabs with interactive visualizations
+
+## What's Done (Complete)
+
+### Phase 0: Core Python Modules
+- `src/models/bayesian_risk.py` — Beta-Binomial, evidence accrual, exact Beta quantiles
+- `src/models/mitigation_model.py` — Correlated RR, Monte Carlo, 5 strategies with caveats
 - `src/models/faers_signal.py` — PRR/ROR/EBGM, openFDA, signal classification
 - `data/sle_cart_studies.py` — 14 AE rates, 14 trials, 8 data sources
-- `src/api/schemas.py` — Patient + population-level Pydantic schemas
 
-### Population API Routes (COMPLETE — commit `d7b7cac`)
-- `src/api/population_routes.py` — 8 endpoints wired to all backend models
-- Registered in `app.py` with OpenAPI tags for "Population" and "Signals"
-- All 421 tests pass
+### Population API (8 endpoints)
+- `/api/v1/population/risk` — Baseline risk with mitigated estimates
+- `/api/v1/population/bayesian` — Custom Bayesian posterior
+- `/api/v1/population/mitigations` — Correlated mitigation analysis
+- `/api/v1/population/evidence-accrual` — Evidence accrual timeline
+- `/api/v1/population/trials` — Clinical trial registry
+- `/api/v1/signals/faers` — FAERS signal detection
+- `/api/v1/population/mitigations/strategies` — Strategy catalog
+- `/api/v1/population/comparison` — Cross-indication comparison
 
-### Expert Review Fixes (COMPLETE — commit `d7b7cac`)
-Fixed critical issues from 4 expert persona reviews:
-1. Replaced normal CI approximation with exact Beta quantiles (biostatistician #1)
-2. Fixed ICANS G3+ rate from 1.5% to 0.0% (clinical physician #1)
-3. Added schema validation: n_events <= n_patients (architect #5)
-4. Downgraded anakinra evidence from "Moderate" to "Limited" (clinical physician #5)
-5. Added oncology-extrapolation caveats to tocilizumab and corticosteroids (clinical physician #3-4)
-6. Reduced Monte Carlo default from 10K to 5K for API performance (architect #2)
+### Expert Review Fixes (6 critical issues resolved)
+1. Exact Beta quantiles (was normal approximation)
+2. ICANS G3+ rate corrected (1.5% → 0.0%)
+3. Schema validation (n_events <= n_patients)
+4. Anakinra evidence downgraded (Moderate → Limited)
+5. Oncology-extrapolation caveats on tocilizumab/corticosteroids
+6. Monte Carlo default reduced (10K → 5K)
 
-### Agent Infrastructure (COMPLETE — commit `48d613b`)
+### Dashboard (13 tabs total)
+- 9 patient-level tabs (existing): Overview, Pre-Infusion, Day 1, CRS, ICANS, HLH, Hematologic, Discharge, Clinical Visit
+- 4 population-level tabs (new): Population Risk, Mitigation Explorer, Signal Detection, Executive Summary
+
+### Infrastructure
 - `.claude/CLAUDE.md` — Persistent instructions for all agents
-- `C:\Users\alto8\Downloads\SAFETY-RESEARCH-SYSTEM-SPEC.md` — Detailed system spec
+- `SPECIFICATION.md` — Detailed system spec (also in Downloads)
+- 704 tests across unit, integration, safety, stress, validation
 
-### Expert Reviews (COMPLETE — all 4 reviews in `docs/reviews/`)
-- Biostatistician: 6 critical → 1 fixed (exact quantiles), others are enhancements
-- Pharmacovigilance: Research-grade, not regulatory. Future: ICSR, secondary malignancy
-- Software Architect: A- architecture. Routes fixed, performance improved
-- Clinical Safety Physician: 8 must-fix → 4 fixed, others are content enhancements
+## What's Next (Priority Order)
 
-## Currently Running (Overnight Agent Swarm)
-
-### Agent 1: Dashboard Enhancement (RUNNING)
-Adding 4 population-level tabs to `src/api/static/index.html`:
-- Population Risk (evidence accrual chart, baseline risk cards)
-- Mitigation Explorer (interactive strategy selector, waterfall chart)
-- Signal Detection (FAERS heatmap, forest plot)
-- Executive Summary (traffic lights, key findings, decision support)
-
-### Agent 2: Unit Tests (RUNNING)
-Writing tests for bayesian_risk, mitigation_model, faers_signal, sle_cart_studies.
-Target: `tests/unit/test_bayesian_risk.py`, `test_mitigation_model.py`, `test_faers_signal.py`, `test_sle_data.py`
-
-### Agent 3: Integration Tests (RUNNING)
-Writing API integration tests for all 8 population endpoints.
-Target: `tests/integration/test_population_api.py`
-
-### Agent 4: gpuserver1 Validation (RUNNING)
-Pulling latest code, running tests, validating API endpoints on gpuserver1.
-
-## What's Next (After Overnight)
-
-### 1. Review Dashboard + Agent Results
-Check all 4 agent outputs, fix any issues, commit and push.
+### 1. User Review of Dashboard
+Start server: `python run_server.py` → http://localhost:8000/clinical
+Click new population tabs to review visualizations.
 
 ### 2. Phase 3: Data Source Deep Dive
 For each of 8 data sources, brainstorm 3-5 integration strategies.
 Agent team review. Create upgrade plan ranked by patient impact.
 
 ### 3. Phase 4: Implement Best Upgrades
-Top-ranked data source integrations: CIBMTR, ClinicalTrials.gov live API,
-background rate estimation, stopping rules, geographic signal analysis.
+- CIBMTR registry integration
+- ClinicalTrials.gov live API
+- Background rate estimation from RWD
+- Stopping rules with evidence accrual
+- Geographic signal analysis (FAERS vs EudraVigilance)
 
 ### 4. Phase 5: Final Review + Iteration
 Agent teams testing, reviewing, iterating on dashboard and codebase.
 
-## User Direction (Latest)
-> "The goal is a safety research system that is data agnostic, able to create modules
-> for any type of data, extensible to new adverse events, different timescales, and
-> new treatments, starting with other cell therapies and expanding beyond there."
-> "Use agent swarms. Protect your context window. Have fun with this."
-> "I'm going to bed. Let's see where you are in the morning. Make sure to have
-> a nice dashboard for me to see and review."
-
-## Key Constraints
-- **Data-agnostic:** No hardcoded AE types in core logic
-- **Extensible:** New AEs, treatments, data sources plug in via configuration
-- **Public data only** — no proprietary data, no personal references
-- **Independent project** — fully separate from any company
-- **Delegate heavily** — agent swarms, gpuserver1
+## User Direction
+> "Data agnostic, extensible to new adverse events, different timescales,
+> new treatments, starting with other cell therapies and expanding beyond."
+> "Use agent swarms. Have fun. I'm going to bed."
 
 ## Repo State
-- **Repo:** `C:\Users\alto8\safety-research-system` (and on gpuserver1)
 - **GitHub:** https://github.com/alto84/safety-research-system.git
 - **Branch:** master
-- **Latest commit:** `48d613b` (CLAUDE.md)
-- **421 tests passing**
+- **Latest commit:** `761f232`
+- **704 tests passing** in 3.7s
+- **Server:** `python run_server.py` → http://localhost:8000
