@@ -649,3 +649,225 @@ class ArchitectureResponse(BaseModel):
     registry_models: list[RegistryModelInfo]
     test_summary: TestSummary
     system_health: SystemHealthInfo
+
+
+# ---------------------------------------------------------------------------
+# Knowledge graph schemas
+# ---------------------------------------------------------------------------
+
+class KnowledgePathwayStep(BaseModel):
+    """A single directed step in a signaling pathway."""
+
+    source: str
+    target: str
+    relation: str
+    mechanism: str
+    confidence: float
+    temporal_window: str
+    is_feedback_loop: bool = False
+    intervention_point: bool = False
+    intervention_agents: list[str] = Field(default_factory=list)
+    references: list[str] = Field(default_factory=list)
+
+
+class KnowledgePathwayNode(BaseModel):
+    """A node in the pathway graph."""
+
+    id: str
+    label: str
+    node_type: str = "molecule"
+
+
+class KnowledgePathwayEdge(BaseModel):
+    """A directed edge in the pathway graph."""
+
+    source: str
+    target: str
+    relation: str
+    mechanism: str
+    confidence: float
+    is_feedback_loop: bool = False
+    intervention_point: bool = False
+    references: list[str] = Field(default_factory=list)
+
+
+class KnowledgePathwayResponse(BaseModel):
+    """A signaling pathway as a directed graph."""
+
+    pathway_id: str
+    name: str
+    description: str
+    nodes: list[KnowledgePathwayNode] = Field(default_factory=list)
+    edges: list[KnowledgePathwayEdge] = Field(default_factory=list)
+    steps: list[KnowledgePathwayStep] = Field(default_factory=list)
+    entry_points: list[str] = Field(default_factory=list)
+    exit_points: list[str] = Field(default_factory=list)
+    feedback_loops: list[str] = Field(default_factory=list)
+    intervention_summary: str = ""
+    ae_outcomes: list[str] = Field(default_factory=list)
+    key_references: list[str] = Field(default_factory=list)
+
+
+class KnowledgePathwayListResponse(BaseModel):
+    """List of all pathways."""
+
+    request_id: str
+    timestamp: datetime
+    pathways: list[KnowledgePathwayResponse]
+    total: int
+
+
+class KnowledgeMechanismStep(BaseModel):
+    """A single step in an AE mechanism chain."""
+
+    step_number: int
+    entity: str
+    action: str
+    detail: str
+    temporal_onset: str = ""
+    biomarkers: list[str] = Field(default_factory=list)
+    is_branching_point: bool = False
+    branches: list[str] = Field(default_factory=list)
+    is_intervention_point: bool = False
+    interventions: list[str] = Field(default_factory=list)
+
+
+class KnowledgeMechanismResponse(BaseModel):
+    """A complete mechanism chain from therapy to adverse event."""
+
+    mechanism_id: str
+    therapy_modality: str
+    ae_category: str
+    name: str
+    description: str
+    steps: list[KnowledgeMechanismStep] = Field(default_factory=list)
+    risk_factors: list[str] = Field(default_factory=list)
+    severity_determinants: list[str] = Field(default_factory=list)
+    typical_onset: str = ""
+    typical_duration: str = ""
+    incidence_range: str = ""
+    mortality_rate: str = ""
+    key_references: list[str] = Field(default_factory=list)
+
+
+class KnowledgeMechanismListResponse(BaseModel):
+    """List of all mechanism chains."""
+
+    request_id: str
+    timestamp: datetime
+    mechanisms: list[KnowledgeMechanismResponse]
+    total: int
+
+
+class KnowledgeModulatorResponse(BaseModel):
+    """A drug that modulates a molecular target."""
+
+    name: str
+    mechanism: str
+    status: str
+    route: str = ""
+    dose: str = ""
+    evidence_refs: list[str] = Field(default_factory=list)
+
+
+class KnowledgeTargetResponse(BaseModel):
+    """A molecular target in the knowledge graph."""
+
+    target_id: str
+    name: str
+    gene_symbol: str
+    category: str
+    pathways: list[str] = Field(default_factory=list)
+    normal_range: str = ""
+    ae_range: str = ""
+    clinical_relevance: str = ""
+    modulators: list[KnowledgeModulatorResponse] = Field(default_factory=list)
+    upstream_of: list[str] = Field(default_factory=list)
+    downstream_of: list[str] = Field(default_factory=list)
+    biomarker_utility: str = ""
+    references: list[str] = Field(default_factory=list)
+
+
+class KnowledgeTargetListResponse(BaseModel):
+    """List of all molecular targets."""
+
+    request_id: str
+    timestamp: datetime
+    targets: list[KnowledgeTargetResponse]
+    total: int
+
+
+class KnowledgeActivationState(BaseModel):
+    """An activation state of a cell type."""
+
+    name: str
+    description: str
+    triggers: list[str] = Field(default_factory=list)
+    secreted_factors: list[str] = Field(default_factory=list)
+    surface_markers: list[str] = Field(default_factory=list)
+    functional_outcome: str = ""
+    references: list[str] = Field(default_factory=list)
+
+
+class KnowledgeCellTypeResponse(BaseModel):
+    """A cell type involved in AE pathogenesis."""
+
+    cell_id: str
+    name: str
+    lineage: str
+    tissue: str
+    surface_markers: list[str] = Field(default_factory=list)
+    activation_states: list[KnowledgeActivationState] = Field(default_factory=list)
+    roles_in_ae: dict[str, str] = Field(default_factory=dict)
+    secreted_factors_baseline: list[str] = Field(default_factory=list)
+    references: list[str] = Field(default_factory=list)
+
+
+class KnowledgeCellTypeListResponse(BaseModel):
+    """List of all cell types."""
+
+    request_id: str
+    timestamp: datetime
+    cell_types: list[KnowledgeCellTypeResponse]
+    total: int
+
+
+class KnowledgeReferenceResponse(BaseModel):
+    """A peer-reviewed publication."""
+
+    pmid: str
+    first_author: str
+    year: int
+    journal: str
+    title: str
+    doi: str
+    key_finding: str
+    evidence_grade: str
+    tags: list[str] = Field(default_factory=list)
+
+
+class KnowledgeReferenceListResponse(BaseModel):
+    """Full citation database."""
+
+    request_id: str
+    timestamp: datetime
+    references: list[KnowledgeReferenceResponse]
+    total: int
+
+
+class KnowledgeOverviewResponse(BaseModel):
+    """Summary statistics across the knowledge graph."""
+
+    request_id: str
+    timestamp: datetime
+    pathway_count: int
+    pathway_names: list[str]
+    total_pathway_steps: int
+    mechanism_count: int
+    mechanism_names: list[str]
+    target_count: int
+    druggable_target_count: int
+    cell_type_count: int
+    reference_count: int
+    ae_types_covered: list[str]
+    therapy_types_covered: list[str]

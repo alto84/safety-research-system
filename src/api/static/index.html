@@ -493,7 +493,8 @@ body {
 .task-btn[data-task="signals"],
 .task-btn[data-task="executive"],
 .task-btn[data-task="cdp"],
-.task-btn[data-task="architecture"] {
+.task-btn[data-task="architecture"],
+.task-btn[data-task="science"] {
   color: var(--info);
 }
 .task-btn[data-task="population"]:hover,
@@ -501,7 +502,8 @@ body {
 .task-btn[data-task="signals"]:hover,
 .task-btn[data-task="executive"]:hover,
 .task-btn[data-task="cdp"]:hover,
-.task-btn[data-task="architecture"]:hover {
+.task-btn[data-task="architecture"]:hover,
+.task-btn[data-task="science"]:hover {
   color: var(--text);
 }
 .task-btn[data-task="population"].active,
@@ -509,7 +511,8 @@ body {
 .task-btn[data-task="signals"].active,
 .task-btn[data-task="executive"].active,
 .task-btn[data-task="cdp"].active,
-.task-btn[data-task="architecture"].active {
+.task-btn[data-task="architecture"].active,
+.task-btn[data-task="science"].active {
   color: var(--primary); border-bottom-color: var(--primary);
 }
 
@@ -723,6 +726,55 @@ body {
 .arch-detail-panel.active { display: block; }
 .arch-detail-panel code { font-family: var(--mono); background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; }
 .arch-detail-title { font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+
+/* ================================================================
+   SCIENTIFIC BASIS TAB STYLES
+   ================================================================ */
+.sci-section { margin-bottom: 24px; }
+.sci-section-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.sci-controls { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.sci-select { font-family: var(--font); font-size: 13px; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); cursor: pointer; }
+.sci-select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px var(--primary-light); }
+.sci-pathway-svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.sci-pathway-svg text { font-family: var(--font); }
+.sci-pathway-svg .pw-node { cursor: pointer; transition: filter 0.15s ease; }
+.sci-pathway-svg .pw-node:hover { filter: brightness(0.92) drop-shadow(0 2px 8px rgba(0,0,0,0.2)); }
+.sci-pathway-svg .pw-edge { fill: none; stroke-width: 1.8; }
+.sci-pathway-svg .pw-edge-feedback { stroke-dasharray: 6 4; }
+.sci-pathway-svg .pw-arrowhead { stroke-width: 1.5; }
+.sci-popup { position: absolute; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: 16px; max-width: 380px; z-index: 50; font-size: 13px; line-height: 1.5; }
+.sci-popup-title { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+.sci-popup-close { position: absolute; top: 6px; right: 10px; background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-secondary); padding: 2px 6px; border-radius: var(--radius); }
+.sci-popup-close:hover { background: var(--surface-hover); color: var(--text); }
+.sci-popup-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
+.sci-popup-value { font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.sci-popup-ref { font-family: var(--mono); font-size: 11px; color: var(--primary); cursor: pointer; text-decoration: underline; }
+.sci-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; padding: 10px 0; border-top: 1px solid var(--border); }
+.sci-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); }
+.sci-legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+.sci-target-svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.sci-target-svg .tgt-node { cursor: pointer; transition: opacity 0.15s; }
+.sci-target-svg .tgt-node:hover { opacity: 0.85; }
+.sci-mech-svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.sci-ref-list { max-height: 500px; overflow-y: auto; }
+.sci-ref-item { padding: 10px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+.sci-ref-item:hover { background: var(--surface-hover); }
+.sci-ref-item.highlighted { background: var(--primary-light); border-left: 3px solid var(--primary); }
+.sci-ref-author { font-weight: 600; font-size: 13px; }
+.sci-ref-journal { font-size: 12px; color: var(--text-secondary); }
+.sci-ref-finding { font-size: 12px; color: var(--text); margin-top: 4px; line-height: 1.4; }
+.sci-ref-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.sci-ref-tag { font-size: 10px; padding: 2px 6px; background: var(--surface-hover); border-radius: 3px; color: var(--text-secondary); }
+.sci-ref-grade { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.sci-ref-grade-high { background: #d1fae5; color: #065f46; }
+.sci-ref-grade-moderate { background: #fef3c7; color: #92400e; }
+.sci-ref-grade-low { background: #e0f2fe; color: #075985; }
+.sci-tab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+@media (max-width: 900px) { .sci-tab-grid { grid-template-columns: 1fr; } }
+.sci-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.sci-stat-card { background: var(--surface-hover); border-radius: var(--radius); padding: 12px; text-align: center; }
+.sci-stat-value { font-size: 22px; font-weight: 700; color: var(--primary); }
+.sci-stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -797,6 +849,7 @@ body {
     <button class="task-btn" data-task="executive" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128196;</span> Executive Summary</button>
     <button class="task-btn" data-task="cdp" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128203;</span> Clinical Safety Plan</button>
     <button class="task-btn" data-task="architecture" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9881;</span> System Architecture</button>
+    <button class="task-btn" data-task="science" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128300;</span> Scientific Basis</button>
   </div>
 </nav>
 
@@ -1112,7 +1165,7 @@ function activateTab(btn) {
   currentTask = btn.dataset.task;
 
   // Hide patient sidebar for population-level tabs
-  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture'];
+  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture', 'science'];
   const sidebar = document.querySelector('.patient-sidebar');
   const mainLayout = document.querySelector('.main-layout');
   if (populationTabs.includes(btn.dataset.task)) {
@@ -1161,6 +1214,7 @@ function renderTaskContent() {
     case 'executive': container.innerHTML = renderExecutiveSummary(); break;
     case 'cdp': container.innerHTML = renderClinicalSafetyPlan(); break;
     case 'architecture': container.innerHTML = renderSystemArchitecture(); break;
+    case 'science': container.innerHTML = renderScientificBasis(); break;
     default: container.innerHTML = renderOverview();
   }
 }
@@ -4759,6 +4813,623 @@ function renderArchRegistryModels(models) {
       </div>
     </div>
   `;
+}
+
+
+// ============================================================================
+// SCIENTIFIC BASIS TAB (Tab 16)
+// ============================================================================
+
+// --- Color palette for node types ---
+const SCI_NODE_COLORS = {
+  cytokine:  { fill: '#fee2e2', stroke: '#dc2626', text: '#991b1b' },
+  cell:      { fill: '#dbeafe', stroke: '#2563eb', text: '#1e3a8a' },
+  process:   { fill: '#d1fae5', stroke: '#059669', text: '#064e3b' },
+  receptor:  { fill: '#f3e8ff', stroke: '#7c3aed', text: '#4c1d95' },
+  kinase:    { fill: '#fef3c7', stroke: '#d97706', text: '#78350f' },
+  biomarker: { fill: '#e0f2fe', stroke: '#0284c7', text: '#0c4a6e' },
+};
+
+// --- Shared state ---
+let sciPathways = null;
+let sciMechanisms = null;
+let sciTargets = null;
+let sciCells = null;
+let sciReferences = null;
+let sciOverview = null;
+let sciPopupEl = null;
+
+function renderScientificBasis() {
+  const containerId = 'sciTabContent';
+  setTimeout(() => loadScientificBasis(containerId), 0);
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#128300; Scientific Basis</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Cell Therapy AE Pathophysiology Knowledge Graph</span>
+      </div>
+      <div class="card-body" id="${containerId}">
+        ${popLoadingHtml('Loading scientific knowledge graph...')}
+      </div>
+    </div>
+  `;
+}
+
+async function loadScientificBasis(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  // Fetch all data in parallel
+  const [pwRes, mechRes, tgtRes, cellRes, refRes, ovRes] = await Promise.all([
+    popFetch('/api/v1/knowledge/pathways'),
+    popFetch('/api/v1/knowledge/mechanisms'),
+    popFetch('/api/v1/knowledge/targets'),
+    popFetch('/api/v1/knowledge/cells'),
+    popFetch('/api/v1/knowledge/references'),
+    popFetch('/api/v1/knowledge/overview'),
+  ]);
+
+  if (ovRes.error) { el.innerHTML = popErrorHtml('Failed to load knowledge graph: ' + ovRes.error); return; }
+
+  sciPathways = pwRes.data;
+  sciMechanisms = mechRes.data;
+  sciTargets = tgtRes.data;
+  sciCells = cellRes.data;
+  sciReferences = refRes.data;
+  sciOverview = ovRes.data;
+
+  // Build sections
+  const statsHtml = renderSciStats();
+  const pathwayHtml = renderSciPathwaySection();
+  const targetHtml = renderSciTargetSection();
+  const mechHtml = renderSciMechanismSection();
+  const refHtml = renderSciReferenceSection();
+
+  el.innerHTML = statsHtml + pathwayHtml +
+    '<div class="sci-tab-grid">' + targetHtml + refHtml + '</div>' +
+    mechHtml;
+
+  // Initialize pathway diagram
+  sciSwitchPathway(0);
+  sciSwitchMechanism(0);
+}
+
+// --- Section A: Stats overview ---
+function renderSciStats() {
+  const ov = sciOverview;
+  return `
+    <div class="sci-section">
+      <div class="sci-stat-grid">
+        <div class="sci-stat-card"><div class="sci-stat-value">${ov.pathway_count}</div><div class="sci-stat-label">Signaling Pathways</div></div>
+        <div class="sci-stat-card"><div class="sci-stat-value">${ov.total_pathway_steps}</div><div class="sci-stat-label">Directed Steps</div></div>
+        <div class="sci-stat-card"><div class="sci-stat-value">${ov.mechanism_count}</div><div class="sci-stat-label">Mechanism Chains</div></div>
+        <div class="sci-stat-card"><div class="sci-stat-value">${ov.target_count}</div><div class="sci-stat-label">Molecular Targets</div></div>
+        <div class="sci-stat-card"><div class="sci-stat-value">${ov.druggable_target_count}</div><div class="sci-stat-label">Druggable Targets</div></div>
+        <div class="sci-stat-card"><div class="sci-stat-value">${ov.cell_type_count}</div><div class="sci-stat-label">Cell Populations</div></div>
+        <div class="sci-stat-card"><div class="sci-stat-value">${ov.reference_count}</div><div class="sci-stat-label">PubMed References</div></div>
+        <div class="sci-stat-card"><div class="sci-stat-value">${ov.ae_types_covered.length}</div><div class="sci-stat-label">AE Types Covered</div></div>
+      </div>
+    </div>
+  `;
+}
+
+// --- Section B: Interactive Pathway Diagram ---
+function renderSciPathwaySection() {
+  if (!sciPathways || !sciPathways.pathways.length) return '';
+  const options = sciPathways.pathways.map((pw, i) =>
+    `<option value="${i}">${pw.name}</option>`
+  ).join('');
+  return `
+    <div class="sci-section">
+      <div class="sci-section-title">&#9889; Interactive Pathway Diagram</div>
+      <div class="sci-controls">
+        <label style="font-size:13px; font-weight:600;">Pathway:</label>
+        <select class="sci-select" id="sciPathwaySelect" onchange="sciSwitchPathway(this.value)">${options}</select>
+      </div>
+      <div id="sciPathwayDesc" style="font-size:12px; color:var(--text-secondary); margin-bottom:12px; line-height:1.5;"></div>
+      <div style="position:relative;" id="sciPathwayContainer">
+        <div id="sciPathwaySvg"></div>
+      </div>
+      <div class="sci-legend" id="sciPathwayLegend"></div>
+      <div id="sciPathwayInfo" style="font-size:12px; color:var(--text-secondary); margin-top:8px;"></div>
+    </div>
+  `;
+}
+
+function sciSwitchPathway(idx) {
+  const pw = sciPathways.pathways[parseInt(idx)];
+  if (!pw) return;
+  document.getElementById('sciPathwayDesc').textContent = pw.description;
+  document.getElementById('sciPathwaySvg').innerHTML = renderSciPathwaySVG(pw);
+  // Legend
+  const legendEl = document.getElementById('sciPathwayLegend');
+  legendEl.innerHTML = Object.entries(SCI_NODE_COLORS).map(([type, c]) =>
+    `<div class="sci-legend-item"><div class="sci-legend-swatch" style="background:${c.fill}; border:1.5px solid ${c.stroke};"></div>${type}</div>`
+  ).join('') +
+    '<div class="sci-legend-item"><svg width="30" height="12"><line x1="0" y1="6" x2="30" y2="6" stroke="#475569" stroke-width="1.5"/><polygon points="26,3 30,6 26,9" fill="#475569"/></svg> activates</div>' +
+    '<div class="sci-legend-item"><svg width="30" height="12"><line x1="0" y1="6" x2="30" y2="6" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4 3"/><polygon points="26,3 30,6 26,9" fill="#dc2626"/></svg> feedback loop</div>' +
+    '<div class="sci-legend-item"><svg width="30" height="12"><line x1="0" y1="6" x2="30" y2="6" stroke="#059669" stroke-width="2.5"/><polygon points="26,3 30,6 26,9" fill="#059669"/></svg> intervention point</div>';
+  // Info
+  const info = document.getElementById('sciPathwayInfo');
+  info.innerHTML = `<strong>Entry points:</strong> ${pw.entry_points.join(', ')} &nbsp;&bull;&nbsp; <strong>Outcomes:</strong> ${pw.ae_outcomes.join(', ')} &nbsp;&bull;&nbsp; <strong>Feedback loops:</strong> ${pw.feedback_loops.length}`;
+}
+
+function renderSciPathwaySVG(pw) {
+  // Layout: layered left-to-right using topological ordering
+  const nodes = pw.nodes;
+  const edges = pw.edges;
+  if (!nodes.length) return '<div style="padding:20px; color:var(--text-secondary);">No pathway data available.</div>';
+
+  // Build adjacency list and compute layers via BFS from entry points
+  const adj = {};
+  const inDeg = {};
+  nodes.forEach(n => { adj[n.id] = []; inDeg[n.id] = 0; });
+  edges.forEach(e => {
+    if (adj[e.source]) adj[e.source].push(e.target);
+    if (inDeg[e.target] !== undefined) inDeg[e.target]++;
+  });
+
+  // BFS layers
+  const layers = {};
+  const queue = [];
+  const entrySet = new Set(pw.entry_points);
+  // Start from nodes with inDeg 0 or entry points
+  nodes.forEach(n => { if (inDeg[n.id] === 0 || entrySet.has(n.id)) { queue.push(n.id); layers[n.id] = 0; } });
+  let maxLayer = 0;
+  while (queue.length) {
+    const cur = queue.shift();
+    const curLayer = layers[cur] || 0;
+    (adj[cur] || []).forEach(tgt => {
+      const newLayer = curLayer + 1;
+      if (layers[tgt] === undefined || newLayer > layers[tgt]) {
+        layers[tgt] = newLayer;
+        if (newLayer > maxLayer) maxLayer = newLayer;
+      }
+      queue.push(tgt);
+    });
+  }
+  // Ensure all nodes have a layer
+  nodes.forEach(n => { if (layers[n.id] === undefined) { layers[n.id] = maxLayer; } });
+
+  // Group nodes by layer
+  const layerGroups = {};
+  nodes.forEach(n => {
+    const l = layers[n.id];
+    if (!layerGroups[l]) layerGroups[l] = [];
+    layerGroups[l].push(n);
+  });
+  const numLayers = maxLayer + 1;
+
+  // Compute positions
+  const nodeW = 130, nodeH = 42, hGap = 50, vGap = 28;
+  let maxInLayer = 0;
+  Object.values(layerGroups).forEach(g => { if (g.length > maxInLayer) maxInLayer = g.length; });
+  const W = numLayers * (nodeW + hGap) + 60;
+  const H = Math.max(300, maxInLayer * (nodeH + vGap) + 80);
+
+  const positions = {};
+  for (let l = 0; l < numLayers; l++) {
+    const group = layerGroups[l] || [];
+    const x = 30 + l * (nodeW + hGap);
+    const totalH = group.length * nodeH + (group.length - 1) * vGap;
+    const startY = (H - totalH) / 2;
+    group.forEach((n, i) => {
+      positions[n.id] = { x, y: startY + i * (nodeH + vGap), w: nodeW, h: nodeH };
+    });
+  }
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="sci-pathway-svg" xmlns="http://www.w3.org/2000/svg">`;
+  // Defs
+  svg += '<defs>';
+  svg += '<marker id="sciArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,1 8,4 0,7" fill="#475569"/></marker>';
+  svg += '<marker id="sciArrowFeedback" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,1 8,4 0,7" fill="#dc2626"/></marker>';
+  svg += '<marker id="sciArrowIntervention" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,1 8,4 0,7" fill="#059669"/></marker>';
+  svg += '</defs>';
+
+  // Draw edges first (behind nodes)
+  edges.forEach((e, idx) => {
+    const src = positions[e.source];
+    const tgt = positions[e.target];
+    if (!src || !tgt) return;
+    const x1 = src.x + src.w;
+    const y1 = src.y + src.h / 2;
+    const x2 = tgt.x;
+    const y2 = tgt.y + tgt.h / 2;
+
+    let strokeColor = '#475569';
+    let marker = 'url(#sciArrow)';
+    let dashArray = '';
+    let strokeWidth = 1.8;
+    if (e.is_feedback_loop) { strokeColor = '#dc2626'; marker = 'url(#sciArrowFeedback)'; dashArray = '6 4'; }
+    if (e.intervention_point) { strokeColor = '#059669'; marker = 'url(#sciArrowIntervention)'; strokeWidth = 2.5; }
+
+    // If same layer or backwards, use curved path
+    const dx = x2 - x1;
+    if (dx <= 0) {
+      // Curved feedback arrow (goes above or below)
+      const cy = Math.min(y1, y2) - 40;
+      svg += `<path d="M${x1},${y1} C${x1+40},${cy} ${x2-40},${cy} ${x2},${y2}" class="pw-edge ${e.is_feedback_loop?'pw-edge-feedback':''}" stroke="${strokeColor}" stroke-width="${strokeWidth}" ${dashArray?`stroke-dasharray="${dashArray}"`:''} fill="none" marker-end="${marker}" data-edge-idx="${idx}" onclick="sciShowEdgePopup(event,${idx})" style="cursor:pointer;"/>`;
+    } else {
+      // Bezier curve for forward edges
+      const cx1 = x1 + dx * 0.4;
+      const cx2 = x2 - dx * 0.4;
+      svg += `<path d="M${x1},${y1} C${cx1},${y1} ${cx2},${y2} ${x2},${y2}" class="pw-edge ${e.is_feedback_loop?'pw-edge-feedback':''}" stroke="${strokeColor}" stroke-width="${strokeWidth}" ${dashArray?`stroke-dasharray="${dashArray}"`:''} fill="none" marker-end="${marker}" data-edge-idx="${idx}" onclick="sciShowEdgePopup(event,${idx})" style="cursor:pointer;"/>`;
+    }
+  });
+
+  // Draw nodes
+  nodes.forEach((n, idx) => {
+    const pos = positions[n.id];
+    if (!pos) return;
+    const colors = SCI_NODE_COLORS[n.node_type] || SCI_NODE_COLORS.cytokine;
+    const label = n.label.length > 18 ? n.label.substring(0, 16) + '...' : n.label;
+    svg += `<g class="pw-node" onclick="sciShowNodePopup(event,${idx})" data-node-idx="${idx}">`;
+    svg += `<rect x="${pos.x}" y="${pos.y}" width="${pos.w}" height="${pos.h}" rx="8" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="1.5"/>`;
+    svg += `<text x="${pos.x + pos.w/2}" y="${pos.y + pos.h/2 + 1}" text-anchor="middle" dominant-baseline="middle" style="font-size:11px; font-weight:600; fill:${colors.text};">${label}</text>`;
+    // Type indicator
+    svg += `<text x="${pos.x + pos.w/2}" y="${pos.y + pos.h - 4}" text-anchor="middle" style="font-size:8px; fill:${colors.stroke}; opacity:0.7;">${n.node_type}</text>`;
+    svg += '</g>';
+  });
+
+  svg += '</svg>';
+  return svg;
+}
+
+function sciShowNodePopup(event, nodeIdx) {
+  event.stopPropagation();
+  const selectEl = document.getElementById('sciPathwaySelect');
+  const pw = sciPathways.pathways[parseInt(selectEl.value)];
+  const node = pw.nodes[nodeIdx];
+  if (!node) return;
+
+  // Find edges involving this node
+  const relatedEdges = pw.edges.filter(e => e.source === node.id || e.target === node.id);
+  const refs = new Set();
+  relatedEdges.forEach(e => e.references.forEach(r => refs.add(r)));
+
+  // Find matching target info
+  let targetInfo = '';
+  if (sciTargets) {
+    const tgt = sciTargets.targets.find(t => t.name.toLowerCase().includes(node.label.toLowerCase().replace(/ /g, '_')) || node.label.toLowerCase().includes(t.gene_symbol.toLowerCase()));
+    if (tgt) {
+      targetInfo = `<div class="sci-popup-label">Clinical Relevance</div><div class="sci-popup-value">${tgt.clinical_relevance.substring(0, 200)}${tgt.clinical_relevance.length > 200 ? '...' : ''}</div>`;
+      if (tgt.modulators.length) {
+        targetInfo += `<div class="sci-popup-label">Modulators</div><div class="sci-popup-value">${tgt.modulators.map(m => m.name).join(', ')}</div>`;
+      }
+    }
+  }
+
+  const refsHtml = [...refs].map(r => `<span class="sci-popup-ref" onclick="sciHighlightRef('${r}')">${r}</span>`).join(' ');
+
+  sciShowPopup(event, `
+    <div class="sci-popup-title" style="color:${(SCI_NODE_COLORS[node.node_type]||SCI_NODE_COLORS.cytokine).stroke};">${node.label}</div>
+    <div class="sci-popup-label">Type</div>
+    <div class="sci-popup-value">${node.node_type}</div>
+    <div class="sci-popup-label">Connections</div>
+    <div class="sci-popup-value">${relatedEdges.length} edges (${relatedEdges.filter(e=>e.source===node.id).length} outgoing, ${relatedEdges.filter(e=>e.target===node.id).length} incoming)</div>
+    ${targetInfo}
+    <div class="sci-popup-label">Role in AE</div>
+    <div class="sci-popup-value">${pw.ae_outcomes.join(', ')}</div>
+    ${refs.size ? `<div class="sci-popup-label">References</div><div class="sci-popup-value">${refsHtml}</div>` : ''}
+  `);
+}
+
+function sciShowEdgePopup(event, edgeIdx) {
+  event.stopPropagation();
+  const selectEl = document.getElementById('sciPathwaySelect');
+  const pw = sciPathways.pathways[parseInt(selectEl.value)];
+  const edge = pw.edges[edgeIdx];
+  if (!edge) return;
+
+  const refsHtml = edge.references.map(r => `<span class="sci-popup-ref" onclick="sciHighlightRef('${r}')">${r}</span>`).join(' ');
+  const confPct = Math.round(edge.confidence * 100);
+  const confColor = confPct >= 90 ? '#059669' : confPct >= 80 ? '#d97706' : '#dc2626';
+
+  sciShowPopup(event, `
+    <div class="sci-popup-title">${edge.source.replace(/_/g,' ')} &rarr; ${edge.target.replace(/_/g,' ')}</div>
+    <div class="sci-popup-label">Relationship</div>
+    <div class="sci-popup-value">${edge.relation}</div>
+    <div class="sci-popup-label">Mechanism</div>
+    <div class="sci-popup-value">${edge.mechanism}</div>
+    <div class="sci-popup-label">Confidence</div>
+    <div class="sci-popup-value"><span style="color:${confColor}; font-weight:700;">${confPct}%</span></div>
+    ${edge.is_feedback_loop ? '<div class="sci-popup-value" style="color:#dc2626; font-weight:600;">&#x21BB; Feedback loop</div>' : ''}
+    ${edge.intervention_point ? '<div class="sci-popup-value" style="color:#059669; font-weight:600;">&#x2695; Intervention point</div>' : ''}
+    ${edge.references.length ? `<div class="sci-popup-label">Evidence</div><div class="sci-popup-value">${refsHtml}</div>` : ''}
+  `);
+}
+
+function sciShowPopup(event, contentHtml) {
+  sciClosePopup();
+  const container = document.getElementById('sciPathwayContainer');
+  if (!container) return;
+  const popup = document.createElement('div');
+  popup.className = 'sci-popup';
+  popup.innerHTML = `<button class="sci-popup-close" onclick="sciClosePopup()">&times;</button>${contentHtml}`;
+  container.appendChild(popup);
+  sciPopupEl = popup;
+
+  // Position near click
+  const rect = container.getBoundingClientRect();
+  let left = event.clientX - rect.left + 12;
+  let top = event.clientY - rect.top + 12;
+  if (left + 380 > rect.width) left = Math.max(4, left - 400);
+  if (top + 250 > rect.height) top = Math.max(4, top - 260);
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+}
+
+function sciClosePopup() {
+  if (sciPopupEl) { sciPopupEl.remove(); sciPopupEl = null; }
+}
+
+// Close popup on outside click
+document.addEventListener('click', (e) => {
+  if (sciPopupEl && !sciPopupEl.contains(e.target) && !e.target.closest('.pw-node') && !e.target.closest('.pw-edge')) {
+    sciClosePopup();
+  }
+});
+
+// --- Section C: Molecular Target Network ---
+function renderSciTargetSection() {
+  if (!sciTargets || !sciTargets.targets.length) return '';
+  return `
+    <div class="sci-section">
+      <div class="sci-section-title">&#127993; Molecular Target Network</div>
+      <div id="sciTargetSvg">${renderSciTargetSVG()}</div>
+      <div style="font-size:11px; color:var(--text-secondary); margin-top:8px;">Hover for details. Size = number of modulators. Color = primary pathway membership.</div>
+    </div>
+  `;
+}
+
+function renderSciTargetSVG() {
+  const targets = sciTargets.targets;
+  const W = 500, H = 420;
+  const cx = W / 2, cy = H / 2;
+
+  // Group by category for coloring
+  const catColors = {
+    cytokine: '#dc2626', receptor: '#7c3aed', kinase: '#d97706',
+    transcription_factor: '#0284c7', biomarker: '#059669',
+    growth_factor: '#ea580c', enzyme: '#6366f1', complement: '#475569',
+    adhesion_molecule: '#be123c',
+  };
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="sci-target-svg" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Position targets in a circle
+  const n = targets.length;
+  const radius = Math.min(W, H) / 2 - 60;
+  const positions = {};
+  targets.forEach((t, i) => {
+    const angle = (2 * Math.PI * i / n) - Math.PI / 2;
+    positions[t.target_id] = {
+      x: cx + radius * Math.cos(angle),
+      y: cy + radius * Math.sin(angle),
+      r: 12 + t.modulators.length * 6,
+    };
+  });
+
+  // Draw lines between targets sharing pathways
+  targets.forEach((t1, i) => {
+    targets.forEach((t2, j) => {
+      if (j <= i) return;
+      const shared = t1.pathways.filter(p => t2.pathways.includes(p));
+      if (shared.length > 0) {
+        const p1 = positions[t1.target_id];
+        const p2 = positions[t2.target_id];
+        svg += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="var(--border)" stroke-width="${Math.min(shared.length, 3)}" opacity="0.4"/>`;
+      }
+    });
+  });
+
+  // Draw nodes
+  targets.forEach((t, i) => {
+    const pos = positions[t.target_id];
+    const color = catColors[t.category] || '#475569';
+    const r = pos.r;
+    // Short label
+    const label = t.gene_symbol || t.name.split(' ')[0];
+    svg += `<g class="tgt-node">`;
+    svg += `<circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="${color}" opacity="0.2" stroke="${color}" stroke-width="1.5"/>`;
+    svg += `<circle cx="${pos.x}" cy="${pos.y}" r="${r * 0.6}" fill="${color}" opacity="0.5"/>`;
+    svg += `<text x="${pos.x}" y="${pos.y + 1}" text-anchor="middle" dominant-baseline="middle" style="font-size:${Math.max(8, 11 - label.length * 0.2)}px; font-weight:600; fill:white; font-family:var(--font);">${label}</text>`;
+    svg += `<text x="${pos.x}" y="${pos.y + r + 12}" text-anchor="middle" style="font-size:9px; fill:var(--text-secondary); font-family:var(--font);">${t.modulators.length ? t.modulators.length + ' mod' : ''}</text>`;
+    // Tooltip on hover (title element)
+    svg += `<title>${t.name}\nCategory: ${t.category}\nPathways: ${t.pathways.join(', ')}\nModulators: ${t.modulators.map(m=>m.name).join(', ') || 'none'}\n${t.clinical_relevance.substring(0,120)}...</title>`;
+    svg += '</g>';
+  });
+
+  svg += '</svg>';
+  return svg;
+}
+
+// --- Section D: Mechanism Chain Visualization ---
+function renderSciMechanismSection() {
+  if (!sciMechanisms || !sciMechanisms.mechanisms.length) return '';
+  const options = sciMechanisms.mechanisms.map((m, i) =>
+    `<option value="${i}">${m.name} (${m.therapy_modality})</option>`
+  ).join('');
+  return `
+    <div class="sci-section">
+      <div class="sci-section-title">&#9939; Mechanism Chain: Therapy to Adverse Event</div>
+      <div class="sci-controls">
+        <label style="font-size:13px; font-weight:600;">Mechanism:</label>
+        <select class="sci-select" id="sciMechSelect" onchange="sciSwitchMechanism(this.value)">${options}</select>
+      </div>
+      <div id="sciMechDesc" style="font-size:12px; color:var(--text-secondary); margin-bottom:12px; line-height:1.5;"></div>
+      <div id="sciMechSvg"></div>
+      <div id="sciMechMeta" style="margin-top:12px;"></div>
+    </div>
+  `;
+}
+
+function sciSwitchMechanism(idx) {
+  const mech = sciMechanisms.mechanisms[parseInt(idx)];
+  if (!mech) return;
+  document.getElementById('sciMechDesc').textContent = mech.description;
+  document.getElementById('sciMechSvg').innerHTML = renderSciMechanismSVG(mech);
+  // Metadata
+  const meta = document.getElementById('sciMechMeta');
+  let metaHtml = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:12px;">';
+  metaHtml += `<div><strong>Onset:</strong> ${mech.typical_onset || 'N/A'}</div>`;
+  metaHtml += `<div><strong>Duration:</strong> ${mech.typical_duration || 'N/A'}</div>`;
+  metaHtml += `<div><strong>Incidence:</strong> ${mech.incidence_range || 'N/A'}</div>`;
+  metaHtml += `<div><strong>Mortality:</strong> ${mech.mortality_rate || 'N/A'}</div>`;
+  metaHtml += '</div>';
+  if (mech.risk_factors.length) {
+    metaHtml += '<div style="margin-top:10px; font-size:12px;"><strong>Risk Factors:</strong><ul style="margin:4px 0 0 16px; padding:0;">';
+    mech.risk_factors.forEach(rf => { metaHtml += `<li style="margin-bottom:2px;">${rf}</li>`; });
+    metaHtml += '</ul></div>';
+  }
+  meta.innerHTML = metaHtml;
+}
+
+function renderSciMechanismSVG(mech) {
+  const steps = mech.steps;
+  if (!steps.length) return '';
+
+  const stepW = 140, stepH = 60, gap = 30, pad = 20;
+  // Wrap into rows of 4
+  const perRow = 4;
+  const rows = Math.ceil(steps.length / perRow);
+  const W = perRow * (stepW + gap) + pad * 2;
+  const H = rows * (stepH + 60) + pad * 2;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="sci-mech-svg" xmlns="http://www.w3.org/2000/svg">`;
+  svg += '<defs><marker id="sciMechArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,1 8,4 0,7" fill="#475569"/></marker></defs>';
+
+  const positions = [];
+  steps.forEach((s, i) => {
+    const row = Math.floor(i / perRow);
+    const col = row % 2 === 0 ? i % perRow : (perRow - 1) - (i % perRow);  // serpentine
+    const x = pad + col * (stepW + gap);
+    const y = pad + row * (stepH + 60);
+    positions.push({ x, y });
+  });
+
+  // Draw arrows between consecutive steps
+  for (let i = 0; i < steps.length - 1; i++) {
+    const p1 = positions[i];
+    const p2 = positions[i + 1];
+    const x1 = p1.x + stepW / 2;
+    const y1 = p1.y + stepH;
+    const x2 = p2.x + stepW / 2;
+    const y2 = p2.y;
+    if (Math.abs(y1 - y2) < 10) {
+      // Same row
+      const ax = p1.x + stepW;
+      const ay = p1.y + stepH / 2;
+      const bx = p2.x;
+      const by = p2.y + stepH / 2;
+      svg += `<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="#475569" stroke-width="1.5" marker-end="url(#sciMechArrow)"/>`;
+    } else {
+      // Between rows - use curved path
+      svg += `<path d="M${x1},${y1} C${x1},${y1+25} ${x2},${y2-25} ${x2},${y2}" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#sciMechArrow)"/>`;
+    }
+  }
+
+  // Draw step boxes
+  steps.forEach((s, i) => {
+    const pos = positions[i];
+    let fillColor = '#f0f1f5';
+    let strokeColor = '#94a3b8';
+    if (s.is_branching_point) { fillColor = '#fef3c7'; strokeColor = '#d97706'; }
+    if (s.is_intervention_point) { fillColor = '#d1fae5'; strokeColor = '#059669'; }
+
+    svg += `<rect x="${pos.x}" y="${pos.y}" width="${stepW}" height="${stepH}" rx="8" fill="${fillColor}" stroke="${strokeColor}" stroke-width="1.5"/>`;
+    // Step number
+    svg += `<circle cx="${pos.x + 14}" cy="${pos.y + 14}" r="10" fill="${strokeColor}"/>`;
+    svg += `<text x="${pos.x + 14}" y="${pos.y + 14}" text-anchor="middle" dominant-baseline="central" style="font-size:10px; font-weight:700; fill:white;">${s.step_number}</text>`;
+    // Entity
+    const entity = s.entity.length > 20 ? s.entity.substring(0, 18) + '..' : s.entity;
+    svg += `<text x="${pos.x + stepW/2 + 8}" y="${pos.y + 18}" text-anchor="middle" style="font-size:10px; font-weight:600; fill:var(--text); font-family:var(--font);">${entity}</text>`;
+    // Action
+    const action = s.action.length > 22 ? s.action.substring(0, 20) + '..' : s.action;
+    svg += `<text x="${pos.x + stepW/2}" y="${pos.y + 36}" text-anchor="middle" style="font-size:9px; fill:var(--text-secondary); font-family:var(--font);">${action}</text>`;
+    // Timing
+    if (s.temporal_onset) {
+      svg += `<text x="${pos.x + stepW/2}" y="${pos.y + 50}" text-anchor="middle" style="font-size:8px; fill:#94a3b8; font-family:var(--mono);">${s.temporal_onset}</text>`;
+    }
+    // Branching/intervention badges
+    if (s.is_branching_point) {
+      svg += `<text x="${pos.x + stepW - 8}" y="${pos.y + 14}" text-anchor="end" style="font-size:12px;" title="Branching point">&#9095;</text>`;
+    }
+    if (s.is_intervention_point) {
+      svg += `<text x="${pos.x + stepW - 8}" y="${pos.y + 14}" text-anchor="end" style="font-size:12px;" title="Intervention point">&#x2695;</text>`;
+    }
+    // Biomarker badges
+    if (s.biomarkers.length) {
+      svg += `<text x="${pos.x + stepW/2}" y="${pos.y + stepH + 14}" text-anchor="middle" style="font-size:8px; fill:var(--primary); font-family:var(--mono);">${s.biomarkers.join(', ')}</text>`;
+    }
+    // Tooltip
+    svg += `<title>${s.entity}: ${s.action}\n${s.detail}\nTiming: ${s.temporal_onset||'N/A'}${s.biomarkers.length?'\nBiomarkers: '+s.biomarkers.join(', '):''}${s.is_branching_point?'\nBRANCHING: '+s.branches.join(', '):''}${s.is_intervention_point?'\nINTERVENTION: '+s.interventions.join(', '):''}</title>`;
+  });
+
+  svg += '</svg>';
+  return svg;
+}
+
+// --- Section E: Reference Panel ---
+function renderSciReferenceSection() {
+  if (!sciReferences || !sciReferences.references.length) return '';
+
+  // Group by primary tag
+  const grouped = {};
+  const tagOrder = ['CRS', 'ICANS', 'HLH', 'biomarker', 'tocilizumab', 'anakinra', 'CAR-NK', 'TCR-T', 'safety_switch', 'CAR-M'];
+  sciReferences.references.forEach(ref => {
+    let group = 'Other';
+    for (const tag of tagOrder) {
+      if (ref.tags.includes(tag)) { group = tag; break; }
+    }
+    if (!grouped[group]) grouped[group] = [];
+    grouped[group].push(ref);
+  });
+
+  let listHtml = '';
+  for (const [group, refs] of Object.entries(grouped)) {
+    listHtml += `<div style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.8px; padding:8px 14px; background:var(--bg);">${group}</div>`;
+    refs.forEach(ref => {
+      const gradeClass = ref.evidence_grade === 'prospective_cohort' || ref.evidence_grade === 'rct' || ref.evidence_grade === 'meta_analysis'
+        ? 'sci-ref-grade-high'
+        : ref.evidence_grade === 'retrospective' || ref.evidence_grade === 'consensus'
+          ? 'sci-ref-grade-moderate'
+          : 'sci-ref-grade-low';
+      listHtml += `
+        <div class="sci-ref-item" data-pmid="${ref.pmid}" onclick="sciHighlightRef('${ref.pmid}')">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="sci-ref-author">${ref.first_author} et al., ${ref.year}</span>
+            <span class="sci-ref-grade ${gradeClass}">${ref.evidence_grade.replace(/_/g,' ')}</span>
+          </div>
+          <div class="sci-ref-journal">${ref.journal}</div>
+          <div class="sci-ref-finding">${ref.key_finding.substring(0, 150)}${ref.key_finding.length > 150 ? '...' : ''}</div>
+          <div class="sci-ref-tags">
+            ${ref.tags.map(t => `<span class="sci-ref-tag">${t}</span>`).join('')}
+            <a href="https://pubmed.ncbi.nlm.nih.gov/${ref.pmid.replace('PMID:','')}" target="_blank" rel="noopener" style="font-size:10px; color:var(--primary); text-decoration:underline; margin-left:4px;">PubMed</a>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  return `
+    <div class="sci-section">
+      <div class="sci-section-title">&#128218; Reference Database (${sciReferences.total} publications)</div>
+      <div class="sci-ref-list" id="sciRefList">${listHtml}</div>
+    </div>
+  `;
+}
+
+function sciHighlightRef(pmid) {
+  // Highlight the reference in the panel
+  const items = document.querySelectorAll('.sci-ref-item');
+  items.forEach(item => {
+    item.classList.remove('highlighted');
+    if (item.dataset.pmid === pmid) {
+      item.classList.add('highlighted');
+      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
 }
 
 </script>
