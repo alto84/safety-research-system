@@ -1,8 +1,8 @@
 # Comprehensive Merge Plan: Predictive Safety Platform
 
 > **Status:** Draft | **Date:** 2026-02-07
-> **Source Repos:** Sartor-claude-network (PSP dashboard), safety-research-system (target)
-> **Objective:** Merge the best of both repos into a unified Predictive Safety Platform for CAR-T safety in autoimmune indications
+> **Scope:** Consolidation of population-level Bayesian analytics into the patient-level platform
+> **Objective:** Build a unified open-source Predictive Safety Platform for CAR-T safety in autoimmune indications
 
 ---
 

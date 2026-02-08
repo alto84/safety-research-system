@@ -12,7 +12,7 @@ computed for each product-adverse event pair:
 Signal strength is classified as none / weak / moderate / strong based on
 standard pharmacovigilance thresholds (Evans 2001, Szarfman 2002).
 
-Ported from the Sartor-claude-network safety_api.py FAERS implementation,
+Implements standard pharmacovigilance disproportionality metrics,
 refactored as a standalone module with proper MGPS-based EBGM computation.
 """
 

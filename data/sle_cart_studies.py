@@ -1,7 +1,7 @@
 """
 Clinical study data for CAR-T safety in autoimmune indications.
 
-Ported from the TypeScript data layer in Sartor-claude-network/dashboard/lib/safety-data.ts.
+Curated from published clinical trial literature and public registries (ClinicalTrials.gov).
 Contains adverse event rates from SLE CAR-T trials and oncology comparators,
 clinical trial metadata, and data source inventory for the safety research system.
 
