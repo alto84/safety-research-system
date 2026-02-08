@@ -5239,12 +5239,15 @@ function renderSciPathwaySVG(pw) {
   });
   const numLayers = maxLayer + 1;
 
-  // Compute positions
-  const nodeW = 130, nodeH = 42, hGap = 50, vGap = 28;
+  // Compute positions — adaptive sizing based on longest label
+  let maxLabelLen = 0;
+  nodes.forEach(n => { if (n.label.length > maxLabelLen) maxLabelLen = n.label.length; });
+  const nodeW = Math.max(140, Math.min(180, maxLabelLen * 8 + 20));
+  const nodeH = 50, hGap = 60, vGap = 32;
   let maxInLayer = 0;
   Object.values(layerGroups).forEach(g => { if (g.length > maxInLayer) maxInLayer = g.length; });
-  const W = numLayers * (nodeW + hGap) + 60;
-  const H = Math.max(300, maxInLayer * (nodeH + vGap) + 80);
+  const W = numLayers * (nodeW + hGap) + 80;
+  const H = Math.max(350, maxInLayer * (nodeH + vGap) + 100);
 
   const positions = {};
   for (let l = 0; l < numLayers; l++) {
@@ -5301,12 +5304,27 @@ function renderSciPathwaySVG(pw) {
     const pos = positions[n.id];
     if (!pos) return;
     const colors = SCI_NODE_COLORS[n.node_type] || SCI_NODE_COLORS.cytokine;
-    const label = n.label.length > 18 ? n.label.substring(0, 16) + '...' : n.label;
+    const maxChars = Math.floor((nodeW - 16) / 6.5);
+    const label = n.label.length > maxChars ? n.label.substring(0, maxChars - 1) + '\u2026' : n.label;
+    // Split long labels into two lines at natural break points
+    let line1 = label, line2 = '';
+    if (label.length > 14 && label.includes(' ')) {
+      const mid = Math.floor(label.length / 2);
+      const spaceAfter = label.indexOf(' ', mid);
+      const spaceBefore = label.lastIndexOf(' ', mid);
+      const splitAt = (spaceAfter !== -1 && spaceAfter - mid < mid - spaceBefore) ? spaceAfter : spaceBefore;
+      if (splitAt > 0) { line1 = label.substring(0, splitAt); line2 = label.substring(splitAt + 1); }
+    }
     svg += `<g class="pw-node" onclick="sciShowNodePopup(event,${idx})" data-node-idx="${idx}">`;
     svg += `<rect x="${pos.x}" y="${pos.y}" width="${pos.w}" height="${pos.h}" rx="8" fill="${colors.fill}" stroke="${colors.stroke}" stroke-width="1.5"/>`;
-    svg += `<text x="${pos.x + pos.w/2}" y="${pos.y + pos.h/2 + 1}" text-anchor="middle" dominant-baseline="middle" style="font-size:11px; font-weight:600; fill:${colors.text};">${label}</text>`;
+    if (line2) {
+      svg += `<text x="${pos.x + pos.w/2}" y="${pos.y + pos.h/2 - 6}" text-anchor="middle" dominant-baseline="middle" style="font-size:11px; font-weight:600; fill:${colors.text};">${line1}</text>`;
+      svg += `<text x="${pos.x + pos.w/2}" y="${pos.y + pos.h/2 + 8}" text-anchor="middle" dominant-baseline="middle" style="font-size:11px; font-weight:600; fill:${colors.text};">${line2}</text>`;
+    } else {
+      svg += `<text x="${pos.x + pos.w/2}" y="${pos.y + pos.h/2 + 1}" text-anchor="middle" dominant-baseline="middle" style="font-size:11px; font-weight:600; fill:${colors.text};">${line1}</text>`;
+    }
     // Type indicator
-    svg += `<text x="${pos.x + pos.w/2}" y="${pos.y + pos.h - 4}" text-anchor="middle" style="font-size:8px; fill:${colors.stroke}; opacity:0.7;">${n.node_type}</text>`;
+    svg += `<text x="${pos.x + pos.w/2}" y="${pos.y + pos.h - 5}" text-anchor="middle" style="font-size:8px; fill:${colors.stroke}; opacity:0.7;">${n.node_type}</text>`;
     svg += '</g>';
   });
 
