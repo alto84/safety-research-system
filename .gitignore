@@ -162,6 +162,9 @@ site/
 eval_results/
 benchmark_results/
 
+# ─── Large Data Files (keep on server, not in git) ───────────────────
+analysis/results/ct_gov_ae_data.json
+
 # ─── Temporary Files ─────────────────────────────────────────────────
 tmp/
 temp/
