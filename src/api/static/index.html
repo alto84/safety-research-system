@@ -3954,6 +3954,7 @@ function renderSignalDetection() {
   setTimeout(() => loadFAERSComparison(), 0);
   setTimeout(() => loadComparisonData(), 0);
   setTimeout(() => loadCTGovTrialData(), 0);
+  setTimeout(() => loadTriangulationData(), 0);
   return `
     <div class="card">
       <div class="card-header">
@@ -4001,6 +4002,16 @@ function renderSignalDetection() {
       </div>
       <div class="card-body" id="ctgovTrialContent">
         ${popLoadingHtml('Loading ClinicalTrials.gov data...')}
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title">&#128295; Cross-Source Signal Triangulation</div>
+        <span style="font-size:12px; color:var(--text-secondary);">FAERS spontaneous rates vs ClinicalTrials.gov controlled trial rates</span>
+      </div>
+      <div class="card-body" id="triangulationContent">
+        ${popLoadingHtml('Loading cross-source triangulation data...')}
       </div>
     </div>
   `;
@@ -4502,6 +4513,182 @@ function buildCTGovCRSForestPlot(trials) {
   });
 
   return '<div style="overflow-x:auto;"><svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%; max-width:' + W + 'px; height:auto; font-family:var(--font);">' + gridLines + dots + '<text x="' + (W / 2) + '" y="15" text-anchor="middle" font-size="12" fill="var(--text)" font-weight="600">CRS Rate by Trial (dot size = enrollment)</text></svg></div>';
+}
+
+// -----------------------------------------------------------------------
+// CROSS-SOURCE SIGNAL TRIANGULATION
+// -----------------------------------------------------------------------
+
+async function loadTriangulationData() {
+  const el = document.getElementById('triangulationContent');
+  if (!el) return;
+
+  const res = await popFetch('/api/v1/signals/triangulation');
+  if (res.error) {
+    el.innerHTML = popErrorHtml('Failed to load triangulation data: ' + res.error);
+    return;
+  }
+
+  const d = res.data;
+  const signals = d.signals || [];
+  const summary = d.summary || {};
+
+  if (signals.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-secondary); padding:12px;">No triangulation data available.</div>';
+    return;
+  }
+
+  // Divergence summary cards
+  const sigCount = summary.significant_count || 0;
+  const modCount = summary.moderate_count || 0;
+  const aliCount = summary.aligned_count || 0;
+
+  let html = `
+    <div class="pop-grid" style="margin-bottom:16px;">
+      <div class="pop-metric-card" style="border-left:4px solid var(--danger);">
+        <div class="pop-metric-label">Significant Divergences</div>
+        <div class="pop-metric-value" style="color:var(--danger);">${sigCount}</div>
+        <div class="pop-metric-sub">&gt;75% divergence between sources</div>
+      </div>
+      <div class="pop-metric-card" style="border-left:4px solid var(--warning);">
+        <div class="pop-metric-label">Moderate Divergences</div>
+        <div class="pop-metric-value" style="color:var(--warning);">${modCount}</div>
+        <div class="pop-metric-sub">25-75% divergence</div>
+      </div>
+      <div class="pop-metric-card" style="border-left:4px solid var(--success);">
+        <div class="pop-metric-label">Aligned Signals</div>
+        <div class="pop-metric-value" style="color:var(--success);">${aliCount}</div>
+        <div class="pop-metric-sub">&lt;25% divergence</div>
+      </div>
+    </div>
+  `;
+
+  // Scatter plot: Trial Rate (X) vs FAERS Rate (Y)
+  html += buildTriangulationScatter(signals);
+
+  // Methodology note
+  html += `
+    <div style="margin-top:16px; padding:12px; background:var(--surface-hover); border-radius:8px; border:1px solid var(--border);">
+      <div style="font-weight:600; font-size:13px; margin-bottom:6px;">Methodology &amp; Caveats</div>
+      <div style="font-size:11px; color:var(--text-secondary); line-height:1.6;">
+        ${d.methodology || ''}
+      </div>
+      <ul style="font-size:11px; color:var(--text-secondary); margin:8px 0 0 0; padding-left:18px; line-height:1.6;">
+        ${(d.caveats || []).map(c => '<li>' + c + '</li>').join('')}
+      </ul>
+    </div>
+  `;
+
+  el.innerHTML = html;
+}
+
+function buildTriangulationScatter(signals) {
+  const W = 700, H = 450;
+  const pad = { top: 40, right: 30, bottom: 60, left: 60 };
+  const cW = W - pad.left - pad.right;
+  const cH = H - pad.top - pad.bottom;
+
+  // Compute axis ranges
+  let maxRate = 10;
+  signals.forEach(s => {
+    if (s.trial_rate_pct > maxRate) maxRate = s.trial_rate_pct;
+    if (s.faers_rate_pct > maxRate) maxRate = s.faers_rate_pct;
+  });
+  const axisMax = Math.ceil(maxRate / 10) * 10 + 5;
+
+  function xPos(v) { return pad.left + (v / axisMax) * cW; }
+  function yPos(v) { return pad.top + cH - (v / axisMax) * cH; }
+
+  // Grid lines
+  let gridLines = '';
+  const step = axisMax <= 30 ? 5 : 10;
+  for (let v = 0; v <= axisMax; v += step) {
+    gridLines += '<line x1="' + pad.left + '" y1="' + yPos(v) + '" x2="' + (W - pad.right) + '" y2="' + yPos(v) + '" stroke="var(--border)" stroke-width="0.5" />';
+    gridLines += '<text x="' + (pad.left - 8) + '" y="' + (yPos(v) + 4) + '" text-anchor="end" font-size="10" fill="var(--text-secondary)">' + v + '%</text>';
+    gridLines += '<line x1="' + xPos(v) + '" y1="' + pad.top + '" x2="' + xPos(v) + '" y2="' + (pad.top + cH) + '" stroke="var(--border)" stroke-width="0.5" />';
+    gridLines += '<text x="' + xPos(v) + '" y="' + (H - 20) + '" text-anchor="middle" font-size="10" fill="var(--text-secondary)">' + v + '%</text>';
+  }
+
+  // Diagonal line (perfect agreement)
+  const diagLine = '<line x1="' + xPos(0) + '" y1="' + yPos(0) + '" x2="' + xPos(axisMax) + '" y2="' + yPos(axisMax) + '" stroke="var(--text-secondary)" stroke-width="1" stroke-dasharray="6,4" opacity="0.6" />';
+
+  // AE type colors
+  const aeColors = {
+    crs: 'var(--danger)',
+    icans: 'var(--warning)',
+    infections: 'var(--primary)',
+    cytopenias: 'var(--success)'
+  };
+
+  // Flag colors for dot outline
+  const flagColors = {
+    aligned: 'var(--success)',
+    moderate: 'var(--warning)',
+    significant: 'var(--danger)'
+  };
+
+  // Draw dots
+  let dots = '';
+  signals.forEach(s => {
+    const cx = xPos(s.trial_rate_pct);
+    const cy = yPos(s.faers_rate_pct);
+    const r = Math.max(4, Math.min(12, Math.sqrt(s.faers_count || 10) * 0.3));
+    const fill = aeColors[s.ae_type] || 'var(--primary)';
+    const stroke = flagColors[s.flag] || 'var(--border)';
+    const divText = s.divergence_pct === Infinity ? '>999%' : (s.divergence_pct > 0 ? '+' : '') + s.divergence_pct.toFixed(1) + '%';
+    const tooltip = s.product + ' | ' + s.ae_label + '\\nTrial: ' + s.trial_rate_pct.toFixed(1) + '% | FAERS: ' + s.faers_rate_pct.toFixed(1) + '%\\nDivergence: ' + divText + ' (' + s.flag + ')\\nFAERS reports: ' + s.faers_count;
+
+    dots += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="2" opacity="0.8" style="cursor:pointer;"><title>' + tooltip + '</title></circle>';
+  });
+
+  // Axis labels
+  const xLabel = '<text x="' + (pad.left + cW / 2) + '" y="' + (H - 2) + '" text-anchor="middle" font-size="12" fill="var(--text)" font-weight="500">Clinical Trial Rate (%)</text>';
+  const yLabel = '<text x="14" y="' + (pad.top + cH / 2) + '" text-anchor="middle" font-size="12" fill="var(--text)" font-weight="500" transform="rotate(-90, 14, ' + (pad.top + cH / 2) + ')">FAERS Reporting Rate (%)</text>';
+
+  // Title
+  const title = '<text x="' + (W / 2) + '" y="18" text-anchor="middle" font-size="13" fill="var(--text)" font-weight="600">FAERS vs Clinical Trial AE Rates</text>';
+
+  // Annotation labels for regions
+  const aboveLabel = '<text x="' + (pad.left + 10) + '" y="' + (pad.top + 14) + '" font-size="10" fill="var(--text-secondary)" opacity="0.7">FAERS higher than trials</text>';
+  const belowLabel = '<text x="' + (W - pad.right - 10) + '" y="' + (pad.top + cH - 6) + '" text-anchor="end" font-size="10" fill="var(--text-secondary)" opacity="0.7">Trials higher than FAERS</text>';
+
+  // Legend for AE types
+  const aeTypes = [
+    { key: 'crs', label: 'CRS' },
+    { key: 'icans', label: 'ICANS' },
+    { key: 'infections', label: 'Infections' },
+    { key: 'cytopenias', label: 'Cytopenias' }
+  ];
+  let legend = '';
+  aeTypes.forEach((ae, i) => {
+    const lx = pad.left + i * 120;
+    legend += '<circle cx="' + (lx + 5) + '" cy="' + (pad.top - 14) + '" r="5" fill="' + (aeColors[ae.key] || '#888') + '" opacity="0.8" />';
+    legend += '<text x="' + (lx + 14) + '" y="' + (pad.top - 10) + '" font-size="10" fill="var(--text)">' + ae.label + '</text>';
+  });
+
+  return `
+    <div style="font-weight:600; margin-bottom:8px;">FAERS vs Clinical Trial Rate Scatter</div>
+    <div style="overflow-x:auto;">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%; max-width:${W}px; height:auto; font-family:var(--font);">
+        ${gridLines}
+        ${diagLine}
+        ${aboveLabel}
+        ${belowLabel}
+        ${dots}
+        ${xLabel}
+        ${yLabel}
+        ${title}
+        ${legend}
+      </svg>
+    </div>
+    <div style="font-size:10px; color:var(--text-secondary); margin-top:4px; display:flex; gap:16px; flex-wrap:wrap;">
+      <span>Dashed line = perfect agreement</span>
+      <span>Dot size = FAERS report count</span>
+      <span style="color:var(--success);">&#9679; Aligned (&lt;25%)</span>
+      <span style="color:var(--warning);">&#9679; Moderate (25-75%)</span>
+      <span style="color:var(--danger);">&#9679; Significant (&gt;75%)</span>
+    </div>
+  `;
 }
 
 // -----------------------------------------------------------------------

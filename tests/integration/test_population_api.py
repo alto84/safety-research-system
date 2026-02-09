@@ -734,3 +734,87 @@ class TestComparisonTrialLevelData:
         """Existing note field should not be broken."""
         data = client.get("/api/v1/population/comparison").json()
         assert "note" in data
+
+
+# ===========================================================================
+# GET /api/v1/signals/triangulation
+# ===========================================================================
+
+@pytest.mark.integration
+class TestSignalTriangulation:
+    """Tests for the cross-source signal triangulation endpoint."""
+
+    def test_returns_200(self, client):
+        response = client.get("/api/v1/signals/triangulation")
+        assert response.status_code == 200
+
+    def test_has_request_id(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        assert "request_id" in data
+
+    def test_has_timestamp(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        assert "timestamp" in data
+
+    def test_has_signals_array(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        assert "signals" in data
+        assert isinstance(data["signals"], list)
+
+    def test_signals_not_empty(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        assert len(data["signals"]) > 0
+
+    def test_has_summary(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        assert "summary" in data
+        assert "total_signals" in data["summary"]
+
+    def test_has_methodology(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        assert "methodology" in data
+        assert len(data["methodology"]) > 0
+
+    def test_has_caveats(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        assert "caveats" in data
+        assert isinstance(data["caveats"], list)
+        assert len(data["caveats"]) >= 3
+
+    def test_summary_counts_consistent(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        summary = data["summary"]
+        assert summary["total_signals"] == len(data["signals"])
+        total = (
+            summary.get("significant_count", 0)
+            + summary.get("moderate_count", 0)
+            + summary.get("aligned_count", 0)
+        )
+        assert total == summary["total_signals"]
+
+    def test_ae_type_filter_crs(self, client):
+        data = client.get("/api/v1/signals/triangulation?ae_type=crs").json()
+        for s in data["signals"]:
+            assert s["ae_type"] == "crs"
+
+    def test_ae_type_filter_icans(self, client):
+        data = client.get("/api/v1/signals/triangulation?ae_type=icans").json()
+        for s in data["signals"]:
+            assert s["ae_type"] == "icans"
+
+    def test_ae_type_filter_reduces_results(self, client):
+        all_data = client.get("/api/v1/signals/triangulation").json()
+        crs_data = client.get("/api/v1/signals/triangulation?ae_type=crs").json()
+        assert len(crs_data["signals"]) < len(all_data["signals"])
+
+    def test_invalid_ae_type_returns_empty(self, client):
+        data = client.get("/api/v1/signals/triangulation?ae_type=bogus").json()
+        assert data["signals"] == []
+        assert data["summary"]["total_signals"] == 0
+
+    def test_signal_has_required_fields(self, client):
+        data = client.get("/api/v1/signals/triangulation").json()
+        s = data["signals"][0]
+        for field in ["ae_type", "product", "faers_rate_pct", "trial_rate_pct",
+                       "divergence_pct", "direction", "flag", "confidence_level"]:
+            assert field in s, f"Missing field: {field}"

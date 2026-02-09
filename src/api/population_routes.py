@@ -133,6 +133,7 @@ from src.data.ctgov_cache import (
     get_trial_summaries as get_ctgov_trial_summaries,
     AE_TERM_MAP as CTGOV_AE_TERM_MAP,
 )
+from src.models.signal_triangulation import triangulate_signals
 
 logger = logging.getLogger(__name__)
 
@@ -698,6 +699,51 @@ async def faers_comparison() -> dict:
         "product_profiles": data.get("product_profiles", {}),
         "comparison": data.get("comparison", {}),
         "metadata": data.get("metadata", {}),
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/signals/triangulation -- Cross-source signal triangulation
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/signals/triangulation",
+    tags=["Signals"],
+    summary="Cross-source signal triangulation (FAERS vs ClinicalTrials.gov)",
+    description=(
+        "Compares FAERS spontaneous reporting rates with enrollment-weighted "
+        "clinical trial AE rates from ClinicalTrials.gov. Flags divergences "
+        "as aligned (<25%), moderate (25-75%), or significant (>75%). "
+        "These flags are hypothesis-generating, not confirmatory."
+    ),
+)
+async def signal_triangulation(
+    ae_type: str | None = Query(
+        None,
+        description="Filter by AE type: crs, icans, infections, cytopenias. "
+                    "Omit for all types.",
+    ),
+) -> dict:
+    """Cross-reference FAERS and CT.gov AE rates."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    try:
+        result = triangulate_signals(ae_type=ae_type)
+    except Exception as exc:
+        logger.exception("Signal triangulation failed")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Signal triangulation failed: {exc}",
+        )
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "signals": result["signals"],
+        "summary": result["summary"],
+        "methodology": result["methodology"],
+        "caveats": result["caveats"],
     }
 
 
