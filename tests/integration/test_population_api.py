@@ -552,3 +552,185 @@ class TestAEComparison:
     def test_comparison_has_note(self, client):
         data = client.get("/api/v1/population/comparison").json()
         assert "note" in data
+
+
+# ===========================================================================
+# GET /api/v1/signals/faers/comparison
+# ===========================================================================
+
+@pytest.mark.integration
+class TestFAERSComparison:
+    """Tests for the cached FAERS product comparison endpoint."""
+
+    def test_faers_comparison_returns_200(self, client):
+        response = client.get("/api/v1/signals/faers/comparison")
+        assert response.status_code == 200
+
+    def test_faers_comparison_has_request_id(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        assert "request_id" in data
+
+    def test_faers_comparison_has_timestamp(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        assert "timestamp" in data
+
+    def test_faers_comparison_has_product_profiles(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        assert "product_profiles" in data
+
+    def test_faers_comparison_has_comparison(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        assert "comparison" in data
+
+    def test_faers_comparison_has_metadata(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        assert "metadata" in data
+
+    def test_faers_comparison_has_six_products(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        profiles = data["product_profiles"]
+        assert len(profiles) >= 6
+
+    def test_faers_comparison_product_names(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        profiles = data["product_profiles"]
+        expected = {"Yescarta", "Kymriah", "Tecartus", "Breyanzi", "Abecma", "Carvykti"}
+        assert expected.issubset(set(profiles.keys()))
+
+    def test_faers_comparison_has_crs_comparison(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        assert "crs_comparison" in data["comparison"]
+
+    def test_faers_comparison_has_mortality_comparison(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        assert "mortality_comparison" in data["comparison"]
+
+    def test_faers_comparison_profiles_have_total_reports(self, client):
+        data = client.get("/api/v1/signals/faers/comparison").json()
+        for name, prof in data["product_profiles"].items():
+            assert "total_reports" in prof, f"{name} missing total_reports"
+            assert prof["total_reports"] > 0
+
+
+# ===========================================================================
+# GET /api/v1/trials/ae-data
+# ===========================================================================
+
+@pytest.mark.integration
+class TestTrialsAEData:
+    """Tests for the ClinicalTrials.gov AE data endpoint."""
+
+    def test_returns_200(self, client):
+        response = client.get("/api/v1/trials/ae-data")
+        assert response.status_code == 200
+
+    def test_has_request_id(self, client):
+        data = client.get("/api/v1/trials/ae-data").json()
+        assert "request_id" in data
+
+    def test_has_timestamp(self, client):
+        data = client.get("/api/v1/trials/ae-data").json()
+        assert "timestamp" in data
+
+    def test_has_trials_array(self, client):
+        data = client.get("/api/v1/trials/ae-data").json()
+        assert "trials" in data
+        assert isinstance(data["trials"], list)
+
+    def test_has_total_trials(self, client):
+        data = client.get("/api/v1/trials/ae-data").json()
+        assert "total_trials" in data
+        assert data["total_trials"] == 47
+
+    def test_trials_have_ae_rates(self, client):
+        data = client.get("/api/v1/trials/ae-data").json()
+        for trial in data["trials"]:
+            assert "ae_rates" in trial
+            assert "crs" in trial["ae_rates"]
+            assert "icans" in trial["ae_rates"]
+
+    def test_trials_have_nct_id(self, client):
+        data = client.get("/api/v1/trials/ae-data").json()
+        for trial in data["trials"]:
+            assert "nct_id" in trial
+            assert trial["nct_id"].startswith("NCT")
+
+    def test_filter_by_ae_type_crs(self, client):
+        response = client.get("/api/v1/trials/ae-data?ae_type=crs")
+        assert response.status_code == 200
+        data = response.json()
+        # Filtered results should only contain trials with CRS events
+        for trial in data["trials"]:
+            crs = trial["ae_rates"]["crs"]
+            assert crs["affected"] > 0
+
+    def test_filter_by_ae_type_icans(self, client):
+        response = client.get("/api/v1/trials/ae-data?ae_type=icans")
+        assert response.status_code == 200
+
+    def test_filter_by_invalid_ae_type(self, client):
+        response = client.get("/api/v1/trials/ae-data?ae_type=invalid")
+        assert response.status_code == 400
+
+    def test_filter_by_min_enrollment(self, client):
+        response = client.get("/api/v1/trials/ae-data?min_enrollment=50")
+        assert response.status_code == 200
+        data = response.json()
+        for trial in data["trials"]:
+            assert trial["enrollment"] >= 50
+
+    def test_has_summary(self, client):
+        data = client.get("/api/v1/trials/ae-data").json()
+        assert "summary" in data
+        assert "unique_serious_event_types" in data["summary"]
+
+
+# ===========================================================================
+# GET /api/v1/population/comparison -- trial_level_data
+# ===========================================================================
+
+@pytest.mark.integration
+class TestComparisonTrialLevelData:
+    """Tests that the comparison endpoint now includes trial_level_data."""
+
+    def test_comparison_has_trial_level_data(self, client):
+        data = client.get("/api/v1/population/comparison").json()
+        assert "trial_level_data" in data
+
+    def test_trial_level_data_is_list(self, client):
+        data = client.get("/api/v1/population/comparison").json()
+        assert isinstance(data["trial_level_data"], list)
+
+    def test_trial_level_data_has_entries(self, client):
+        data = client.get("/api/v1/population/comparison").json()
+        assert len(data["trial_level_data"]) > 0
+
+    def test_trial_level_entries_have_nct_id(self, client):
+        data = client.get("/api/v1/population/comparison").json()
+        for entry in data["trial_level_data"]:
+            assert "nct_id" in entry
+            assert entry["nct_id"].startswith("NCT")
+
+    def test_trial_level_entries_have_crs_rate(self, client):
+        data = client.get("/api/v1/population/comparison").json()
+        for entry in data["trial_level_data"]:
+            assert "crs_rate_pct" in entry
+            assert isinstance(entry["crs_rate_pct"], (int, float))
+
+    def test_trial_level_entries_have_icans_rate(self, client):
+        data = client.get("/api/v1/population/comparison").json()
+        for entry in data["trial_level_data"]:
+            assert "icans_rate_pct" in entry
+            assert isinstance(entry["icans_rate_pct"], (int, float))
+
+    def test_comparison_data_still_present(self, client):
+        """Existing comparison_data field should not be broken."""
+        data = client.get("/api/v1/population/comparison").json()
+        assert "comparison_data" in data
+        assert isinstance(data["comparison_data"], list)
+        assert len(data["comparison_data"]) >= 2
+
+    def test_note_still_present(self, client):
+        """Existing note field should not be broken."""
+        data = client.get("/api/v1/population/comparison").json()
+        assert "note" in data

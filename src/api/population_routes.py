@@ -109,6 +109,7 @@ from src.models.mitigation_model import (
     monte_carlo_mitigated_risk,
 )
 from src.models.faers_signal import get_faers_signals
+from src.data.faers_cache import get_faers_comparison
 from data.sle_cart_studies import (
     ADVERSE_EVENT_RATES,
     CLINICAL_TRIALS,
@@ -127,6 +128,11 @@ from src.data.knowledge.molecular_targets import (
 from src.data.knowledge.cell_types import CELL_TYPE_REGISTRY
 from src.data.knowledge.references import REFERENCES
 from src.api.narrative_engine import generate_narrative, generate_briefing
+from src.data.ctgov_cache import (
+    get_summary as get_ctgov_summary,
+    get_trial_summaries as get_ctgov_trial_summaries,
+    AE_TERM_MAP as CTGOV_AE_TERM_MAP,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -653,6 +659,49 @@ async def faers_signals(
 
 
 # ---------------------------------------------------------------------------
+# GET /api/v1/signals/faers/comparison -- Cached FAERS product comparison
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/signals/faers/comparison",
+    tags=["Signals"],
+    summary="Pre-computed FAERS product comparison across CAR-T products",
+    description=(
+        "Returns cached FAERS product comparison data extracted from openFDA. "
+        "Includes product profiles, report counts, top adverse events, and "
+        "cross-product comparison rates for CRS, neurotoxicity, mortality, "
+        "infections, and cytopenias."
+    ),
+)
+async def faers_comparison() -> dict:
+    """Return pre-computed FAERS product comparison data."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    try:
+        data = get_faers_comparison()
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="FAERS comparison data file not found.",
+        )
+    except Exception as exc:
+        logger.exception("Failed to load FAERS comparison data")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to load FAERS comparison data: {exc}",
+        )
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "product_profiles": data.get("product_profiles", {}),
+        "comparison": data.get("comparison", {}),
+        "metadata": data.get("metadata", {}),
+    }
+
+
+# ---------------------------------------------------------------------------
 # GET /api/v1/population/mitigations/strategies -- List available mitigations
 # ---------------------------------------------------------------------------
 
@@ -701,9 +750,83 @@ async def list_mitigations() -> dict:
 )
 async def ae_comparison() -> dict:
     """Return cross-indication adverse event comparison data."""
+    # Build trial-level CRS/ICANS rate summaries from CT.gov data
+    trial_summaries = get_ctgov_trial_summaries()
+    trial_level = []
+    for t in trial_summaries:
+        rates = t.get("ae_rates", {})
+        trial_level.append({
+            "nct_id": t["nct_id"],
+            "title": t["title"],
+            "phase": t["phase"],
+            "enrollment": t["enrollment"],
+            "crs_rate_pct": rates.get("crs", {}).get("rate_pct", 0.0),
+            "icans_rate_pct": rates.get("icans", {}).get("rate_pct", 0.0),
+        })
     return {
         "comparison_data": get_comparison_chart_data(),
         "note": "SLE data from pooled analysis (n=47); oncology from pivotal trials",
+        "trial_level_data": trial_level,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/trials/ae-data -- CT.gov trial-level AE data
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/trials/ae-data",
+    tags=["Population"],
+    summary="ClinicalTrials.gov adverse event data",
+    description=(
+        "Returns pre-extracted adverse event data from 47 completed CAR-T "
+        "trials on ClinicalTrials.gov with computed CRS, ICANS, cytopenia, "
+        "and infection rates."
+    ),
+)
+async def trials_ae_data(
+    ae_type: str | None = Query(
+        default=None,
+        description="Filter to a specific AE category (crs, icans, cytopenias, infections, hlh)",
+    ),
+    min_enrollment: int = Query(
+        default=0,
+        ge=0,
+        description="Minimum trial enrollment to include",
+    ),
+) -> dict:
+    """Return CT.gov trial AE data with optional filtering."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    summaries = get_ctgov_trial_summaries(min_enrollment=min_enrollment)
+    ctgov_summary = get_ctgov_summary()
+
+    # If ae_type specified, validate and filter to non-zero rates
+    if ae_type is not None:
+        ae_key = ae_type.lower().strip()
+        if ae_key not in CTGOV_AE_TERM_MAP:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unknown ae_type '{ae_type}'. "
+                       f"Valid: {list(CTGOV_AE_TERM_MAP.keys())}",
+            )
+        filtered = []
+        for s in summaries:
+            rate_info = s["ae_rates"].get(ae_key, {})
+            if rate_info.get("affected", 0) > 0:
+                filtered.append(s)
+        summaries = filtered
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "total_trials": len(summaries),
+        "summary": {
+            "unique_serious_event_types": ctgov_summary.get("unique_serious_event_types", 0),
+            "unique_other_event_types": ctgov_summary.get("unique_other_event_types", 0),
+        },
+        "trials": summaries,
     }
 
 
@@ -2334,6 +2457,11 @@ async def system_architecture() -> ArchitectureResponse:
             summary="FAERS signal detection for CAR-T products",
             tags=["Signals"],
             response_schema="FAERSSummaryResponse",
+        ),
+        EndpointInfo(
+            method="GET", path="/api/v1/signals/faers/comparison",
+            summary="Pre-computed FAERS product comparison",
+            tags=["Signals"],
         ),
         EndpointInfo(
             method="GET", path="/api/v1/population/mitigations/strategies",

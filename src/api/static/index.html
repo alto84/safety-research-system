@@ -3951,18 +3951,30 @@ function buildWaterfallChart(mitigationData) {
 // SIGNAL DETECTION TAB
 // -----------------------------------------------------------------------
 function renderSignalDetection() {
+  setTimeout(() => loadFAERSComparison(), 0);
   setTimeout(() => loadComparisonData(), 0);
+  setTimeout(() => loadCTGovTrialData(), 0);
   return `
     <div class="card">
       <div class="card-header">
-        <div class="card-title">&#128225; FAERS Signal Detection</div>
-        <span style="font-size:12px; color:var(--text-secondary);">FDA Adverse Event Reporting System</span>
+        <div class="card-title">&#128202; FAERS Product Comparison (Cached)</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Pre-computed openFDA data across 6 approved CAR-T products</span>
+      </div>
+      <div class="card-body" id="faersComparisonContent">
+        ${popLoadingHtml('Loading cached FAERS comparison data...')}
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title">&#128225; Live Signal Query</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Real-time openFDA FAERS query</span>
       </div>
       <div class="card-body">
         <div class="alert alert-info" style="margin-bottom:16px;">
           <span class="alert-icon">&#8505;</span>
-          <div>FAERS data is fetched from the live openFDA API and may take 30-60 seconds. Results are not cached.
-          This queries real-world post-market safety data for approved CAR-T products.</div>
+          <div>This queries the live openFDA API in real-time and may take 30-60 seconds.
+          Use the cached comparison above for pre-computed results.</div>
         </div>
         <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="loadFAERSData()">&#128269; Load FAERS Data</button>
@@ -3980,6 +3992,162 @@ function renderSignalDetection() {
       <div class="card-body" id="comparisonContent">
         ${popLoadingHtml('Loading comparison data...')}
       </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title">&#127973; Clinical Trial Evidence (ClinicalTrials.gov)</div>
+        <span style="font-size:12px; color:var(--text-secondary);">Adverse event rates from completed CAR-T trials</span>
+      </div>
+      <div class="card-body" id="ctgovTrialContent">
+        ${popLoadingHtml('Loading ClinicalTrials.gov data...')}
+      </div>
+    </div>
+  `;
+}
+
+async function loadFAERSComparison() {
+  const el = document.getElementById('faersComparisonContent');
+  if (!el) return;
+
+  const res = await popFetch('/api/v1/signals/faers/comparison');
+  if (res.error) {
+    el.innerHTML = popErrorHtml('Failed to load FAERS comparison: ' + res.error);
+    return;
+  }
+
+  const d = res.data;
+  const profiles = d.product_profiles || {};
+  const comparison = d.comparison || {};
+  const meta = d.metadata || {};
+  const products = Object.keys(profiles);
+
+  if (products.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-secondary); padding:12px;">No comparison data available.</div>';
+    return;
+  }
+
+  // Build grouped bar chart for key AE rates
+  const chartHtml = buildFAERSGroupedBarChart(comparison, products);
+
+  // Build product cards grid
+  const cardsHtml = products.map(p => {
+    const prof = profiles[p];
+    const topAEs = (prof.top_adverse_events || []).slice(0, 3);
+    return `
+      <div class="pop-metric-card" style="padding:12px;">
+        <div style="font-weight:600; font-size:14px; margin-bottom:4px;">${prof.product_name || p}</div>
+        <div style="font-size:11px; color:var(--text-secondary); margin-bottom:6px;">${prof.generic_name || ''}</div>
+        <div style="font-family:var(--mono); font-size:18px; font-weight:700; color:var(--primary); margin-bottom:4px;">
+          ${(prof.total_reports || 0).toLocaleString()}
+        </div>
+        <div style="font-size:11px; color:var(--text-secondary); margin-bottom:8px;">total FAERS reports</div>
+        <div style="font-size:11px; color:var(--text-secondary); margin-bottom:2px;">Top adverse events:</div>
+        ${topAEs.map(ae => `
+          <div style="display:flex; justify-content:space-between; font-size:11px; padding:1px 0;">
+            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:70%;">${ae.term}</span>
+            <span style="font-family:var(--mono); color:var(--text-secondary);">${ae.count}</span>
+          </div>
+        `).join('')}
+        <div style="font-size:10px; color:var(--text-secondary); margin-top:6px; border-top:1px solid var(--border); padding-top:4px;">
+          Approved: ${prof.approval_date || 'N/A'} | ${prof.manufacturer || ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  el.innerHTML = `
+    ${chartHtml}
+    <div style="margin-top:16px;">
+      <div style="font-weight:600; margin-bottom:8px;">Product Profiles</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px;">
+        ${cardsHtml}
+      </div>
+    </div>
+    <div style="font-size:10px; color:var(--text-secondary); margin-top:12px; font-style:italic;">
+      Source: openFDA FAERS API | Extracted: ${meta.extraction_date ? meta.extraction_date.split('T')[0] : 'N/A'} | Runtime: ${meta.runtime_seconds ? meta.runtime_seconds.toFixed(0) + 's' : 'N/A'}
+    </div>
+  `;
+}
+
+function buildFAERSGroupedBarChart(comparison, products) {
+  const categories = [
+    { key: 'crs_comparison', label: 'CRS', color: 'var(--danger)' },
+    { key: 'neurotoxicity_comparison', label: 'Neurotoxicity', color: 'var(--warning)' },
+    { key: 'mortality_comparison', label: 'Mortality', color: '#6b21a8' },
+    { key: 'infection_comparison', label: 'Infections', color: 'var(--primary)' },
+    { key: 'cytopenia_comparison', label: 'Cytopenias', color: 'var(--success)' },
+    { key: 'secondary_malignancy_comparison', label: 'Secondary Malignancy', color: '#be185d' },
+  ];
+
+  const W = 800, pad = { top: 50, right: 20, bottom: 60, left: 50 };
+  const nProducts = products.length;
+  const nCategories = categories.length;
+  const groupWidth = (W - pad.left - pad.right) / nCategories;
+  const barWidth = Math.min(14, (groupWidth - 16) / nProducts);
+  const groupGap = (groupWidth - barWidth * nProducts) / 2;
+
+  // Find max rate
+  let maxRate = 0;
+  categories.forEach(cat => {
+    const catData = comparison[cat.key] || {};
+    products.forEach(p => {
+      const rate = (catData[p] || {}).rate_pct || 0;
+      if (rate > maxRate) maxRate = rate;
+    });
+  });
+  const yMax = Math.ceil(maxRate / 10) * 10 + 5;
+  const chartH = 250;
+  const H = chartH + pad.top + pad.bottom;
+
+  function yPos(v) { return pad.top + chartH - (v / yMax) * chartH; }
+
+  // Grid lines
+  let gridLines = '';
+  for (let v = 0; v <= yMax; v += 10) {
+    gridLines += `<line x1="${pad.left}" y1="${yPos(v)}" x2="${W - pad.right}" y2="${yPos(v)}" stroke="var(--border)" stroke-width="0.5" />`;
+    gridLines += `<text x="${pad.left - 6}" y="${yPos(v) + 4}" text-anchor="end" font-size="10" fill="var(--text-secondary)">${v}%</text>`;
+  }
+
+  // Product colors for differentiation
+  const productColors = ['#2563eb', '#dc2626', '#d97706', '#059669', '#7c3aed', '#be185d'];
+
+  // Bars
+  let bars = '';
+  categories.forEach((cat, ci) => {
+    const catData = comparison[cat.key] || {};
+    const groupX = pad.left + ci * groupWidth;
+
+    // Category label
+    bars += `<text x="${groupX + groupWidth / 2}" y="${H - 20}" text-anchor="middle" font-size="10" fill="var(--text)" font-weight="500">${cat.label}</text>`;
+
+    products.forEach((p, pi) => {
+      const rate = (catData[p] || {}).rate_pct || 0;
+      const x = groupX + groupGap + pi * barWidth;
+      const barH = (rate / yMax) * chartH;
+      const y = pad.top + chartH - barH;
+      bars += `<rect x="${x}" y="${y}" width="${barWidth - 1}" height="${barH}" fill="${productColors[pi % productColors.length]}" opacity="0.8" rx="1">
+        <title>${p}: ${rate.toFixed(1)}%</title>
+      </rect>`;
+    });
+  });
+
+  // Legend
+  let legend = '';
+  products.forEach((p, i) => {
+    const lx = pad.left + i * 110;
+    legend += `<rect x="${lx}" y="${pad.top - 30}" width="10" height="10" fill="${productColors[i % productColors.length]}" rx="2" />`;
+    legend += `<text x="${lx + 14}" y="${pad.top - 21}" font-size="10" fill="var(--text)">${p}</text>`;
+  });
+
+  return `
+    <div style="font-weight:600; margin-bottom:8px;">AE Reporting Rates by Product (%)</div>
+    <div style="overflow-x:auto;">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%; max-width:${W}px; height:auto; font-family:var(--font);">
+        ${gridLines}
+        ${bars}
+        ${legend}
+      </svg>
     </div>
   `;
 }
@@ -4145,6 +4313,195 @@ function buildForestPlot(data, note) {
       ${note ? `<div style="font-size:11px; color:var(--text-secondary); margin-top:6px; font-style:italic;">${note}</div>` : ''}
     </div>
   `;
+}
+
+// -----------------------------------------------------------------------
+// CT.GOV TRIAL DATA LOADER
+// -----------------------------------------------------------------------
+async function loadCTGovTrialData() {
+  const el = document.getElementById('ctgovTrialContent');
+  if (!el) return;
+
+  const res = await popFetch('/api/v1/trials/ae-data');
+  if (res.error) {
+    el.innerHTML = popErrorHtml('Failed to load CT.gov data: ' + res.error);
+    return;
+  }
+
+  const d = res.data;
+  const trials = d.trials || [];
+  const summary = d.summary || {};
+
+  // Summary cards
+  let html = `
+    <div class="pop-grid" style="margin-bottom:16px;">
+      <div class="pop-metric-card grade-low">
+        <div class="pop-metric-label">Trials Analyzed</div>
+        <div class="pop-metric-value">${d.total_trials || 0}</div>
+        <div class="pop-metric-sub">Completed CAR-T trials with AE data</div>
+      </div>
+      <div class="pop-metric-card grade-low">
+        <div class="pop-metric-label">SAE Types</div>
+        <div class="pop-metric-value">${(summary.unique_serious_event_types || 0).toLocaleString()}</div>
+        <div class="pop-metric-sub">Unique serious adverse event terms</div>
+      </div>
+      <div class="pop-metric-card grade-low">
+        <div class="pop-metric-label">Other AE Types</div>
+        <div class="pop-metric-value">${(summary.unique_other_event_types || 0).toLocaleString()}</div>
+        <div class="pop-metric-sub">Unique other adverse event terms</div>
+      </div>
+    </div>
+  `;
+
+  // Sortable table
+  if (trials.length > 0) {
+    html += buildCTGovTrialTable(trials);
+  } else {
+    html += '<div style="color:var(--text-secondary); padding:12px;">No trial data available.</div>';
+  }
+
+  // Mini forest plot for CRS rates
+  const crsTrials = trials.filter(t => t.ae_rates && t.ae_rates.crs && t.ae_rates.crs.rate_pct > 0);
+  if (crsTrials.length > 0) {
+    html += `
+      <div style="margin-top:16px;">
+        <div style="font-weight:600; margin-bottom:8px;">CRS Rate Distribution Across Trials</div>
+        ${buildCTGovCRSForestPlot(crsTrials)}
+      </div>
+    `;
+  }
+
+  html += `
+    <div style="font-size:10px; color:var(--text-secondary); margin-top:12px; font-style:italic;">
+      Source: ClinicalTrials.gov API v2 | Pre-extracted structured results data
+    </div>
+  `;
+
+  el.innerHTML = html;
+}
+
+let _ctgovSortCol = 'crs';
+let _ctgovSortAsc = false;
+
+function buildCTGovTrialTable(trials) {
+  const sorted = [...trials].sort((a, b) => {
+    let va, vb;
+    if (_ctgovSortCol === 'nct_id') { va = a.nct_id; vb = b.nct_id; }
+    else if (_ctgovSortCol === 'title') { va = a.title; vb = b.title; }
+    else if (_ctgovSortCol === 'phase') { va = a.phase; vb = b.phase; }
+    else if (_ctgovSortCol === 'enrollment') { va = a.enrollment || 0; vb = b.enrollment || 0; }
+    else if (_ctgovSortCol === 'crs') { va = (a.ae_rates && a.ae_rates.crs) ? a.ae_rates.crs.rate_pct : 0; vb = (b.ae_rates && b.ae_rates.crs) ? b.ae_rates.crs.rate_pct : 0; }
+    else if (_ctgovSortCol === 'icans') { va = (a.ae_rates && a.ae_rates.icans) ? a.ae_rates.icans.rate_pct : 0; vb = (b.ae_rates && b.ae_rates.icans) ? b.ae_rates.icans.rate_pct : 0; }
+    else if (_ctgovSortCol === 'cytopenias') { va = (a.ae_rates && a.ae_rates.cytopenias) ? a.ae_rates.cytopenias.rate_pct : 0; vb = (b.ae_rates && b.ae_rates.cytopenias) ? b.ae_rates.cytopenias.rate_pct : 0; }
+    else { va = 0; vb = 0; }
+    if (typeof va === 'string') return _ctgovSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return _ctgovSortAsc ? va - vb : vb - va;
+  });
+
+  function arrow(col) {
+    if (_ctgovSortCol !== col) return '';
+    return _ctgovSortAsc ? ' &#9650;' : ' &#9660;';
+  }
+
+  const rows = sorted.map(t => {
+    const rates = t.ae_rates || {};
+    const crs = rates.crs || {};
+    const icans = rates.icans || {};
+    const cyto = rates.cytopenias || {};
+    const titleShort = (t.title || '').length > 50 ? t.title.substring(0, 50) + '...' : (t.title || '');
+    return `
+      <tr>
+        <td><a href="https://clinicaltrials.gov/study/${t.nct_id}" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:none;">${t.nct_id}</a></td>
+        <td title="${(t.title || '').replace(/"/g, '&quot;')}" style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${titleShort}</td>
+        <td>${(t.phase || '').replace('PHASE', 'P')}</td>
+        <td style="font-family:var(--mono); text-align:right;">${t.enrollment || 0}</td>
+        <td style="font-family:var(--mono); text-align:right; ${crs.rate_pct > 0 ? 'color:var(--danger); font-weight:600;' : ''}">${(crs.rate_pct || 0).toFixed(1)}%</td>
+        <td style="font-family:var(--mono); text-align:right; ${icans.rate_pct > 0 ? 'color:var(--warning); font-weight:600;' : ''}">${(icans.rate_pct || 0).toFixed(1)}%</td>
+        <td style="font-family:var(--mono); text-align:right; ${cyto.rate_pct > 0 ? 'font-weight:600;' : ''}">${(cyto.rate_pct || 0).toFixed(1)}%</td>
+      </tr>
+    `;
+  }).join('');
+
+  return `
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="cursor:pointer;" onclick="sortCTGovTable('nct_id')">NCT ID${arrow('nct_id')}</th>
+            <th style="cursor:pointer;" onclick="sortCTGovTable('title')">Title${arrow('title')}</th>
+            <th style="cursor:pointer;" onclick="sortCTGovTable('phase')">Phase${arrow('phase')}</th>
+            <th style="cursor:pointer;" onclick="sortCTGovTable('enrollment')">N${arrow('enrollment')}</th>
+            <th style="cursor:pointer;" onclick="sortCTGovTable('crs')">CRS Rate${arrow('crs')}</th>
+            <th style="cursor:pointer;" onclick="sortCTGovTable('icans')">ICANS Rate${arrow('icans')}</th>
+            <th style="cursor:pointer;" onclick="sortCTGovTable('cytopenias')">Cytopenia${arrow('cytopenias')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+let _ctgovTrialCache = null;
+
+function sortCTGovTable(col) {
+  if (_ctgovSortCol === col) {
+    _ctgovSortAsc = !_ctgovSortAsc;
+  } else {
+    _ctgovSortCol = col;
+    _ctgovSortAsc = (col === 'nct_id' || col === 'title' || col === 'phase');
+  }
+  // Re-render table from cached data
+  if (_ctgovTrialCache) {
+    const tableContainer = document.getElementById('ctgovTrialContent');
+    if (tableContainer) {
+      // Re-fetch to re-render (the data is cached server-side)
+      loadCTGovTrialData();
+    }
+  }
+}
+
+function buildCTGovCRSForestPlot(trials) {
+  const sorted = [...trials].sort((a, b) => {
+    const ra = (a.ae_rates && a.ae_rates.crs) ? a.ae_rates.crs.rate_pct : 0;
+    const rb = (b.ae_rates && b.ae_rates.crs) ? b.ae_rates.crs.rate_pct : 0;
+    return ra - rb;
+  });
+
+  const W = 700, rowH = 22, pad = { top: 30, right: 30, bottom: 25, left: 120 };
+  const H = pad.top + sorted.length * rowH + pad.bottom;
+  const cW = W - pad.left - pad.right;
+  const maxRate = Math.max(...sorted.map(t => t.ae_rates.crs.rate_pct), 10);
+  const xMax = Math.ceil(maxRate / 10) * 10 + 10;
+
+  function xPos(v) { return pad.left + (v / xMax) * cW; }
+  function yPos(i) { return pad.top + i * rowH + rowH / 2; }
+
+  let gridLines = '';
+  for (let v = 0; v <= xMax; v += 10) {
+    gridLines += '<line x1="' + xPos(v) + '" y1="' + pad.top + '" x2="' + xPos(v) + '" y2="' + (H - pad.bottom) + '" stroke="var(--border)" stroke-width="0.5" />';
+    gridLines += '<text x="' + xPos(v) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" fill="var(--text-secondary)">' + v + '%</text>';
+  }
+
+  let dots = '';
+  sorted.forEach((t, i) => {
+    const y = yPos(i);
+    const rate = t.ae_rates.crs.rate_pct;
+    const r = Math.max(3, Math.min(7, Math.sqrt(t.enrollment || 10) * 0.8));
+
+    // Label
+    dots += '<text x="' + (pad.left - 6) + '" y="' + (y + 3) + '" text-anchor="end" font-size="10" fill="var(--text-secondary)">' + t.nct_id + '</text>';
+    // Row stripe
+    if (i % 2 === 0) {
+      dots += '<rect x="' + pad.left + '" y="' + (y - rowH / 2) + '" width="' + cW + '" height="' + rowH + '" fill="var(--surface-hover)" opacity="0.3" />';
+    }
+    // Dot
+    dots += '<circle cx="' + xPos(rate) + '" cy="' + y + '" r="' + r + '" fill="var(--danger)" opacity="0.7"><title>' + t.nct_id + ': CRS ' + rate.toFixed(1) + '% (N=' + (t.enrollment || 0) + ')</title></circle>';
+  });
+
+  return '<div style="overflow-x:auto;"><svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%; max-width:' + W + 'px; height:auto; font-family:var(--font);">' + gridLines + dots + '<text x="' + (W / 2) + '" y="15" text-anchor="middle" font-size="12" fill="var(--text)" font-weight="600">CRS Rate by Trial (dot size = enrollment)</text></svg></div>';
 }
 
 // -----------------------------------------------------------------------
