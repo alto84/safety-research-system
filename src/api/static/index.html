@@ -546,21 +546,24 @@ body {
 .task-btn[data-task="pharma-regulatory"],
 .task-btn[data-task="pharma-pipeline"],
 .task-btn[data-task="pharma-pv"],
-.task-btn[data-task="pharma-quality"] {
+.task-btn[data-task="pharma-quality"],
+.task-btn[data-task="pharma-simulation"] {
   color: #7c3aed;
 }
 .task-btn[data-task="pharma-org"]:hover,
 .task-btn[data-task="pharma-regulatory"]:hover,
 .task-btn[data-task="pharma-pipeline"]:hover,
 .task-btn[data-task="pharma-pv"]:hover,
-.task-btn[data-task="pharma-quality"]:hover {
+.task-btn[data-task="pharma-quality"]:hover,
+.task-btn[data-task="pharma-simulation"]:hover {
   color: var(--text);
 }
 .task-btn[data-task="pharma-org"].active,
 .task-btn[data-task="pharma-regulatory"].active,
 .task-btn[data-task="pharma-pipeline"].active,
 .task-btn[data-task="pharma-pv"].active,
-.task-btn[data-task="pharma-quality"].active {
+.task-btn[data-task="pharma-quality"].active,
+.task-btn[data-task="pharma-simulation"].active {
   color: #7c3aed; border-bottom-color: #7c3aed;
 }
 
@@ -669,6 +672,47 @@ body {
 .capa-in-progress { background: var(--info-light); color: var(--info); }
 .capa-closed { background: var(--success-light); color: #047857; }
 .capa-overdue { background: var(--danger-light); color: #b91c1c; }
+
+/* Simulation tab styles */
+.sim-control-panel { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; padding: 12px; background: var(--surface-hover); border-radius: var(--radius); border: 1px solid var(--border); }
+.sim-run-btn { padding: 8px 20px; background: #7c3aed; color: #fff; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+.sim-run-btn:hover { background: #6d28d9; }
+.sim-run-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.sim-status-cards { display: flex; gap: 12px; flex-wrap: wrap; }
+.sim-status-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; text-align: center; min-width: 100px; }
+.sim-status-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+.sim-status-value { font-size: 20px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+.sim-columns { display: grid; grid-template-columns: 40% 60%; gap: 16px; }
+@media (max-width: 900px) { .sim-columns { grid-template-columns: 1fr; } }
+.sim-tree-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+.sim-tree-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.sim-tree-svg text { font-family: var(--font); cursor: pointer; }
+.sim-tree-node { cursor: pointer; transition: filter 0.2s; }
+.sim-tree-node:hover { filter: brightness(0.92) drop-shadow(0 2px 6px rgba(0,0,0,0.18)); }
+.sim-tree-node rect { rx: 8; ry: 8; }
+.sim-right-col { display: flex; flex-direction: column; gap: 16px; }
+.sim-log-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; max-height: 400px; overflow-y: auto; }
+.sim-log-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.sim-log-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.sim-log-table th { padding: 6px 8px; background: var(--surface-hover); border: 1px solid var(--border); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; text-align: left; position: sticky; top: 0; }
+.sim-log-table td { padding: 5px 8px; border: 1px solid var(--border); vertical-align: top; }
+.sim-action-delegated { color: #2563eb; font-weight: 600; }
+.sim-action-completed { color: #059669; font-weight: 600; }
+.sim-action-reviewed { color: #d97706; font-weight: 600; }
+.sim-action-escalated { color: #dc2626; font-weight: 600; }
+.sim-deliverables-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; min-height: 150px; }
+.sim-deliverables-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.sim-deliv-card { background: var(--surface-hover); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 8px; cursor: pointer; transition: var(--transition); }
+.sim-deliv-card:hover { box-shadow: var(--shadow-md); }
+.sim-deliv-card.status-completed { border-left: 4px solid #059669; }
+.sim-deliv-card.status-in_progress { border-left: 4px solid #d97706; }
+.sim-deliv-card.status-pending { border-left: 4px solid #9ca3af; }
+.sim-deliv-title { font-size: 13px; font-weight: 600; }
+.sim-deliv-meta { font-size: 11px; color: var(--text-secondary); margin-top: 3px; display: flex; gap: 10px; flex-wrap: wrap; }
+.sim-deliv-content { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-secondary); display: none; }
+.sim-deliv-card.expanded .sim-deliv-content { display: block; }
+.sim-auto-refresh { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); margin-left: auto; }
+.sim-auto-refresh input { cursor: pointer; }
 
 /* Therapy selector bar */
 .therapy-selector-bar {
@@ -1059,6 +1103,7 @@ body {
     <button class="task-btn" data-task="pharma-pipeline" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128200;</span> Clinical Pipeline</button>
     <button class="task-btn" data-task="pharma-pv" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128721;</span> PV Dashboard</button>
     <button class="task-btn" data-task="pharma-quality" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9989;</span> Quality Metrics</button>
+    <button class="task-btn" data-task="pharma-simulation" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9654;</span> Simulation</button>
   </div>
 </nav>
 
@@ -1388,7 +1433,7 @@ function activateTab(btn) {
   currentTask = btn.dataset.task;
 
   // Hide patient sidebar for population-level tabs
-  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture', 'science', 'pharma-org', 'pharma-regulatory', 'pharma-pipeline', 'pharma-pv', 'pharma-quality'];
+  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture', 'science', 'pharma-org', 'pharma-regulatory', 'pharma-pipeline', 'pharma-pv', 'pharma-quality', 'pharma-simulation'];
   const sidebar = document.querySelector('.patient-sidebar');
   const mainLayout = document.querySelector('.main-layout');
   if (populationTabs.includes(btn.dataset.task)) {
@@ -1444,6 +1489,7 @@ function renderTaskContent() {
     case 'pharma-pipeline': container.innerHTML = renderPharmaPipeline(); break;
     case 'pharma-pv': container.innerHTML = renderPharmaPVDashboard(); break;
     case 'pharma-quality': container.innerHTML = renderPharmaQualityMetrics(); break;
+    case 'pharma-simulation': container.innerHTML = renderPharmaSimulation(); break;
     default: container.innerHTML = renderOverview();
   }
 }
@@ -7416,6 +7462,325 @@ async function loadPharmaQualityMetrics(containerId) {
   gaugeHtml += '</div></div>';
 
   el.innerHTML = cardsHtml + capaHtml + batchHtml + gaugeHtml;
+}
+
+
+// ---------------------------------------------------------------------------
+// TAB 23: SIMULATION ACTIVITY
+// ---------------------------------------------------------------------------
+function renderPharmaSimulation() {
+  var containerId = 'pharmaSimulationContent';
+  setTimeout(function() { loadSimulation(containerId); }, 0);
+  return '<div class="card">' +
+    '<div class="card-header">' +
+    '<div class="card-title">&#9654; Simulation Activity</div>' +
+    '<span style="font-size:12px; color:var(--text-secondary);">Pharma Company Agent Simulation</span>' +
+    '</div>' +
+    '<div class="card-body" id="' + containerId + '">' +
+    popLoadingHtml('Loading simulation...') +
+    '</div></div>';
+}
+
+var _simAutoRefreshTimer = null;
+var _simSelectedRole = null;
+
+async function loadSimulation(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+
+  // Build the full UI skeleton immediately
+  var html = '';
+
+  // 1. Control panel
+  html += '<div class="sim-control-panel">';
+  html += '<button class="sim-run-btn" id="simRunBtn" onclick="simRunSimulation(\'' + containerId + '\')">&#9654; Run Simulation</button>';
+  html += '<div class="sim-status-cards" id="simStatusCards">';
+  html += '<div class="sim-status-card"><div class="sim-status-label">Roles Active</div><div class="sim-status-value" id="simRolesActive">--</div></div>';
+  html += '<div class="sim-status-card"><div class="sim-status-label">Deliverables</div><div class="sim-status-value" id="simDeliverables">--</div></div>';
+  html += '<div class="sim-status-card"><div class="sim-status-label">Log Entries</div><div class="sim-status-value" id="simLogEntries">--</div></div>';
+  html += '</div>';
+  html += '<label class="sim-auto-refresh"><input type="checkbox" id="simAutoRefresh" onchange="simToggleAutoRefresh(\'' + containerId + '\')"> Auto-refresh (5s)</label>';
+  html += '</div>';
+
+  // 2. Two-column layout
+  html += '<div class="sim-columns">';
+
+  // Left: Delegation tree
+  html += '<div class="sim-tree-panel">';
+  html += '<h3>Delegation Tree</h3>';
+  html += '<div id="simTreeContainer">' + popLoadingHtml('Loading tree...') + '</div>';
+  html += '</div>';
+
+  // Right column
+  html += '<div class="sim-right-col">';
+
+  // Activity log
+  html += '<div class="sim-log-panel">';
+  html += '<h3>Activity Log</h3>';
+  html += '<div id="simLogContainer">' + popLoadingHtml('Loading log...') + '</div>';
+  html += '</div>';
+
+  // Deliverables panel
+  html += '<div class="sim-deliverables-panel">';
+  html += '<h3>Deliverables <span id="simDelivRoleLabel" style="font-weight:400; font-size:12px; color:var(--text-secondary);"></span></h3>';
+  html += '<div id="simDelivContainer"><div style="color:var(--text-secondary); font-size:13px;">Click a role in the delegation tree to view its deliverables.</div></div>';
+  html += '</div>';
+
+  html += '</div>'; // right col
+  html += '</div>'; // columns
+
+  el.innerHTML = html;
+
+  // Load initial data
+  await simRefreshStatus();
+  await Promise.all([simRefreshTree(), simRefreshLog()]);
+}
+
+async function simRefreshStatus() {
+  var res = await popFetch('/api/v1/pharma/simulation/status');
+  var rolesEl = document.getElementById('simRolesActive');
+  var delivEl = document.getElementById('simDeliverables');
+  var logEl = document.getElementById('simLogEntries');
+  if (res.error) {
+    if (rolesEl) rolesEl.textContent = '--';
+    if (delivEl) delivEl.textContent = '--';
+    if (logEl) logEl.textContent = '--';
+    return;
+  }
+  var d = res.data;
+  if (rolesEl) rolesEl.textContent = d.roles_active || 0;
+  if (delivEl) delivEl.textContent = d.deliverables_count || 0;
+  if (logEl) logEl.textContent = d.log_entries_count || 0;
+}
+
+async function simRunSimulation(containerId) {
+  var btn = document.getElementById('simRunBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '&#9203; Running...'; }
+  var res = await popFetch('/api/v1/pharma/simulation/run');
+  if (btn) { btn.disabled = false; btn.innerHTML = '&#9654; Run Simulation'; }
+  if (res.error) {
+    var el = document.getElementById(containerId);
+    if (el) {
+      var errDiv = document.createElement('div');
+      errDiv.style.cssText = 'color:var(--danger); font-size:12px; margin-bottom:8px;';
+      errDiv.textContent = 'Simulation error: ' + res.error;
+      el.prepend(errDiv);
+      setTimeout(function() { errDiv.remove(); }, 5000);
+    }
+    return;
+  }
+  // Refresh all panels
+  await simRefreshStatus();
+  await Promise.all([simRefreshTree(), simRefreshLog()]);
+  // If a role was selected, refresh deliverables too
+  if (_simSelectedRole) {
+    await simLoadDeliverables(_simSelectedRole);
+  }
+}
+
+function simToggleAutoRefresh(containerId) {
+  var cb = document.getElementById('simAutoRefresh');
+  if (_simAutoRefreshTimer) {
+    clearInterval(_simAutoRefreshTimer);
+    _simAutoRefreshTimer = null;
+  }
+  if (cb && cb.checked) {
+    _simAutoRefreshTimer = setInterval(async function() {
+      // Only refresh if the simulation tab is still active
+      if (currentTask !== 'pharma-simulation') {
+        clearInterval(_simAutoRefreshTimer);
+        _simAutoRefreshTimer = null;
+        return;
+      }
+      await simRefreshStatus();
+      await Promise.all([simRefreshTree(), simRefreshLog()]);
+      if (_simSelectedRole) { await simLoadDeliverables(_simSelectedRole); }
+    }, 5000);
+  }
+}
+
+async function simRefreshTree() {
+  var container = document.getElementById('simTreeContainer');
+  if (!container) return;
+  var res = await popFetch('/api/v1/pharma/simulation/tree');
+  if (res.error) {
+    container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">Tree not available. Run the simulation first.</div>';
+    return;
+  }
+  var tree = res.data;
+  if (!tree || !tree.id) {
+    container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No delegation tree data. Run the simulation to populate.</div>';
+    return;
+  }
+  // Build SVG tree from hierarchical data
+  var nodeList = [];
+  simFlattenTree(tree, 0, nodeList);
+  var nodeH = 36, nodeW = 180, levelIndent = 30, gapY = 6;
+  var svgH = nodeList.length * (nodeH + gapY) + 20;
+  var svgW = 420;
+
+  var svg = '<svg class="sim-tree-svg" viewBox="0 0 ' + svgW + ' ' + svgH + '" width="100%" height="auto">';
+
+  // Draw connection lines first
+  nodeList.forEach(function(node, i) {
+    var x = 10 + node.depth * levelIndent;
+    var y = 10 + i * (nodeH + gapY);
+    if (node.parentIndex !== null) {
+      var px = 10 + nodeList[node.parentIndex].depth * levelIndent;
+      var py = 10 + node.parentIndex * (nodeH + gapY);
+      // Vertical line down from parent then horizontal to child
+      var cornerX = px + 6;
+      var cornerY = y + nodeH / 2;
+      svg += '<line x1="' + cornerX + '" y1="' + (py + nodeH) + '" x2="' + cornerX + '" y2="' + cornerY + '" stroke="var(--border)" stroke-width="1.5"/>';
+      svg += '<line x1="' + cornerX + '" y1="' + cornerY + '" x2="' + x + '" y2="' + cornerY + '" stroke="var(--border)" stroke-width="1.5"/>';
+    }
+  });
+
+  // Draw nodes
+  nodeList.forEach(function(node, i) {
+    var x = 10 + node.depth * levelIndent;
+    var y = 10 + i * (nodeH + gapY);
+    var statusColor = node.status === 'completed' ? '#059669' : node.status === 'in_progress' ? '#d97706' : '#9ca3af';
+    var fillColor = node.status === 'completed' ? 'var(--success-light)' : node.status === 'in_progress' ? 'var(--warning-light)' : 'var(--surface-hover)';
+    var isSelected = _simSelectedRole === node.id;
+    var strokeColor = isSelected ? '#7c3aed' : 'var(--border)';
+    var strokeW = isSelected ? 2.5 : 1;
+
+    svg += '<g class="sim-tree-node" onclick="simSelectRole(\'' + escapeHtml(node.id) + '\', \'' + escapeHtml(node.title) + '\')">';
+    svg += '<rect x="' + x + '" y="' + y + '" width="' + nodeW + '" height="' + nodeH + '" fill="' + fillColor + '" stroke="' + strokeColor + '" stroke-width="' + strokeW + '"/>';
+    // Status dot
+    svg += '<circle cx="' + (x + 12) + '" cy="' + (y + nodeH / 2) + '" r="4" fill="' + statusColor + '"/>';
+    // Role name
+    var displayName = node.title.length > 18 ? node.title.substring(0, 17) + '\u2026' : node.title;
+    svg += '<text x="' + (x + 22) + '" y="' + (y + 15) + '" font-size="11" font-weight="600" fill="var(--text)">' + escapeHtml(displayName) + '</text>';
+    // Deliverables count
+    var delivCount = node.deliverables_count || 0;
+    svg += '<text x="' + (x + 22) + '" y="' + (y + 28) + '" font-size="9" fill="var(--text-secondary)">' + delivCount + ' deliverable' + (delivCount !== 1 ? 's' : '') + '</text>';
+    svg += '</g>';
+  });
+
+  svg += '</svg>';
+
+  // Legend
+  svg += '<div style="display:flex; gap:14px; font-size:11px; color:var(--text-secondary); margin-top:8px;">';
+  svg += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:50%; background:#059669; display:inline-block;"></span>Completed</span>';
+  svg += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:50%; background:#d97706; display:inline-block;"></span>In Progress</span>';
+  svg += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; border-radius:50%; background:#9ca3af; display:inline-block;"></span>Pending</span>';
+  svg += '</div>';
+
+  container.innerHTML = svg;
+}
+
+function simFlattenTree(node, depth, list, parentIndex) {
+  var idx = list.length;
+  list.push({
+    id: node.id || node.role_id || '',
+    title: node.title || node.name || node.role || '',
+    status: node.status || 'pending',
+    deliverables_count: node.deliverables_count || (node.deliverables ? node.deliverables.length : 0),
+    depth: depth,
+    parentIndex: parentIndex !== undefined ? parentIndex : null
+  });
+  var children = node.children || node.reports || [];
+  children.forEach(function(child) {
+    simFlattenTree(child, depth + 1, list, idx);
+  });
+}
+
+async function simSelectRole(roleId, roleTitle) {
+  _simSelectedRole = roleId;
+  // Update tree highlighting
+  await simRefreshTree();
+  // Update deliverables label
+  var label = document.getElementById('simDelivRoleLabel');
+  if (label) label.textContent = '- ' + roleTitle;
+  // Load deliverables
+  await simLoadDeliverables(roleId);
+}
+
+async function simLoadDeliverables(roleId) {
+  var container = document.getElementById('simDelivContainer');
+  if (!container) return;
+  container.innerHTML = popLoadingHtml('Loading deliverables...');
+  var res = await popFetch('/api/v1/pharma/simulation/deliverables/' + encodeURIComponent(roleId));
+  if (res.error) {
+    container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No deliverables available for this role.</div>';
+    return;
+  }
+  var deliverables = res.data;
+  if (!deliverables || !Array.isArray(deliverables) || deliverables.length === 0) {
+    // Try data.deliverables if response is wrapped
+    if (res.data && Array.isArray(res.data.deliverables)) {
+      deliverables = res.data.deliverables;
+    }
+    if (!deliverables || deliverables.length === 0) {
+      container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No deliverables found for this role.</div>';
+      return;
+    }
+  }
+  var html = '';
+  deliverables.forEach(function(d, i) {
+    var status = d.status || 'pending';
+    var statusClass = 'status-' + status.replace(/\s+/g, '_');
+    var statusLabel = status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
+    html += '<div class="sim-deliv-card ' + statusClass + '" onclick="this.classList.toggle(\'expanded\')">';
+    html += '<div class="sim-deliv-title">' + escapeHtml(d.title || d.name || 'Deliverable ' + (i+1)) + '</div>';
+    html += '<div class="sim-deliv-meta">';
+    if (d.type) html += '<span>Type: ' + escapeHtml(d.type) + '</span>';
+    html += '<span>Status: ' + escapeHtml(statusLabel) + '</span>';
+    if (d.regulatory_basis || d.regulation) html += '<span>Reg: ' + escapeHtml(d.regulatory_basis || d.regulation) + '</span>';
+    html += '</div>';
+    if (d.content || d.description || d.details) {
+      html += '<div class="sim-deliv-content">' + escapeHtml(d.content || d.description || d.details) + '</div>';
+    }
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+async function simRefreshLog() {
+  var container = document.getElementById('simLogContainer');
+  if (!container) return;
+  var res = await popFetch('/api/v1/pharma/simulation/log?limit=50');
+  if (res.error) {
+    container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">Activity log not available. Run the simulation first.</div>';
+    return;
+  }
+  var entries = res.data;
+  if (!entries || !Array.isArray(entries)) {
+    if (res.data && Array.isArray(res.data.entries)) {
+      entries = res.data.entries;
+    }
+  }
+  if (!entries || entries.length === 0) {
+    container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No log entries yet. Run the simulation to generate activity.</div>';
+    return;
+  }
+  var html = '<table class="sim-log-table"><thead><tr><th>Time</th><th>Role</th><th>Action</th><th>Target</th><th>Description</th><th>Regulation</th></tr></thead><tbody>';
+  entries.forEach(function(entry) {
+    var action = entry.action || '';
+    var actionLower = action.toLowerCase();
+    var actionClass = '';
+    if (actionLower.indexOf('delegat') >= 0) actionClass = 'sim-action-delegated';
+    else if (actionLower.indexOf('complet') >= 0) actionClass = 'sim-action-completed';
+    else if (actionLower.indexOf('review') >= 0) actionClass = 'sim-action-reviewed';
+    else if (actionLower.indexOf('escalat') >= 0) actionClass = 'sim-action-escalated';
+
+    var time = entry.time || entry.timestamp || '';
+    if (time && time.length > 19) time = time.substring(11, 19);
+    else if (time && time.indexOf('T') > 0) time = time.split('T')[1].substring(0, 8);
+
+    html += '<tr>';
+    html += '<td style="font-family:var(--mono); font-size:11px; white-space:nowrap;">' + escapeHtml(time) + '</td>';
+    html += '<td style="font-weight:500;">' + escapeHtml(entry.role || entry.role_id || '') + '</td>';
+    html += '<td><span class="' + actionClass + '">' + escapeHtml(action) + '</span></td>';
+    html += '<td>' + escapeHtml(entry.target || entry.target_role || '') + '</td>';
+    html += '<td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="' + escapeHtml(entry.description || '') + '">' + escapeHtml(entry.description || '') + '</td>';
+    html += '<td style="font-size:10px; color:var(--text-secondary);">' + escapeHtml(entry.regulation || '') + '</td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
 }
 
 </script>

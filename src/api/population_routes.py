@@ -144,6 +144,35 @@ from src.data.pharma_org import (
     get_role_skills,
 )
 
+# Pharma simulation module — may not exist yet (built in parallel).
+# We always define the callable names so that mock.patch works in tests.
+try:
+    from src.data.pharma_simulation import (
+        run_simulation as _run_simulation,
+        get_simulation_status as _get_simulation_status,
+        get_role_deliverables as _get_role_deliverables,
+        get_activity_log as _get_activity_log,
+        get_delegation_tree as _get_delegation_tree,
+    )
+    _SIMULATION_AVAILABLE = True
+except ImportError:
+    _SIMULATION_AVAILABLE = False
+
+    def _run_simulation() -> dict:  # type: ignore[misc]
+        return {}
+
+    def _get_simulation_status() -> dict:  # type: ignore[misc]
+        return {}
+
+    def _get_role_deliverables(role_id: str) -> list:  # type: ignore[misc]
+        return []
+
+    def _get_activity_log(limit: int = 50) -> list:  # type: ignore[misc]
+        return []
+
+    def _get_delegation_tree() -> dict:  # type: ignore[misc]
+        return {}
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -2935,4 +2964,232 @@ async def pharma_role_skills(role_id: str) -> dict:
         "role_id": role_id,
         "skills": skills,
         "total_skills": len(skills),
+    }
+
+
+# ===========================================================================
+# Pharma Simulation Endpoints
+# ===========================================================================
+
+
+def _simulation_not_available_response() -> dict:
+    """Standard response when the simulation module is not yet available."""
+    return {
+        "request_id": str(uuid.uuid4()),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "status": "unavailable",
+        "message": (
+            "Simulation module (src/data/pharma_simulation.py) is not yet "
+            "available. It is being built in parallel."
+        ),
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/simulation/run -- Run full simulation
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/simulation/run",
+    tags=["Pharma Simulation"],
+    summary="Run full pharma company simulation",
+    description=(
+        "Executes the full pharmaceutical company simulation, running all "
+        "agent roles through their delegation and deliverable workflow. "
+        "Returns comprehensive results including deliverables, activity log, "
+        "and delegation tree."
+    ),
+)
+async def run_pharma_simulation() -> dict:
+    """Run the full pharma company simulation."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    if not _SIMULATION_AVAILABLE:
+        return _simulation_not_available_response()
+
+    try:
+        result = _run_simulation()
+    except Exception as exc:
+        logger.exception("Simulation run failed")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Simulation run failed: {exc}",
+        ) from exc
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        **result,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/simulation/status -- Simulation status summary
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/simulation/status",
+    tags=["Pharma Simulation"],
+    summary="Get simulation status summary",
+    description=(
+        "Returns a summary of the current simulation state including "
+        "role counts, deliverable counts, completion percentages, and "
+        "overall health indicators."
+    ),
+)
+async def get_simulation_status() -> dict:
+    """Get current simulation status summary."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    if not _SIMULATION_AVAILABLE:
+        return _simulation_not_available_response()
+
+    try:
+        status = _get_simulation_status()
+    except Exception as exc:
+        logger.exception("Failed to get simulation status")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get simulation status: {exc}",
+        ) from exc
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        **status,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/simulation/log -- Activity log
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/simulation/log",
+    tags=["Pharma Simulation"],
+    summary="Get simulation activity log",
+    description=(
+        "Returns the activity log for the simulation, showing delegation "
+        "events, deliverable completions, and status changes. Supports a "
+        "limit parameter to control how many entries are returned."
+    ),
+)
+async def get_simulation_log(
+    limit: int = Query(
+        default=50,
+        ge=1,
+        le=1000,
+        description="Maximum number of log entries to return (1-1000).",
+    ),
+) -> dict:
+    """Get activity log entries."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    if not _SIMULATION_AVAILABLE:
+        return _simulation_not_available_response()
+
+    try:
+        entries = _get_activity_log(limit=limit)
+    except Exception as exc:
+        logger.exception("Failed to get simulation activity log")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get simulation activity log: {exc}",
+        ) from exc
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "entries": entries,
+        "total_entries": len(entries),
+        "limit": limit,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/simulation/deliverables/{role_id} -- Role deliverables
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/simulation/deliverables/{role_id}",
+    tags=["Pharma Simulation"],
+    summary="Get deliverables for a specific role",
+    description=(
+        "Returns the list of deliverables produced by or assigned to the "
+        "specified organizational role, including status, timestamps, and "
+        "delegation chain information."
+    ),
+)
+async def get_role_deliverables_endpoint(role_id: str) -> dict:
+    """Get deliverables for a specific role."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    if not _SIMULATION_AVAILABLE:
+        return _simulation_not_available_response()
+
+    # Validate role_id against known org roles first
+    if role_id not in ORG_ROLES:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Role '{role_id}' not found. "
+                   f"Valid role IDs: {sorted(ORG_ROLES.keys())}",
+        )
+
+    try:
+        deliverables = _get_role_deliverables(role_id)
+    except Exception as exc:
+        logger.exception("Failed to get deliverables for role '%s'", role_id)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get deliverables for role '{role_id}': {exc}",
+        ) from exc
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "role_id": role_id,
+        "deliverables": deliverables,
+        "total_deliverables": len(deliverables),
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/simulation/tree -- Delegation tree
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/simulation/tree",
+    tags=["Pharma Simulation"],
+    summary="Get delegation tree",
+    description=(
+        "Returns the full delegation tree showing which roles delegated "
+        "what tasks to which subordinate roles, forming a hierarchical "
+        "view of the simulation's task breakdown."
+    ),
+)
+async def get_delegation_tree_endpoint() -> dict:
+    """Get the delegation tree showing who delegated what to whom."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    if not _SIMULATION_AVAILABLE:
+        return _simulation_not_available_response()
+
+    try:
+        tree = _get_delegation_tree()
+    except Exception as exc:
+        logger.exception("Failed to get delegation tree")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get delegation tree: {exc}",
+        ) from exc
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        **tree,
     }
