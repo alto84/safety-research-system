@@ -541,6 +541,135 @@ body {
   color: var(--primary); border-bottom-color: var(--primary);
 }
 
+/* Pharma Simulation Tab Separator & Styles */
+.task-btn[data-task="pharma-org"],
+.task-btn[data-task="pharma-regulatory"],
+.task-btn[data-task="pharma-pipeline"],
+.task-btn[data-task="pharma-pv"],
+.task-btn[data-task="pharma-quality"] {
+  color: #7c3aed;
+}
+.task-btn[data-task="pharma-org"]:hover,
+.task-btn[data-task="pharma-regulatory"]:hover,
+.task-btn[data-task="pharma-pipeline"]:hover,
+.task-btn[data-task="pharma-pv"]:hover,
+.task-btn[data-task="pharma-quality"]:hover {
+  color: var(--text);
+}
+.task-btn[data-task="pharma-org"].active,
+.task-btn[data-task="pharma-regulatory"].active,
+.task-btn[data-task="pharma-pipeline"].active,
+.task-btn[data-task="pharma-pv"].active,
+.task-btn[data-task="pharma-quality"].active {
+  color: #7c3aed; border-bottom-color: #7c3aed;
+}
+
+/* Org Chart styles */
+.org-chart-svg text { font-family: var(--font); }
+.org-node { cursor: pointer; transition: filter 0.2s; }
+.org-node:hover { filter: brightness(0.95) drop-shadow(0 2px 6px rgba(0,0,0,0.15)); }
+.org-node rect { rx: 10; ry: 10; }
+.org-detail-panel {
+  background: var(--surface-hover); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px; margin-top: 16px;
+}
+.org-detail-panel h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.org-detail-section { margin-bottom: 12px; }
+.org-detail-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 4px; }
+.org-detail-list { list-style: none; padding: 0; }
+.org-detail-list li { font-size: 13px; padding: 2px 0; color: var(--text); }
+.org-detail-list li::before { content: '\\2022'; color: var(--primary); margin-right: 8px; }
+.org-dept-clinical { --dept-color: #2563eb; }
+.org-dept-quality { --dept-color: #059669; }
+.org-dept-regulatory { --dept-color: #7c3aed; }
+.org-dept-commercial { --dept-color: #6b7280; }
+.org-dept-manufacturing { --dept-color: #d97706; }
+.org-dept-safety { --dept-color: #dc2626; }
+.org-dept-executive { --dept-color: #1e40af; }
+.org-status-active { fill: #059669; }
+.org-status-idle { fill: #d97706; }
+.org-status-escalation { fill: #dc2626; }
+
+/* Regulatory map styles */
+.reg-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px; cursor: pointer; transition: var(--transition);
+}
+.reg-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.reg-card-id { font-family: var(--mono); font-size: 11px; color: var(--text-secondary); }
+.reg-card-title { font-size: 13px; font-weight: 600; margin-top: 4px; }
+.reg-category-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 12px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.reg-cat-clinical { background: #dbeafe; color: #1e40af; }
+.reg-cat-safety { background: #fee2e2; color: #b91c1c; }
+.reg-cat-quality { background: #d1fae5; color: #047857; }
+.reg-cat-ethics { background: #ede9fe; color: #6d28d9; }
+.reg-cat-submissions { background: #ffedd5; color: #9a3412; }
+.reg-cat-cell-therapy { background: #ccfbf1; color: #0f766e; }
+[data-theme="dark"] .reg-cat-clinical { background: #1e3a5f; color: #93c5fd; }
+[data-theme="dark"] .reg-cat-safety { background: #3f1515; color: #fca5a5; }
+[data-theme="dark"] .reg-cat-quality { background: #0a3020; color: #6ee7b7; }
+[data-theme="dark"] .reg-cat-ethics { background: #2e1065; color: #c4b5fd; }
+[data-theme="dark"] .reg-cat-submissions { background: #3f1f08; color: #fdba74; }
+[data-theme="dark"] .reg-cat-cell-therapy { background: #042f2e; color: #5eead4; }
+.reg-matrix-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.reg-matrix-table th { padding: 6px 8px; background: var(--surface-hover); border: 1px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.reg-matrix-table td { padding: 6px 8px; border: 1px solid var(--border); text-align: center; }
+.reg-matrix-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.reg-detail-overlay { background: var(--surface-hover); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-top: 12px; }
+
+/* Pipeline / Gantt styles */
+.gantt-svg text { font-family: var(--font); }
+.gantt-bar { rx: 4; ry: 4; cursor: pointer; transition: filter 0.2s; }
+.gantt-bar:hover { filter: brightness(0.9); }
+.gantt-completed { fill: #059669; }
+.gantt-in-progress { fill: #2563eb; }
+.gantt-planned { fill: #9ca3af; }
+.milestone-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px; flex: 1; min-width: 220px;
+}
+.milestone-date { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--primary); }
+.milestone-name { font-size: 13px; font-weight: 600; margin-top: 4px; }
+.milestone-owner { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.milestone-regs { font-size: 10px; color: var(--text-secondary); margin-top: 4px; }
+
+/* PV Dashboard styles */
+.pv-header-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.pv-header-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px; text-align: center; box-shadow: var(--shadow);
+}
+.pv-header-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+.pv-header-value { font-size: 24px; font-weight: 700; font-family: var(--mono); margin: 4px 0; }
+.pv-signal-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.pv-signal-table th { padding: 8px 10px; background: var(--surface-hover); border: 1px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; text-align: left; }
+.pv-signal-table td { padding: 8px 10px; border: 1px solid var(--border); }
+.pv-countdown { font-family: var(--mono); font-weight: 600; }
+.pv-countdown-urgent { color: var(--danger); }
+.pv-countdown-ok { color: var(--success); }
+
+/* Quality metric cards */
+.quality-metric-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.quality-metric-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px; box-shadow: var(--shadow);
+}
+.quality-metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+.quality-metric-value { font-size: 24px; font-weight: 700; font-family: var(--mono); margin: 4px 0; }
+.quality-metric-sub { font-size: 11px; color: var(--text-secondary); }
+.quality-overdue { color: var(--danger); }
+.capa-status-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 12px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+}
+.capa-open { background: var(--warning-light); color: #92400e; }
+.capa-in-progress { background: var(--info-light); color: var(--info); }
+.capa-closed { background: var(--success-light); color: #047857; }
+.capa-overdue { background: var(--danger-light); color: #b91c1c; }
+
 /* Therapy selector bar */
 .therapy-selector-bar {
   background: var(--surface);
@@ -924,6 +1053,12 @@ body {
     <button class="task-btn" data-task="architecture" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9881;</span> System Architecture</button>
     <button class="task-btn" data-task="science" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128300;</span> Scientific Basis</button>
     <button class="task-btn" data-task="publication" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128220;</span> Publication Analysis</button>
+    <div class="tab-separator" aria-hidden="true"></div>
+    <button class="task-btn" data-task="pharma-org" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#127970;</span> Org Chart</button>
+    <button class="task-btn" data-task="pharma-regulatory" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128220;</span> Regulatory Map</button>
+    <button class="task-btn" data-task="pharma-pipeline" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128200;</span> Clinical Pipeline</button>
+    <button class="task-btn" data-task="pharma-pv" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128721;</span> PV Dashboard</button>
+    <button class="task-btn" data-task="pharma-quality" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9989;</span> Quality Metrics</button>
   </div>
 </nav>
 
@@ -1253,7 +1388,7 @@ function activateTab(btn) {
   currentTask = btn.dataset.task;
 
   // Hide patient sidebar for population-level tabs
-  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture', 'science'];
+  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture', 'science', 'pharma-org', 'pharma-regulatory', 'pharma-pipeline', 'pharma-pv', 'pharma-quality'];
   const sidebar = document.querySelector('.patient-sidebar');
   const mainLayout = document.querySelector('.main-layout');
   if (populationTabs.includes(btn.dataset.task)) {
@@ -1304,6 +1439,11 @@ function renderTaskContent() {
     case 'architecture': container.innerHTML = renderSystemArchitecture(); break;
     case 'science': container.innerHTML = renderScientificBasis(); break;
     case 'publication': container.innerHTML = renderPublicationAnalysis(); break;
+    case 'pharma-org': container.innerHTML = renderPharmaOrgChart(); break;
+    case 'pharma-regulatory': container.innerHTML = renderPharmaRegulatoryMap(); break;
+    case 'pharma-pipeline': container.innerHTML = renderPharmaPipeline(); break;
+    case 'pharma-pv': container.innerHTML = renderPharmaPVDashboard(); break;
+    case 'pharma-quality': container.innerHTML = renderPharmaQualityMetrics(); break;
     default: container.innerHTML = renderOverview();
   }
 }
@@ -6601,6 +6741,681 @@ function pubRenderReferences() {
     items += '<div class="pub-ref-item"><span class="pub-ref-pmid">PMID:' + r.pmid + '</span> ' + r.citation + ' <a class="pub-ref-link" href="https://pubmed.ncbi.nlm.nih.gov/' + r.pmid + '/" target="_blank" rel="noopener">[PubMed]</a></div>';
   });
   return '<div class="pub-section"><div class="pub-section-title">References (' + pubData.references.length + ')</div><div class="pub-ref-list">' + items + '</div></div>';
+}
+
+// ============================================================================
+// PHARMA SIMULATION TAB RENDERERS
+// ============================================================================
+
+// ---------------------------------------------------------------------------
+// TAB 18: ORG CHART
+// ---------------------------------------------------------------------------
+function renderPharmaOrgChart() {
+  var containerId = 'pharmaOrgContent';
+  setTimeout(function() { loadPharmaOrgChart(containerId); }, 0);
+  return '<div class="card">' +
+    '<div class="card-header">' +
+    '<div class="card-title">&#127970; Organizational Hierarchy</div>' +
+    '<span style="font-size:12px; color:var(--text-secondary);">Simulated Cell Therapy Company</span>' +
+    '</div>' +
+    '<div class="card-body" id="' + containerId + '">' +
+    popLoadingHtml('Loading org chart...') +
+    '</div></div>';
+}
+
+async function loadPharmaOrgChart(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var res = await popFetch('/api/v1/pharma/org');
+  if (res.error) { el.innerHTML = popErrorHtml('Failed to load org data: ' + res.error); return; }
+  var d = res.data;
+  var rolesDict = d.roles || {};
+
+  // Convert dict to array and build tree
+  var roles = [];
+  Object.keys(rolesDict).forEach(function(k) { roles.push(rolesDict[k]); });
+  var children = {};
+  roles.forEach(function(r) {
+    var pid = r.reports_to || '__root__';
+    if (!children[pid]) children[pid] = [];
+    children[pid].push(r);
+  });
+
+  // Infer department from regulatory frameworks and skills
+  function inferDept(r) {
+    var id = r.role_id;
+    if (id === 'ceo') return 'executive';
+    if (id === 'cmo') return 'clinical';
+    if (id === 'head_cmc') return 'manufacturing';
+    if (id === 'head_qa') return 'quality';
+    if (id === 'head_commercial') return 'commercial';
+    if (id === 'head_pv') return 'safety';
+    if (id === 'vp_regulatory') return 'regulatory';
+    if (id === 'vp_clinops' || id === 'head_biostats' || id === 'head_clindev' || id === 'vp_med_affairs') return 'clinical';
+    return 'clinical';
+  }
+
+  // Department colors for SVG fills
+  var deptColors = {
+    executive: { bg: '#dbeafe', stroke: '#1e40af', text: '#1e40af' },
+    clinical: { bg: '#dbeafe', stroke: '#2563eb', text: '#1e40af' },
+    manufacturing: { bg: '#fef3c7', stroke: '#d97706', text: '#92400e' },
+    quality: { bg: '#d1fae5', stroke: '#059669', text: '#047857' },
+    commercial: { bg: '#f3f4f6', stroke: '#6b7280', text: '#374151' },
+    safety: { bg: '#fee2e2', stroke: '#dc2626', text: '#b91c1c' },
+    regulatory: { bg: '#ede9fe', stroke: '#7c3aed', text: '#5b21b6' }
+  };
+  var statusColors = { active: '#059669', idle: '#d97706', escalation: '#dc2626', pending: '#d97706' };
+
+  // Layout: CEO at top, then C-suite row, then CMO reports row
+  var cSuite = (children['ceo'] || []);
+  var cmoReports = (children['cmo'] || []);
+
+  var nodeW = 180, nodeH = 56, gapX = 20, gapY = 70;
+  var totalW1 = cSuite.length * nodeW + (cSuite.length - 1) * gapX;
+  var totalW2 = cmoReports.length * nodeW + (cmoReports.length - 1) * gapX;
+  var svgW = Math.max(totalW1, totalW2, 400) + 40;
+  var svgH = 3 * nodeH + 2 * gapY + 60;
+  var cx = svgW / 2;
+
+  var svg = '<svg class="org-chart-svg" viewBox="0 0 ' + svgW + ' ' + svgH + '" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">';
+
+  function drawNode(r, x, y) {
+    var dept = inferDept(r);
+    var dc = deptColors[dept] || deptColors.commercial;
+    var sc = statusColors[r.status] || statusColors.idle;
+    svg += '<g class="org-node" onclick="showOrgDetail(\'' + r.role_id + '\')" data-role="' + r.role_id + '">';
+    svg += '<rect x="' + x + '" y="' + y + '" width="' + nodeW + '" height="' + nodeH + '" rx="10" ry="10" fill="' + dc.bg + '" stroke="' + dc.stroke + '" stroke-width="1.5"/>';
+    var titleText = r.title.length > 24 ? r.title.substring(0, 22) + '..' : r.title;
+    svg += '<text x="' + (x + nodeW/2) + '" y="' + (y + 22) + '" text-anchor="middle" font-size="11" font-weight="600" fill="' + dc.text + '">' + escapeHtml(titleText) + '</text>';
+    svg += '<text x="' + (x + nodeW/2) + '" y="' + (y + 37) + '" text-anchor="middle" font-size="10" fill="' + dc.text + '" opacity="0.7">' + escapeHtml(r.role_id) + '</text>';
+    svg += '<circle cx="' + (x + nodeW - 12) + '" cy="' + (y + 12) + '" r="5" fill="' + sc + '"/>';
+    svg += '</g>';
+    return { cx: x + nodeW/2, bottom: y + nodeH, top: y };
+  }
+
+  function drawLine(x1, y1, x2, y2) {
+    svg += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="var(--border)" stroke-width="1.5"/>';
+  }
+
+  // Draw CEO (row 0)
+  var ceoRole = rolesDict['ceo'];
+  var ceoX = cx - nodeW/2;
+  var ceoY = 20;
+  var ceoPos = ceoRole ? drawNode(ceoRole, ceoX, ceoY) : { cx: cx, bottom: ceoY + nodeH, top: ceoY };
+
+  // Draw C-suite (row 1)
+  var row1StartX = cx - totalW1/2;
+  var row1Y = ceoY + nodeH + gapY;
+  var row1Positions = [];
+  cSuite.forEach(function(r, i) {
+    var x = row1StartX + i * (nodeW + gapX);
+    var pos = drawNode(r, x, row1Y);
+    row1Positions.push({ pos: pos, role: r });
+    drawLine(ceoPos.cx, ceoPos.bottom, pos.cx, pos.top);
+  });
+
+  // Draw CMO reports (row 2)
+  var cmoEntry = row1Positions.find(function(e) { return e.role.role_id === 'cmo'; });
+  var cmoPos = cmoEntry ? cmoEntry.pos : null;
+  if (cmoPos && cmoReports.length > 0) {
+    var row2StartX = cx - totalW2/2;
+    var row2Y = row1Y + nodeH + gapY;
+    cmoReports.forEach(function(r, i) {
+      var x = row2StartX + i * (nodeW + gapX);
+      var pos = drawNode(r, x, row2Y);
+      drawLine(cmoPos.cx, cmoPos.bottom, pos.cx, pos.top);
+    });
+  }
+
+  svg += '</svg>';
+
+  // Legend
+  var legend = '<div style="display:flex; flex-wrap:wrap; gap:14px; margin-top:12px; font-size:12px; color:var(--text-secondary);">';
+  [{ l:'Clinical', c:'#2563eb' }, { l:'Quality', c:'#059669' }, { l:'Regulatory', c:'#7c3aed' }, { l:'Manufacturing', c:'#d97706' }, { l:'Safety', c:'#dc2626' }, { l:'Commercial', c:'#6b7280' }].forEach(function(li) {
+    legend += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:12px; height:12px; border-radius:3px; background:' + li.c + '; display:inline-block;"></span>' + li.l + '</span>';
+  });
+  legend += '&nbsp;&nbsp;|&nbsp;&nbsp;';
+  [{ l:'Active', c:'#059669' }, { l:'Idle', c:'#d97706' }].forEach(function(si) {
+    legend += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:8px; height:8px; border-radius:50%; background:' + si.c + '; display:inline-block;"></span>' + si.l + '</span>';
+  });
+  legend += '</div>';
+
+  var detailHtml = '<div id="orgDetailPanel" class="org-detail-panel" style="display:none;"></div>';
+  window._pharmaOrgRoles = rolesDict;
+  el.innerHTML = svg + legend + detailHtml;
+}
+
+function showOrgDetail(roleId) {
+  var r = window._pharmaOrgRoles && window._pharmaOrgRoles[roleId];
+  if (!r) return;
+  var panel = document.getElementById('orgDetailPanel');
+  if (!panel) return;
+  var html = '<h3>' + escapeHtml(r.title) + ' <span style="font-size:12px; font-weight:400; color:var(--text-secondary);">' + escapeHtml(r.role_id) + '</span></h3>';
+  html += '<div style="margin-bottom:8px;">';
+  html += '<span style="display:inline-flex; align-items:center; gap:4px; font-size:12px;"><span style="width:8px; height:8px; border-radius:50%; background:' + (r.status === 'active' ? '#059669' : '#d97706') + '; display:inline-block;"></span>' + escapeHtml(r.status) + '</span>';
+  if (r.reports_to) html += '<span style="font-size:12px; color:var(--text-secondary); margin-left:12px;">Reports to: ' + escapeHtml(r.reports_to) + '</span>';
+  html += '</div>';
+  html += '<div class="org-detail-section"><div class="org-detail-label">Current Task</div><div style="font-size:13px;">' + escapeHtml(r.current_task) + '</div></div>';
+  html += '<div class="org-detail-section"><div class="org-detail-label">Responsibilities</div><ul class="org-detail-list">';
+  (r.responsibilities || []).forEach(function(resp) { html += '<li>' + escapeHtml(resp) + '</li>'; });
+  html += '</ul></div>';
+  if (r.regulatory_frameworks && r.regulatory_frameworks.length > 0) {
+    html += '<div class="org-detail-section"><div class="org-detail-label">Regulatory Frameworks</div><div style="display:flex; flex-wrap:wrap; gap:6px;">';
+    r.regulatory_frameworks.forEach(function(rf) { html += '<span style="font-size:11px; padding:2px 8px; background:var(--surface); border:1px solid var(--border); border-radius:12px;">' + escapeHtml(rf) + '</span>'; });
+    html += '</div></div>';
+  }
+  if (r.skills && r.skills.length > 0) {
+    html += '<div class="org-detail-section"><div class="org-detail-label">Skills</div><div style="display:flex; flex-wrap:wrap; gap:6px;">';
+    r.skills.forEach(function(s) { html += '<span style="font-size:11px; padding:2px 8px; background:var(--primary-light); border-radius:12px; color:var(--primary);">' + escapeHtml(s) + '</span>'; });
+    html += '</div></div>';
+  }
+  panel.innerHTML = html;
+  panel.style.display = 'block';
+}
+
+
+// ---------------------------------------------------------------------------
+// TAB 19: REGULATORY MAP
+// ---------------------------------------------------------------------------
+function renderPharmaRegulatoryMap() {
+  var containerId = 'pharmaRegMapContent';
+  setTimeout(function() { loadPharmaRegulatoryMap(containerId); }, 0);
+  return '<div class="card">' +
+    '<div class="card-header">' +
+    '<div class="card-title">&#128220; Regulatory Framework Map</div>' +
+    '<span style="font-size:12px; color:var(--text-secondary);">Governing frameworks for CG-501 development</span>' +
+    '</div>' +
+    '<div class="card-body" id="' + containerId + '">' +
+    popLoadingHtml('Loading regulatory map...') +
+    '</div></div>';
+}
+
+async function loadPharmaRegulatoryMap(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var regRes = await popFetch('/api/v1/pharma/regulatory-map');
+  var orgRes = await popFetch('/api/v1/pharma/org');
+  if (regRes.error) { el.innerHTML = popErrorHtml('Failed to load regulatory map: ' + regRes.error); return; }
+  var d = regRes.data;
+  var fwDict = d.frameworks || {};
+  var catCounts = d.categories || {};
+  var rolesDict = (orgRes.data && orgRes.data.roles) || {};
+
+  // Convert to arrays with IDs
+  var frameworks = [];
+  Object.keys(fwDict).forEach(function(k) {
+    var f = Object.assign({ _id: k }, fwDict[k]);
+    frameworks.push(f);
+  });
+  var roles = [];
+  Object.keys(rolesDict).forEach(function(k) { roles.push(rolesDict[k]); });
+
+  var catBadgeClass = {
+    clinical: 'reg-cat-clinical', safety: 'reg-cat-safety', quality: 'reg-cat-quality',
+    preclinical: 'reg-cat-quality', biostatistics: 'reg-cat-clinical',
+    regulatory: 'reg-cat-submissions', manufacturing: 'reg-cat-cell-therapy',
+    commercial: 'reg-cat-submissions', corporate_governance: 'reg-cat-submissions'
+  };
+
+  // Group by category
+  var grouped = {};
+  frameworks.forEach(function(f) {
+    var cat = f.category;
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(f);
+  });
+
+  // Render cards by category
+  var cardsHtml = '';
+  Object.keys(grouped).forEach(function(cat) {
+    cardsHtml += '<div style="margin-bottom:20px;">';
+    cardsHtml += '<div style="font-size:13px; font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:8px;"><span class="reg-category-badge ' + (catBadgeClass[cat] || 'reg-cat-clinical') + '">' + escapeHtml(cat) + '</span> (' + grouped[cat].length + ' frameworks)</div>';
+    cardsHtml += '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px;">';
+    grouped[cat].forEach(function(f) {
+      cardsHtml += '<div class="reg-card" onclick="showRegDetail(\'' + f._id + '\')">';
+      cardsHtml += '<div class="reg-card-id">' + escapeHtml(f._id) + '</div>';
+      cardsHtml += '<div class="reg-card-title">' + escapeHtml(f.title) + '</div>';
+      cardsHtml += '<div style="margin-top:6px;"><span class="reg-category-badge ' + (catBadgeClass[f.category] || 'reg-cat-clinical') + '">' + escapeHtml(f.category) + '</span></div>';
+      cardsHtml += '</div>';
+    });
+    cardsHtml += '</div></div>';
+  });
+
+  // Matrix view: rows = regulations, columns = roles (check if role references framework)
+  var matrixHtml = '<div style="margin-top:24px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">Regulation-Role Applicability Matrix</div>';
+  matrixHtml += '<div style="overflow-x:auto;"><table class="reg-matrix-table"><thead><tr><th>Regulation</th>';
+  roles.forEach(function(r) {
+    var shortTitle = r.title.replace('Head of ', '').replace('VP of ', '').replace('Chief ', 'C');
+    if (shortTitle.length > 16) shortTitle = shortTitle.substring(0, 14) + '..';
+    matrixHtml += '<th style="font-size:10px; writing-mode:vertical-lr; transform:rotate(180deg); height:100px; white-space:nowrap;">' + escapeHtml(shortTitle) + '</th>';
+  });
+  matrixHtml += '</tr></thead><tbody>';
+  frameworks.forEach(function(f) {
+    var catCls = catBadgeClass[f.category] || '';
+    matrixHtml += '<tr><td style="font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px;" title="' + escapeHtml(f.title) + '"><span class="reg-category-badge ' + catCls + '" style="margin-right:4px;">' + escapeHtml(f.category) + '</span>' + escapeHtml(f._id) + '</td>';
+    roles.forEach(function(r) {
+      var applies = r.regulatory_frameworks && r.regulatory_frameworks.indexOf(f._id) >= 0;
+      matrixHtml += '<td>' + (applies ? '<span class="reg-matrix-dot" style="background:var(--primary);"></span>' : '') + '</td>';
+    });
+    matrixHtml += '</tr>';
+  });
+  matrixHtml += '</tbody></table></div></div>';
+
+  var detailHtml = '<div id="regDetailPanel" class="reg-detail-overlay" style="display:none;"></div>';
+  window._pharmaRegFrameworks = {};
+  frameworks.forEach(function(f) { window._pharmaRegFrameworks[f._id] = f; });
+  el.innerHTML = cardsHtml + matrixHtml + detailHtml;
+}
+
+function showRegDetail(regId) {
+  var f = window._pharmaRegFrameworks && window._pharmaRegFrameworks[regId];
+  if (!f) return;
+  var panel = document.getElementById('regDetailPanel');
+  if (!panel) return;
+  var catBadgeClass = {
+    clinical: 'reg-cat-clinical', safety: 'reg-cat-safety', quality: 'reg-cat-quality',
+    preclinical: 'reg-cat-quality', biostatistics: 'reg-cat-clinical',
+    regulatory: 'reg-cat-submissions', manufacturing: 'reg-cat-cell-therapy',
+    commercial: 'reg-cat-submissions', corporate_governance: 'reg-cat-submissions'
+  };
+  var html = '<div style="display:flex; justify-content:space-between; align-items:flex-start;">';
+  html += '<div><div style="font-size:16px; font-weight:700;">' + escapeHtml(f.title) + '</div>';
+  html += '<div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">' + escapeHtml(f._id) + '</div></div>';
+  html += '<span class="reg-category-badge ' + (catBadgeClass[f.category] || '') + '">' + escapeHtml(f.category) + '</span></div>';
+  html += '<div style="font-size:13px; margin-top:10px; color:var(--text);">' + escapeHtml(f.description) + '</div>';
+  if (f.url) {
+    html += '<div style="margin-top:8px;"><a href="' + escapeHtml(f.url) + '" target="_blank" rel="noopener" style="font-size:12px; color:var(--primary);">Reference link</a></div>';
+  }
+  panel.innerHTML = html;
+  panel.style.display = 'block';
+}
+
+
+// ---------------------------------------------------------------------------
+// TAB 20: CLINICAL PIPELINE
+// ---------------------------------------------------------------------------
+function renderPharmaPipeline() {
+  var containerId = 'pharmaPipelineContent';
+  setTimeout(function() { loadPharmaPipeline(containerId); }, 0);
+  return '<div class="card">' +
+    '<div class="card-header">' +
+    '<div class="card-title">&#128200; Clinical Pipeline</div>' +
+    '<span style="font-size:12px; color:var(--text-secondary);">CG-501 Anti-CD19 CAR-T for SLE</span>' +
+    '</div>' +
+    '<div class="card-body" id="' + containerId + '">' +
+    popLoadingHtml('Loading clinical pipeline...') +
+    '</div></div>';
+}
+
+async function loadPharmaPipeline(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var res = await popFetch('/api/v1/pharma/pipeline');
+  if (res.error) { el.innerHTML = popErrorHtml('Failed to load pipeline data: ' + res.error); return; }
+  var d = res.data;
+  var stages = d.stages || [];
+  var statusSummary = d.status_summary || {};
+
+  // Filter stages with dates for Gantt; show all in a list otherwise
+  var datedStages = stages.filter(function(s) { return s.start; });
+  var undatedStages = stages.filter(function(s) { return !s.start; });
+
+  // Status summary cards
+  var summaryHtml = '<div class="pop-grid" style="margin-bottom:16px;">';
+  summaryHtml += '<div class="pop-metric-card grade-low"><div class="pop-metric-label">Total Stages</div><div class="pop-metric-value">' + stages.length + '</div></div>';
+  Object.keys(statusSummary).forEach(function(st) {
+    var cls = st === 'completed' ? 'grade-low' : st === 'in_progress' ? 'grade-moderate' : '';
+    summaryHtml += '<div class="pop-metric-card ' + cls + '"><div class="pop-metric-label">' + escapeHtml(st.replace('_', ' ')) + '</div><div class="pop-metric-value">' + statusSummary[st] + '</div></div>';
+  });
+  summaryHtml += '</div>';
+
+  // Gantt chart for dated stages
+  var ganttHtml = '';
+  if (datedStages.length > 0) {
+    // Parse YYYY-MM to date
+    function parseYM(ym) { return new Date(ym + '-01'); }
+    var minDate = parseYM('2023-01');
+    var maxDate = parseYM('2026-06');
+    datedStages.forEach(function(s) {
+      if (s.end) { var ed = parseYM(s.end); if (ed > maxDate) maxDate = ed; }
+    });
+    maxDate = new Date(maxDate.getTime() + 90 * 24 * 60 * 60 * 1000); // pad 3 months
+    var totalDays = (maxDate - minDate) / (1000 * 60 * 60 * 24);
+    var today = new Date();
+
+    var labelW = 180, chartW = 600, barH = 28, rowH = 40, padTop = 40;
+    var svgW = labelW + chartW + 40;
+    var svgH = padTop + datedStages.length * rowH + 30;
+
+    function dateToX(dt) {
+      var days = (dt - minDate) / (1000 * 60 * 60 * 24);
+      return labelW + 20 + (days / totalDays) * chartW;
+    }
+
+    var statusColors = { completed: '#059669', in_progress: '#2563eb', planned: '#9ca3af', pending: '#d97706' };
+
+    ganttHtml = '<div style="margin-bottom:16px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">Development Timeline</div>';
+    ganttHtml += '<svg class="gantt-svg" viewBox="0 0 ' + svgW + ' ' + svgH + '" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">';
+
+    // Year axis
+    for (var yr = 2023; yr <= 2027; yr++) {
+      var x = dateToX(new Date(yr, 0, 1));
+      if (x >= labelW && x <= labelW + chartW + 20) {
+        ganttHtml += '<line x1="' + x + '" y1="' + (padTop - 15) + '" x2="' + x + '" y2="' + svgH + '" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="4 4"/>';
+        ganttHtml += '<text x="' + x + '" y="' + (padTop - 20) + '" font-size="10" fill="var(--text-secondary)" text-anchor="middle">' + yr + '</text>';
+      }
+    }
+
+    datedStages.forEach(function(s, i) {
+      var y = padTop + i * rowH;
+      var x1 = dateToX(parseYM(s.start));
+      var endDate = s.end ? parseYM(s.end) : today;
+      var x2 = dateToX(endDate);
+      var w = Math.max(x2 - x1, 8);
+      var col = statusColors[s.status] || statusColors.planned;
+
+      ganttHtml += '<text x="' + (labelW - 5) + '" y="' + (y + barH/2 + 4) + '" text-anchor="end" font-size="11" fill="var(--text)" font-weight="500">' + escapeHtml(s.name) + '</text>';
+      ganttHtml += '<rect class="gantt-bar" x="' + x1 + '" y="' + y + '" width="' + w + '" height="' + barH + '" rx="4" ry="4" fill="' + col + '" opacity="0.85"><title>' + escapeHtml(s.name) + ' (' + s.start + ' to ' + (s.end || 'ongoing') + ')</title></rect>';
+      ganttHtml += '<text x="' + (x1 + w/2) + '" y="' + (y + barH/2 + 4) + '" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">' + s.status.replace('_', ' ').toUpperCase() + '</text>';
+    });
+
+    // Today marker
+    var todayX = dateToX(today);
+    if (todayX >= labelW && todayX <= labelW + chartW + 20) {
+      ganttHtml += '<line x1="' + todayX + '" y1="' + (padTop - 15) + '" x2="' + todayX + '" y2="' + svgH + '" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 3"/>';
+      ganttHtml += '<text x="' + todayX + '" y="' + (padTop - 5) + '" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="600">TODAY</text>';
+    }
+
+    ganttHtml += '</svg>';
+    ganttHtml += '<div style="display:flex; gap:16px; margin-top:8px; font-size:12px; color:var(--text-secondary);">';
+    ganttHtml += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:14px; height:10px; border-radius:2px; background:#059669; display:inline-block;"></span>Completed</span>';
+    ganttHtml += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:14px; height:10px; border-radius:2px; background:#2563eb; display:inline-block;"></span>In Progress</span>';
+    ganttHtml += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:14px; height:10px; border-radius:2px; background:#d97706; display:inline-block;"></span>Pending</span>';
+    ganttHtml += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:2px; height:12px; border-left:2px dashed #dc2626; display:inline-block;"></span>Current Date</span>';
+    ganttHtml += '</div></div>';
+  }
+
+  // Pipeline stages list (all stages, including undated ones)
+  var listHtml = '<div style="margin-top:16px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">All Pipeline Stages</div>';
+  listHtml += '<div style="overflow-x:auto;"><table class="pv-signal-table"><thead><tr><th>Stage</th><th>Owner</th><th>Status</th><th>Start</th><th>End</th><th>Regulations</th></tr></thead><tbody>';
+  stages.forEach(function(s) {
+    var stColor = s.status === 'completed' ? 'var(--success)' : s.status === 'in_progress' ? 'var(--primary)' : s.status === 'pending' ? 'var(--warning)' : 'var(--text-secondary)';
+    listHtml += '<tr>';
+    listHtml += '<td style="font-weight:500;">' + escapeHtml(s.name) + '</td>';
+    listHtml += '<td style="font-size:11px;">' + escapeHtml(s.owner) + '</td>';
+    listHtml += '<td><span style="color:' + stColor + '; font-weight:600; font-size:12px;">' + escapeHtml(s.status.replace('_', ' ')) + '</span></td>';
+    listHtml += '<td style="font-family:var(--mono); font-size:11px;">' + (s.start || '-') + '</td>';
+    listHtml += '<td style="font-family:var(--mono); font-size:11px;">' + (s.end || '-') + '</td>';
+    listHtml += '<td style="font-size:10px;">' + (s.regulations || []).join(', ') + '</td>';
+    listHtml += '</tr>';
+  });
+  listHtml += '</tbody></table></div></div>';
+
+  el.innerHTML = summaryHtml + ganttHtml + listHtml;
+}
+
+
+// ---------------------------------------------------------------------------
+// TAB 21: PV DASHBOARD
+// ---------------------------------------------------------------------------
+function renderPharmaPVDashboard() {
+  var containerId = 'pharmaPVContent';
+  setTimeout(function() { loadPharmaPVDashboard(containerId); }, 0);
+  return '<div class="card">' +
+    '<div class="card-header">' +
+    '<div class="card-title">&#128721; Pharmacovigilance Dashboard</div>' +
+    '<span style="font-size:12px; color:var(--text-secondary);">CG-501 Safety Monitoring</span>' +
+    '</div>' +
+    '<div class="card-body" id="' + containerId + '">' +
+    popLoadingHtml('Loading PV dashboard...') +
+    '</div></div>';
+}
+
+async function loadPharmaPVDashboard(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+
+  var results = await Promise.all([
+    popFetch('/api/v1/pharma/quality-metrics'),
+    popFetch('/api/v1/signals/faers/comparison'),
+    popFetch('/api/v1/signals/triangulation')
+  ]);
+  var qmRes = results[0];
+  var faersRes = results[1];
+  var triRes = results[2];
+
+  // Header cards (simulated PV metrics from quality+capa data)
+  var metrics = qmRes.data ? qmRes.data.metrics : null;
+  var capaInfo = metrics ? metrics.capa : {};
+  var headerHtml = '<div class="pv-header-cards">';
+  headerHtml += '<div class="pv-header-card"><div class="pv-header-label">ICSR Reports</div><div class="pv-header-value" style="color:var(--primary);">3</div><div style="font-size:11px; color:var(--text-secondary);">Phase I (to date)</div></div>';
+  headerHtml += '<div class="pv-header-card"><div class="pv-header-label">Active Signals</div><div class="pv-header-value" style="color:var(--warning);">2</div><div style="font-size:11px; color:var(--text-secondary);">Under evaluation</div></div>';
+  headerHtml += '<div class="pv-header-card"><div class="pv-header-label">Expedited Reports Due</div><div class="pv-header-value" style="color:var(--danger);">1</div><div style="font-size:11px; color:var(--text-secondary);">Within 15 calendar days</div></div>';
+  headerHtml += '<div class="pv-header-card"><div class="pv-header-label">DSUR Status</div><div class="pv-header-value" style="color:var(--success);">On Track</div><div style="font-size:11px; color:var(--text-secondary);">Due: 2026-07-15</div></div>';
+  headerHtml += '</div>';
+
+  // Signal tracking table from triangulation data
+  var signalHtml = '<div style="margin-top:16px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">Signal Tracking</div>';
+  if (triRes.data && triRes.data.signals) {
+    var signals = triRes.data.signals;
+    signalHtml += '<div style="overflow-x:auto;"><table class="pv-signal-table"><thead><tr><th>AE Type</th><th>Source</th><th>Strength</th><th>Status</th><th>Action Required</th></tr></thead><tbody>';
+    signals.forEach(function(sig) {
+      var strengthBadge = sig.overall_signal_strength || sig.combined_strength || 'none';
+      var badgeCls = strengthBadge === 'strong' ? 'signal-strong' : strengthBadge === 'moderate' ? 'signal-moderate' : strengthBadge === 'weak' ? 'signal-weak' : 'signal-none';
+      var action = strengthBadge === 'strong' ? 'Expedited evaluation required' : strengthBadge === 'moderate' ? 'Routine review scheduled' : 'Continue monitoring';
+      signalHtml += '<tr><td style="font-weight:500;">' + escapeHtml(sig.ae_type || sig.adverse_event || '') + '</td>';
+      signalHtml += '<td style="font-size:11px;">FAERS + ClinicalTrials.gov</td>';
+      signalHtml += '<td><span class="traffic-badge ' + badgeCls + '">' + escapeHtml(strengthBadge) + '</span></td>';
+      signalHtml += '<td>Active</td>';
+      signalHtml += '<td style="font-size:12px;">' + action + '</td></tr>';
+    });
+    signalHtml += '</tbody></table></div>';
+  } else {
+    signalHtml += '<div style="color:var(--text-secondary); font-size:13px;">Signal data not available. Connect to live openFDA to populate.</div>';
+  }
+  signalHtml += '</div>';
+
+  // Expedited reporting timeline
+  var expHtml = '<div style="margin-top:20px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">Expedited Reporting Timelines</div>';
+  expHtml += '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">';
+  // Simulated expedited reports
+  var expReports = [
+    { id: 'IND-SR-001', ae: 'Grade 3 CRS', type: '15-day IND Safety Report', deadline: '2026-02-20', submitted: false },
+    { id: 'IND-SR-002', ae: 'Grade 2 Neurotoxicity', type: '15-day IND Safety Report', deadline: '2026-03-01', submitted: false },
+    { id: 'IND-SR-003', ae: 'Grade 1 CRS', type: 'Annual DSUR', deadline: '2026-07-15', submitted: false }
+  ];
+  expReports.forEach(function(rpt) {
+    var deadlineDate = new Date(rpt.deadline);
+    var now = new Date();
+    var daysLeft = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
+    var urgClass = daysLeft <= 7 ? 'pv-countdown-urgent' : 'pv-countdown-ok';
+    expHtml += '<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px;">';
+    expHtml += '<div style="font-weight:600; font-size:13px;">' + escapeHtml(rpt.id) + '</div>';
+    expHtml += '<div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">' + escapeHtml(rpt.ae) + ' &mdash; ' + escapeHtml(rpt.type) + '</div>';
+    expHtml += '<div style="margin-top:6px;"><span class="pv-countdown ' + urgClass + '">' + (daysLeft > 0 ? daysLeft + ' days remaining' : 'OVERDUE') + '</span></div>';
+    expHtml += '<div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Deadline: ' + escapeHtml(rpt.deadline) + '</div>';
+    expHtml += '</div>';
+  });
+  expHtml += '</div></div>';
+
+  // PSUR/DSUR tracker
+  var dsurHtml = '<div style="margin-top:20px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">PSUR / DSUR Status Tracker</div>';
+  dsurHtml += '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:12px;">';
+  var dsurItems = [
+    { name: 'DSUR #1', status: 'In Preparation', due: '2026-07-15', progress: 35 },
+    { name: 'Annual IND Report', status: 'Not Started', due: '2027-01-15', progress: 0 },
+  ];
+  dsurItems.forEach(function(item) {
+    dsurHtml += '<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px;">';
+    dsurHtml += '<div style="font-weight:600; font-size:14px;">' + escapeHtml(item.name) + '</div>';
+    dsurHtml += '<div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">' + escapeHtml(item.status) + ' | Due: ' + escapeHtml(item.due) + '</div>';
+    dsurHtml += '<div style="margin-top:8px; background:var(--border); border-radius:4px; height:8px; overflow:hidden;">';
+    dsurHtml += '<div style="background:var(--primary); height:100%; width:' + item.progress + '%; border-radius:4px;"></div>';
+    dsurHtml += '</div>';
+    dsurHtml += '<div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">' + item.progress + '% complete</div>';
+    dsurHtml += '</div>';
+  });
+  dsurHtml += '</div></div>';
+
+  el.innerHTML = headerHtml + signalHtml + expHtml + dsurHtml;
+}
+
+
+// ---------------------------------------------------------------------------
+// TAB 22: QUALITY METRICS
+// ---------------------------------------------------------------------------
+function renderPharmaQualityMetrics() {
+  var containerId = 'pharmaQualityContent';
+  setTimeout(function() { loadPharmaQualityMetrics(containerId); }, 0);
+  return '<div class="card">' +
+    '<div class="card-header">' +
+    '<div class="card-title">&#9989; Quality Metrics</div>' +
+    '<span style="font-size:12px; color:var(--text-secondary);">GxP Compliance &amp; CAPA Tracking</span>' +
+    '</div>' +
+    '<div class="card-body" id="' + containerId + '">' +
+    popLoadingHtml('Loading quality metrics...') +
+    '</div></div>';
+}
+
+async function loadPharmaQualityMetrics(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var res = await popFetch('/api/v1/pharma/quality-metrics');
+  if (res.error) { el.innerHTML = popErrorHtml('Failed to load quality metrics: ' + res.error); return; }
+  var d = res.data;
+  var metrics = d.metrics || {};
+  var devs = metrics.deviations || {};
+  var capa = metrics.capa || {};
+  var audits = metrics.audits || {};
+  var batches = metrics.batches || {};
+  var training = metrics.training || {};
+
+  // 5 metric cards at top
+  var cardsHtml = '<div class="quality-metric-cards">';
+  cardsHtml += '<div class="quality-metric-card" style="border-left:4px solid var(--warning);"><div class="quality-metric-label">Open Deviations</div><div class="quality-metric-value">' + (devs.open || 0) + '</div><div class="quality-metric-sub">Closed YTD: ' + (devs.closed_ytd || 0) + '</div></div>';
+  cardsHtml += '<div class="quality-metric-card" style="border-left:4px solid ' + ((capa.overdue || 0) > 0 ? 'var(--danger)' : 'var(--info)') + ';"><div class="quality-metric-label">Open CAPAs</div><div class="quality-metric-value">' + (capa.open || 0) + '</div><div class="quality-metric-sub">' + ((capa.overdue || 0) > 0 ? '<span class="quality-overdue">' + capa.overdue + ' overdue</span>' : 'None overdue') + '</div></div>';
+  cardsHtml += '<div class="quality-metric-card" style="border-left:4px solid var(--moderate);"><div class="quality-metric-label">Audit Findings</div><div class="quality-metric-value">' + (audits.findings_open || 0) + '</div><div class="quality-metric-sub">' + (audits.completed || 0) + '/' + (audits.scheduled_ytd || 0) + ' audits completed</div></div>';
+  cardsHtml += '<div class="quality-metric-card" style="border-left:4px solid var(--success);"><div class="quality-metric-label">Training Compliance</div><div class="quality-metric-value">' + (training.compliance_pct || 0) + '%</div><div class="quality-metric-sub">' + (training.overdue_assignments || 0) + ' overdue assignments</div></div>';
+  var failRate = batches.failure_rate_pct || 0;
+  var successRate = (100 - failRate).toFixed(1);
+  cardsHtml += '<div class="quality-metric-card" style="border-left:4px solid var(--primary);"><div class="quality-metric-label">Batch Success Rate</div><div class="quality-metric-value">' + successRate + '%</div><div class="quality-metric-sub">' + (batches.released || 0) + ' released / ' + (batches.manufactured_ytd || 0) + ' manufactured</div></div>';
+  cardsHtml += '</div>';
+
+  // CAPA waterfall bar (using summary counts)
+  var capaOpen = capa.open || 0;
+  var capaOverdue = capa.overdue || 0;
+  var capaClosedYtd = capa.closed_ytd || 0;
+  var capaTotal = capaOpen + capaOverdue + capaClosedYtd;
+  var capaHtml = '<div style="margin-top:20px;"><div style="font-size:15px; font-weight:600; margin-bottom:10px;">CAPA Status Overview</div>';
+  var capaBarW = 500;
+  capaHtml += '<svg viewBox="0 0 ' + (capaBarW + 120) + ' 50" width="100%" height="auto" style="max-width:' + (capaBarW + 120) + 'px;">';
+  var capaColors = { closed: '#059669', open: '#d97706', overdue: '#dc2626' };
+  var capaItems = [
+    { label: 'Closed YTD', count: capaClosedYtd, color: capaColors.closed },
+    { label: 'Open', count: capaOpen, color: capaColors.open },
+    { label: 'Overdue', count: capaOverdue, color: capaColors.overdue },
+  ];
+  var cx = 0;
+  capaItems.forEach(function(item) {
+    var w = capaTotal > 0 ? (item.count / capaTotal) * capaBarW : 0;
+    if (w > 0) {
+      capaHtml += '<rect x="' + cx + '" y="10" width="' + w + '" height="28" fill="' + item.color + '" rx="' + (cx === 0 ? '4' : '0') + '"><title>' + item.label + ': ' + item.count + '</title></rect>';
+      if (w > 25) {
+        capaHtml += '<text x="' + (cx + w/2) + '" y="28" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">' + item.count + '</text>';
+      }
+      cx += w;
+    }
+  });
+  capaHtml += '<text x="' + (cx + 8) + '" y="28" font-size="11" fill="var(--text-secondary)">' + capaTotal + ' total</text>';
+  capaHtml += '</svg>';
+  capaHtml += '<div style="display:flex; gap:14px; font-size:12px; color:var(--text-secondary); margin-top:4px;">';
+  capaItems.forEach(function(item) {
+    capaHtml += '<span style="display:flex; align-items:center; gap:4px;"><span style="width:12px; height:10px; border-radius:2px; background:' + item.color + '; display:inline-block;"></span>' + item.label + ' (' + item.count + ')</span>';
+  });
+  capaHtml += '</div>';
+  capaHtml += '<div style="font-size:12px; color:var(--text-secondary); margin-top:8px;">Average closure: ' + (capa.avg_closure_days || 'N/A') + ' days</div>';
+  capaHtml += '</div>';
+
+  // Batch tracker (donut chart)
+  var batchReleased = batches.released || 0;
+  var batchFailed = batches.failed || 0;
+  var batchMfg = batches.manufactured_ytd || 0;
+  var batchPending = Math.max(0, batchMfg - batchReleased - batchFailed);
+  var batchHtml = '<div style="margin-top:20px;"><div style="font-size:15px; font-weight:600; margin-bottom:10px;">Batch Tracker</div>';
+  batchHtml += '<div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">';
+  var batchR = 60, batchCxV = 80, batchCyV = 80;
+  var batchSlices = [
+    { label: 'Released', count: batchReleased, color: '#059669' },
+    { label: 'Pending', count: batchPending, color: '#d97706' },
+    { label: 'Failed', count: batchFailed, color: '#dc2626' }
+  ];
+  var batchTot = batchSlices.reduce(function(s, sl) { return s + sl.count; }, 0);
+  batchHtml += '<svg viewBox="0 0 160 160" width="160" height="160">';
+  var startAngle = -90;
+  batchSlices.forEach(function(sl) {
+    if (sl.count === 0 || batchTot === 0) return;
+    var angle = (sl.count / batchTot) * 360;
+    var endAngle = startAngle + angle;
+    var largeArc = angle > 180 ? 1 : 0;
+    var sr = startAngle * Math.PI / 180;
+    var er = endAngle * Math.PI / 180;
+    var x1 = batchCxV + batchR * Math.cos(sr);
+    var y1 = batchCyV + batchR * Math.sin(sr);
+    var x2 = batchCxV + batchR * Math.cos(er);
+    var y2 = batchCyV + batchR * Math.sin(er);
+    batchHtml += '<path d="M ' + batchCxV + ' ' + batchCyV + ' L ' + x1 + ' ' + y1 + ' A ' + batchR + ' ' + batchR + ' 0 ' + largeArc + ' 1 ' + x2 + ' ' + y2 + ' Z" fill="' + sl.color + '" opacity="0.85"><title>' + sl.label + ': ' + sl.count + '</title></path>';
+    startAngle = endAngle;
+  });
+  batchHtml += '<circle cx="' + batchCxV + '" cy="' + batchCyV + '" r="35" fill="var(--surface)"/>';
+  batchHtml += '<text x="' + batchCxV + '" y="' + (batchCyV + 5) + '" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)">' + batchTot + '</text>';
+  batchHtml += '<text x="' + batchCxV + '" y="' + (batchCyV + 18) + '" text-anchor="middle" font-size="9" fill="var(--text-secondary)">batches</text>';
+  batchHtml += '</svg>';
+  batchHtml += '<div style="display:flex; flex-direction:column; gap:6px;">';
+  batchSlices.forEach(function(sl) {
+    batchHtml += '<span style="display:flex; align-items:center; gap:6px; font-size:13px;"><span style="width:12px; height:12px; border-radius:3px; background:' + sl.color + '; display:inline-block;"></span>' + sl.label + ': <strong>' + sl.count + '</strong></span>';
+  });
+  batchHtml += '</div></div></div>';
+
+  // Training compliance gauge (semi-circle)
+  var trainPct = training.compliance_pct || 0;
+  var gaugeHtml = '<div style="margin-top:20px;"><div style="font-size:15px; font-weight:600; margin-bottom:10px;">Training Compliance</div>';
+  gaugeHtml += '<div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">';
+  // Semi-circle gauge SVG
+  var gaugeR = 65, gaugeCx = 80, gaugeCy = 80;
+  var gaugeAngle = (trainPct / 100) * 180;
+  var gaugeStartRad = Math.PI;
+  var gaugeEndRad = Math.PI - (gaugeAngle * Math.PI / 180);
+  var gx1 = gaugeCx + gaugeR * Math.cos(gaugeStartRad);
+  var gy1 = gaugeCy + gaugeR * Math.sin(gaugeStartRad);
+  var gx2 = gaugeCx + gaugeR * Math.cos(gaugeEndRad);
+  var gy2 = gaugeCy + gaugeR * Math.sin(gaugeEndRad);
+  var gaugeLargeArc = gaugeAngle > 180 ? 1 : 0;
+  var gaugeColor = trainPct >= 90 ? '#059669' : trainPct >= 75 ? '#d97706' : '#dc2626';
+  gaugeHtml += '<svg viewBox="0 0 160 100" width="160" height="100">';
+  // Background arc
+  gaugeHtml += '<path d="M ' + (gaugeCx - gaugeR) + ' ' + gaugeCy + ' A ' + gaugeR + ' ' + gaugeR + ' 0 0 1 ' + (gaugeCx + gaugeR) + ' ' + gaugeCy + '" fill="none" stroke="var(--border)" stroke-width="12" stroke-linecap="round"/>';
+  // Value arc
+  if (trainPct > 0) {
+    gaugeHtml += '<path d="M ' + gx1 + ' ' + gy1 + ' A ' + gaugeR + ' ' + gaugeR + ' 0 ' + gaugeLargeArc + ' 1 ' + gx2 + ' ' + gy2 + '" fill="none" stroke="' + gaugeColor + '" stroke-width="12" stroke-linecap="round"/>';
+  }
+  gaugeHtml += '<text x="' + gaugeCx + '" y="' + (gaugeCy - 5) + '" text-anchor="middle" font-size="22" font-weight="700" fill="var(--text)">' + trainPct + '%</text>';
+  gaugeHtml += '<text x="' + gaugeCx + '" y="' + (gaugeCy + 10) + '" text-anchor="middle" font-size="10" fill="var(--text-secondary)">compliance</text>';
+  gaugeHtml += '</svg>';
+
+  // Training modules table
+  var mods = training.modules || [];
+  if (mods.length > 0) {
+    gaugeHtml += '<div style="flex:1; min-width:200px;"><table class="pv-signal-table"><thead><tr><th>Module</th><th style="text-align:right;">Compliance</th></tr></thead><tbody>';
+    mods.forEach(function(mod) {
+      var color = mod.compliance_pct >= 95 ? 'var(--success)' : mod.compliance_pct >= 90 ? 'var(--warning)' : 'var(--danger)';
+      gaugeHtml += '<tr><td>' + escapeHtml(mod.name) + '</td><td style="text-align:right; font-family:var(--mono); color:' + color + '; font-weight:600;">' + mod.compliance_pct + '%</td></tr>';
+    });
+    gaugeHtml += '</tbody></table></div>';
+  }
+  gaugeHtml += '</div></div>';
+
+  el.innerHTML = cardsHtml + capaHtml + batchHtml + gaugeHtml;
 }
 
 </script>

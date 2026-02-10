@@ -134,6 +134,15 @@ from src.data.ctgov_cache import (
     AE_TERM_MAP as CTGOV_AE_TERM_MAP,
 )
 from src.models.signal_triangulation import triangulate_signals
+from src.data.pharma_org import (
+    ORG_ROLES,
+    PIPELINE_STAGES,
+    REGULATORY_MAP,
+    SKILL_LIBRARY,
+    get_quality_metrics,
+    get_role,
+    get_role_skills,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -2733,3 +2742,197 @@ async def generate_briefing_endpoint(
         key_references=result.get("key_references", []),
         generation_method="template_rules_v1",
     )
+
+
+# ===========================================================================
+# Pharma company simulation endpoints
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/org -- Full org hierarchy
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/org",
+    tags=["Pharma"],
+    summary="Full organizational hierarchy",
+    description=(
+        "Returns the complete pharmaceutical company organizational "
+        "hierarchy with roles, responsibilities, regulatory frameworks, "
+        "skills, and current status."
+    ),
+)
+async def pharma_org() -> dict:
+    """Return the full org hierarchy."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "roles": ORG_ROLES,
+        "total_roles": len(ORG_ROLES),
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/pipeline -- Clinical pipeline stages
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/pipeline",
+    tags=["Pharma"],
+    summary="Clinical pipeline stages",
+    description=(
+        "Returns the clinical development pipeline from preclinical through "
+        "approval, including stage owners, status, dates, and applicable "
+        "regulatory frameworks."
+    ),
+)
+async def pharma_pipeline() -> dict:
+    """Return the clinical pipeline stages."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    # Compute summary counts
+    statuses = {}
+    for stage in PIPELINE_STAGES:
+        s = stage["status"]
+        statuses[s] = statuses.get(s, 0) + 1
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "stages": PIPELINE_STAGES,
+        "total_stages": len(PIPELINE_STAGES),
+        "status_summary": statuses,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/regulatory-map -- All regulatory frameworks
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/regulatory-map",
+    tags=["Pharma"],
+    summary="Regulatory framework mapping",
+    description=(
+        "Returns all regulatory frameworks (ICH, FDA CFR, CIOMS, EU GMP, etc.) "
+        "referenced by the organizational roles and pipeline stages, with "
+        "titles, categories, URLs, and descriptions."
+    ),
+)
+async def pharma_regulatory_map() -> dict:
+    """Return the full regulatory framework mapping."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    # Count by category
+    categories: dict[str, int] = {}
+    for entry in REGULATORY_MAP.values():
+        cat = entry["category"]
+        categories[cat] = categories.get(cat, 0) + 1
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "frameworks": REGULATORY_MAP,
+        "total_frameworks": len(REGULATORY_MAP),
+        "categories": categories,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/quality-metrics -- Quality metrics
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/quality-metrics",
+    tags=["Pharma"],
+    summary="Quality metrics dashboard",
+    description=(
+        "Returns simulated quality metrics including deviations, CAPAs, "
+        "audit findings, training compliance, and batch manufacturing data."
+    ),
+)
+async def pharma_quality_metrics() -> dict:
+    """Return simulated quality metrics."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "metrics": get_quality_metrics(),
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/role/{role_id} -- Single role detail
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/role/{role_id}",
+    tags=["Pharma"],
+    summary="Get details for a specific role",
+    description=(
+        "Returns full details for a single organizational role including "
+        "title, manager, responsibilities, regulatory frameworks, skills, "
+        "and current task."
+    ),
+)
+async def pharma_role_detail(role_id: str) -> dict:
+    """Return details for a specific role."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    role = get_role(role_id)
+    if role is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Role '{role_id}' not found. "
+                   f"Valid role IDs: {sorted(ORG_ROLES.keys())}",
+        )
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "role": role,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/pharma/role/{role_id}/skills -- Skills for a role
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/pharma/role/{role_id}/skills",
+    tags=["Pharma"],
+    summary="Get skills for a specific role",
+    description=(
+        "Returns the skill library entries assigned to a specific "
+        "organizational role, with skill names, categories, and descriptions."
+    ),
+)
+async def pharma_role_skills(role_id: str) -> dict:
+    """Return skills for a specific role."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    skills = get_role_skills(role_id)
+    if skills is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Role '{role_id}' not found. "
+                   f"Valid role IDs: {sorted(ORG_ROLES.keys())}",
+        )
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "role_id": role_id,
+        "skills": skills,
+        "total_skills": len(skills),
+    }

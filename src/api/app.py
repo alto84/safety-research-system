@@ -155,6 +155,11 @@ app = FastAPI(
             "name": "WebSocket",
             "description": "Real-time patient monitoring via WebSocket.",
         },
+        {
+            "name": "Pharma",
+            "description": "Pharmaceutical company simulation: org hierarchy, clinical pipeline, "
+            "regulatory frameworks, quality metrics, and role management.",
+        },
     ],
 )
 
