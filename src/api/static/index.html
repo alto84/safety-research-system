@@ -7549,8 +7549,8 @@ async function simRefreshStatus() {
   }
   var d = res.data;
   if (rolesEl) rolesEl.textContent = d.roles_active || 0;
-  if (delivEl) delivEl.textContent = d.deliverables_count || 0;
-  if (logEl) logEl.textContent = d.log_entries_count || 0;
+  if (delivEl) delivEl.textContent = d.total_deliverables || d.deliverables_count || 0;
+  if (logEl) logEl.textContent = d.total_log_entries || d.log_entries_count || 0;
 }
 
 async function simRunSimulation(containerId) {
@@ -7608,7 +7608,7 @@ async function simRefreshTree() {
     return;
   }
   var tree = res.data;
-  if (!tree || !tree.id) {
+  if (!tree || (!tree.role_id && !tree.id)) {
     container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No delegation tree data. Run the simulation to populate.</div>';
     return;
   }
@@ -7677,11 +7677,11 @@ function simFlattenTree(node, depth, list, parentIndex) {
     id: node.id || node.role_id || '',
     title: node.title || node.name || node.role || '',
     status: node.status || 'pending',
-    deliverables_count: node.deliverables_count || (node.deliverables ? node.deliverables.length : 0),
+    deliverables_count: node.deliverables_count || (node.deliverables_completed ? node.deliverables_completed.length : 0) || (node.deliverables ? node.deliverables.length : 0),
     depth: depth,
     parentIndex: parentIndex !== undefined ? parentIndex : null
   });
-  var children = node.children || node.reports || [];
+  var children = node.delegated_to || node.children || node.reports || [];
   children.forEach(function(child) {
     simFlattenTree(child, depth + 1, list, idx);
   });
