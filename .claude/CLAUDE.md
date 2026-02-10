@@ -99,6 +99,59 @@ When delegating to agent teams:
 - **Server:** `python run_server.py` → http://localhost:8000/clinical
 - Commit and push frequently. Document state in SESSION-STATE.md.
 
+## Pharma Company Simulation (CEO Mission)
+
+This project includes a simulated pharmaceutical company organizational structure
+implemented as recursive AI agent teams. The CEO (top-level agent) delegates to
+C-suite roles, who delegate to VPs, who delegate to operational leads.
+
+### Organizational Hierarchy
+```
+CEO
+├── CMO (Chief Medical Officer)
+│   ├── VP Clinical Operations
+│   ├── VP Medical Affairs
+│   ├── Head of Patient Safety / Pharmacovigilance
+│   ├── VP Regulatory Affairs
+│   ├── Head of Biostatistics
+│   └── Head of Clinical Development
+├── Head of CMC / Manufacturing
+├── Head of Quality Assurance
+└── Head of Commercial / Market Access
+```
+
+### Governing Frameworks
+All agent behaviors are grounded in real regulatory frameworks:
+- **Clinical Trials:** ICH E6(R3) GCP, ICH E8(R1), 21 CFR Parts 11/50/56/312
+- **Pharmacovigilance:** ICH E2A-E2F, 21 CFR 312.32/314.80, CIOMS I-VI
+- **Cell Therapy Specific:** FDA CBER guidances, 21 CFR 1271, PHS Act §351
+- **Quality:** ICH Q1-Q12, 21 CFR 210/211/600, EU GMP Annex 1
+- **Ethics:** Declaration of Helsinki, Belmont Report, 45 CFR 46 (Common Rule)
+- **Biostatistics:** ICH E9(R1), FDA adaptive design guidance
+- **Regulatory Submissions:** ICH CTD (M4), eCTD format, FDA BLA pathway
+
+### Skill Library
+Agent skills live in `.claude/skills/pharma/` organized by role.
+Each skill is a reusable prompt template with:
+- Regulatory grounding (which guidance applies)
+- Input/output specification
+- Escalation path (who to report to)
+- Dashboard visualization (which tab shows output)
+
+### Dashboard Tabs for Pharma Simulation
+Tabs beyond the original 17 are pharma simulation tabs:
+- **Org Chart**: Interactive hierarchy showing agent roles, status, current tasks
+- **Regulatory Map**: Which regulations apply to which activities
+- **Clinical Pipeline**: IND → Phase I → Phase II → Phase III → BLA timeline
+- **PV Dashboard**: Pharmacovigilance signal detection, ICSR tracking, PSUR status
+- **Quality Metrics**: GxP compliance, CAPA tracking, audit readiness
+
+### Agent Communication Pattern
+- Agents report UP (to their manager agent) with structured status updates
+- Agents delegate DOWN with specific task descriptions + regulatory context
+- Cross-functional coordination through the CEO agent (this level)
+- All decisions reference the governing framework that applies
+
 ## What NOT To Do
 - Do not reference AstraZeneca, personal names, or internal data
 - Do not hardcode adverse event types — use configuration/registry patterns
