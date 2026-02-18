@@ -59,9 +59,9 @@ class TestKnowledgeOverview:
         # Use >= to allow for future additions
         assert data["total_pathway_steps"] >= 40
 
-    def test_mechanism_count_is_6(self, client):
+    def test_mechanism_count_is_8(self, client):
         data = client.get("/api/v1/knowledge/overview").json()
-        assert data["mechanism_count"] == 6
+        assert data["mechanism_count"] == 8
 
     def test_target_count_is_15(self, client):
         data = client.get("/api/v1/knowledge/overview").json()
@@ -232,10 +232,10 @@ class TestKnowledgeMechanisms:
         response = client.get("/api/v1/knowledge/mechanisms")
         assert response.status_code == 200
 
-    def test_returns_6_mechanisms(self, client):
+    def test_returns_8_mechanisms(self, client):
         data = client.get("/api/v1/knowledge/mechanisms").json()
-        assert data["total"] == 6
-        assert len(data["mechanisms"]) == 6
+        assert data["total"] == 8
+        assert len(data["mechanisms"]) == 8
 
     def test_mechanism_has_required_fields(self, client):
         data = client.get("/api/v1/knowledge/mechanisms").json()

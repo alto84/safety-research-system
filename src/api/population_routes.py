@@ -134,6 +134,11 @@ from src.data.ctgov_cache import (
     AE_TERM_MAP as CTGOV_AE_TERM_MAP,
 )
 from src.models.signal_triangulation import triangulate_signals
+from src.models.secondary_malignancy import (
+    assess_secondary_malignancy_risk,
+    get_all_signals_data,
+    get_monitoring_protocol as get_sec_mal_monitoring_protocol,
+)
 from src.data.pharma_org import (
     ORG_ROLES,
     PIPELINE_STAGES,
@@ -1819,6 +1824,218 @@ async def knowledge_overview() -> KnowledgeOverviewResponse:
     )
 
 
+# ---------------------------------------------------------------------------
+# GET /api/v1/knowledge/graph -- Force-directed graph data
+# ---------------------------------------------------------------------------
+
+
+def _build_knowledge_graph() -> dict:
+    """Build a unified force-directed graph from all knowledge registries.
+
+    Combines nodes and edges from PATHWAY_REGISTRY, MOLECULAR_TARGET_REGISTRY,
+    CELL_TYPE_REGISTRY, and MECHANISM_REGISTRY into a single graph suitable
+    for force-directed visualization.
+
+    Returns:
+        Dictionary with nodes, edges, pathways, and stats keys.
+    """
+    nodes: dict[str, dict] = {}  # id -> node dict
+    edges: list[dict] = []
+    edge_set: set[tuple[str, str, str]] = set()  # dedup (source, target, relation)
+    pathway_names: list[str] = []
+
+    # ---- 1. Process PATHWAY_REGISTRY ----
+    for pw in PATHWAY_REGISTRY.values():
+        pw_name = pw.name
+        pathway_names.append(pw_name)
+
+        for step in pw.steps:
+            # Add source node
+            src_id = step.source
+            if src_id not in nodes:
+                nodes[src_id] = {
+                    "id": src_id,
+                    "type": _classify_node_type(src_id),
+                    "label": src_id.replace("_", " "),
+                    "pathways": [],
+                    "references": list(step.references),
+                }
+            if pw_name not in nodes[src_id]["pathways"]:
+                nodes[src_id]["pathways"].append(pw_name)
+
+            # Add target node
+            tgt_id = step.target
+            if tgt_id not in nodes:
+                nodes[tgt_id] = {
+                    "id": tgt_id,
+                    "type": _classify_node_type(tgt_id),
+                    "label": tgt_id.replace("_", " "),
+                    "pathways": [],
+                    "references": list(step.references),
+                }
+            if pw_name not in nodes[tgt_id]["pathways"]:
+                nodes[tgt_id]["pathways"].append(pw_name)
+
+            # Add edge (dedup)
+            edge_key = (src_id, tgt_id, step.relation.value)
+            if edge_key not in edge_set:
+                edge_set.add(edge_key)
+                edges.append({
+                    "source": src_id,
+                    "target": tgt_id,
+                    "relation": step.relation.value,
+                    "pathway": pw_name,
+                    "confidence": step.confidence,
+                })
+
+    # ---- 2. Process MOLECULAR_TARGET_REGISTRY ----
+    for t in MOLECULAR_TARGET_REGISTRY.values():
+        node_id = t.name
+        node_type = t.category.value
+        # Map target categories to graph node types
+        type_map = {
+            "cytokine": "cytokine",
+            "receptor": "receptor",
+            "kinase": "kinase",
+            "transcription_factor": "kinase",
+            "biomarker": "biomarker",
+            "adhesion_molecule": "receptor",
+            "enzyme": "kinase",
+            "growth_factor": "cytokine",
+            "complement": "cytokine",
+        }
+        mapped_type = type_map.get(node_type, "cytokine")
+        if node_id not in nodes:
+            nodes[node_id] = {
+                "id": node_id,
+                "type": mapped_type,
+                "label": node_id,
+                "pathways": [],
+                "references": list(t.references),
+            }
+        # Add modulators as drug nodes
+        for mod in t.modulators:
+            drug_id = mod.name
+            if drug_id not in nodes:
+                nodes[drug_id] = {
+                    "id": drug_id,
+                    "type": "drug",
+                    "label": drug_id,
+                    "pathways": [],
+                    "references": list(mod.evidence_refs),
+                }
+            edge_key = (drug_id, node_id, "inhibits")
+            if edge_key not in edge_set:
+                edge_set.add(edge_key)
+                edges.append({
+                    "source": drug_id,
+                    "target": node_id,
+                    "relation": "inhibits",
+                    "pathway": "Therapeutic Targets",
+                    "confidence": 0.90,
+                })
+
+    # ---- 3. Process CELL_TYPE_REGISTRY ----
+    for ct in CELL_TYPE_REGISTRY.values():
+        cell_id = ct.name
+        if cell_id not in nodes:
+            nodes[cell_id] = {
+                "id": cell_id,
+                "type": "cell_type",
+                "label": cell_id,
+                "pathways": [],
+                "references": list(ct.references),
+            }
+        # Add edges from activation states (secreted factors)
+        for state in ct.activation_states:
+            for factor in state.secreted_factors:
+                edge_key = (cell_id, factor, "produces")
+                if edge_key not in edge_set:
+                    # Only add if target node exists or is a known molecule
+                    edge_set.add(edge_key)
+                    if factor not in nodes:
+                        nodes[factor] = {
+                            "id": factor,
+                            "type": _classify_node_type(factor),
+                            "label": factor.replace("_", " "),
+                            "pathways": [],
+                            "references": list(state.references),
+                        }
+                    edges.append({
+                        "source": cell_id,
+                        "target": factor,
+                        "relation": "produces",
+                        "pathway": "Cell Biology",
+                        "confidence": 0.80,
+                    })
+
+    # ---- 4. Process MECHANISM_REGISTRY for pathway nodes ----
+    for mech in MECHANISM_REGISTRY.values():
+        ae_name = mech.ae_category.value
+        if ae_name not in nodes:
+            nodes[ae_name] = {
+                "id": ae_name,
+                "type": "process",
+                "label": ae_name,
+                "pathways": [mech.name],
+                "references": mech.key_references,
+            }
+        elif mech.name not in nodes[ae_name].get("pathways", []):
+            nodes[ae_name]["pathways"].append(mech.name)
+
+    # ---- 5. Compute node sizes based on connectivity ----
+    node_edge_count: dict[str, int] = {}
+    for edge in edges:
+        node_edge_count[edge["source"]] = node_edge_count.get(edge["source"], 0) + 1
+        node_edge_count[edge["target"]] = node_edge_count.get(edge["target"], 0) + 1
+
+    node_list = []
+    for nid, ndata in nodes.items():
+        ndata["size"] = node_edge_count.get(nid, 1)
+        node_list.append(ndata)
+
+    # Collect all unique pathway names
+    all_pathways = sorted(set(pathway_names))
+    if "Therapeutic Targets" not in all_pathways:
+        all_pathways.append("Therapeutic Targets")
+    if "Cell Biology" not in all_pathways:
+        all_pathways.append("Cell Biology")
+
+    return {
+        "nodes": node_list,
+        "edges": edges,
+        "pathways": all_pathways,
+        "stats": {
+            "total_nodes": len(node_list),
+            "total_edges": len(edges),
+            "total_pathways": len(all_pathways),
+        },
+    }
+
+
+@router.get(
+    "/api/v1/knowledge/graph",
+    tags=["Knowledge"],
+    summary="Unified knowledge graph for force-directed visualization",
+    description=(
+        "Returns all nodes and edges from the knowledge graph in a format "
+        "suitable for force-directed graph visualization. Combines data from "
+        "signaling pathways, molecular targets, cell types, and mechanism "
+        "chains into a unified graph with node type classifications, edge "
+        "relations, pathway membership, and connectivity-based sizing."
+    ),
+)
+async def knowledge_graph() -> dict:
+    """Return the unified knowledge graph for visualization."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    graph = _build_knowledge_graph()
+    graph["request_id"] = request_id
+    graph["timestamp"] = now.isoformat()
+    return graph
+
+
 # ===========================================================================
 # PUBLICATION ANALYSIS ENDPOINTS
 # ===========================================================================
@@ -2771,6 +2988,253 @@ async def generate_briefing_endpoint(
         key_references=result.get("key_references", []),
         generation_method="template_rules_v1",
     )
+
+
+# ===========================================================================
+# Secondary malignancy signal detection endpoints
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/signals/secondary-malignancy -- All signals and risk data
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/signals/secondary-malignancy",
+    tags=["Signals"],
+    summary="Secondary malignancy signals for all CAR-T products",
+    description=(
+        "Returns all known secondary malignancy signals, regulatory timeline, "
+        "epidemiological summary, monitoring protocol, and causality framework "
+        "for approved CAR-T products. Based on FDA FAERS analysis and published "
+        "literature. The FDA added a boxed warning for T-cell malignancies "
+        "post CAR-T therapy in January 2024."
+    ),
+)
+async def secondary_malignancy_all() -> dict:
+    """Return all secondary malignancy signals and supporting data."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    try:
+        data = get_all_signals_data()
+    except Exception as exc:
+        logger.exception("Failed to get secondary malignancy data")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get secondary malignancy data: {exc}",
+        ) from exc
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        **data,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/signals/secondary-malignancy/monitoring-protocol
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/signals/secondary-malignancy/monitoring-protocol",
+    tags=["Signals"],
+    summary="FDA-recommended lifelong monitoring protocol",
+    description=(
+        "Returns the FDA-recommended lifelong monitoring protocol for "
+        "secondary malignancies post CAR-T therapy, including phases, "
+        "assessments, urgent evaluation triggers, and diagnostic workup."
+    ),
+)
+async def secondary_malignancy_monitoring() -> dict:
+    """Return the monitoring protocol for secondary malignancies."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    try:
+        protocol = get_sec_mal_monitoring_protocol()
+    except Exception as exc:
+        logger.exception("Failed to get monitoring protocol")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get monitoring protocol: {exc}",
+        ) from exc
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        **protocol,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/signals/secondary-malignancy/{product_name}
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/signals/secondary-malignancy/{product_name}",
+    tags=["Signals"],
+    summary="Product-specific secondary malignancy risk assessment",
+    description=(
+        "Returns a comprehensive risk assessment for secondary malignancies "
+        "for a specific CAR-T product, including known signals, monitoring "
+        "recommendations, regulatory status, and causality assessment."
+    ),
+)
+async def secondary_malignancy_product(product_name: str) -> dict:
+    """Return product-specific secondary malignancy risk assessment."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    try:
+        assessment = assess_secondary_malignancy_risk(product_name)
+    except Exception as exc:
+        logger.exception(
+            "Failed to assess secondary malignancy risk for '%s'",
+            product_name,
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to assess risk for '{product_name}': {exc}",
+        ) from exc
+
+    if assessment.get("risk_level") == "unknown":
+        raise HTTPException(
+            status_code=404,
+            detail=assessment.get("error", f"Product '{product_name}' not found"),
+        )
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        **assessment,
+    }
+
+
+# ===========================================================================
+# AE term classification (SapBERT)
+# ===========================================================================
+
+# Lazy import -- the classifier module may not have torch/transformers available
+# on all environments.  We handle this gracefully at the endpoint level.
+try:
+    from src.models.ae_classifier import (
+        classify_ae_terms_batch as _classify_ae_batch,
+        get_model_status as _get_ae_model_status,
+    )
+    _AE_CLASSIFIER_IMPORTABLE = True
+except Exception:
+    _AE_CLASSIFIER_IMPORTABLE = False
+
+
+@router.post(
+    "/api/v1/classify-ae",
+    tags=["ML"],
+    summary="Classify adverse event terms using SapBERT embeddings",
+    description=(
+        "Accepts a list of free-text adverse event descriptions and classifies "
+        "each to the nearest MedDRA Preferred Term category using SapBERT "
+        "biomedical embeddings and cosine similarity. Returns top-3 matches "
+        "per term with confidence scores. Requires the SapBERT model to be "
+        "loaded on gpuserver1."
+    ),
+    responses={
+        200: {
+            "description": "Classification results",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "request_id": "abc-123",
+                        "timestamp": "2026-02-17T12:00:00Z",
+                        "classifications": [
+                            {
+                                "input_term": "cytokine storm",
+                                "top_matches": [
+                                    {
+                                        "category": "crs",
+                                        "confidence": 0.94,
+                                        "matched_term": "cytokine storm",
+                                    }
+                                ],
+                            }
+                        ],
+                        "model_status": {"loaded": True, "device": "cuda"},
+                    }
+                }
+            },
+        },
+        503: {"description": "AE classifier not available"},
+    },
+)
+async def classify_ae_terms(body: dict) -> dict:
+    """Classify free-text AE terms to MedDRA categories via SapBERT embeddings.
+
+    Request body should contain:
+        ``{"terms": ["cytokine storm", "low platelets", ...]}``
+
+    Returns classification results with top-3 matches per term.
+    """
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    # Validate input
+    terms = body.get("terms")
+    if not terms or not isinstance(terms, list):
+        raise HTTPException(
+            status_code=422,
+            detail="Request body must contain 'terms': a non-empty list of strings.",
+        )
+    if len(terms) > 100:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Maximum 100 terms per request, got {len(terms)}.",
+        )
+    # Ensure all terms are strings
+    for i, term in enumerate(terms):
+        if not isinstance(term, str) or not term.strip():
+            raise HTTPException(
+                status_code=422,
+                detail=f"Term at index {i} must be a non-empty string.",
+            )
+
+    # Check if the classifier is importable
+    if not _AE_CLASSIFIER_IMPORTABLE:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "AE classifier is not available. The SapBERT model requires "
+                "PyTorch and Transformers to be installed. This endpoint is "
+                "only functional on gpuserver1."
+            ),
+        )
+
+    # Attempt classification
+    try:
+        classifications = _classify_ae_batch(terms, top_k=3)
+        model_status = _get_ae_model_status()
+    except RuntimeError as exc:
+        # Model loading failed (missing deps, OOM, etc.)
+        raise HTTPException(
+            status_code=503,
+            detail=f"AE classifier failed to load: {exc}",
+        ) from exc
+    except Exception as exc:
+        logger.exception("AE classification failed")
+        raise HTTPException(
+            status_code=500,
+            detail=f"AE classification error: {exc}",
+        ) from exc
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "classifications": classifications,
+        "model_status": {
+            "loaded": model_status.get("loaded", False),
+            "device": model_status.get("device"),
+            "model_name": model_status.get("model_name"),
+        },
+    }
 
 
 # ===========================================================================

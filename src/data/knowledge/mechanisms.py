@@ -48,6 +48,7 @@ class AECategory(Enum):
     ON_TARGET_OFF_TUMOR = "On-Target/Off-Tumor Toxicity"
     CROSS_REACTIVITY = "Cross-Reactivity Toxicity"
     INSERTIONAL_MUTAGENESIS = "Insertional Mutagenesis"
+    SECONDARY_MALIGNANCY = "Secondary Malignancy"
     PROLONGED_CYTOPENIA = "Prolonged Cytopenia"
     GVHD = "GvHD"
     INFECTION = "Infection"
@@ -420,6 +421,203 @@ CART_CD19_B_CELL_APLASIA = MechanismChain(
 
 
 # ---------------------------------------------------------------------------
+# Mechanism 7: CAR-T -> Secondary Malignancy (Insertional Mutagenesis Pathway)
+# ---------------------------------------------------------------------------
+
+CART_SECONDARY_MALIGNANCY_INSERTIONAL = MechanismChain(
+    mechanism_id="MECH:CART_SEC_MAL_INSERTIONAL",
+    therapy_modality=TherapyModality.CAR_T_CD19,
+    ae_category=AECategory.SECONDARY_MALIGNANCY,
+    name="CAR-T Secondary Malignancy via Insertional Mutagenesis",
+    description=(
+        "Retroviral and lentiviral vectors used in CAR-T manufacturing integrate "
+        "into the host T-cell genome. Integration near proto-oncogenes or tumor "
+        "suppressors can dysregulate gene expression, conferring a proliferative "
+        "advantage to the modified T cell. Over months to years, the affected clone "
+        "may accumulate additional mutations, leading to T-cell lymphoma or leukemia. "
+        "CAR transgene detection in the malignant clone (7/19 tested cases positive) "
+        "provides direct evidence for this mechanism. The FDA added a boxed warning "
+        "to all approved CAR-T products in January 2024."
+    ),
+    steps=[
+        MechanismStep(
+            1, "retroviral/lentiviral vector",
+            "integrates into T-cell genome during manufacturing",
+            "Integrase-mediated semi-random insertion into host DNA. Retroviral "
+            "vectors preferentially integrate near transcription start sites and "
+            "CpG islands; lentiviral vectors prefer active gene bodies.",
+            "during_manufacturing",
+        ),
+        MechanismStep(
+            2, "integration site",
+            "near proto-oncogene or tumor suppressor",
+            "Integration within or near oncogenic loci (e.g., LMO2, MDS1-EVI1, "
+            "PRDM16, TLX3) can activate oncogene expression via enhancer insertion "
+            "or disrupt tumor suppressor function.",
+            "during_manufacturing",
+            biomarkers=("integration_site_analysis", "vector_copy_number"),
+        ),
+        MechanismStep(
+            3, "oncogene activation / tumor suppressor disruption",
+            "clonal proliferative advantage",
+            "Vector enhancer/promoter elements drive aberrant expression of adjacent "
+            "oncogenes, or integration disrupts tumor suppressor reading frames. "
+            "The affected T cell gains a selective growth advantage.",
+            "months_post_infusion",
+            is_branching_point=True,
+            branches=("clonal_expansion_to_malignancy", "clonal_expansion_self_limiting"),
+        ),
+        MechanismStep(
+            4, "clonal expansion",
+            "accumulation of secondary mutations",
+            "The expanding clone acquires additional oncogenic hits (e.g., TP53 loss, "
+            "NOTCH1 activation) through replication errors, creating a fully "
+            "transformed malignant clone.",
+            "months_to_years",
+            biomarkers=("CBC_differential", "peripheral_blood_flow_cytometry"),
+        ),
+        MechanismStep(
+            5, "T-cell malignancy",
+            "clinical presentation",
+            "T-cell lymphoma or T-cell leukemia presenting as lymphadenopathy, "
+            "cytopenias, skin lesions, or B-symptoms. CAR transgene may be "
+            "detectable by PCR in malignant cells.",
+            "2-24_months_post_infusion",
+            biomarkers=("CAR_transgene_PCR", "T_cell_clonality", "tissue_biopsy"),
+            is_intervention_point=True,
+            interventions=("chemotherapy", "allogeneic_SCT", "targeted_therapy"),
+        ),
+    ],
+    risk_factors=[
+        "Retroviral vector (higher insertional mutagenesis risk vs lentiviral)",
+        "High vector copy number per cell",
+        "Prior exposure to alkylating agents and fludarabine",
+        "Prior radiation therapy",
+        "Older patient age (accumulated somatic mutations)",
+        "History of prior hematologic malignancies",
+        "Lymphodepletion conditioning regimen intensity",
+    ],
+    severity_determinants=[
+        "Proximity of integration to known oncogenes",
+        "Vector design (self-inactivating vs non-SIN)",
+        "Number of additional oncogenic mutations acquired",
+        "T-cell malignancy subtype (aggressive vs indolent)",
+    ],
+    typical_onset="2-24 months post-infusion (median ~8 months; 67% within 12 months)",
+    typical_duration="Permanent; requires treatment of secondary malignancy",
+    incidence_range="~1/1000 treated patients (based on spontaneous reporting); 38 cases reported by April 2024",
+    mortality_rate="Variable; T-cell lymphomas carry significant mortality",
+    key_references=[
+        "PMID:38442389",   # Levine et al. 2024 - FDA FAERS analysis
+        "PMID:39467014",   # Ghilardi et al. 2024 - Systematic FAERS review
+        "PMID:38442375",   # Verdun & Bhoj 2024 - PEI causality perspective
+        "PMID:38587889",   # Shah et al. 2024 - Nature Medicine review
+        "PMID:12529469",   # Hacein-Bey-Abina et al. 2003 - LMO2 precedent
+    ],
+)
+
+
+# ---------------------------------------------------------------------------
+# Mechanism 8: CAR-T -> Secondary Malignancy (Aberrant T-cell Expansion)
+# ---------------------------------------------------------------------------
+
+CART_SECONDARY_MALIGNANCY_EXPANSION = MechanismChain(
+    mechanism_id="MECH:CART_SEC_MAL_EXPANSION",
+    therapy_modality=TherapyModality.CAR_T_BCMA,
+    ae_category=AECategory.SECONDARY_MALIGNANCY,
+    name="CAR-T Secondary Malignancy via Aberrant T-cell Expansion",
+    description=(
+        "An alternative or complementary pathway to insertional mutagenesis. "
+        "CAR-T cells undergo massive in vivo expansion driven by tonic CAR "
+        "signaling and antigen stimulation. Sustained proliferative signaling "
+        "through CD28 or 4-1BB costimulatory domains, combined with the "
+        "immunosuppressed microenvironment post-lymphodepletion, may promote "
+        "aberrant T-cell proliferation. In some cases, malignant T cells lack "
+        "the CAR transgene, suggesting that the conditioning regimen and immune "
+        "dysregulation -- rather than direct vector insertion -- contribute to "
+        "malignant transformation. This pathway is particularly relevant for "
+        "BCMA-directed products where higher disproportionality signals have "
+        "been observed."
+    ),
+    steps=[
+        MechanismStep(
+            1, "lymphodepletion conditioning",
+            "profound immunosuppression",
+            "Fludarabine + cyclophosphamide deplete regulatory T cells and NK cells, "
+            "creating a permissive environment for T-cell expansion. Fludarabine "
+            "is independently associated with secondary malignancy risk.",
+            "day_-5_to_-3",
+            biomarkers=("ALC", "CD4_count"),
+        ),
+        MechanismStep(
+            2, "CAR-T cell infusion and expansion",
+            "massive T-cell proliferation",
+            "CAR-T cells expand 100-10,000 fold in vivo. Costimulatory domain "
+            "signaling (CD28: rapid/intense; 4-1BB: sustained/prolonged) drives "
+            "proliferation beyond normal homeostatic controls.",
+            "day_0_to_14",
+            biomarkers=("CAR_T_cell_count", "cytokine_levels"),
+        ),
+        MechanismStep(
+            3, "tonic CAR signaling",
+            "sustained proliferative drive",
+            "Antigen-independent CAR signaling through scFv aggregation provides "
+            "continuous growth signals to CAR-T cells, bypassing normal T-cell "
+            "activation checkpoints. This may promote genomic instability.",
+            "weeks_to_months",
+            is_branching_point=True,
+            branches=("normal_contraction", "aberrant_persistence"),
+        ),
+        MechanismStep(
+            4, "immune surveillance failure",
+            "escape from homeostatic control",
+            "Post-lymphodepletion immune reconstitution is impaired. NK cells and "
+            "regulatory T cells that normally surveil aberrant T-cell clones are "
+            "depleted. Cytokine sinks (IL-7, IL-15) are open, promoting T-cell survival.",
+            "months_post_infusion",
+        ),
+        MechanismStep(
+            5, "aberrant T-cell clone emerges",
+            "malignant transformation",
+            "A T-cell clone (which may or may not carry the CAR transgene) "
+            "acquires sufficient oncogenic mutations to become autonomous. "
+            "CAR-negative malignancies may result from bystander T cells "
+            "transformed in the permissive post-lymphodepletion environment.",
+            "months_to_years",
+            biomarkers=("T_cell_clonality", "TCR_sequencing", "flow_cytometry"),
+            is_intervention_point=True,
+            interventions=("early_detection_via_monitoring", "treatment_of_malignancy"),
+        ),
+    ],
+    risk_factors=[
+        "Fludarabine-containing conditioning regimen",
+        "High-dose cyclophosphamide conditioning",
+        "Multiple prior lines of therapy",
+        "Prior autologous or allogeneic stem cell transplant",
+        "Older patient age",
+        "BCMA-directed therapy (higher disproportionality signals observed)",
+        "Tonic CAR signaling (design-dependent)",
+    ],
+    severity_determinants=[
+        "Speed of immune reconstitution post-conditioning",
+        "Presence of tonic CAR signaling",
+        "Conditioning regimen intensity",
+        "Cumulative prior therapy exposure",
+    ],
+    typical_onset="6-24 months post-infusion",
+    typical_duration="Permanent; requires treatment",
+    incidence_range="Under investigation; BCMA-directed products may have slightly higher rates based on FAERS disproportionality",
+    mortality_rate="Variable; depends on malignancy subtype and response to treatment",
+    key_references=[
+        "PMID:38442389",   # Levine et al. 2024
+        "PMID:38981000",   # Strati et al. 2024
+        "PMID:38587889",   # Shah et al. 2024
+        "PMID:39467014",   # Ghilardi et al. 2024
+    ],
+)
+
+
+# ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
@@ -431,6 +629,8 @@ MECHANISM_REGISTRY: dict[str, MechanismChain] = {
         CARNK_REDUCED_CRS,
         GENE_THERAPY_INSERTIONAL,
         CART_CD19_B_CELL_APLASIA,
+        CART_SECONDARY_MALIGNANCY_INSERTIONAL,
+        CART_SECONDARY_MALIGNANCY_EXPANSION,
     ]
 }
 

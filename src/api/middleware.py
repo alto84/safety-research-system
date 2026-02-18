@@ -16,7 +16,7 @@ import os
 import time
 import uuid
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
@@ -143,7 +143,7 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
                 status_code=401,
                 content={
                     "request_id": request_id,
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "error": "Unauthorized",
                     "detail": "Invalid or missing API key. Provide a valid key via the X-API-Key header.",
                     "status_code": 401,
@@ -166,6 +166,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     Note: For production use, replace with a Redis-backed limiter.
     """
 
+    _MAX_TRACKED_IPS = 10_000
+
     def __init__(
         self,
         app: FastAPI,
@@ -174,6 +176,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         self._rpm = requests_per_minute
         self._request_log: dict[str, list[float]] = defaultdict(list)
+        self._last_cleanup: float = 0.0
 
     async def dispatch(
         self,
@@ -192,6 +195,18 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         now = time.monotonic()
         cutoff = now - 60.0
 
+        # Periodic full cleanup of stale IPs (every 5 minutes)
+        if now - self._last_cleanup > 300:
+            stale_ips = [ip for ip, ts in self._request_log.items() if not ts or ts[-1] < cutoff]
+            for ip in stale_ips:
+                del self._request_log[ip]
+            # Hard cap on tracked IPs to prevent unbounded growth
+            if len(self._request_log) > self._MAX_TRACKED_IPS:
+                excess = len(self._request_log) - self._MAX_TRACKED_IPS
+                for ip in list(self._request_log.keys())[:excess]:
+                    del self._request_log[ip]
+            self._last_cleanup = now
+
         # Prune old entries
         timestamps = self._request_log[client_ip]
         self._request_log[client_ip] = [t for t in timestamps if t > cutoff]
@@ -209,7 +224,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 status_code=429,
                 content={
                     "request_id": request_id,
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "error": "Rate limit exceeded",
                     "detail": f"Maximum {self._rpm} requests per minute. Try again later.",
                     "status_code": 429,
@@ -248,13 +263,14 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
                 request_id,
                 exc,
             )
+            _debug = os.environ.get("DEBUG", "").lower() in ("1", "true", "yes")
             return JSONResponse(
                 status_code=500,
                 content={
                     "request_id": request_id,
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "error": "Internal server error",
-                    "detail": str(exc),
+                    "detail": str(exc) if _debug else "An unexpected error occurred. Check server logs for details.",
                     "status_code": 500,
                 },
             )

@@ -22,6 +22,9 @@ Population-level risk models:
 
 FAERS signal detection:
     faers_signal:       Disproportionality analysis via openFDA API
+
+AE term classification (ML):
+    ae_classifier:      SapBERT-based MedDRA term classification (requires torch)
 """
 
 from src.models.biomarker_scores import (
@@ -74,6 +77,15 @@ from src.models.model_validation import (
     leave_one_out_cv,
     model_comparison,
     sequential_prediction_test,
+)
+from src.models.ae_classifier import (
+    AEClassification,
+    AEClassifier,
+    MEDDRA_REFERENCE_TERMS,
+    classify_ae_term,
+    classify_ae_terms_batch,
+    embed_ae_terms,
+    get_model_status,
 )
 from src.models.mitigation_model import (
     MITIGATION_CORRELATIONS,
@@ -148,4 +160,12 @@ __all__ = [
     "classify_signal",
     "get_faers_signals",
     "get_faers_summary",
+    # AE classifier (ML -- available only with torch/transformers)
+    "AEClassifier",
+    "AEClassification",
+    "MEDDRA_REFERENCE_TERMS",
+    "classify_ae_term",
+    "classify_ae_terms_batch",
+    "embed_ae_terms",
+    "get_model_status",
 ]

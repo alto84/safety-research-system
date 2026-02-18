@@ -517,7 +517,8 @@ body {
 .task-btn[data-task="cdp"],
 .task-btn[data-task="architecture"],
 .task-btn[data-task="science"],
-.task-btn[data-task="publication"] {
+.task-btn[data-task="publication"],
+.task-btn[data-task="knowledge-graph"] {
   color: var(--info);
 }
 .task-btn[data-task="population"]:hover,
@@ -527,7 +528,8 @@ body {
 .task-btn[data-task="cdp"]:hover,
 .task-btn[data-task="architecture"]:hover,
 .task-btn[data-task="science"]:hover,
-.task-btn[data-task="publication"]:hover {
+.task-btn[data-task="publication"]:hover,
+.task-btn[data-task="knowledge-graph"]:hover {
   color: var(--text);
 }
 .task-btn[data-task="population"].active,
@@ -537,7 +539,8 @@ body {
 .task-btn[data-task="cdp"].active,
 .task-btn[data-task="architecture"].active,
 .task-btn[data-task="science"].active,
-.task-btn[data-task="publication"].active {
+.task-btn[data-task="publication"].active,
+.task-btn[data-task="knowledge-graph"].active {
   color: var(--primary); border-bottom-color: var(--primary);
 }
 
@@ -1021,6 +1024,41 @@ body {
 .pub-methods-box p { margin-bottom: 8px; }
 .pub-controls { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
 .pub-select { font-family: var(--font); font-size: 13px; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); cursor: pointer; }
+
+/* Knowledge Graph Tab Styles */
+.kg-container { display: flex; flex-direction: column; gap: 16px; }
+.kg-controls { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.kg-control-group { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; min-width: 180px; }
+.kg-control-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 8px; }
+.kg-checkbox-list { display: flex; flex-direction: column; gap: 4px; }
+.kg-checkbox-list label { font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 2px 0; }
+.kg-checkbox-list label:hover { color: var(--primary); }
+.kg-checkbox-list input[type="checkbox"] { accent-color: var(--primary); }
+.kg-search-box { display: flex; gap: 8px; align-items: center; }
+.kg-search-input { font-family: var(--font); font-size: 13px; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); width: 220px; }
+.kg-search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
+.kg-search-btn { font-family: var(--font); font-size: 12px; padding: 6px 14px; border: 1px solid var(--primary); border-radius: var(--radius); background: var(--primary); color: #fff; cursor: pointer; }
+.kg-search-btn:hover { opacity: 0.9; }
+.kg-graph-area { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; position: relative; min-height: 600px; }
+.kg-graph-area svg { width: 100%; height: 100%; display: block; }
+.kg-stats-bar { display: flex; gap: 24px; flex-wrap: wrap; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.kg-stat { display: flex; align-items: baseline; gap: 6px; }
+.kg-stat-value { font-size: 18px; font-weight: 700; color: var(--primary); }
+.kg-stat-label { font-size: 12px; color: var(--text-secondary); }
+.kg-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); align-items: center; }
+.kg-legend-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-right: 4px; }
+.kg-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); }
+.kg-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.kg-legend-line { width: 24px; height: 2px; display: inline-block; }
+.kg-legend-line.dashed { border-top: 2px dashed var(--text-secondary); background: none; }
+.kg-legend-line.dotted { border-top: 2px dotted var(--text-secondary); background: none; }
+.kg-legend-line.solid { background: var(--text-secondary); }
+.kg-tooltip { position: absolute; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; font-size: 12px; box-shadow: var(--shadow-lg); pointer-events: none; z-index: 50; max-width: 300px; display: none; }
+.kg-tooltip-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.kg-tooltip-type { color: var(--text-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.kg-tooltip-detail { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
+.kg-reset-btn { font-family: var(--font); font-size: 12px; padding: 6px 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); cursor: pointer; }
+.kg-reset-btn:hover { background: var(--surface-hover); }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -1097,6 +1135,7 @@ body {
     <button class="task-btn" data-task="architecture" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9881;</span> System Architecture</button>
     <button class="task-btn" data-task="science" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128300;</span> Scientific Basis</button>
     <button class="task-btn" data-task="publication" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128220;</span> Publication Analysis</button>
+    <button class="task-btn" data-task="knowledge-graph" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128376;</span> Knowledge Graph</button>
     <div class="tab-separator" aria-hidden="true"></div>
     <button class="task-btn" data-task="pharma-org" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#127970;</span> Org Chart</button>
     <button class="task-btn" data-task="pharma-regulatory" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128220;</span> Regulatory Map</button>
@@ -1433,7 +1472,7 @@ function activateTab(btn) {
   currentTask = btn.dataset.task;
 
   // Hide patient sidebar for population-level tabs
-  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture', 'science', 'pharma-org', 'pharma-regulatory', 'pharma-pipeline', 'pharma-pv', 'pharma-quality', 'pharma-simulation'];
+  const populationTabs = ['population', 'mitigations', 'signals', 'executive', 'cdp', 'architecture', 'science', 'knowledge-graph', 'pharma-org', 'pharma-regulatory', 'pharma-pipeline', 'pharma-pv', 'pharma-quality', 'pharma-simulation'];
   const sidebar = document.querySelector('.patient-sidebar');
   const mainLayout = document.querySelector('.main-layout');
   if (populationTabs.includes(btn.dataset.task)) {
@@ -1484,6 +1523,7 @@ function renderTaskContent() {
     case 'architecture': container.innerHTML = renderSystemArchitecture(); break;
     case 'science': container.innerHTML = renderScientificBasis(); break;
     case 'publication': container.innerHTML = renderPublicationAnalysis(); break;
+    case 'knowledge-graph': container.innerHTML = renderKnowledgeGraph(); break;
     case 'pharma-org': container.innerHTML = renderPharmaOrgChart(); break;
     case 'pharma-regulatory': container.innerHTML = renderPharmaRegulatoryMap(); break;
     case 'pharma-pipeline': container.innerHTML = renderPharmaPipeline(); break;
@@ -7782,6 +7822,600 @@ async function simRefreshLog() {
   html += '</tbody></table>';
   container.innerHTML = html;
 }
+
+
+// ============================================================================
+// KNOWLEDGE GRAPH TAB (Force-Directed Visualization)
+// ============================================================================
+
+var _kgState = {
+  nodes: [],
+  edges: [],
+  pathways: [],
+  stats: {},
+  selectedNode: null,
+  activePathways: {},
+  activeTypes: {},
+  searchTerm: '',
+  simulation: null,
+  dragging: null,
+  dragOffsetX: 0,
+  dragOffsetY: 0,
+};
+
+var KG_NODE_COLORS = {
+  cytokine: '#dc2626',
+  receptor: '#2563eb',
+  cell_type: '#059669',
+  process: '#ea580c',
+  biomarker: '#7c3aed',
+  drug: '#0891b2',
+  kinase: '#d97706',
+  pathway_node: '#eab308',
+};
+
+function renderKnowledgeGraph() {
+  var containerId = 'kgContent';
+  setTimeout(function() { loadKnowledgeGraph(containerId); }, 0);
+  return '<div class="kg-container">' +
+    '<div class="card"><div class="card-title">&#128376; Interactive Knowledge Graph</div>' +
+    '<div class="card-desc">Force-directed visualization of cell therapy AE pathophysiology. ' +
+    'Nodes represent molecules, cells, and processes. Edges represent biological relationships.</div></div>' +
+    '<div id="' + containerId + '">' + popLoadingHtml('Loading knowledge graph...') + '</div></div>';
+}
+
+async function loadKnowledgeGraph(containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+
+  var res = await popFetch('/api/v1/knowledge/graph');
+  if (res.error) {
+    container.innerHTML = popErrorHtml('Failed to load knowledge graph: ' + res.error);
+    return;
+  }
+
+  var data = res.data;
+  _kgState.nodes = data.nodes || [];
+  _kgState.edges = data.edges || [];
+  _kgState.pathways = data.pathways || [];
+  _kgState.stats = data.stats || {};
+  _kgState.selectedNode = null;
+  _kgState.searchTerm = '';
+
+  // Initialize filters (all on)
+  _kgState.activePathways = {};
+  _kgState.pathways.forEach(function(p) { _kgState.activePathways[p] = true; });
+  _kgState.activeTypes = {};
+  Object.keys(KG_NODE_COLORS).forEach(function(t) { _kgState.activeTypes[t] = true; });
+
+  // Build HTML
+  var html = '';
+
+  // Stats bar
+  html += '<div class="kg-stats-bar">';
+  html += '<div class="kg-stat"><span class="kg-stat-value">' + (_kgState.stats.total_nodes || 0) + '</span><span class="kg-stat-label">Nodes</span></div>';
+  html += '<div class="kg-stat"><span class="kg-stat-value">' + (_kgState.stats.total_edges || 0) + '</span><span class="kg-stat-label">Edges</span></div>';
+  html += '<div class="kg-stat"><span class="kg-stat-value">' + (_kgState.stats.total_pathways || 0) + '</span><span class="kg-stat-label">Pathways</span></div>';
+  html += '<div class="kg-stat"><span class="kg-stat-value">' + _kgState.nodes.filter(function(n) { return n.type === "drug"; }).length + '</span><span class="kg-stat-label">Drugs</span></div>';
+  html += '<div class="kg-stat"><span class="kg-stat-value">' + _kgState.nodes.filter(function(n) { return n.type === "cell_type"; }).length + '</span><span class="kg-stat-label">Cell Types</span></div>';
+  html += '</div>';
+
+  // Controls row
+  html += '<div class="kg-controls">';
+
+  // Search
+  html += '<div class="kg-control-group">';
+  html += '<div class="kg-control-title">Search</div>';
+  html += '<div class="kg-search-box">';
+  html += '<input type="text" class="kg-search-input" id="kgSearchInput" placeholder="Find a node..." onkeydown="if(event.key===\'Enter\')kgSearch()">';
+  html += '<button class="kg-search-btn" onclick="kgSearch()">Find</button>';
+  html += '<button class="kg-reset-btn" onclick="kgReset()">Reset</button>';
+  html += '</div></div>';
+
+  // Pathway filters
+  html += '<div class="kg-control-group">';
+  html += '<div class="kg-control-title">Pathways</div>';
+  html += '<div class="kg-checkbox-list">';
+  _kgState.pathways.forEach(function(p) {
+    var shortName = p.length > 30 ? p.substring(0, 28) + '...' : p;
+    html += '<label title="' + escapeHtml(p) + '"><input type="checkbox" checked onchange="kgTogglePathway(\'' + escapeHtml(p).replace(/'/g, "\\'") + '\', this.checked)"> ' + escapeHtml(shortName) + '</label>';
+  });
+  html += '</div></div>';
+
+  // Node type filters
+  html += '<div class="kg-control-group">';
+  html += '<div class="kg-control-title">Node Types</div>';
+  html += '<div class="kg-checkbox-list">';
+  Object.keys(KG_NODE_COLORS).forEach(function(t) {
+    var label = t.replace('_', ' ');
+    label = label.charAt(0).toUpperCase() + label.slice(1);
+    html += '<label><input type="checkbox" checked onchange="kgToggleType(\'' + t + '\', this.checked)"> <span class="kg-legend-dot" style="background:' + KG_NODE_COLORS[t] + '"></span> ' + label + '</label>';
+  });
+  html += '</div></div>';
+
+  html += '</div>';
+
+  // Legend
+  html += '<div class="kg-legend">';
+  html += '<span class="kg-legend-title">Nodes:</span>';
+  Object.keys(KG_NODE_COLORS).forEach(function(t) {
+    var label = t.replace('_', ' ');
+    label = label.charAt(0).toUpperCase() + label.slice(1);
+    html += '<span class="kg-legend-item"><span class="kg-legend-dot" style="background:' + KG_NODE_COLORS[t] + '"></span>' + label + '</span>';
+  });
+  html += '<span style="width:1px;height:16px;background:var(--border);margin:0 4px"></span>';
+  html += '<span class="kg-legend-title">Edges:</span>';
+  html += '<span class="kg-legend-item"><span class="kg-legend-line solid"></span>activates/produces</span>';
+  html += '<span class="kg-legend-item"><span class="kg-legend-line dashed"></span>inhibits</span>';
+  html += '<span class="kg-legend-item"><span class="kg-legend-line dotted"></span>leads_to/other</span>';
+  html += '</div>';
+
+  // Graph area
+  html += '<div class="kg-graph-area" id="kgGraphArea" style="height:650px;"></div>';
+
+  // Tooltip
+  html += '<div class="kg-tooltip" id="kgTooltip"></div>';
+
+  container.innerHTML = html;
+
+  // Run force simulation and render
+  kgInitSimulation();
+}
+
+function kgInitSimulation() {
+  var area = document.getElementById('kgGraphArea');
+  if (!area) return;
+
+  var W = area.clientWidth || 900;
+  var H = area.clientHeight || 650;
+  var cx = W / 2;
+  var cy = H / 2;
+
+  // Initialize node positions randomly
+  var nodes = _kgState.nodes;
+  nodes.forEach(function(n) {
+    n.x = cx + (Math.random() - 0.5) * W * 0.7;
+    n.y = cy + (Math.random() - 0.5) * H * 0.7;
+    n.vx = 0;
+    n.vy = 0;
+  });
+
+  // Build adjacency for quick lookup
+  var nodeMap = {};
+  nodes.forEach(function(n) { nodeMap[n.id] = n; });
+
+  var edges = _kgState.edges;
+
+  // Force simulation
+  var iterations = 300;
+  var repulsionStrength = 3000;
+  var springLength = 100;
+  var springStrength = 0.01;
+  var centerStrength = 0.005;
+  var damping = 0.9;
+  var maxForce = 50;
+
+  for (var iter = 0; iter < iterations; iter++) {
+    var t = 1 - iter / iterations; // temperature
+    var tempFactor = t * 0.5 + 0.5;
+
+    // Repulsion: every node pair
+    for (var i = 0; i < nodes.length; i++) {
+      for (var j = i + 1; j < nodes.length; j++) {
+        var dx = nodes[i].x - nodes[j].x;
+        var dy = nodes[i].y - nodes[j].y;
+        var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        var force = repulsionStrength / (dist * dist);
+        force = Math.min(force, maxForce) * tempFactor;
+        var fx = (dx / dist) * force;
+        var fy = (dy / dist) * force;
+        nodes[i].vx += fx;
+        nodes[i].vy += fy;
+        nodes[j].vx -= fx;
+        nodes[j].vy -= fy;
+      }
+    }
+
+    // Spring: edges
+    edges.forEach(function(e) {
+      var src = nodeMap[e.source];
+      var tgt = nodeMap[e.target];
+      if (!src || !tgt) return;
+      var dx = tgt.x - src.x;
+      var dy = tgt.y - src.y;
+      var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      var displacement = dist - springLength;
+      var force = springStrength * displacement * tempFactor;
+      var fx = (dx / dist) * force;
+      var fy = (dy / dist) * force;
+      src.vx += fx;
+      src.vy += fy;
+      tgt.vx -= fx;
+      tgt.vy -= fy;
+    });
+
+    // Center gravity
+    nodes.forEach(function(n) {
+      n.vx += (cx - n.x) * centerStrength * tempFactor;
+      n.vy += (cy - n.y) * centerStrength * tempFactor;
+    });
+
+    // Update positions with damping
+    nodes.forEach(function(n) {
+      n.vx *= damping;
+      n.vy *= damping;
+      n.x += n.vx;
+      n.y += n.vy;
+      // Clamp to bounds
+      n.x = Math.max(30, Math.min(W - 30, n.x));
+      n.y = Math.max(30, Math.min(H - 30, n.y));
+    });
+  }
+
+  // Zero velocities after settling
+  nodes.forEach(function(n) { n.vx = 0; n.vy = 0; });
+
+  kgRenderSVG();
+}
+
+function kgIsNodeVisible(n) {
+  if (!_kgState.activeTypes[n.type]) return false;
+  if (!n.pathways || n.pathways.length === 0) {
+    // Nodes without explicit pathway membership (e.g. from cell registry)
+    // are visible if their type is visible
+    return true;
+  }
+  // Visible if at least one of the node's pathways is active
+  for (var i = 0; i < n.pathways.length; i++) {
+    if (_kgState.activePathways[n.pathways[i]]) return true;
+  }
+  return false;
+}
+
+function kgIsEdgeVisible(e, nodeMap) {
+  var src = nodeMap[e.source];
+  var tgt = nodeMap[e.target];
+  if (!src || !tgt) return false;
+  if (!kgIsNodeVisible(src) || !kgIsNodeVisible(tgt)) return false;
+  if (e.pathway && !_kgState.activePathways[e.pathway]) return false;
+  return true;
+}
+
+function kgRenderSVG() {
+  var area = document.getElementById('kgGraphArea');
+  if (!area) return;
+  var W = area.clientWidth || 900;
+  var H = area.clientHeight || 650;
+
+  var nodes = _kgState.nodes;
+  var edges = _kgState.edges;
+  var nodeMap = {};
+  nodes.forEach(function(n) { nodeMap[n.id] = n; });
+
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.style.fontFamily = 'Inter, sans-serif';
+
+  // Defs for arrowheads and dash patterns
+  var defs = document.createElementNS(ns, 'defs');
+
+  var marker = document.createElementNS(ns, 'marker');
+  marker.setAttribute('id', 'kg-arrow');
+  marker.setAttribute('viewBox', '0 0 10 10');
+  marker.setAttribute('refX', '10');
+  marker.setAttribute('refY', '5');
+  marker.setAttribute('markerWidth', '6');
+  marker.setAttribute('markerHeight', '6');
+  marker.setAttribute('orient', 'auto-start-reverse');
+  var arrowPath = document.createElementNS(ns, 'path');
+  arrowPath.setAttribute('d', 'M 0 0 L 10 5 L 0 10 Z');
+  arrowPath.setAttribute('fill', '#999');
+  marker.appendChild(arrowPath);
+  defs.appendChild(marker);
+
+  // Highlighted arrow
+  var markerHi = document.createElementNS(ns, 'marker');
+  markerHi.setAttribute('id', 'kg-arrow-hi');
+  markerHi.setAttribute('viewBox', '0 0 10 10');
+  markerHi.setAttribute('refX', '10');
+  markerHi.setAttribute('refY', '5');
+  markerHi.setAttribute('markerWidth', '6');
+  markerHi.setAttribute('markerHeight', '6');
+  markerHi.setAttribute('orient', 'auto-start-reverse');
+  var arrowPathHi = document.createElementNS(ns, 'path');
+  arrowPathHi.setAttribute('d', 'M 0 0 L 10 5 L 0 10 Z');
+  arrowPathHi.setAttribute('fill', 'var(--primary)');
+  markerHi.appendChild(arrowPathHi);
+  defs.appendChild(markerHi);
+
+  svg.appendChild(defs);
+
+  // Background
+  var bgRect = document.createElementNS(ns, 'rect');
+  bgRect.setAttribute('width', W);
+  bgRect.setAttribute('height', H);
+  bgRect.setAttribute('fill', 'var(--bg)');
+  bgRect.setAttribute('rx', '12');
+  svg.appendChild(bgRect);
+
+  // Edge group (rendered first, under nodes)
+  var edgeGroup = document.createElementNS(ns, 'g');
+  edgeGroup.setAttribute('class', 'kg-edges');
+
+  // Determine highlighted edges
+  var highlightedEdges = {};
+  var highlightedNodes = {};
+  if (_kgState.selectedNode) {
+    highlightedNodes[_kgState.selectedNode] = true;
+    edges.forEach(function(e) {
+      if (e.source === _kgState.selectedNode || e.target === _kgState.selectedNode) {
+        highlightedEdges[e.source + '->' + e.target + ':' + e.relation] = true;
+        highlightedNodes[e.source] = true;
+        highlightedNodes[e.target] = true;
+      }
+    });
+  }
+
+  var searchMatch = {};
+  if (_kgState.searchTerm) {
+    var searchLower = _kgState.searchTerm.toLowerCase();
+    nodes.forEach(function(n) {
+      if (n.id.toLowerCase().indexOf(searchLower) >= 0 || n.label.toLowerCase().indexOf(searchLower) >= 0) {
+        searchMatch[n.id] = true;
+      }
+    });
+  }
+
+  edges.forEach(function(e) {
+    if (!kgIsEdgeVisible(e, nodeMap)) return;
+    var src = nodeMap[e.source];
+    var tgt = nodeMap[e.target];
+    if (!src || !tgt) return;
+
+    var line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', src.x);
+    line.setAttribute('y1', src.y);
+    line.setAttribute('x2', tgt.x);
+    line.setAttribute('y2', tgt.y);
+
+    var edgeKey = e.source + '->' + e.target + ':' + e.relation;
+    var isHighlighted = highlightedEdges[edgeKey];
+    var hasSelection = _kgState.selectedNode !== null;
+
+    // Edge style based on relation
+    var rel = e.relation || '';
+    if (rel === 'inhibits') {
+      line.setAttribute('stroke-dasharray', '8,4');
+    } else if (rel === 'leads_to' || rel === 'translocates_to' || rel === 'dimerizes_with' || rel === 'recruits' || rel === 'cleaves' || rel === 'sheds') {
+      line.setAttribute('stroke-dasharray', '3,3');
+    }
+
+    if (isHighlighted) {
+      line.setAttribute('stroke', 'var(--primary)');
+      line.setAttribute('stroke-width', '2.5');
+      line.setAttribute('marker-end', 'url(#kg-arrow-hi)');
+      line.setAttribute('opacity', '1');
+    } else {
+      line.setAttribute('stroke', hasSelection ? '#ddd' : '#bbb');
+      line.setAttribute('stroke-width', hasSelection ? '0.5' : '1');
+      line.setAttribute('marker-end', 'url(#kg-arrow)');
+      line.setAttribute('opacity', hasSelection ? '0.2' : '0.5');
+    }
+
+    edgeGroup.appendChild(line);
+  });
+  svg.appendChild(edgeGroup);
+
+  // Node group
+  var nodeGroup = document.createElementNS(ns, 'g');
+  nodeGroup.setAttribute('class', 'kg-nodes');
+
+  nodes.forEach(function(n) {
+    if (!kgIsNodeVisible(n)) return;
+
+    var isHighlighted = highlightedNodes[n.id];
+    var hasSelection = _kgState.selectedNode !== null;
+    var isSearched = searchMatch[n.id];
+
+    var color = KG_NODE_COLORS[n.type] || '#888';
+    var radius = Math.max(5, Math.min(18, 4 + (n.size || 1) * 1.5));
+
+    var g = document.createElementNS(ns, 'g');
+    g.setAttribute('transform', 'translate(' + n.x + ',' + n.y + ')');
+    g.style.cursor = 'pointer';
+
+    // Glow for searched nodes
+    if (isSearched) {
+      var glow = document.createElementNS(ns, 'circle');
+      glow.setAttribute('r', radius + 6);
+      glow.setAttribute('fill', 'none');
+      glow.setAttribute('stroke', '#fbbf24');
+      glow.setAttribute('stroke-width', '3');
+      glow.setAttribute('opacity', '0.8');
+      g.appendChild(glow);
+    }
+
+    // Node circle
+    var circle = document.createElementNS(ns, 'circle');
+    circle.setAttribute('r', radius);
+    circle.setAttribute('fill', color);
+    circle.setAttribute('stroke', '#fff');
+    circle.setAttribute('stroke-width', isHighlighted ? '3' : '1.5');
+
+    if (hasSelection && !isHighlighted && !isSearched) {
+      circle.setAttribute('opacity', '0.15');
+    } else if (isHighlighted) {
+      circle.setAttribute('opacity', '1');
+      circle.setAttribute('stroke', 'var(--primary)');
+    } else {
+      circle.setAttribute('opacity', '0.85');
+    }
+
+    g.appendChild(circle);
+
+    // Label
+    var label = document.createElementNS(ns, 'text');
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('dy', radius + 12);
+    label.setAttribute('font-size', '10');
+    label.setAttribute('fill', 'var(--text)');
+    label.setAttribute('pointer-events', 'none');
+    if (hasSelection && !isHighlighted && !isSearched) {
+      label.setAttribute('opacity', '0.15');
+    }
+    var labelText = n.label || n.id;
+    if (labelText.length > 18) labelText = labelText.substring(0, 16) + '...';
+    label.textContent = labelText;
+    g.appendChild(label);
+
+    // Event listeners
+    (function(node, gEl) {
+      gEl.addEventListener('mouseenter', function(ev) { kgShowTooltip(ev, node); });
+      gEl.addEventListener('mouseleave', function() { kgHideTooltip(); });
+      gEl.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        if (_kgState.selectedNode === node.id) {
+          _kgState.selectedNode = null;
+        } else {
+          _kgState.selectedNode = node.id;
+        }
+        kgRenderSVG();
+      });
+      gEl.addEventListener('mousedown', function(ev) {
+        if (ev.button !== 0) return;
+        ev.preventDefault();
+        _kgState.dragging = node;
+        _kgState.dragOffsetX = ev.clientX - node.x;
+        _kgState.dragOffsetY = ev.clientY - node.y;
+      });
+    })(n, g);
+
+    nodeGroup.appendChild(g);
+  });
+  svg.appendChild(nodeGroup);
+
+  // Click on background to deselect
+  bgRect.addEventListener('click', function() {
+    _kgState.selectedNode = null;
+    kgRenderSVG();
+  });
+
+  // Clear old SVG
+  area.innerHTML = '';
+  area.appendChild(svg);
+
+  // Drag handling on SVG
+  svg.addEventListener('mousemove', function(ev) {
+    if (!_kgState.dragging) return;
+    var rect = svg.getBoundingClientRect();
+    var x = ev.clientX - rect.left;
+    var y = ev.clientY - rect.top;
+    _kgState.dragging.x = Math.max(30, Math.min((area.clientWidth || 900) - 30, x));
+    _kgState.dragging.y = Math.max(30, Math.min((area.clientHeight || 650) - 30, y));
+    kgRenderSVG();
+  });
+  svg.addEventListener('mouseup', function() { _kgState.dragging = null; });
+  svg.addEventListener('mouseleave', function() { _kgState.dragging = null; });
+}
+
+function kgShowTooltip(ev, node) {
+  var tip = document.getElementById('kgTooltip');
+  if (!tip) return;
+  var typeLabel = (node.type || 'unknown').replace('_', ' ');
+  typeLabel = typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1);
+
+  var html = '<div class="kg-tooltip-title">' + escapeHtml(node.label || node.id) + '</div>';
+  html += '<div class="kg-tooltip-type" style="color:' + (KG_NODE_COLORS[node.type] || '#888') + '">' + escapeHtml(typeLabel) + '</div>';
+
+  if (node.pathways && node.pathways.length > 0) {
+    html += '<div class="kg-tooltip-detail"><strong>Pathways:</strong> ' + node.pathways.map(function(p) { return escapeHtml(p); }).join(', ') + '</div>';
+  }
+
+  // Count connections
+  var inCount = 0, outCount = 0;
+  _kgState.edges.forEach(function(e) {
+    if (e.source === node.id) outCount++;
+    if (e.target === node.id) inCount++;
+  });
+  html += '<div class="kg-tooltip-detail"><strong>Connections:</strong> ' + inCount + ' in, ' + outCount + ' out</div>';
+
+  if (node.references && node.references.length > 0) {
+    html += '<div class="kg-tooltip-detail"><strong>References:</strong> ' + node.references.slice(0, 3).map(function(r) { return escapeHtml(r); }).join(', ');
+    if (node.references.length > 3) html += ' +' + (node.references.length - 3) + ' more';
+    html += '</div>';
+  }
+
+  tip.innerHTML = html;
+  tip.style.display = 'block';
+
+  // Position near cursor
+  var area = document.getElementById('kgGraphArea');
+  if (area) {
+    var rect = area.getBoundingClientRect();
+    var tx = ev.clientX - rect.left + 15;
+    var ty = ev.clientY - rect.top + 15;
+    // Keep within bounds
+    if (tx + 300 > rect.width) tx = ev.clientX - rect.left - 310;
+    if (ty + 150 > rect.height) ty = ev.clientY - rect.top - 150;
+    tip.style.left = tx + 'px';
+    tip.style.top = ty + 'px';
+  }
+}
+
+function kgHideTooltip() {
+  var tip = document.getElementById('kgTooltip');
+  if (tip) tip.style.display = 'none';
+}
+
+function kgTogglePathway(pathway, checked) {
+  _kgState.activePathways[pathway] = checked;
+  kgRenderSVG();
+}
+
+function kgToggleType(type, checked) {
+  _kgState.activeTypes[type] = checked;
+  kgRenderSVG();
+}
+
+function kgSearch() {
+  var input = document.getElementById('kgSearchInput');
+  if (!input) return;
+  _kgState.searchTerm = input.value.trim();
+  _kgState.selectedNode = null;
+
+  // If there's a match, center on it
+  if (_kgState.searchTerm) {
+    var searchLower = _kgState.searchTerm.toLowerCase();
+    var match = _kgState.nodes.find(function(n) {
+      return n.id.toLowerCase().indexOf(searchLower) >= 0 || n.label.toLowerCase().indexOf(searchLower) >= 0;
+    });
+    if (match) {
+      _kgState.selectedNode = match.id;
+    }
+  }
+  kgRenderSVG();
+}
+
+function kgReset() {
+  _kgState.selectedNode = null;
+  _kgState.searchTerm = '';
+  var input = document.getElementById('kgSearchInput');
+  if (input) input.value = '';
+
+  // Reset all filters to on
+  _kgState.pathways.forEach(function(p) { _kgState.activePathways[p] = true; });
+  Object.keys(KG_NODE_COLORS).forEach(function(t) { _kgState.activeTypes[t] = true; });
+
+  // Re-check all checkboxes
+  var checkboxes = document.querySelectorAll('.kg-checkbox-list input[type="checkbox"]');
+  checkboxes.forEach(function(cb) { cb.checked = true; });
+
+  kgRenderSVG();
+}
+
 
 </script>
 </body>

@@ -12,7 +12,7 @@ import logging
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum, IntEnum
 from typing import Any, Callable
 
@@ -285,7 +285,7 @@ class AlertEngine:
             return False
 
         alert.status = AlertStatus.ACKNOWLEDGED
-        alert.acknowledged_at = datetime.utcnow()
+        alert.acknowledged_at = datetime.now(timezone.utc)
         alert.acknowledged_by = acknowledged_by
 
         logger.info("Alert %s acknowledged by %s", alert_id, acknowledged_by)
@@ -305,7 +305,7 @@ class AlertEngine:
             return False
 
         alert.status = AlertStatus.RESOLVED
-        alert.resolved_at = datetime.utcnow()
+        alert.resolved_at = datetime.now(timezone.utc)
 
         logger.info("Alert %s resolved", alert_id)
         return True
@@ -559,7 +559,7 @@ class AlertEngine:
 
     def _process_escalations(self) -> None:
         """Process escalation rules for active unacknowledged alerts."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         for alert in self._active_alerts.values():
             if alert.status != AlertStatus.ACTIVE:
                 continue

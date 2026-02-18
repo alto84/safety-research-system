@@ -21,11 +21,13 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import math
+import os
 import time
 import uuid
 from collections import defaultdict
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from pathlib import Path
@@ -83,11 +85,26 @@ _hscore_model = HScore()
 _car_hematotox_model = CARHematotox()
 
 # In-memory stores (replace with database in production)
+# Bounded: max 1000 entries per patient, max 500 patients
+_MAX_TIMELINE_ENTRIES_PER_PATIENT = 1000
+_MAX_PATIENTS = 500
 _patient_timelines: dict[str, list[dict[str, Any]]] = defaultdict(list)
 _model_last_run: dict[str, datetime] = {}
 
 # WebSocket connections for real-time monitoring
 _ws_connections: dict[str, list[WebSocket]] = defaultdict(list)
+
+
+def _bounded_timeline_append(patient_id: str, entry: dict[str, Any]) -> None:
+    """Append to patient timeline with size bounds."""
+    if len(_patient_timelines) >= _MAX_PATIENTS and patient_id not in _patient_timelines:
+        # Evict oldest patient (first key in dict)
+        oldest = next(iter(_patient_timelines))
+        del _patient_timelines[oldest]
+    _patient_timelines[patient_id].append(entry)
+    # Cap per-patient entries
+    if len(_patient_timelines[patient_id]) > _MAX_TIMELINE_ENTRIES_PER_PATIENT:
+        _patient_timelines[patient_id] = _patient_timelines[patient_id][-_MAX_TIMELINE_ENTRIES_PER_PATIENT:]
 
 
 # ---------------------------------------------------------------------------
@@ -189,12 +206,17 @@ async def root_redirect():
 # Middleware (order matters: outermost first)
 # ---------------------------------------------------------------------------
 
+_cors_origins = os.environ.get(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:8000,http://127.0.0.1:8000,http://192.168.1.100:8000",
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_cors_origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["X-API-Key", "Content-Type", "X-Request-ID"],
     expose_headers=["X-Request-ID", "X-Process-Time"],
 )
 
@@ -409,7 +431,6 @@ def _compute_composite_score(all_scores: list[ScoringResult]) -> float:
 
 def _normalise_score(model_name: str, score: float) -> float:
     """Normalise a model score to the 0.0-1.0 range."""
-    import math
 
     if model_name == "EASIX":
         # EASIX typical range: 0-50+, log-transform and clip
@@ -495,7 +516,7 @@ async def predict(
 
     # Update last-run times
     for score in ensemble_result.all_scores:
-        _model_last_run[score.model_name] = datetime.utcnow()
+        _model_last_run[score.model_name] = datetime.now(timezone.utc)
 
     # Build layer details
     layer_details = []
@@ -534,7 +555,7 @@ async def predict(
         ensemble_result.model_count_run / total_models if total_models > 0 else 0.0
     )
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # Build model_scores dict for timeline
     model_scores: dict[str, float] = {}
@@ -550,7 +571,7 @@ async def predict(
         "hours_since_infusion": request.product.hours_since_infusion,
         "model_scores": model_scores,
     }
-    _patient_timelines[request.patient_id].append(timeline_point)
+    _bounded_timeline_append(request.patient_id, timeline_point)
 
     # Notify WebSocket clients
     ws_payload = {
@@ -603,7 +624,7 @@ async def predict_batch(
 ) -> BatchPredictionResponse:
     """Run predictions for multiple patients."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     predictions: list[PredictionResponse] = []
     errors: list[dict[str, str]] = []
@@ -655,7 +676,7 @@ async def predict_batch(
 async def get_timeline(patient_id: str) -> TimelineResponse:
     """Retrieve the risk score timeline for a patient."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     timeline_data = _patient_timelines.get(patient_id, [])
     if not timeline_data:
@@ -712,7 +733,7 @@ async def get_timeline(patient_id: str) -> TimelineResponse:
 async def get_model_status() -> ModelStatusResponse:
     """Return status of all scoring models."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     models = [
         ModelInfo(
@@ -822,7 +843,7 @@ async def compute_easix(
 ) -> ScoreResponse:
     """Compute EASIX score from query parameters."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     endpoint_warnings: list[str] = []
 
     # Warn on unusual values
@@ -888,7 +909,7 @@ async def compute_hscore(
 ) -> ScoreResponse:
     """Compute HScore from query parameters."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     endpoint_warnings: list[str] = []
 
     if ferritin > 50000:
@@ -957,7 +978,7 @@ async def compute_car_hematotox(
 ) -> ScoreResponse:
     """Compute CAR-HEMATOTOX score from query parameters."""
     request_id = str(uuid.uuid4())
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     endpoint_warnings: list[str] = []
 
     if anc == 0:
@@ -1009,7 +1030,7 @@ async def health_check() -> HealthResponse:
         status="healthy",
         version="0.1.0",
         uptime_seconds=time.monotonic() - _start_time,
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(timezone.utc),
         models_available=7,
         engine_initialized=False,
     )
@@ -1052,7 +1073,7 @@ async def websocket_monitor(websocket: WebSocket, patient_id: str):
     await websocket.send_json({
         "type": "connected",
         "patient_id": patient_id,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "message": f"Monitoring patient {patient_id}. You will receive updates on new predictions.",
     })
 
@@ -1080,7 +1101,7 @@ async def websocket_monitor(websocket: WebSocket, patient_id: str):
                             "type": "no_data",
                             "patient_id": patient_id,
                             "message": "No predictions available yet for this patient.",
-                            "timestamp": datetime.utcnow().isoformat(),
+                            "timestamp": datetime.now(timezone.utc).isoformat(),
                         })
 
             except asyncio.TimeoutError:
@@ -1088,7 +1109,7 @@ async def websocket_monitor(websocket: WebSocket, patient_id: str):
                 await websocket.send_json({
                     "type": "heartbeat",
                     "patient_id": patient_id,
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
 
     except WebSocketDisconnect:
