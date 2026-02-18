@@ -8557,10 +8557,13 @@ function stRenderFull() {
   // -- Summary stats table --
   html += stRenderSummaryTable();
 
+  // -- Comparative Safety Heatmap --
+  html += stRenderHeatmapContainer();
+
   el.innerHTML = html;
 
   // Draw chart after DOM is ready
-  setTimeout(function() { stDrawChart(); stDrawMilestoneBar(); }, 0);
+  setTimeout(function() { stDrawChart(); stDrawMilestoneBar(); stDrawHeatmap(); }, 0);
 }
 
 function stRenderSummaryTable() {
@@ -8618,6 +8621,155 @@ function stRenderSummaryTable() {
 
   html += '</tbody></table></div></div>';
   return html;
+}
+
+/* ---- Comparative Safety Heatmap ---- */
+
+var ST_HEATMAP_PRODUCTS = ['Kymriah', 'Yescarta', 'Tecartus', 'Breyanzi', 'Abecma', 'Carvykti'];
+var ST_HEATMAP_AE_KEYS = ['CRS', 'secondary_malignancy', 'neurotoxicity', 'cytopenias'];
+var ST_HEATMAP_AE_COLS = {
+  'CRS': 'CRS',
+  'secondary_malignancy': 'Secondary Malignancy',
+  'neurotoxicity': 'ICANS',
+  'cytopenias': 'Cytopenias'
+};
+
+function stHeatmapColor(prr) {
+  // Green (<5) -> Yellow (5-15) -> Orange (15-25) -> Red (>25)
+  if (prr <= 0) return '#6b7280';       // Gray for no data
+  if (prr < 5)  return '#22c55e';       // Green
+  if (prr < 10) return '#84cc16';       // Yellow-green
+  if (prr < 15) return '#eab308';       // Yellow
+  if (prr < 20) return '#f59e0b';       // Amber
+  if (prr < 25) return '#f97316';       // Orange
+  return '#ef4444';                     // Red
+}
+
+function stHeatmapTextColor(prr) {
+  // Ensure text is readable on the background
+  if (prr <= 0) return '#ffffff';
+  if (prr < 5)  return '#052e16';
+  if (prr < 15) return '#1a1a2e';
+  return '#ffffff';
+}
+
+function stStatusLabel(status) {
+  var labels = {
+    'confirmed': 'Confirmed',
+    'emerging': 'Emerging',
+    'under_review': 'Under Review',
+    'monitoring': 'Monitoring',
+    'resolved': 'Resolved'
+  };
+  return labels[status] || status || '-';
+}
+
+function stStatusBadgeStyle(status) {
+  var colors = {
+    'confirmed':    'background:#fef2f2; color:#991b1b; border:1px solid #fecaca;',
+    'emerging':     'background:#fffbeb; color:#92400e; border:1px solid #fde68a;',
+    'under_review': 'background:#fefce8; color:#854d0e; border:1px solid #fef08a;',
+    'monitoring':   'background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe;',
+    'resolved':     'background:#f0fdf4; color:#166534; border:1px solid #bbf7d0;'
+  };
+  return colors[status] || 'background:#f3f4f6; color:#374151; border:1px solid #e5e7eb;';
+}
+
+function stRenderHeatmapContainer() {
+  var html = '<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-top:16px;">';
+  html += '<div style="font-size:14px; font-weight:700; margin-bottom:4px;">Comparative Safety Heatmap &mdash; Latest PRR by Product &times; Adverse Event</div>';
+  html += '<div style="font-size:11px; color:var(--text-secondary); margin-bottom:12px;">Cell color indicates disproportionality signal strength. Values show Proportional Reporting Ratio (PRR) from FAERS data.</div>';
+
+  // Color scale legend
+  html += '<div style="display:flex; align-items:center; gap:6px; margin-bottom:14px; flex-wrap:wrap;">';
+  html += '<span style="font-size:11px; color:var(--text-secondary); font-weight:600;">PRR Scale:</span>';
+  var legendItems = [
+    { color: '#22c55e', label: '< 5 (Low)' },
+    { color: '#eab308', label: '5\u201315 (Moderate)' },
+    { color: '#f97316', label: '15\u201325 (Elevated)' },
+    { color: '#ef4444', label: '> 25 (High)' }
+  ];
+  legendItems.forEach(function(item) {
+    html += '<span style="display:inline-flex; align-items:center; gap:3px; font-size:11px;">';
+    html += '<span style="display:inline-block; width:14px; height:14px; border-radius:3px; background:' + item.color + ';"></span>';
+    html += item.label + '</span>';
+  });
+  html += '</div>';
+
+  // Heatmap grid container
+  html += '<div id="stHeatmapGrid" style="overflow-x:auto;"></div>';
+  html += '</div>';
+  return html;
+}
+
+function stDrawHeatmap() {
+  var container = document.getElementById('stHeatmapGrid');
+  if (!container) return;
+
+  var profiles = _stState.profiles || [];
+  if (profiles.length === 0) {
+    container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:16px; font-size:12px;">No temporal data available for heatmap.</div>';
+    return;
+  }
+
+  // Build lookup: product -> ae_category -> { prr, status }
+  var lookup = {};
+  ST_HEATMAP_PRODUCTS.forEach(function(prod) { lookup[prod] = {}; });
+
+  profiles.forEach(function(p) {
+    if (!lookup[p.product_name]) return;
+    // Get latest PRR from the profile's timepoints
+    var latestPrr = 0;
+    if (p.timepoints && p.timepoints.length > 0) {
+      latestPrr = p.timepoints[p.timepoints.length - 1].prr || 0;
+    }
+    // Also check top-level latest_prr if provided (from serialization)
+    if (typeof p.latest_prr === 'number' && p.latest_prr > 0) {
+      latestPrr = p.latest_prr;
+    }
+    lookup[p.product_name][p.ae_category] = {
+      prr: latestPrr,
+      status: p.current_status || 'monitoring'
+    };
+  });
+
+  // Build CSS grid table
+  var cols = ST_HEATMAP_AE_KEYS.length;
+  var html = '<div style="display:grid; grid-template-columns:140px repeat(' + cols + ', minmax(130px, 1fr)); gap:2px; font-size:12px;">';
+
+  // Header row
+  html += '<div style="padding:8px 10px; font-weight:700; color:var(--text-secondary); display:flex; align-items:flex-end;">Product</div>';
+  ST_HEATMAP_AE_KEYS.forEach(function(ae) {
+    html += '<div style="padding:8px 10px; font-weight:700; color:var(--text-secondary); text-align:center; display:flex; align-items:flex-end; justify-content:center;">' + ST_HEATMAP_AE_COLS[ae] + '</div>';
+  });
+
+  // Data rows
+  ST_HEATMAP_PRODUCTS.forEach(function(prod) {
+    var prodColor = ST_COLORS[prod] || '#666';
+    // Product label cell
+    html += '<div style="padding:8px 10px; font-weight:600; display:flex; align-items:center; gap:6px; border-right:2px solid var(--border);">';
+    html += '<span style="display:inline-block; width:10px; height:10px; border-radius:2px; background:' + prodColor + '; flex-shrink:0;"></span>';
+    html += '<span>' + prod + '</span>';
+    html += '</div>';
+
+    // Data cells
+    ST_HEATMAP_AE_KEYS.forEach(function(ae) {
+      var cell = (lookup[prod] || {})[ae];
+      var prr = cell ? cell.prr : 0;
+      var status = cell ? cell.status : 'monitoring';
+      var bgColor = stHeatmapColor(prr);
+      var txtColor = stHeatmapTextColor(prr);
+      var statusStyle = stStatusBadgeStyle(status);
+
+      html += '<div style="background:' + bgColor + '; color:' + txtColor + '; padding:8px 6px; text-align:center; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:56px;">';
+      html += '<div style="font-size:18px; font-weight:700; line-height:1;">' + (prr > 0 ? prr.toFixed(1) : '\u2014') + '</div>';
+      html += '<div style="font-size:9px; font-weight:600; padding:1px 5px; border-radius:3px; ' + statusStyle + ' line-height:1.3; white-space:nowrap;">' + stStatusLabel(status) + '</div>';
+      html += '</div>';
+    });
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
 }
 
 function stToggleProduct(p) {
