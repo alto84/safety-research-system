@@ -626,35 +626,38 @@ async def predict_batch(
     request_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
 
-    predictions: list[PredictionResponse] = []
-    errors: list[dict[str, str]] = []
-    successful = 0
-    failed = 0
-
-    for patient_request in batch_request.patients:
+    # Run predictions concurrently for better throughput
+    async def _safe_predict(patient_request: PredictionRequest) -> tuple[PredictionResponse | None, dict | None]:
         try:
             result = await predict(patient_request)
-            predictions.append(result)
-            successful += 1
+            return result, None
         except Exception as exc:
-            failed += 1
-            errors.append({
-                "patient_id": patient_request.patient_id,
-                "error": str(exc),
-            })
             logger.error(
                 "Batch prediction failed for patient %s: %s",
                 patient_request.patient_id,
                 exc,
             )
+            return None, {"patient_id": patient_request.patient_id, "error": str(exc)}
+
+    results = await asyncio.gather(
+        *(_safe_predict(req) for req in batch_request.patients)
+    )
+
+    predictions: list[PredictionResponse] = []
+    errors: list[dict[str, str]] = []
+    for result, error in results:
+        if result is not None:
+            predictions.append(result)
+        if error is not None:
+            errors.append(error)
 
     return BatchPredictionResponse(
         request_id=request_id,
         timestamp=now,
         predictions=predictions,
         total_patients=len(batch_request.patients),
-        successful=successful,
-        failed=failed,
+        successful=len(predictions),
+        failed=len(errors),
         errors=errors,
     )
 

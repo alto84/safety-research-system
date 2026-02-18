@@ -134,6 +134,17 @@ from src.data.ctgov_cache import (
     AE_TERM_MAP as CTGOV_AE_TERM_MAP,
 )
 from src.models.signal_triangulation import triangulate_signals
+from src.models.temporal_signal import (
+    AE_CATEGORIES as TEMPORAL_AE_CATEGORIES,
+    PRODUCT_METADATA as TEMPORAL_PRODUCT_METADATA,
+    get_all_temporal_profiles,
+    get_product_profiles as get_temporal_product_profiles,
+    get_regulatory_timeline as get_temporal_regulatory_timeline,
+    get_signal_summary as get_temporal_signal_summary,
+    get_temporal_profile,
+    milestone_to_dict,
+    profile_to_dict,
+)
 from src.models.secondary_malignancy import (
     assess_secondary_malignancy_risk,
     get_all_signals_data,
@@ -787,6 +798,151 @@ async def signal_triangulation(
         "summary": result["summary"],
         "methodology": result["methodology"],
         "caveats": result["caveats"],
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/signals/temporal-evolution -- All temporal signal profiles
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/signals/temporal-evolution",
+    tags=["Signals"],
+    summary="Temporal signal evolution for all CAR-T products",
+    description=(
+        "Returns temporal signal evolution profiles showing how FAERS "
+        "disproportionality metrics (PRR, ROR, EBGM, IC025) evolve over "
+        "quarterly reporting periods from approval through 2025, with "
+        "regulatory milestone overlays.  Covers CRS, secondary malignancy, "
+        "neurotoxicity, and cytopenias for all 6 approved CAR-T products."
+    ),
+)
+async def temporal_evolution(
+    ae_category: str | None = Query(
+        None,
+        description="Filter by AE category: CRS, secondary_malignancy, "
+                    "neurotoxicity, cytopenias. Omit for all categories.",
+    ),
+) -> dict:
+    """Return all temporal signal profiles with optional AE category filter."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    try:
+        profiles = get_all_temporal_profiles()
+
+        if ae_category:
+            from src.models.temporal_signal import _normalize_ae_category
+            normalized = _normalize_ae_category(ae_category)
+            if normalized:
+                profiles = [p for p in profiles if p.ae_category == normalized]
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Unknown AE category: '{ae_category}'. "
+                           f"Valid categories: {', '.join(TEMPORAL_AE_CATEGORIES)}",
+                )
+
+        milestones = get_temporal_regulatory_timeline()
+        summary = get_temporal_signal_summary()
+
+        return {
+            "request_id": request_id,
+            "timestamp": now.isoformat(),
+            "profiles": [profile_to_dict(p) for p in profiles],
+            "milestones": [milestone_to_dict(m) for m in milestones],
+            "summary": summary,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Temporal signal evolution failed")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Temporal signal evolution failed: {exc}",
+        ) from exc
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/signals/temporal-evolution/{product_name} -- Single product
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/signals/temporal-evolution/{product_name}",
+    tags=["Signals"],
+    summary="Temporal signal evolution for a specific CAR-T product",
+    description=(
+        "Returns temporal signal evolution profiles for a single product "
+        "across all AE categories.  Supports case-insensitive and partial "
+        "product name matching (e.g., 'kymriah', 'tisagen')."
+    ),
+)
+async def temporal_evolution_product(product_name: str) -> dict:
+    """Return temporal profiles for a single product."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    try:
+        profiles = get_temporal_product_profiles(product_name)
+        if not profiles:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Product '{product_name}' not found. "
+                       f"Known products: {', '.join(TEMPORAL_PRODUCT_METADATA.keys())}",
+            )
+
+        milestones = get_temporal_regulatory_timeline()
+        # Filter milestones relevant to this product
+        actual_name = profiles[0].product_name
+        product_milestones = [
+            m for m in milestones if actual_name in m.products_affected
+        ]
+
+        return {
+            "request_id": request_id,
+            "timestamp": now.isoformat(),
+            "product_name": actual_name,
+            "profiles": [profile_to_dict(p) for p in profiles],
+            "milestones": [milestone_to_dict(m) for m in product_milestones],
+        }
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Temporal signal evolution failed for %s", product_name)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed: {exc}",
+        ) from exc
+
+
+# ---------------------------------------------------------------------------
+# GET /api/v1/signals/regulatory-timeline -- Regulatory milestone timeline
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/api/v1/signals/regulatory-timeline",
+    tags=["Signals"],
+    summary="Regulatory milestone timeline for CAR-T products",
+    description=(
+        "Returns the chronologically ordered regulatory milestone timeline "
+        "covering FDA approvals, boxed warnings, REMS updates, label changes, "
+        "and advisory committee meetings related to CAR-T safety signals."
+    ),
+)
+async def regulatory_timeline() -> dict:
+    """Return the full regulatory milestone timeline."""
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+
+    milestones = get_temporal_regulatory_timeline()
+
+    return {
+        "request_id": request_id,
+        "timestamp": now.isoformat(),
+        "total_milestones": len(milestones),
+        "milestones": [milestone_to_dict(m) for m in milestones],
     }
 
 

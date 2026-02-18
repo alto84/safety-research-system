@@ -7,12 +7,12 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 
 ## Architecture
 - **Backend:** Python 3.13 + FastAPI (single server, three route groups: patient-level, population-level, system)
-- **Frontend:** Single-page HTML dashboard in `src/api/static/index.html` (vanilla JS, no build tools, ~5000+ lines)
-- **Models:** `src/models/` — 7-model risk registry, Bayesian risk, correlated mitigation, FAERS signal detection, ensemble scoring, model validation
+- **Frontend:** Single-page HTML dashboard in `src/api/static/index.html` (vanilla JS, no build tools, ~8400+ lines)
+- **Models:** `src/models/` — 7-model risk registry, Bayesian risk, correlated mitigation, FAERS signal detection, ensemble scoring, model validation, AE classifier (SapBERT), secondary malignancy detection
 - **Data:** `data/sle_cart_studies.py` — curated clinical data; `data/cell_therapy_registry.py` — 12 therapy types, 21 AE profiles
-- **Knowledge Graph:** `src/data/knowledge/` — 4 signaling pathways, 47 directed steps, 15 molecular targets, 9 cell types, 22 PubMed references
-- **Tests:** `tests/` — pytest, 1400+ tests, run with `python -m pytest tests/ -q`
-- **API:** `src/api/` — FastAPI app with 33 endpoints, Pydantic schemas, rate-limiting middleware
+- **Knowledge Graph:** `src/data/knowledge/` — 4 signaling pathways, 47 directed steps, 15 molecular targets, 9 cell types, 22 PubMed references, 8 mechanism chains
+- **Tests:** `tests/` — pytest, 2100+ tests, run with `python -m pytest tests/ -q`
+- **API:** `src/api/` — FastAPI app with 40+ endpoints, Pydantic schemas, rate-limiting middleware
 - **Analysis:** `analysis/` — Publication-ready risk model analyses
 
 ## Design Principles
@@ -45,6 +45,8 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 | `population_routes.py` | Population + CDP + knowledge + publication + narrative endpoints | 25 routes |
 | `ensemble_runner.py` | Two-layer biomarker scoring ensemble | `BiomarkerEnsembleRunner`, `EnsembleResult` |
 | `narrative_engine.py` | Template-based clinical narrative generation | `generate_narrative()`, `generate_briefing()` |
+| `ae_classifier.py` | SapBERT-based AE term classification, 13 MedDRA categories, 470 terms | `classify_ae_term()`, `embed_ae_terms()`, `get_model_status()` |
+| `secondary_malignancy.py` | FDA boxed warning tracker, 10 signals, 6 CAR-T products | `assess_secondary_malignancy_risk()`, `get_monitoring_protocol()` |
 
 ## Knowledge Graph (`src/data/knowledge/`)
 | Module | Content |
@@ -53,22 +55,23 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 | `cell_types.py` | 9 cell populations with markers, activation states, AE roles |
 | `molecular_targets.py` | 15 druggable targets with modulators, pathway membership |
 | `pathways.py` | 4 cascades: CRS IL-6 trans-signaling, ICANS BBB disruption, HLH IFN-γ feedback, general |
-| `mechanisms.py` | 6 therapy-to-AE chains (CAR-T CD19, TCR-T, CAR-NK, gene therapy) |
+| `mechanisms.py` | 8 therapy-to-AE chains (CAR-T CD19, TCR-T, CAR-NK, gene therapy, secondary malignancy) |
 | `graph_queries.py` | Query API: `get_pathway_for_ae()`, `get_intervention_points()`, `get_mechanism_chain()` |
 | `integration.py` | Knowledge-to-model bridge: `get_mechanistic_context()`, `get_narrative_context()` |
 
-## Dashboard (17 tabs)
+## Dashboard (25 tabs)
 - **Patient-level (9):** Overview, Pre-Infusion, Day 1 Monitor, CRS Monitor, ICANS, HLH Screen, Hematologic, Discharge, Clinical Visit
-- **Population-level (8):** Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, Clinical Safety Plan, System Architecture, Scientific Basis, Publication Analysis
+- **Population-level (9):** Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, Clinical Safety Plan, System Architecture, Scientific Basis, Publication Analysis, Knowledge Graph
 - Therapy type selector at top (8 therapy types)
 - All charts: vanilla SVG, data from API via `fetch()`
 
-## API Endpoints (33)
+## API Endpoints (40+)
 - Patient: `/api/v1/predict`, `/api/v1/predict/batch`, `/api/v1/scores/easix`, `/api/v1/scores/hscore`, `/api/v1/scores/car-hematotox`, `/api/v1/patient/{patient_id}/timeline`, `/api/v1/models/status`
 - Population: `/api/v1/population/risk`, `/api/v1/population/bayesian`, `/api/v1/population/mitigations`, `/api/v1/population/mitigations/strategies`, `/api/v1/population/evidence-accrual`, `/api/v1/population/trials`, `/api/v1/population/comparison`
-- Signals: `/api/v1/signals/faers`
+- Signals: `/api/v1/signals/faers`, `/api/v1/signals/secondary-malignancy`, `/api/v1/signals/secondary-malignancy/monitoring-protocol`, `/api/v1/signals/secondary-malignancy/{product_name}`
+- ML: `/api/v1/classify-ae`
 - CDP/CSP: `/api/v1/cdp/monitoring-schedule`, `/api/v1/cdp/eligibility-criteria`, `/api/v1/cdp/stopping-rules`, `/api/v1/cdp/sample-size`
-- Knowledge: `/api/v1/knowledge/pathways`, `/api/v1/knowledge/pathways/{pathway_id}`, `/api/v1/knowledge/mechanisms`, `/api/v1/knowledge/targets`, `/api/v1/knowledge/cells`, `/api/v1/knowledge/references`, `/api/v1/knowledge/overview`
+- Knowledge: `/api/v1/knowledge/pathways`, `/api/v1/knowledge/pathways/{pathway_id}`, `/api/v1/knowledge/mechanisms`, `/api/v1/knowledge/targets`, `/api/v1/knowledge/cells`, `/api/v1/knowledge/references`, `/api/v1/knowledge/overview`, `/api/v1/knowledge/graph`
 - Publication: `/api/v1/publication/analysis`, `/api/v1/publication/figures/{figure_name}`
 - Narratives: `/api/v1/narratives/generate`, `/api/v1/narratives/patient/{patient_id}/briefing`
 - System: `/api/v1/system/architecture`, `/api/v1/therapies`, `/api/v1/health`

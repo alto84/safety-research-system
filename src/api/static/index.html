@@ -518,7 +518,8 @@ body {
 .task-btn[data-task="architecture"],
 .task-btn[data-task="science"],
 .task-btn[data-task="publication"],
-.task-btn[data-task="knowledge-graph"] {
+.task-btn[data-task="knowledge-graph"],
+.task-btn[data-task="signal-timeline"] {
   color: var(--info);
 }
 .task-btn[data-task="population"]:hover,
@@ -529,7 +530,8 @@ body {
 .task-btn[data-task="architecture"]:hover,
 .task-btn[data-task="science"]:hover,
 .task-btn[data-task="publication"]:hover,
-.task-btn[data-task="knowledge-graph"]:hover {
+.task-btn[data-task="knowledge-graph"]:hover,
+.task-btn[data-task="signal-timeline"]:hover {
   color: var(--text);
 }
 .task-btn[data-task="population"].active,
@@ -540,7 +542,8 @@ body {
 .task-btn[data-task="architecture"].active,
 .task-btn[data-task="science"].active,
 .task-btn[data-task="publication"].active,
-.task-btn[data-task="knowledge-graph"].active {
+.task-btn[data-task="knowledge-graph"].active,
+.task-btn[data-task="signal-timeline"].active {
   color: var(--primary); border-bottom-color: var(--primary);
 }
 
@@ -1136,6 +1139,7 @@ body {
     <button class="task-btn" data-task="science" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128300;</span> Scientific Basis</button>
     <button class="task-btn" data-task="publication" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128220;</span> Publication Analysis</button>
     <button class="task-btn" data-task="knowledge-graph" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128376;</span> Knowledge Graph</button>
+    <button class="task-btn" data-task="signal-timeline" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128200;</span> Signal Timeline</button>
     <div class="tab-separator" aria-hidden="true"></div>
     <button class="task-btn" data-task="pharma-org" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#127970;</span> Org Chart</button>
     <button class="task-btn" data-task="pharma-regulatory" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128220;</span> Regulatory Map</button>
@@ -1524,6 +1528,7 @@ function renderTaskContent() {
     case 'science': container.innerHTML = renderScientificBasis(); break;
     case 'publication': container.innerHTML = renderPublicationAnalysis(); break;
     case 'knowledge-graph': container.innerHTML = renderKnowledgeGraph(); break;
+    case 'signal-timeline': container.innerHTML = renderSignalTimeline(); break;
     case 'pharma-org': container.innerHTML = renderPharmaOrgChart(); break;
     case 'pharma-regulatory': container.innerHTML = renderPharmaRegulatoryMap(); break;
     case 'pharma-pipeline': container.innerHTML = renderPharmaPipeline(); break;
@@ -8414,6 +8419,498 @@ function kgReset() {
   checkboxes.forEach(function(cb) { cb.checked = true; });
 
   kgRenderSVG();
+}
+
+
+// ============================================================================
+// SIGNAL TIMELINE -- Temporal Signal Evolution with Regulatory Milestone Overlay
+// ============================================================================
+
+var _stState = {
+  profiles: [],
+  milestones: [],
+  summary: null,
+  loaded: false,
+  selectedProducts: {},
+  selectedAE: 'CRS',
+  selectedMetric: 'prr',
+  hoveredPoint: null,
+};
+
+var ST_COLORS = {
+  'Kymriah':  '#2563eb',
+  'Yescarta': '#dc2626',
+  'Tecartus': '#059669',
+  'Breyanzi': '#d97706',
+  'Abecma':   '#7c3aed',
+  'Carvykti': '#0891b2',
+};
+
+var ST_AE_LABELS = {
+  'CRS': 'Cytokine Release Syndrome',
+  'secondary_malignancy': 'Secondary Malignancy',
+  'neurotoxicity': 'Neurotoxicity (ICANS)',
+  'cytopenias': 'Cytopenias',
+};
+
+var ST_METRIC_LABELS = {
+  'prr': 'PRR (Proportional Reporting Ratio)',
+  'ror': 'ROR (Reporting Odds Ratio)',
+  'ebgm': 'EBGM (Empirical Bayesian Geometric Mean)',
+  'ic025': 'IC025 (Information Component Lower Bound)',
+  'cumulative_cases': 'Cumulative Case Count',
+};
+
+function renderSignalTimeline() {
+  setTimeout(function() { loadSignalTimelineData(); }, 0);
+  return '<div class="card">' +
+    '<div class="card-header">' +
+      '<div class="card-title">&#128200; Temporal Signal Evolution</div>' +
+      '<span style="font-size:12px; color:var(--text-secondary);">FAERS disproportionality metrics over time with regulatory milestone overlay</span>' +
+    '</div>' +
+    '<div class="card-body" id="stContent">' +
+      popLoadingHtml('Loading temporal signal data...') +
+    '</div>' +
+  '</div>';
+}
+
+async function loadSignalTimelineData() {
+  var el = document.getElementById('stContent');
+  if (!el) return;
+
+  var res = await popFetch('/api/v1/signals/temporal-evolution');
+  if (res.error) {
+    el.innerHTML = popErrorHtml('Failed to load temporal signal data: ' + res.error);
+    return;
+  }
+
+  _stState.profiles = res.data.profiles || [];
+  _stState.milestones = res.data.milestones || [];
+  _stState.summary = res.data.summary || {};
+  _stState.loaded = true;
+
+  // Initialize product selection -- all on
+  var products = _stState.summary.products || [];
+  products.forEach(function(p) { _stState.selectedProducts[p] = true; });
+
+  stRenderFull();
+}
+
+function stRenderFull() {
+  var el = document.getElementById('stContent');
+  if (!el) return;
+
+  var products = _stState.summary.products || [];
+  var aeCategories = _stState.summary.ae_categories || [];
+
+  // -- Controls row --
+  var html = '<div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; align-items:flex-start;">';
+
+  // Product selector
+  html += '<div style="flex:1; min-width:180px;">';
+  html += '<div style="font-size:12px; font-weight:600; margin-bottom:6px; color:var(--text-secondary);">Products</div>';
+  html += '<div style="display:flex; flex-wrap:wrap; gap:4px;">';
+  products.forEach(function(p) {
+    var checked = _stState.selectedProducts[p] ? ' checked' : '';
+    var color = ST_COLORS[p] || '#666';
+    html += '<label style="display:inline-flex; align-items:center; gap:4px; font-size:12px; cursor:pointer; padding:2px 6px; border-radius:4px; border:1px solid var(--border); background:var(--surface);">';
+    html += '<input type="checkbox" onchange="stToggleProduct(\'' + p + '\')"' + checked + '>';
+    html += '<span style="width:10px; height:10px; border-radius:2px; background:' + color + '; display:inline-block;"></span>';
+    html += p + '</label>';
+  });
+  html += '</div></div>';
+
+  // AE category selector
+  html += '<div style="min-width:160px;">';
+  html += '<div style="font-size:12px; font-weight:600; margin-bottom:6px; color:var(--text-secondary);">Adverse Event</div>';
+  html += '<select id="stAESelect" onchange="stChangeAE(this.value)" style="font-size:12px; padding:4px 8px; border-radius:4px; border:1px solid var(--border); background:var(--surface); color:var(--text);">';
+  aeCategories.forEach(function(ae) {
+    var sel = ae === _stState.selectedAE ? ' selected' : '';
+    html += '<option value="' + ae + '"' + sel + '>' + (ST_AE_LABELS[ae] || ae) + '</option>';
+  });
+  html += '</select></div>';
+
+  // Metric selector
+  html += '<div style="min-width:160px;">';
+  html += '<div style="font-size:12px; font-weight:600; margin-bottom:6px; color:var(--text-secondary);">Metric</div>';
+  html += '<select id="stMetricSelect" onchange="stChangeMetric(this.value)" style="font-size:12px; padding:4px 8px; border-radius:4px; border:1px solid var(--border); background:var(--surface); color:var(--text);">';
+  Object.keys(ST_METRIC_LABELS).forEach(function(m) {
+    var sel = m === _stState.selectedMetric ? ' selected' : '';
+    html += '<option value="' + m + '"' + sel + '>' + ST_METRIC_LABELS[m] + '</option>';
+  });
+  html += '</select></div>';
+
+  html += '</div>';
+
+  // -- SVG chart --
+  html += '<div id="stChartContainer" style="position:relative; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:8px; margin-bottom:16px;">';
+  html += '<svg id="stSVG" width="100%" height="600" style="display:block;"></svg>';
+  html += '<div id="stTooltip" style="display:none; position:absolute; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:11px; pointer-events:none; box-shadow:var(--shadow-md); z-index:10; max-width:250px;"></div>';
+  html += '</div>';
+
+  // -- Regulatory milestone bar --
+  html += '<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px; margin-bottom:16px;">';
+  html += '<div style="font-size:13px; font-weight:600; margin-bottom:8px;">Regulatory Milestone Timeline</div>';
+  html += '<div id="stMilestoneBar" style="position:relative; height:80px;"></div>';
+  html += '</div>';
+
+  // -- Summary stats table --
+  html += stRenderSummaryTable();
+
+  el.innerHTML = html;
+
+  // Draw chart after DOM is ready
+  setTimeout(function() { stDrawChart(); stDrawMilestoneBar(); }, 0);
+}
+
+function stRenderSummaryTable() {
+  var summary = _stState.summary;
+  if (!summary || !summary.by_product) return '';
+
+  var html = '<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px;">';
+  html += '<div style="font-size:13px; font-weight:600; margin-bottom:8px;">Signal Summary by Product</div>';
+  html += '<div style="overflow-x:auto;">';
+  html += '<table style="width:100%; border-collapse:collapse; font-size:12px;">';
+  html += '<thead><tr style="border-bottom:2px solid var(--border);">';
+  html += '<th style="text-align:left; padding:6px 8px;">Product</th>';
+  html += '<th style="text-align:left; padding:6px 8px;">Target</th>';
+  html += '<th style="text-align:center; padding:6px 8px;">Signals Detected</th>';
+  html += '<th style="text-align:center; padding:6px 8px;">Signals Confirmed</th>';
+  html += '<th style="text-align:left; padding:6px 8px;">AE Categories</th>';
+  html += '</tr></thead><tbody>';
+
+  var products = summary.products || [];
+  products.forEach(function(p) {
+    var pd = summary.by_product[p] || {};
+    var color = ST_COLORS[p] || '#666';
+    html += '<tr style="border-bottom:1px solid var(--border);">';
+    html += '<td style="padding:6px 8px; font-weight:500;"><span style="display:inline-block; width:10px; height:10px; border-radius:2px; background:' + color + '; margin-right:6px; vertical-align:middle;"></span>' + p + '</td>';
+    html += '<td style="padding:6px 8px;">' + (pd.target_antigen || '-') + '</td>';
+    html += '<td style="padding:6px 8px; text-align:center;">' + (pd.signals_detected || 0) + '</td>';
+    html += '<td style="padding:6px 8px; text-align:center;">' + (pd.signals_confirmed || 0) + '</td>';
+    html += '<td style="padding:6px 8px;">' + ((pd.ae_categories || []).join(', ')) + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+
+  // AE category summary
+  html += '<div style="margin-top:12px; font-size:13px; font-weight:600; margin-bottom:8px;">Signal Summary by Adverse Event</div>';
+  html += '<div style="overflow-x:auto;">';
+  html += '<table style="width:100%; border-collapse:collapse; font-size:12px;">';
+  html += '<thead><tr style="border-bottom:2px solid var(--border);">';
+  html += '<th style="text-align:left; padding:6px 8px;">AE Category</th>';
+  html += '<th style="text-align:center; padding:6px 8px;">Total Cases</th>';
+  html += '<th style="text-align:center; padding:6px 8px;">Max PRR</th>';
+  html += '<th style="text-align:center; padding:6px 8px;">Signals Confirmed</th>';
+  html += '</tr></thead><tbody>';
+
+  var cats = summary.ae_categories || [];
+  cats.forEach(function(cat) {
+    var cd = (summary.by_ae_category || {})[cat] || {};
+    html += '<tr style="border-bottom:1px solid var(--border);">';
+    html += '<td style="padding:6px 8px; font-weight:500;">' + (ST_AE_LABELS[cat] || cat) + '</td>';
+    html += '<td style="padding:6px 8px; text-align:center;">' + (cd.total_cumulative_cases || 0).toLocaleString() + '</td>';
+    html += '<td style="padding:6px 8px; text-align:center;">' + (cd.max_current_prr || 0).toFixed(1) + '</td>';
+    html += '<td style="padding:6px 8px; text-align:center;">' + (cd.signals_confirmed || 0) + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div></div>';
+  return html;
+}
+
+function stToggleProduct(p) {
+  _stState.selectedProducts[p] = !_stState.selectedProducts[p];
+  stDrawChart();
+}
+
+function stChangeAE(ae) {
+  _stState.selectedAE = ae;
+  stDrawChart();
+}
+
+function stChangeMetric(m) {
+  _stState.selectedMetric = m;
+  stDrawChart();
+}
+
+function stDrawChart() {
+  var svg = document.getElementById('stSVG');
+  if (!svg) return;
+
+  var W = svg.getBoundingClientRect().width || 900;
+  var H = 600;
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+  var margin = { top: 30, right: 30, bottom: 60, left: 70 };
+  var cw = W - margin.left - margin.right;
+  var ch = H - margin.top - margin.bottom;
+
+  // Filter profiles for selected AE
+  var filteredProfiles = _stState.profiles.filter(function(p) {
+    return p.ae_category === _stState.selectedAE && _stState.selectedProducts[p.product_name];
+  });
+
+  // Determine data range
+  var metric = _stState.selectedMetric;
+  var allDates = [];
+  var allValues = [];
+
+  filteredProfiles.forEach(function(profile) {
+    (profile.timepoints || []).forEach(function(tp) {
+      allDates.push(new Date(tp.date));
+      var val = metric === 'cumulative_cases' ? tp.cumulative_cases : tp[metric];
+      if (typeof val === 'number') allValues.push(val);
+    });
+  });
+
+  if (allDates.length === 0) {
+    svg.innerHTML = '<text x="' + (W/2) + '" y="' + (H/2) + '" text-anchor="middle" fill="var(--text-secondary)" font-size="14">No data for selected filters</text>';
+    return;
+  }
+
+  var minDate = new Date(Math.min.apply(null, allDates));
+  var maxDate = new Date(Math.max.apply(null, allDates));
+  var maxVal = Math.max.apply(null, allValues) * 1.1;
+  var minVal = Math.min(0, Math.min.apply(null, allValues));
+  if (maxVal <= minVal) maxVal = minVal + 1;
+
+  // Threshold value for PRR and EBGM
+  var threshold = null;
+  if (metric === 'prr' || metric === 'ebgm') threshold = 2.0;
+  if (metric === 'ic025') threshold = 0.0;
+
+  function xScale(d) {
+    var t = (d.getTime() - minDate.getTime()) / (maxDate.getTime() - minDate.getTime());
+    return margin.left + t * cw;
+  }
+
+  function yScale(v) {
+    return margin.top + ch - ((v - minVal) / (maxVal - minVal)) * ch;
+  }
+
+  var svgContent = '';
+
+  // Background
+  svgContent += '<rect x="' + margin.left + '" y="' + margin.top + '" width="' + cw + '" height="' + ch + '" fill="var(--bg)" rx="4"/>';
+
+  // Grid lines (horizontal)
+  var nGridY = 6;
+  for (var gi = 0; gi <= nGridY; gi++) {
+    var gv = minVal + (maxVal - minVal) * gi / nGridY;
+    var gy = yScale(gv);
+    svgContent += '<line x1="' + margin.left + '" y1="' + gy + '" x2="' + (margin.left + cw) + '" y2="' + gy + '" stroke="var(--border)" stroke-width="0.5"/>';
+    svgContent += '<text x="' + (margin.left - 8) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="10" fill="var(--text-secondary)">' + (metric === 'cumulative_cases' ? Math.round(gv) : gv.toFixed(1)) + '</text>';
+  }
+
+  // X-axis year labels
+  var startYear = minDate.getFullYear();
+  var endYear = maxDate.getFullYear();
+  for (var yr = startYear; yr <= endYear; yr++) {
+    var yd = new Date(yr, 0, 1);
+    if (yd >= minDate && yd <= maxDate) {
+      var xx = xScale(yd);
+      svgContent += '<line x1="' + xx + '" y1="' + margin.top + '" x2="' + xx + '" y2="' + (margin.top + ch) + '" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="4,4"/>';
+      svgContent += '<text x="' + xx + '" y="' + (H - margin.bottom + 20) + '" text-anchor="middle" font-size="11" fill="var(--text-secondary)">' + yr + '</text>';
+    }
+  }
+
+  // Threshold line
+  if (threshold !== null && threshold >= minVal && threshold <= maxVal) {
+    var ty = yScale(threshold);
+    svgContent += '<line x1="' + margin.left + '" y1="' + ty + '" x2="' + (margin.left + cw) + '" y2="' + ty + '" stroke="var(--danger)" stroke-width="1.5" stroke-dasharray="6,3"/>';
+    var threshLabel = metric === 'ic025' ? 'IC025 = 0 (signal threshold)' : (metric.toUpperCase() + ' = 2 (signal threshold)');
+    svgContent += '<text x="' + (margin.left + cw - 4) + '" y="' + (ty - 5) + '" text-anchor="end" font-size="10" fill="var(--danger)" font-weight="500">' + threshLabel + '</text>';
+  }
+
+  // Regulatory milestone vertical lines
+  var milestoneTypes = {
+    'Boxed Warning': { color: '#dc2626', dash: '4,2' },
+    'Safety Communication': { color: '#d97706', dash: '6,3' },
+    'REMS Update': { color: '#7c3aed', dash: '4,4' },
+    'Advisory Committee Meeting': { color: '#0891b2', dash: '3,3' },
+    'Label Change': { color: '#059669', dash: '5,3' },
+    'REMS Elimination': { color: '#6366f1', dash: '5,3' },
+  };
+
+  var drawnMilestones = {};
+  (_stState.milestones || []).forEach(function(m) {
+    var md = new Date(m.date);
+    if (md < minDate || md > maxDate) return;
+    // Skip approval milestones (too cluttered)
+    if (m.type === 'FDA Approval') return;
+    // Deduplicate by date
+    var key = m.date;
+    if (drawnMilestones[key]) return;
+    drawnMilestones[key] = true;
+
+    var mx = xScale(md);
+    var mStyle = milestoneTypes[m.type] || { color: '#888', dash: '4,4' };
+    svgContent += '<line x1="' + mx + '" y1="' + margin.top + '" x2="' + mx + '" y2="' + (margin.top + ch) + '" stroke="' + mStyle.color + '" stroke-width="1" stroke-dasharray="' + mStyle.dash + '" opacity="0.6"/>';
+    // Label at top, rotated
+    svgContent += '<text x="' + mx + '" y="' + (margin.top - 5) + '" text-anchor="start" font-size="9" fill="' + mStyle.color + '" transform="rotate(-30 ' + mx + ' ' + (margin.top - 5) + ')">' + m.type + '</text>';
+  });
+
+  // Draw lines for each product
+  filteredProfiles.forEach(function(profile) {
+    var color = ST_COLORS[profile.product_name] || '#666';
+    var tps = profile.timepoints || [];
+    if (tps.length < 2) return;
+
+    // Build path
+    var pathParts = [];
+    var circles = [];
+    tps.forEach(function(tp, idx) {
+      var d = new Date(tp.date);
+      var val = metric === 'cumulative_cases' ? tp.cumulative_cases : tp[metric];
+      if (typeof val !== 'number') return;
+
+      var px = xScale(d);
+      var py = yScale(val);
+      pathParts.push((idx === 0 ? 'M' : 'L') + px.toFixed(1) + ',' + py.toFixed(1));
+
+      // Data points
+      circles.push({ x: px, y: py, tp: tp, product: profile.product_name });
+    });
+
+    if (pathParts.length > 1) {
+      svgContent += '<path d="' + pathParts.join(' ') + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linejoin="round"/>';
+    }
+
+    // Draw circles (interactive hover)
+    circles.forEach(function(c) {
+      svgContent += '<circle cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1) + '" r="3.5" fill="' + color + '" stroke="var(--surface)" stroke-width="1.5" style="cursor:pointer;" ' +
+        'onmouseenter="stShowTooltip(event,' + JSON.stringify(c.tp).replace(/"/g, '&quot;') + ',\'' + c.product + '\')" ' +
+        'onmouseleave="stHideTooltip()"/>';
+    });
+
+    // Product label at the end of line
+    if (circles.length > 0) {
+      var last = circles[circles.length - 1];
+      svgContent += '<text x="' + (last.x + 6) + '" y="' + (last.y + 4) + '" font-size="10" fill="' + color + '" font-weight="600">' + profile.product_name + '</text>';
+    }
+  });
+
+  // Axis labels
+  svgContent += '<text x="' + (margin.left + cw / 2) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="12" fill="var(--text-secondary)">Reporting Quarter</text>';
+  svgContent += '<text x="15" y="' + (margin.top + ch / 2) + '" text-anchor="middle" font-size="12" fill="var(--text-secondary)" transform="rotate(-90 15 ' + (margin.top + ch / 2) + ')">' + (ST_METRIC_LABELS[metric] || metric) + '</text>';
+
+  // Title
+  svgContent += '<text x="' + (margin.left + cw / 2) + '" y="18" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="600">' + (ST_AE_LABELS[_stState.selectedAE] || _stState.selectedAE) + ' Signal Evolution</text>';
+
+  svg.innerHTML = svgContent;
+}
+
+function stShowTooltip(event, tp, product) {
+  var tooltip = document.getElementById('stTooltip');
+  if (!tooltip) return;
+
+  var color = ST_COLORS[product] || '#666';
+  var html = '<div style="font-weight:600; margin-bottom:4px; color:' + color + ';">' + product + '</div>';
+  html += '<div style="color:var(--text-secondary); margin-bottom:4px;">' + tp.quarter + ' (' + tp.date + ')</div>';
+  html += '<div>Cases: <strong>' + tp.case_count + '</strong> (cumulative: ' + tp.cumulative_cases + ')</div>';
+  html += '<div>PRR: <strong>' + tp.prr.toFixed(2) + '</strong></div>';
+  html += '<div>ROR: <strong>' + tp.ror.toFixed(2) + '</strong></div>';
+  html += '<div>EBGM: <strong>' + tp.ebgm.toFixed(2) + '</strong></div>';
+  html += '<div>IC025: <strong>' + tp.ic025.toFixed(3) + '</strong></div>';
+
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+
+  var container = document.getElementById('stChartContainer');
+  var rect = container.getBoundingClientRect();
+  var x = event.clientX - rect.left + 15;
+  var y = event.clientY - rect.top - 10;
+
+  // Keep tooltip within container
+  if (x + 260 > rect.width) x = x - 270;
+  if (y + 150 > rect.height) y = Math.max(0, y - 120);
+
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function stHideTooltip() {
+  var tooltip = document.getElementById('stTooltip');
+  if (tooltip) tooltip.style.display = 'none';
+}
+
+function stDrawMilestoneBar() {
+  var el = document.getElementById('stMilestoneBar');
+  if (!el) return;
+
+  var milestones = (_stState.milestones || []).filter(function(m) {
+    return m.type !== 'FDA Approval' || true;  // Include all
+  });
+
+  if (milestones.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No milestones available</div>';
+    return;
+  }
+
+  // Date range
+  var dates = milestones.map(function(m) { return new Date(m.date); });
+  var minD = new Date(Math.min.apply(null, dates));
+  var maxD = new Date(Math.max.apply(null, dates));
+  // Add padding
+  minD.setMonth(minD.getMonth() - 3);
+  maxD.setMonth(maxD.getMonth() + 3);
+  var range = maxD.getTime() - minD.getTime();
+
+  var W = el.getBoundingClientRect().width || 800;
+  var H = 80;
+
+  var svg = '<svg width="100%" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">';
+
+  // Timeline axis
+  var axisY = 50;
+  svg += '<line x1="20" y1="' + axisY + '" x2="' + (W - 20) + '" y2="' + axisY + '" stroke="var(--border)" stroke-width="2"/>';
+
+  // Year markers
+  var startY = minD.getFullYear();
+  var endY = maxD.getFullYear();
+  for (var yr = startY; yr <= endY; yr++) {
+    var yd = new Date(yr, 0, 1);
+    var xp = 20 + ((yd.getTime() - minD.getTime()) / range) * (W - 40);
+    if (xp >= 20 && xp <= W - 20) {
+      svg += '<line x1="' + xp + '" y1="' + (axisY - 4) + '" x2="' + xp + '" y2="' + (axisY + 4) + '" stroke="var(--text-secondary)" stroke-width="1"/>';
+      svg += '<text x="' + xp + '" y="' + (axisY + 18) + '" text-anchor="middle" font-size="10" fill="var(--text-secondary)">' + yr + '</text>';
+    }
+  }
+
+  // Milestone type colors
+  var typeColors = {
+    'FDA Approval': '#059669',
+    'Boxed Warning': '#dc2626',
+    'Safety Communication': '#d97706',
+    'REMS Update': '#7c3aed',
+    'Advisory Committee Meeting': '#0891b2',
+    'Label Change': '#2563eb',
+    'Dear Healthcare Provider Letter': '#ea580c',
+    'REMS Elimination': '#6366f1',
+  };
+
+  // Draw milestones
+  milestones.forEach(function(m, idx) {
+    var md = new Date(m.date);
+    var xp = 20 + ((md.getTime() - minD.getTime()) / range) * (W - 40);
+    var col = typeColors[m.type] || '#888';
+
+    // Diamond marker
+    svg += '<polygon points="' + xp + ',' + (axisY - 10) + ' ' + (xp + 6) + ',' + axisY + ' ' + xp + ',' + (axisY + 10) + ' ' + (xp - 6) + ',' + axisY + '" fill="' + col + '" stroke="var(--surface)" stroke-width="1">';
+    svg += '<title>' + m.date + ': ' + m.description + '</title>';
+    svg += '</polygon>';
+
+    // Short label above (alternating up/down to avoid overlap)
+    var labelY = (idx % 2 === 0) ? axisY - 18 : axisY - 28;
+    var shortLabel = m.type;
+    if (shortLabel.length > 18) shortLabel = shortLabel.substring(0, 16) + '..';
+    svg += '<text x="' + xp + '" y="' + labelY + '" text-anchor="middle" font-size="8" fill="' + col + '">' + shortLabel + '</text>';
+  });
+
+  svg += '</svg>';
+  el.innerHTML = svg;
 }
 
 
