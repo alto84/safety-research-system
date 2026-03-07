@@ -1077,6 +1077,12 @@ a:hover { text-decoration: underline; }
       <span class="nav-num">15</span>
       <span>Implementation Roadmap</span>
     </div>
+
+    <div class="sidebar-group-label">AI Intelligence</div>
+    <div class="sidebar-nav-item" onclick="showSection('section-16')">
+      <span class="nav-num">16</span>
+      <span>AI Safety Intelligence</span>
+    </div>
   </nav>
   <!-- ============================================================
        MAIN CONTENT AREA
@@ -6318,6 +6324,446 @@ a:hover { text-decoration: underline; }
   </div>
 </div>
 
+
+<!-- ============================================================
+     SECTION 16: AI SAFETY INTELLIGENCE
+     ============================================================ -->
+<div id="section-16" class="psd-section">
+
+<style>
+/* Section 16 scoped styles */
+.s16-pipeline-container { display:flex; align-items:stretch; justify-content:center; gap:0; flex-wrap:wrap; margin:16px 0; }
+.s16-pipeline-stage { background:var(--surface); border:2px solid var(--border); border-radius:8px; padding:14px 16px; text-align:center; min-width:140px; max-width:170px; flex:1; position:relative; }
+.s16-pipeline-stage.s16-active { border-color:var(--success); }
+.s16-pipeline-stage.s16-pending { border-color:var(--warning); }
+.s16-pipeline-arrow { display:flex; align-items:center; font-size:22px; color:var(--text-muted); padding:0 2px; }
+.s16-stage-num { font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+.s16-stage-name { font-weight:700; font-size:13px; color:var(--text); margin-bottom:6px; }
+.s16-stage-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+.s16-dot-green { background:var(--success); }
+.s16-dot-amber { background:var(--warning); }
+.s16-stage-detail { font-size:11px; color:var(--text-secondary); margin-top:4px; }
+.s16-stage-component { font-size:11px; color:var(--primary); font-weight:600; }
+
+.s16-confidence-bar-bg { background:var(--border); border-radius:6px; height:18px; width:100%; overflow:hidden; position:relative; }
+.s16-confidence-bar { height:100%; border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:6px; font-size:10px; font-weight:700; color:#fff; transition:width 0.4s ease; }
+.s16-conf-green { background:var(--success); }
+.s16-conf-amber { background:var(--warning); }
+.s16-conf-red { background:var(--danger); }
+
+.s16-pathway-step { display:flex; align-items:flex-start; gap:16px; margin-bottom:0; }
+.s16-pathway-connector { display:flex; flex-direction:column; align-items:center; min-width:36px; }
+.s16-pathway-dot { width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+.s16-pathway-line { width:2px; height:28px; background:var(--border); }
+.s16-pathway-content { flex:1; padding-bottom:12px; }
+.s16-pathway-title { font-weight:700; font-size:13px; color:var(--text); }
+.s16-pathway-desc { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+.s16-evidence-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.s16-evidence-for { background:var(--success-bg); border:1px solid var(--success-light); border-radius:var(--radius); padding:16px; }
+.s16-evidence-against { background:var(--danger-bg); border:1px solid var(--danger-light); border-radius:var(--radius); padding:16px; }
+.s16-evidence-title { font-weight:700; font-size:13px; margin-bottom:10px; }
+.s16-evidence-for .s16-evidence-title { color:var(--success); }
+.s16-evidence-against .s16-evidence-title { color:var(--danger); }
+.s16-evidence-item { font-size:12px; color:var(--text); margin-bottom:6px; padding-left:14px; position:relative; }
+.s16-evidence-item::before { content:''; position:absolute; left:0; top:6px; width:6px; height:6px; border-radius:50%; }
+.s16-evidence-for .s16-evidence-item::before { background:var(--success); }
+.s16-evidence-against .s16-evidence-item::before { background:var(--danger); }
+
+.s16-risk-low { background:var(--success-light); color:var(--success); }
+.s16-risk-mod { background:var(--warning-light); color:var(--warning); }
+.s16-risk-high { background:var(--danger-light); color:var(--danger); }
+.s16-risk-eval { background:var(--primary-light); color:var(--primary); font-weight:700; }
+.s16-risk-cell { padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; text-align:center; display:inline-block; }
+.s16-highlight-row { background:var(--primary-light) !important; font-weight:700; }
+
+.s16-landscape-table td, .s16-landscape-table th { font-size:12px; padding:8px 10px; }
+
+.s16-unmet-need { background:var(--warning-bg); border-left:4px solid var(--warning); padding:12px 16px; border-radius:0 var(--radius) var(--radius) 0; margin-top:12px; font-size:13px; color:var(--text); }
+</style>
+
+  <h2 class="psd-section-title">AI Safety Intelligence</h2>
+
+  <!-- Card 6: AI Insights Summary (stat cards at top) -->
+  <div class="psd-card" style="margin-bottom:24px;">
+    <div class="psd-card-header">AI Insights Summary</div>
+    <div style="padding:24px;">
+      <div class="psd-stat-grid">
+        <div class="psd-stat-card">
+          <div style="font-size:28px;font-weight:800;color:var(--primary-accent);">3</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Active Hypotheses</div>
+        </div>
+        <div class="psd-stat-card">
+          <div style="font-size:28px;font-weight:800;color:var(--success-accent);">847</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Literature References Analyzed</div>
+        </div>
+        <div class="psd-stat-card">
+          <div style="font-size:28px;font-weight:800;color:var(--warning-dark);">6</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Class-Effect Signals Monitored</div>
+        </div>
+        <div class="psd-stat-card">
+          <div style="font-size:28px;font-weight:800;color:var(--purple);">72%</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Average Confidence Score</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 1: AI-Native Pipeline Visualization -->
+  <div class="psd-card" style="margin-bottom:24px;">
+    <div class="psd-card-header">AI-Native Safety Intelligence Pipeline &mdash; Active Signal: SIG-2026-001 Cardiac Failure Cluster</div>
+    <div style="padding:24px;">
+      <div class="s16-pipeline-container">
+        <!-- Stage 1 -->
+        <div class="s16-pipeline-stage s16-active">
+          <div class="s16-stage-num">Stage 1</div>
+          <div class="s16-stage-name">Foundation Model</div>
+          <div><span class="s16-stage-dot s16-dot-green"></span><span style="font-size:11px;color:var(--success);font-weight:600;">Active</span></div>
+          <div class="s16-stage-component">Claude Opus</div>
+          <div class="s16-stage-detail">Large language model for safety reasoning</div>
+        </div>
+        <div class="s16-pipeline-arrow">&#9654;</div>
+        <!-- Stage 2 -->
+        <div class="s16-pipeline-stage s16-active">
+          <div class="s16-stage-num">Stage 2</div>
+          <div class="s16-stage-name">Agent Harness</div>
+          <div><span class="s16-stage-dot s16-dot-green"></span><span style="font-size:11px;color:var(--success);font-weight:600;">Active</span></div>
+          <div class="s16-stage-component">Iterative mechanistic reasoning</div>
+          <div class="s16-stage-detail">Multi-step hypothesis generation &amp; testing</div>
+        </div>
+        <div class="s16-pipeline-arrow">&#9654;</div>
+        <!-- Stage 3 -->
+        <div class="s16-pipeline-stage s16-active">
+          <div class="s16-stage-num">Stage 3</div>
+          <div class="s16-stage-name">Governance/SOPs</div>
+          <div><span class="s16-stage-dot s16-dot-green"></span><span style="font-size:11px;color:var(--success);font-weight:600;">Active</span></div>
+          <div class="s16-stage-component">GVP Module IX, PV-SOP-007</div>
+          <div class="s16-stage-detail">Regulatory-compliant signal management</div>
+        </div>
+        <div class="s16-pipeline-arrow">&#9654;</div>
+        <!-- Stage 4 -->
+        <div class="s16-pipeline-stage s16-active">
+          <div class="s16-stage-num">Stage 4</div>
+          <div class="s16-stage-name">Data Integration</div>
+          <div><span class="s16-stage-dot s16-dot-green"></span><span style="font-size:11px;color:var(--success);font-weight:600;">Active</span></div>
+          <div class="s16-stage-component">Argus Safety + FAERS + PubMed</div>
+          <div class="s16-stage-detail">Multi-source pharmacovigilance data</div>
+        </div>
+        <div class="s16-pipeline-arrow">&#9654;</div>
+        <!-- Stage 5 -->
+        <div class="s16-pipeline-stage s16-active">
+          <div class="s16-stage-num">Stage 5</div>
+          <div class="s16-stage-name">Workflow</div>
+          <div><span class="s16-stage-dot s16-dot-green"></span><span style="font-size:11px;color:var(--success);font-weight:600;">Active</span></div>
+          <div class="s16-stage-component">SMT &#8594; SRC escalation</div>
+          <div class="s16-stage-detail">Signal management team to safety review</div>
+        </div>
+        <div class="s16-pipeline-arrow">&#9654;</div>
+        <!-- Stage 6 -->
+        <div class="s16-pipeline-stage s16-pending">
+          <div class="s16-stage-num">Stage 6</div>
+          <div class="s16-stage-name">Validation</div>
+          <div><span class="s16-stage-dot s16-dot-amber"></span><span style="font-size:11px;color:var(--warning);font-weight:600;">Pending</span></div>
+          <div class="s16-stage-component">Medical review + QPPV sign-off</div>
+          <div class="s16-stage-detail">Human expert validation &amp; regulatory sign-off</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Active Hypothesis Board -->
+  <div class="psd-card" style="margin-bottom:24px;">
+    <div class="psd-card-header">Active Hypothesis Board</div>
+    <div style="padding:24px;overflow-x:auto;">
+      <table class="psd-table" style="width:100%;">
+        <thead>
+          <tr>
+            <th>Hypothesis ID</th>
+            <th>Title</th>
+            <th>Signal</th>
+            <th>Confidence</th>
+            <th>Plausibility</th>
+            <th>Status</th>
+            <th>Mechanism Summary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:700;white-space:nowrap;">HYP-2026-001</td>
+            <td>HER2/ErbB2 off-target inhibition driving cardiac failure</td>
+            <td style="white-space:nowrap;">SIG-2026-001</td>
+            <td style="min-width:120px;">
+              <div class="s16-confidence-bar-bg">
+                <div class="s16-confidence-bar s16-conf-green" style="width:72%;">72%</div>
+              </div>
+            </td>
+            <td><span class="psd-badge-green">High</span></td>
+            <td><span class="psd-badge-amber">Under Investigation</span></td>
+            <td style="font-size:12px;max-width:220px;">Off-target ErbB2 inhibition disrupts NRG-1/ErbB4 cardiomyocyte survival signaling, suppressing PI3K/Akt cardioprotection&hellip;</td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;white-space:nowrap;">HYP-2026-002</td>
+            <td>EGFR-dependent alveolar repair inhibition as ILD mechanism</td>
+            <td style="white-space:nowrap;">SIG-2026-002</td>
+            <td style="min-width:120px;">
+              <div class="s16-confidence-bar-bg">
+                <div class="s16-confidence-bar s16-conf-green" style="width:81%;">81%</div>
+              </div>
+            </td>
+            <td><span class="psd-badge-green">High</span></td>
+            <td><span class="psd-badge-amber">Under Investigation</span></td>
+            <td style="font-size:12px;max-width:220px;">EGFR inhibition impairs type II pneumocyte proliferation and alveolar repair, predisposing to inflammatory ILD&hellip;</td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;white-space:nowrap;">HYP-2026-003</td>
+            <td>CYP3A4-mediated reactive metabolite hepatotoxicity</td>
+            <td style="white-space:nowrap;">SIG-2025-019</td>
+            <td style="min-width:120px;">
+              <div class="s16-confidence-bar-bg">
+                <div class="s16-confidence-bar s16-conf-amber" style="width:58%;">58%</div>
+              </div>
+            </td>
+            <td><span class="psd-badge-amber">Medium</span></td>
+            <td><span class="psd-badge-amber">Under Investigation</span></td>
+            <td style="font-size:12px;max-width:220px;">CYP3A4 metabolism generates reactive quinone-imine intermediates causing oxidative hepatocellular damage&hellip;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 3: Mechanistic Deep Dive — Cardiac Signal -->
+  <div class="psd-card" style="margin-bottom:24px;">
+    <div class="psd-card-header">Mechanistic Deep Dive &mdash; Cardiac Signal (SIG-2026-001)</div>
+    <div style="padding:24px;">
+
+      <!-- Pathway visualization -->
+      <h4 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px;">Mechanistic Pathway: EGFR TKI &rarr; Cardiac Failure</h4>
+
+      <div style="margin-bottom:24px;">
+        <div class="s16-pathway-step">
+          <div class="s16-pathway-connector">
+            <div class="s16-pathway-dot">1</div>
+            <div class="s16-pathway-line"></div>
+          </div>
+          <div class="s16-pathway-content">
+            <div class="s16-pathway-title">EGFR TKI (Prosinertimib) &rarr; Binds EGFR kinase domain</div>
+            <div class="s16-pathway-desc">Competitive ATP-binding site inhibition of EGFR catalytic domain</div>
+          </div>
+        </div>
+        <div class="s16-pathway-step">
+          <div class="s16-pathway-connector">
+            <div class="s16-pathway-dot">2</div>
+            <div class="s16-pathway-line"></div>
+          </div>
+          <div class="s16-pathway-content">
+            <div class="s16-pathway-title">Off-target ErbB2/HER2 inhibition &rarr; IC50 84 nM at therapeutic concentrations</div>
+            <div class="s16-pathway-desc">Structural homology between EGFR and ErbB2 kinase domains enables cross-reactivity</div>
+          </div>
+        </div>
+        <div class="s16-pathway-step">
+          <div class="s16-pathway-connector">
+            <div class="s16-pathway-dot">3</div>
+            <div class="s16-pathway-line"></div>
+          </div>
+          <div class="s16-pathway-content">
+            <div class="s16-pathway-title">Disrupted NRG-1/ErbB2/ErbB4 signaling &rarr; Cardiomyocyte survival pathway impaired</div>
+            <div class="s16-pathway-desc">Neuregulin-1 signaling through ErbB2/ErbB4 heterodimers is essential for cardiac homeostasis</div>
+          </div>
+        </div>
+        <div class="s16-pathway-step">
+          <div class="s16-pathway-connector">
+            <div class="s16-pathway-dot">4</div>
+            <div class="s16-pathway-line"></div>
+          </div>
+          <div class="s16-pathway-content">
+            <div class="s16-pathway-title">PI3K/Akt pathway suppression &rarr; Reduced stress-response cardioprotection</div>
+            <div class="s16-pathway-desc">PI3K/Akt signaling mediates anti-apoptotic and hypertrophic growth responses in cardiomyocytes</div>
+          </div>
+        </div>
+        <div class="s16-pathway-step">
+          <div class="s16-pathway-connector">
+            <div class="s16-pathway-dot">5</div>
+            <div class="s16-pathway-line"></div>
+          </div>
+          <div class="s16-pathway-content">
+            <div class="s16-pathway-title">Hemodynamic stress &rarr; Myocardial dysfunction</div>
+            <div class="s16-pathway-desc">Loss of compensatory mechanisms under cardiac workload leads to progressive dysfunction</div>
+          </div>
+        </div>
+        <div class="s16-pathway-step">
+          <div class="s16-pathway-connector">
+            <div class="s16-pathway-dot" style="background:var(--danger);">6</div>
+          </div>
+          <div class="s16-pathway-content">
+            <div class="s16-pathway-title">Clinical manifestation &rarr; Heart failure (14 cases, 3 Grade 3+)</div>
+            <div class="s16-pathway-desc">NYHA Class II-III symptoms; LVEF decrease observed in 8/14 patients</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Class Precedent Table -->
+      <h4 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">Class Precedent &mdash; ErbB/HER2 Cardiac Toxicity</h4>
+      <div style="overflow-x:auto;margin-bottom:24px;">
+        <table class="psd-table" style="width:100%;">
+          <thead>
+            <tr><th>Drug</th><th>Finding</th><th>Evidence</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;">Lapatinib</td>
+              <td>Cardiac events 1.6%, LVEF decrease</td>
+              <td><a href="https://pubmed.ncbi.nlm.nih.gov/17192538/" target="_blank" style="color:var(--primary);">PMID:17192538</a></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;">Osimertinib</td>
+              <td>QTc prolongation, LVEF decrease 3-4%</td>
+              <td><a href="https://pubmed.ncbi.nlm.nih.gov/28841389/" target="_blank" style="color:var(--primary);">PMID:28841389</a></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;">Vandetanib</td>
+              <td>QT prolongation, torsades de pointes</td>
+              <td><a href="https://pubmed.ncbi.nlm.nih.gov/22025146/" target="_blank" style="color:var(--primary);">PMID:22025146</a></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;">Trastuzumab (HER2)</td>
+              <td>Cardiomyopathy 2-7%</td>
+              <td><a href="https://pubmed.ncbi.nlm.nih.gov/11902316/" target="_blank" style="color:var(--primary);">PMID:11902316</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Evidence Balance -->
+      <h4 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">Evidence Balance</h4>
+      <div class="s16-evidence-grid">
+        <div class="s16-evidence-for">
+          <div class="s16-evidence-title">Evidence Supporting Hypothesis</div>
+          <div class="s16-evidence-item">ErbB2 IC50 (84 nM) within therapeutic plasma concentrations (Cmax 120 nM)</div>
+          <div class="s16-evidence-item">Class effect established: trastuzumab, lapatinib cardiac toxicity well-documented</div>
+          <div class="s16-evidence-item">NRG-1/ErbB2/ErbB4 pathway essential for cardiomyocyte survival (PMID:12015981)</div>
+          <div class="s16-evidence-item">Temporal association: cardiac events cluster at 3-6 months (consistent with cumulative cardiotoxicity)</div>
+          <div class="s16-evidence-item">Dose-response trend observed in PROSPER-1 dose-escalation cohort</div>
+        </div>
+        <div class="s16-evidence-against">
+          <div class="s16-evidence-title">Evidence Against Hypothesis</div>
+          <div class="s16-evidence-item">14/847 patients (1.7%) &mdash; lower than lapatinib class rate (1.6-2.5%)</div>
+          <div class="s16-evidence-item">5/14 patients had pre-existing cardiac risk factors (hypertension, prior anthracycline)</div>
+          <div class="s16-evidence-item">No dose-dependent LVEF decrease in Phase I healthy volunteer study</div>
+          <div class="s16-evidence-item">3rd-gen EGFR TKIs generally show improved selectivity vs. earlier generations</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: EGFR TKI Class Safety Comparison -->
+  <div class="psd-card" style="margin-bottom:24px;">
+    <div class="psd-card-header">EGFR TKI Class Safety Comparison</div>
+    <div style="padding:24px;overflow-x:auto;">
+      <table class="psd-table s16-landscape-table" style="width:100%;">
+        <thead>
+          <tr>
+            <th>Drug</th>
+            <th>Gen</th>
+            <th>Cardiac</th>
+            <th>ILD</th>
+            <th>Rash</th>
+            <th>Diarrhea</th>
+            <th>Hepatotox</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;">Erlotinib</td>
+            <td>1st</td>
+            <td><span class="s16-risk-cell s16-risk-low">Low</span></td>
+            <td>1-3%</td>
+            <td>75%</td>
+            <td>55%</td>
+            <td>5%</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">Gefitinib</td>
+            <td>1st</td>
+            <td><span class="s16-risk-cell s16-risk-low">Low</span></td>
+            <td>1-4%</td>
+            <td>50%</td>
+            <td>45%</td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">Afatinib</td>
+            <td>2nd</td>
+            <td><span class="s16-risk-cell s16-risk-mod">Low-Mod</span></td>
+            <td>1%</td>
+            <td>90%</td>
+            <td>96%</td>
+            <td>8%</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">Osimertinib</td>
+            <td>3rd</td>
+            <td><span class="s16-risk-cell s16-risk-mod">Moderate</span></td>
+            <td>3-4%</td>
+            <td>40%</td>
+            <td>48%</td>
+            <td>25%</td>
+          </tr>
+          <tr class="s16-highlight-row">
+            <td style="font-weight:800;">Prosinertimib</td>
+            <td style="font-weight:700;">3rd</td>
+            <td><span class="s16-risk-cell s16-risk-eval">Under eval</span></td>
+            <td style="font-weight:700;">2.8%</td>
+            <td style="font-weight:700;">45%</td>
+            <td style="font-weight:700;">42%</td>
+            <td style="font-weight:700;">22%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 5: Therapeutic Area Context -->
+  <div class="psd-card" style="margin-bottom:24px;">
+    <div class="psd-card-header">Therapeutic Area Context</div>
+    <div style="padding:24px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <!-- Left: Drug & Disease Info -->
+        <div>
+          <h4 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;">Drug &amp; Disease Profile</h4>
+          <table class="psd-table" style="width:100%;margin-bottom:16px;">
+            <tbody>
+              <tr><td style="font-weight:600;width:40%;color:var(--text-secondary);">Disease</td><td>NSCLC, EGFR-mutant</td></tr>
+              <tr><td style="font-weight:600;color:var(--text-secondary);">Drug</td><td>Prosinertimib (3rd-gen EGFR TKI)</td></tr>
+              <tr><td style="font-weight:600;color:var(--text-secondary);">Key Efficacy</td><td>ORR 58%, mPFS 11.2 months (PROSPER-1)</td></tr>
+              <tr><td style="font-weight:600;color:var(--text-secondary);">Median Age</td><td>62 years</td></tr>
+              <tr><td style="font-weight:600;color:var(--text-secondary);">Sex Distribution</td><td>60% female</td></tr>
+              <tr><td style="font-weight:600;color:var(--text-secondary);">ECOG PS</td><td>0-1</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Right: Treatment Landscape -->
+        <div>
+          <h4 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;">EGFR+ NSCLC Treatment Landscape</h4>
+          <table class="psd-table" style="width:100%;margin-bottom:16px;">
+            <thead>
+              <tr><th>Line</th><th>Standard of Care</th><th>Key Agent(s)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td style="font-weight:600;">1L</td><td>EGFR TKI monotherapy</td><td>Osimertinib, Erlotinib</td></tr>
+              <tr><td style="font-weight:600;">2L</td><td>Post-progression TKI or chemo</td><td>Prosinertimib, Platinum doublet</td></tr>
+              <tr><td style="font-weight:600;">3L</td><td>Chemo or clinical trial</td><td>Docetaxel, Immunotherapy combos</td></tr>
+            </tbody>
+          </table>
+          <div class="s16-unmet-need">
+            <strong>Unmet Need:</strong> Patients progressing on 1L osimertinib lack effective targeted options. Prosinertimib addresses T790M-independent resistance mutations (C797S, L718Q) with a novel binding mode, representing a potential breakthrough in the post-osimertinib setting.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 <!-- ============================================================
      FOOTER

@@ -371,6 +371,75 @@ class BenefitRiskResponse(BaseModel):
     overall_benefit_risk_conclusion: str
 
 
+class AIChainStage(BaseModel):
+    stage: int
+    name: str
+    status: str
+    component: str
+    detail: str
+
+
+class Hypothesis(BaseModel):
+    id: str
+    signal_ref: str
+    title: str
+    hypothesis: str
+    mechanism: str
+    biological_plausibility: str
+    confidence: float
+    evidence_for: list[dict]
+    evidence_against: list[dict]
+    status: str
+    generated_date: str
+    next_steps: list[str]
+
+
+class ClassComparator(BaseModel):
+    drug: str
+    generation: str
+    cardiac_risk: str
+    ild_risk: str
+    skin_rash: str
+    diarrhea: str
+    hepatotox: str
+    status: str
+
+
+class MechanisticAnalysis(BaseModel):
+    signal_id: str
+    signal_name: str
+    biological_plausibility: str
+    pathway_summary: str
+    pathway_steps: list[dict]
+    class_precedent: list[dict]
+    unique_risk_factors: str
+    monitoring_recommendation: str
+
+
+class TherapeuticAreaContext(BaseModel):
+    disease: str
+    drug_class: str
+    mechanism_of_action: str
+    generation: str
+    approved_indication: str
+    treatment_landscape: list[dict]
+    unmet_need: str
+    five_year_survival: str
+    patient_population: str
+
+
+class AIIntelligenceResponse(BaseModel):
+    request_id: str
+    timestamp: str
+    product: str
+    therapeutic_area: TherapeuticAreaContext
+    ai_chain: dict
+    active_hypotheses: list[Hypothesis]
+    mechanistic_analysis: MechanisticAnalysis
+    drug_class_comparison: list[ClassComparator]
+    ai_insights_summary: dict
+
+
 # ---------------------------------------------------------------------------
 # Data generators
 # ---------------------------------------------------------------------------
@@ -2470,4 +2539,340 @@ async def get_benefit_risk() -> BenefitRiskResponse:
             "continued close monitoring but does not alter the overall favorable conclusion at this time. "
             "This assessment will be updated in PBRER #3 (DLP 2026-06-22) with additional cardiac safety data."
         ),
+    )
+
+
+# ---------------------------------------------------------------------------
+# 12. GET /ai-intelligence
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/ai-intelligence",
+    response_model=AIIntelligenceResponse,
+    summary="AI-native safety intelligence",
+    description=(
+        "Returns AI-native safety intelligence data for the Prosinertimib PV dashboard. "
+        "Demonstrates the AI-native paradigm: hypothesis-driven safety science with "
+        "mechanistic reasoning."
+    ),
+)
+async def get_ai_intelligence() -> AIIntelligenceResponse:
+    """AI-native safety intelligence with hypothesis-driven mechanistic reasoning."""
+
+    therapeutic_area = TherapeuticAreaContext(
+        disease="Non-Small Cell Lung Cancer (NSCLC) — EGFR-mutant",
+        drug_class="EGFR Tyrosine Kinase Inhibitor",
+        mechanism_of_action=(
+            "Selective, irreversible inhibitor of EGFR (including T790M, C797S resistance mutations)"
+        ),
+        generation="3rd generation",
+        approved_indication="2nd-line+ EGFR-mutant NSCLC after progression on prior EGFR TKI",
+        treatment_landscape=[
+            {"line": "1L", "standard": "Osimertinib (TAGRISSO)", "rationale": "FLAURA trial, OS 38.6 months"},
+            {"line": "2L (T790M+)", "standard": "Prosinertimib", "rationale": "PROSPER-1 trial, ORR 58%, mPFS 11.2 months"},
+            {"line": "2L (T790M-)", "standard": "Platinum-based chemotherapy ± pembrolizumab", "rationale": "Standard of care for T790M-negative progression"},
+            {"line": "3L+", "standard": "Clinical trials, docetaxel, or BSC", "rationale": "Limited options after 2nd-line progression"},
+        ],
+        unmet_need=(
+            "Patients progressing on osimertinib with C797S resistance mutation. No approved targeted "
+            "therapy exists. CNS-penetrant options urgently needed — 25-40% of patients develop brain metastases."
+        ),
+        five_year_survival="30-40% for EGFR+ NSCLC with sequential TKI therapy",
+        patient_population="Median age 62, 60% female, 30% never-smokers, ECOG PS 0-1",
+    )
+
+    ai_chain = {
+        "description": "6-stage AI safety intelligence pipeline applied to cardiac signal SIG-2026-001",
+        "stages": [
+            AIChainStage(
+                stage=1,
+                name="Foundation Model",
+                status="active",
+                component="Claude Opus",
+                detail=(
+                    "Analyzing 14 cardiac AE narratives, 847 class-effect literature references, "
+                    "6 EGFR TKI product labels"
+                ),
+            ).model_dump(),
+            AIChainStage(
+                stage=2,
+                name="Agent Harness",
+                status="active",
+                component="Iterative mechanistic reasoning",
+                detail=(
+                    "3 hypothesis cycles, cross-referencing kinase selectivity data with cardiac "
+                    "tissue expression profiles"
+                ),
+            ).model_dump(),
+            AIChainStage(
+                stage=3,
+                name="Governance/SOPs",
+                status="complete",
+                component="Regulatory framework alignment",
+                detail=(
+                    "GVP Module IX signal evaluation criteria, PV-SOP-007 signal detection, "
+                    "ASTCT grading criteria, ICH E2C(R2) Section 16"
+                ),
+            ).model_dump(),
+            AIChainStage(
+                stage=4,
+                name="Data Integration",
+                status="complete",
+                component="Multi-source data fusion",
+                detail=(
+                    "Oracle Argus Safety 8.4 (14 cardiac cases), FAERS (EGFR TKI class query, "
+                    "2,847 cardiac events), PubMed (23 relevant publications)"
+                ),
+            ).model_dump(),
+            AIChainStage(
+                stage=5,
+                name="Workflow",
+                status="pending",
+                component="Escalation pathway",
+                detail="Signal Management Review Meeting → SMT → SRC escalation pathway",
+            ).model_dump(),
+            AIChainStage(
+                stage=6,
+                name="Validation",
+                status="pending",
+                component="Human-in-the-loop review",
+                detail="Medical reviewer verification, QPPV sign-off, CMO benefit-risk review",
+            ).model_dump(),
+        ],
+    }
+
+    active_hypotheses = [
+        Hypothesis(
+            id="HYP-2026-001",
+            signal_ref="SIG-2026-001",
+            title="HER2/ErbB2 off-target inhibition driving cardiac failure",
+            hypothesis=(
+                "Prosinertimib's C797S-targeting selectivity profile may result in off-target inhibition "
+                "of the HER2/ErbB4 neuregulin-1 signaling pathway in cardiomyocytes, impairing "
+                "stress-response cardioprotection and leading to clinical heart failure in susceptible patients."
+            ),
+            mechanism=(
+                "EGFR/HER2 heterodimerization → neuregulin-1 (NRG-1) signaling → PI3K/Akt survival "
+                "pathway in cardiomyocytes → impaired response to hemodynamic stress → myocardial dysfunction"
+            ),
+            biological_plausibility="High",
+            confidence=0.72,
+            evidence_for=[
+                {
+                    "source": "Crone et al., 2002",
+                    "finding": "Cardiac-specific ErbB2 knockout mice develop dilated cardiomyopathy",
+                    "pmid": "12015981",
+                },
+                {
+                    "source": "Ozcelik et al., 2002",
+                    "finding": "ErbB2 conditional deletion causes dilated cardiomyopathy in mice",
+                    "pmid": "12015982",
+                },
+                {
+                    "source": "FAERS class analysis",
+                    "finding": (
+                        "247 cardiac failure reports across EGFR TKI class (2015-2025), "
+                        "ROR 1.8 (95% CI 1.4-2.3)"
+                    ),
+                    "pmid": "",
+                },
+                {
+                    "source": "Prosinertimib kinase panel",
+                    "finding": (
+                        "IC50 for ErbB2: 84 nM (vs EGFR: 1.2 nM) — 70x selectivity, but clinically "
+                        "relevant at therapeutic concentrations"
+                    ),
+                    "pmid": "",
+                },
+            ],
+            evidence_against=[
+                {
+                    "source": "PROSPER-1 Phase III",
+                    "finding": (
+                        "No significant LVEF decline vs chemotherapy at 12-month analysis "
+                        "(mean change -2.1% vs -1.8%)"
+                    ),
+                    "pmid": "",
+                },
+                {
+                    "source": "Clinical profile",
+                    "finding": "6 of 14 cases had pre-existing cardiovascular comorbidities",
+                    "pmid": "",
+                },
+            ],
+            status="Under Investigation",
+            generated_date="2026-02-28",
+            next_steps=[
+                "Retrospective echocardiography analysis across PROSPER trials",
+                "Request troponin T substudy in PROSPER-3",
+                "FDA FAERS deep-dive: cardiac events by EGFR TKI generation",
+            ],
+        ),
+        Hypothesis(
+            id="HYP-2026-002",
+            signal_ref="SIG-2026-002",
+            title="EGFR-dependent alveolar repair inhibition as ILD mechanism",
+            hypothesis=(
+                "EGFR signaling is critical for type II pneumocyte proliferation and alveolar repair. "
+                "Prosinertimib's potent EGFR inhibition may impair the lung's repair response to "
+                "subclinical injury, leading to progressive interstitial inflammation."
+            ),
+            mechanism=(
+                "EGFR on type II pneumocytes → proliferation/repair signaling → TGF-β pathway "
+                "modulation → impaired alveolar repair → progressive interstitial fibrosis"
+            ),
+            biological_plausibility="High",
+            confidence=0.81,
+            evidence_for=[
+                {
+                    "source": "Suzuki et al., 2003",
+                    "finding": (
+                        "EGFR ligands promote type II pneumocyte proliferation; EGFR inhibition "
+                        "delays alveolar repair"
+                    ),
+                    "pmid": "12626338",
+                },
+                {
+                    "source": "EGFR TKI class data",
+                    "finding": (
+                        "ILD is a recognized class effect: gefitinib 1-4%, osimertinib 3-4%, "
+                        "erlotinib 1-3%"
+                    ),
+                    "pmid": "",
+                },
+                {
+                    "source": "Japanese PMS data",
+                    "finding": (
+                        "Higher ILD rates in Japanese population (5-10%) suggesting genetic susceptibility"
+                    ),
+                    "pmid": "15818571",
+                },
+            ],
+            evidence_against=[
+                {
+                    "source": "PROSPER-1",
+                    "finding": "ILD rate (2.8%) within expected range for 3rd-gen EGFR TKIs",
+                    "pmid": "",
+                },
+            ],
+            status="Under Investigation",
+            generated_date="2026-01-15",
+            next_steps=[
+                "Monitor ILD case accrual rate vs osimertinib benchmark",
+                "Evaluate HRCT patterns for drug-induced vs disease progression",
+            ],
+        ),
+        Hypothesis(
+            id="HYP-2026-003",
+            signal_ref="SIG-2025-019",
+            title="CYP3A4-mediated reactive metabolite hepatotoxicity",
+            hypothesis=(
+                "Prosinertimib's pyrimidine core undergoes CYP3A4-mediated bioactivation to a reactive "
+                "quinone-imine intermediate, which depletes glutathione and causes dose-dependent "
+                "hepatocellular injury, particularly in patients with CYP3A4 ultra-rapid metabolizer phenotype."
+            ),
+            mechanism=(
+                "Prosinertimib → CYP3A4 bioactivation → reactive quinone-imine → glutathione depletion → "
+                "mitochondrial dysfunction → hepatocyte apoptosis → ALT/AST elevation → Hy's Law cases"
+            ),
+            biological_plausibility="Medium",
+            confidence=0.58,
+            evidence_for=[
+                {
+                    "source": "In vitro metabolism study",
+                    "finding": (
+                        "Reactive metabolite detected in human hepatocyte incubations with GSH trapping"
+                    ),
+                    "pmid": "",
+                },
+                {
+                    "source": "Clinical data",
+                    "finding": (
+                        "3 Hy's Law cases, all on concomitant CYP3A4 inhibitors "
+                        "(2 ketoconazole, 1 voriconazole)"
+                    ),
+                    "pmid": "",
+                },
+            ],
+            evidence_against=[
+                {
+                    "source": "PROSPER-1",
+                    "finding": "Overall ALT elevation rate (22%) similar to osimertinib (25%)",
+                    "pmid": "",
+                },
+                {
+                    "source": "Population PK",
+                    "finding": "No clear dose-exposure-hepatotoxicity relationship identified",
+                    "pmid": "",
+                },
+            ],
+            status="Under Investigation",
+            generated_date="2025-12-10",
+            next_steps=[
+                "CYP3A4 genotyping in hepatotoxicity cases",
+                "Drug interaction protocol amendment for PROSPER-3",
+            ],
+        ),
+    ]
+
+    mechanistic_analysis = MechanisticAnalysis(
+        signal_id="SIG-2026-001",
+        signal_name="Cardiac failure cluster",
+        biological_plausibility="High",
+        pathway_summary=(
+            "EGFR/HER2 heterodimerization → neuregulin-1 (NRG-1) signaling → PI3K/Akt survival "
+            "pathway in cardiomyocytes → impaired response to hemodynamic stress → myocardial dysfunction"
+        ),
+        pathway_steps=[
+            {"step": 1, "entity": "Prosinertimib", "action": "inhibits", "detail": "EGFR (IC50 1.2 nM) and off-target HER2/ErbB2 (IC50 84 nM)"},
+            {"step": 2, "entity": "HER2/ErbB4", "action": "disrupted", "detail": "Neuregulin-1 (NRG-1) cardioprotective signaling blocked"},
+            {"step": 3, "entity": "PI3K/Akt pathway", "action": "suppressed", "detail": "Cardiomyocyte survival signaling impaired"},
+            {"step": 4, "entity": "Cardiomyocytes", "action": "vulnerable", "detail": "Impaired stress-response → susceptibility to hemodynamic injury"},
+            {"step": 5, "entity": "Clinical outcome", "action": "manifests as", "detail": "Heart failure (NYHA Class II-IV), LVEF decline, cardiac biomarker elevation"},
+        ],
+        class_precedent=[
+            {"drug": "Trastuzumab", "finding": "HER2 blockade causes reversible cardiomyopathy in 2-7% of patients", "pmid": "11673345"},
+            {"drug": "Lapatinib", "finding": "Dual EGFR/HER2 inhibitor: 1.6% LVEF decline, generally reversible", "pmid": "17192538"},
+            {"drug": "Osimertinib", "finding": "QTc prolongation and LVEF decline reported; FDA label includes cardiac monitoring", "pmid": "29596029"},
+        ],
+        unique_risk_factors=(
+            "Prosinertimib's irreversible binding mechanism may cause prolonged HER2 inhibition compared to "
+            "reversible EGFR TKIs, potentially increasing cardiac risk duration. C797S-targeting moiety may "
+            "enhance off-target cardiac kinase inhibition."
+        ),
+        monitoring_recommendation=(
+            "Baseline and q12w echocardiography, troponin T at baseline and Cycles 1-4, BNP/NT-proBNP "
+            "monitoring, cardiac risk factor assessment at screening. Hold for LVEF <50% or >10% absolute decline."
+        ),
+    )
+
+    drug_class_comparison = [
+        ClassComparator(drug="Erlotinib", generation="1st generation", cardiac_risk="Low", ild_risk="1-3%", skin_rash="75%", diarrhea="55%", hepatotox="5%", status="Approved"),
+        ClassComparator(drug="Gefitinib", generation="1st generation", cardiac_risk="Low", ild_risk="1-4%", skin_rash="50%", diarrhea="45%", hepatotox="10%", status="Approved"),
+        ClassComparator(drug="Afatinib", generation="2nd generation", cardiac_risk="Low-Moderate", ild_risk="1%", skin_rash="90%", diarrhea="96%", hepatotox="8%", status="Approved"),
+        ClassComparator(drug="Osimertinib", generation="3rd generation", cardiac_risk="Moderate (QTc, LVEF)", ild_risk="3-4%", skin_rash="40%", diarrhea="48%", hepatotox="25%", status="Approved"),
+        ClassComparator(drug="Prosinertimib", generation="3rd generation", cardiac_risk="Under evaluation", ild_risk="2.8%", skin_rash="45%", diarrhea="42%", hepatotox="22%", status="Approved"),
+    ]
+
+    ai_insights_summary = {
+        "total_hypotheses": 3,
+        "confirmed": 0,
+        "under_investigation": 3,
+        "refuted": 0,
+        "avg_confidence": 0.70,
+        "literature_references_analyzed": 847,
+        "class_effect_signals_monitored": 6,
+        "ai_chain_status": "Active — processing SIG-2026-001 cardiac failure cluster",
+    }
+
+    return AIIntelligenceResponse(
+        request_id=_make_request_id(),
+        timestamp=_now().isoformat(),
+        product="Prosinertimib",
+        therapeutic_area=therapeutic_area,
+        ai_chain=ai_chain,
+        active_hypotheses=active_hypotheses,
+        mechanistic_analysis=mechanistic_analysis,
+        drug_class_comparison=drug_class_comparison,
+        ai_insights_summary=ai_insights_summary,
     )
