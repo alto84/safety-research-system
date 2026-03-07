@@ -62,7 +62,7 @@ The PV Plan is built directly from the Safety Specification. Two tiers of action
 ### Scope
 Defines recommended format and content for periodic benefit-risk evaluation reporting on marketed products (including approved drugs under further study). Supersedes the former PSUR format from E2C/E2C(R1), shifting from interval safety report to cumulative benefit-risk evaluation.
 
-### PBRER Section Structure (20 Sections)
+### PBRER Section Structure (19 Sections + Appendices)
 
 | Section | Title | Content |
 |---------|-------|---------|

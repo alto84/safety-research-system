@@ -15,7 +15,7 @@ CMO (Chief Medical Officer)
         +-- QPPV (EU)
         |     Qualified Person for Pharmacovigilance
         |     Regulatory-mandated independence (dotted-line to CMO)
-        |     UK-based, oversees PSMF, EudraVigilance, LPPV network
+        |     Dublin, Ireland, oversees PSMF, EudraVigilance, LPPV network
         |
         +-- Director, Signal Management & Safety Science
         |     Signal detection (PRR/ROR/EBGM/BCPNN)
@@ -57,7 +57,7 @@ CMO (Chief Medical Officer)
 |-----------|-------|-----------|---------|
 | Safety Review Committee (SRC) | CMO | Quarterly | Head PS, QPPV, VP Regulatory, VP Clinical Ops, Medical Affairs, Biostatistics |
 | Safety Management Team (SMT) | Head of Patient Safety | Monthly | QPPV, all 5 direct reports, Regulatory Affairs liaison |
-| Risk Management Committee (RMC) | Director, Risk Management | Ad hoc | Head PS, CMO, QPPV, Signal Mgmt, Regulatory, Clinical, Quality |
+| Risk Management Committee (RMC) | Director, Risk Management | Quarterly | Head PS, CMO, QPPV, Signal Mgmt, Regulatory, Clinical, Quality |
 | DSMB | Independent Chair | Per protocol | 3 independent members (statistician, clinician, ethicist) |
 
 ## Operating Model
@@ -70,14 +70,14 @@ CMO (Chief Medical Officer)
 
 | Role | Skill File | Status |
 |------|-----------|--------|
-| CMO | `cmo_safety_oversight.md` | Complete |
-| Head of Patient Safety | `head_patient_safety.md` | Complete |
-| Director, Signal Management | `director_signal_management.md` | Complete |
-| Associate Director, PV Operations | `vp_pv_operations.md` | Complete |
-| Director, Risk Management | `director_risk_management.md` | Complete |
-| Associate Director, Aggregate Reporting | `director_aggregate_reporting.md` | Complete |
-| Manager, PV Quality | `director_pv_quality.md` | Complete |
-| QPPV (EU) | `qppv_eu.md` | TODO |
+| CMO | `1-cmo.md` | Complete |
+| Head of Patient Safety | `2-head-ps.md` | Complete |
+| Director, Signal Management | `4-signal-mgmt.md` | Complete |
+| Associate Director, PV Operations | `5-pv-ops.md` | Complete |
+| Director, Risk Management | `6-risk-mgmt.md` | Complete |
+| Associate Director, Aggregate Reporting | `7-aggregate-reporting.md` | Complete |
+| Manager, PV Quality | `8-pv-quality.md` | Complete |
+| QPPV (EU) | `3-qppv.md` | TODO |
 
 ## Key Changes from Previous Structure
 

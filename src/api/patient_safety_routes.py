@@ -9,7 +9,6 @@ All data is fictional and for demonstration purposes only.
 
 from __future__ import annotations
 
-import logging
 import uuid
 from datetime import datetime, timezone
 from enum import Enum
@@ -18,7 +17,6 @@ from typing import Any, Optional
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Router
@@ -60,14 +58,6 @@ class GovernanceBody(BaseModel):
     members: int
     charter_status: str
 
-
-class OrgRole(BaseModel):
-    role: str
-    name: str
-    reports_to: str
-    department: str
-    location: str
-    fte_direct_reports: int = 0
 
 
 class OverviewResponse(BaseModel):
@@ -510,14 +500,14 @@ async def get_overview() -> OverviewResponse:
             frequency="Monthly (weekly during active enrollment)",
             last_meeting="2026-02-20",
             next_meeting="2026-03-20",
-            members=12,
+            members=8,
             charter_status="Approved (v3.1, 2025-09-15)",
         ),
         GovernanceBody(
             name="Safety Review Committee",
             abbreviation="SRC",
             chair="Chief Medical Officer",
-            frequency="Monthly",
+            frequency="Quarterly",
             last_meeting="2026-02-15",
             next_meeting="2026-03-15",
             members=18,
@@ -538,14 +528,14 @@ async def get_overview() -> OverviewResponse:
     operating_model = {
         "model_type": "Hybrid (In-house + CRO)",
         "pv_vendor": "SafetyFirst Ltd",
-        "safety_database": "Argus Safety 8.4",
+        "safety_database": "Oracle Argus Safety 8.4",
         "signal_detection_tool": "Empirica Signal 9.1",
         "medical_coding": "MedDRA v27.0",
         "drug_coding": "WHODrug Global B3 March 2026",
         "case_processing_locations": [
             {"location": "Bangalore, India", "function": "Case intake, data entry, MedDRA coding", "fte": 30},
             {"location": "Dublin, Ireland", "function": "Case quality review, medical assessment", "fte": 8},
-            {"location": "Basel, Switzerland", "function": "Medical review, signal assessment", "fte": 5},
+            {"location": "Basel, Switzerland", "function": "Medical review, signal assessment", "fte": 4},
         ],
         "total_pv_fte": 42,
         "outsourced_pct": 57,
@@ -864,7 +854,7 @@ async def get_eu_compliance() -> EUComplianceResponse:
         QPPVNetwork(
             role="QPPV (EU)",
             name="QPPV (EU)",
-            country="Switzerland (EU oversight)",
+            country="Ireland",
             qualification="MD, PhD Pharmacology, FESC",
             status="Active",
             last_training="2025-11-15",
@@ -1046,7 +1036,7 @@ async def get_icsr_metrics() -> ICSRResponse:
             "target": 100.0,
             "actual": 97.8,
             "status": "amber",
-            "detail": "89 of 91 expedited reports submitted within 15 calendar days. "
+            "detail": "87 of 89 expedited reports submitted within 15 calendar days. "
                       "2 late reports due to follow-up data received at Day 13 requiring re-assessment.",
         },
         "90_day_periodic": {
@@ -1268,7 +1258,7 @@ async def get_signals() -> SignalsResponse:
         "new_signals_ytd": 3,
         "under_evaluation": 3,
         "ongoing_monitoring": 1,
-        "closed_validated": 0,
+        "closed_validated": 1,
         "closed_refuted": 1,
         "average_evaluation_days": 52,
         "target_evaluation_days": 60,
@@ -1336,7 +1326,7 @@ async def get_signals() -> SignalsResponse:
         request_id=_make_request_id(),
         timestamp=_now(),
         product="Prosinertimib",
-        total_signals=5,
+        total_signals=6,
         active_signals=active_signals,
         pipeline_summary=pipeline_summary,
         recent_assessments=recent_assessments,
@@ -1833,12 +1823,12 @@ async def get_quality() -> QualityResponse:
         "total_closed_ytd": 3,
         "overdue": 1,
         "by_source": {
-            "Self-identified": 2,
+            "Self-identified": 1,
             "Audit finding": 1,
             "QMS review": 1,
             "Survey": 1,
         },
-        "by_priority": {"high": 1, "medium": 3, "low": 1},
+        "by_priority": {"high": 1, "medium": 2, "low": 1},
         "average_closure_days": 68,
         "target_closure_days": 90,
     }

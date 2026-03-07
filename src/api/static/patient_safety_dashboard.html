@@ -945,6 +945,13 @@ a:hover { text-decoration: underline; }
 .psd-collapse-body.collapsed {
   display: none;
 }
+@media print {
+  .psd-sidebar, .psd-header, .psd-alert-item, .psd-cross-link, [onclick*="showSection"] { display: none !important; }
+  .psd-main { margin-left: 0 !important; padding-top: 0 !important; }
+  .psd-section { display: block !important; page-break-inside: avoid; }
+  .psd-card { box-shadow: none !important; border: 1px solid #ddd; page-break-inside: avoid; }
+  body { background: #fff !important; color: #000 !important; }
+}
 </style>
 </head>
 <body>
@@ -4596,51 +4603,6 @@ a:hover { text-decoration: underline; }
     </div>
   </div>
 
-  <!-- Emerging Safety Issue Tracker -->
-  <div class="psd-card">
-    <div class="psd-card-header">
-      <h3>Emerging Safety Issue Tracker</h3>
-      <span class="psd-badge-red">3 ACTIVE</span>
-    </div>
-    <div class="psd-card-body">
-      <div class="psd-table-wrapper">
-        <table class="psd-table">
-          <thead>
-            <tr>
-              <th>Issue</th>
-              <th>First Identified</th>
-              <th>Cases</th>
-              <th>Assessment</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="background:var(--danger-light);">
-              <td><strong>Cardiac failure cluster</strong></td>
-              <td>2026-01-08</td>
-              <td>23</td>
-              <td><span class="psd-badge-red">Under evaluation</span></td>
-              <td>SRC convened; dedicated cardiac sub-study (PRO-CARDIAC) initiated</td>
-            </tr>
-            <tr style="background:var(--warning-light);">
-              <td><strong>Hepatotoxicity (Hy's Law)</strong></td>
-              <td>2025-09-22</td>
-              <td>3</td>
-              <td><span class="psd-badge-amber">Monitoring</span></td>
-              <td>Label update drafted; hepatic monitoring protocol enhanced</td>
-            </tr>
-            <tr style="background:var(--warning-light);">
-              <td><strong>Ocular toxicity (blurred vision)</strong></td>
-              <td>2026-02-15</td>
-              <td>7</td>
-              <td><span class="psd-badge-amber">Preliminary review</span></td>
-              <td>Targeted questionnaire designed; ophthalmology consult recommended</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </div>
 
 
@@ -5494,8 +5456,8 @@ a:hover { text-decoration: underline; }
         <div class="psd-alert-content">
           <strong>AMBER &mdash; SOP Currency: 91.7% (Target: 95%)</strong>
           <p>
-            3 SOPs past periodic review date (SOP-PV-012: Expedited reporting, SOP-PV-018: Signal evaluation,
-            SOP-PV-024: SDEA management). All three in draft review stage; expected effective by 2026-03-31.
+            3 SOPs past periodic review date (PV-SOP-009: RMP Management, PV-SOP-007: Signal Detection and Screening,
+            PV-SOP-012: SDEA Management). All three in draft review stage; expected effective by 2026-03-31.
           </p>
         </div>
       </div>
@@ -5814,86 +5776,6 @@ a:hover { text-decoration: underline; }
     </div>
   </div>
 
-  <!-- Market Authorization Status -->
-  <div class="psd-card">
-    <div class="psd-card-header">
-      <h3>Market Authorization Status</h3>
-    </div>
-    <div class="psd-card-body">
-      <div class="psd-table-wrapper">
-        <table class="psd-table">
-          <thead>
-            <tr>
-              <th>Territory</th>
-              <th>Regulatory Authority</th>
-              <th>Submission Date</th>
-              <th>Status</th>
-              <th>Approval Date</th>
-              <th>Conditions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <span class="psd-geo-flag-inline">&#127482;&#127480;</span>
-                <strong>United States</strong>
-              </td>
-              <td>FDA (CDER)</td>
-              <td>BLA submitted 2023-11-15</td>
-              <td><span class="psd-badge-green">Approved</span></td>
-              <td>2024-06-28</td>
-              <td>REMS, PMR for cardiac study</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="psd-geo-flag-inline">&#127466;&#127482;</span>
-                <strong>European Union</strong>
-              </td>
-              <td>EMA (CHMP)</td>
-              <td>MAA submitted 2024-01-10</td>
-              <td><span class="psd-badge-green">Approved</span></td>
-              <td>2024-09-15</td>
-              <td>RMP, PASS for ILD</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="psd-geo-flag-inline">&#127471;&#127477;</span>
-                <strong>Japan</strong>
-              </td>
-              <td>PMDA</td>
-              <td>JNDA submitted 2024-06-01</td>
-              <td><span class="psd-badge-amber">Under Review</span></td>
-              <td>&mdash;</td>
-              <td>Expected Q4 2026</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="psd-geo-flag-inline">&#127464;&#127475;</span>
-                <strong>China</strong>
-              </td>
-              <td>NMPA (CDE)</td>
-              <td>Pre-IND meeting</td>
-              <td><span style="background:#607d8b;color:#fff;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;">Planned Q1 2027</span></td>
-              <td>&mdash;</td>
-              <td>&mdash;</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="psd-geo-flag-inline">&#127464;&#127462;</span>
-                <strong>Canada</strong>
-              </td>
-              <td>Health Canada</td>
-              <td>NDS submitted 2024-08-15</td>
-              <td><span class="psd-badge-green">Approved</span></td>
-              <td>2025-03-01</td>
-              <td>RMP equivalent</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
   <!-- Local Safety Reporting Requirements -->
   <div class="psd-card">
     <div class="psd-card-header">
@@ -5916,7 +5798,7 @@ a:hover { text-decoration: underline; }
                 <span class="psd-geo-flag-inline">&#127482;&#127480;</span>
                 <strong>United States</strong>
               </td>
-              <td>15 calendar days</td>
+              <td>7 calendar days</td>
               <td>15 calendar days</td>
               <td>90 calendar days</td>
             </tr>
@@ -6085,19 +5967,19 @@ a:hover { text-decoration: underline; }
                   <td>Case Processing &amp; Volume</td>
                   <td><span class="psd-badge-green">Complete</span></td>
                   <td>Argus API integration</td>
-                  <td>Section 2</td>
+                  <td>Section 5</td>
                 </tr>
                 <tr>
                   <td>Regulatory Compliance</td>
                   <td><span class="psd-badge-green">Complete</span></td>
                   <td>Submission gateway data</td>
-                  <td>Section 3</td>
+                  <td>Section 2</td>
                 </tr>
                 <tr>
                   <td>Regulatory Deadlines</td>
                   <td><span class="psd-badge-green">Complete</span></td>
                   <td>Argus + regulatory calendar</td>
-                  <td>Section 4</td>
+                  <td>Section 3</td>
                 </tr>
                 <tr>
                   <td>KPI Framework</td>
@@ -6138,25 +6020,25 @@ a:hover { text-decoration: underline; }
                   <td>CAPA Tracker</td>
                   <td><span class="psd-badge-amber">Planned</span></td>
                   <td>TrackWise API</td>
-                  <td>Section 6</td>
+                  <td>Section 9</td>
                 </tr>
                 <tr>
                   <td>SOP Registry</td>
                   <td><span class="psd-badge-amber">Planned</span></td>
                   <td>Veeva Vault integration</td>
-                  <td>Section 6</td>
+                  <td>Section 9</td>
                 </tr>
                 <tr>
                   <td>Training Management</td>
                   <td><span class="psd-badge-amber">Planned</span></td>
                   <td>LMS data feed</td>
-                  <td>Section 6</td>
+                  <td>Section 9</td>
                 </tr>
                 <tr>
                   <td>Quality Metrics Automation</td>
                   <td><span class="psd-badge-amber">Planned</span></td>
                   <td>Phase 1 KPI framework</td>
-                  <td>Section 6</td>
+                  <td>Section 9</td>
                 </tr>
               </tbody>
             </table>

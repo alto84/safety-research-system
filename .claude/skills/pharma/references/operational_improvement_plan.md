@@ -38,7 +38,7 @@ Head of Patient Safety / Pharmacovigilance
 │   ├── US REMS (if required)
 │   ├── Risk minimization measure effectiveness evaluation
 │   └── Epidemiological study oversight
-├── Associate Associate Director, Aggregate Reporting
+├── Associate Director, Aggregate Reporting
 │   ├── PSUR/PBRER authoring
 │   ├── DSUR authoring
 │   └── PADER coordination
@@ -76,7 +76,7 @@ Head of Patient Safety / Pharmacovigilance
 ### Gap 3: Aggregate Reporting Resources (MEDIUM)
 **Current state:** No dedicated aggregate reporting role visible in dashboard. The report calendar for a single approved product includes: PBRER (typically every 6 months for 2 years post-approval, then annually), DSUR (if ongoing trials), PADER (US, annually).
 **Regulatory requirement:** ICH E2C(R2) requires that PBRER authoring is performed by qualified personnel with access to cumulative safety data.
-**Recommendation:** The Associate Associate Director, Aggregate Reporting should have 1 medical writer (can be outsourced) and direct access to the safety database. For the current volume (1 product, 3 aggregate reports/year), 1.0 FTE internal + 0.5 FTE outsourced medical writing is sufficient.
+**Recommendation:** The Associate Director, Aggregate Reporting should have 1 medical writer (can be outsourced) and direct access to the safety database. For the current volume (1 product, 3 aggregate reports/year), 1.0 FTE internal + 0.5 FTE outsourced medical writing is sufficient.
 
 ### Gap 4: Clinical Trial Safety / SAE Reconciliation (MEDIUM)
 **Current state:** Dashboard Section 10 covers clinical trial safety but no role is explicitly mapped to it.
@@ -153,7 +153,7 @@ For a single-product EGFR inhibitor (approved, NSCLC indication), this total hea
 | **RENAME** | Safety Surveillance Director -> split function | Literature surveillance oversight stays with Signal Management; remove standalone "Surveillance Director" title |
 | **CONSOLIDATE** | QPPV as overlay on Director, Signal Management | QPPV is a legal designation. Avoid creating a standalone role with no operational function. |
 | **ADD TO DASHBOARD** | Director, Risk Management & Epidemiology | Already in API; missing from dashboard |
-| **ADD TO DASHBOARD** | Associate Associate Director, Aggregate Reporting | Already in API; missing from dashboard |
+| **ADD TO DASHBOARD** | Associate Director, Aggregate Reporting | Already in API; missing from dashboard |
 | **ADD TO DASHBOARD** | Manager, PV Quality & Compliance | Already in API; missing from dashboard |
 | **DO NOT ADD** | Standalone Medical Information role | Not needed at this stage. Medical information queries can be handled by Medical Affairs with PV triage for AE reports. |
 

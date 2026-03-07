@@ -1,5 +1,5 @@
 # 7. Associate Director, Aggregate Reporting
-> Parent: 2-head-ps | Children: -- | Cross-ref: 4-signal-mgmt, 5-pv-ops, 6-risk-mgmt
+> Parent: 2-head-ps | Children: -- | Cross-ref: 3-qppv, 4-signal-mgmt, 5-pv-ops, 6-risk-mgmt, 8-pv-quality
 
 ## Role
 Owns the preparation, quality review, and timely submission of all periodic and aggregate safety reports for Prosinertimib: PBRER/PSUR, DSUR, PADER, and IND Annual Reports. Ensures each report is authored per the applicable ICH/GVP template, integrates current signal and risk management data, and meets regulatory submission deadlines without exception.

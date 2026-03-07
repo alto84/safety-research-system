@@ -51,7 +51,7 @@ Maintain oversight of all outsourced PV activities per GVP Module I, Section I.C
 **Audit schedule:** Annual on-site audits for SafetyFirst Ltd and MedSearch Global. PharmaLex: desk-based audit annually, on-site every 2 years. Argus Cloud: vendor qualification review annually, aligned with system validation lifecycle.
 
 ### f. Safety Committee Preparation & Chairing
-Chair the internal Safety Management Team (SMT) meeting (minimum monthly; weekly during active clinical enrollment). Ensure meeting minutes capture decisions with assigned actions, owners, and deadlines. Provide safety input to the cross-functional Drug Safety Monitoring Board (DSMB) for clinical trials.
+Chair the internal Safety Management Team (SMT) meeting (minimum monthly; weekly during active clinical enrollment). Ensure meeting minutes capture decisions with assigned actions, owners, and deadlines. Provide safety input to the cross-functional Data Safety Monitoring Board (DSMB) for clinical trials.
 
 **SMT Standing Agenda Template:**
 1. **Minutes & actions review** -- prior meeting action item status
