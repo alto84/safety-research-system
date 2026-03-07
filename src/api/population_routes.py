@@ -1032,7 +1032,7 @@ async def ae_comparison() -> dict:
 async def trials_ae_data(
     ae_type: str | None = Query(
         default=None,
-        description="Filter to a specific AE category (crs, icans, cytopenias, infections, hlh)",
+        description="Filter to a specific AE category (crs, icans, cytopenias, infections, iechs)",
     ),
     min_enrollment: int = Query(
         default=0,
@@ -1601,7 +1601,7 @@ def _classify_node_type(entity: str) -> str:
         return "kinase"
     # Processes / clinical outcomes
     process_keywords = [
-        "crs", "icans", "hlh", "mas", "coagulopathy",
+        "crs", "icans", "iechs", "iec-hs", "hlh", "mas", "coagulopathy",
         "hemophagocytosis", "permeability", "infiltration",
         "excitotoxicity", "expansion", "recruitment", "lysis",
         "gene", "transcrib", "apoptosis", "leak",

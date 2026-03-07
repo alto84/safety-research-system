@@ -170,7 +170,7 @@ class PromptRouter:
 
     The routing algorithm considers:
         1. Query complexity (more complex -> more capable model)
-        2. Clinical domain (specialized models for neuro, HLH, etc.)
+        2. Clinical domain (specialized models for neuro, IEC-HS, etc.)
         3. Latency budget (fast models for real-time monitoring)
         4. Cost optimization (cheaper models for simple queries)
         5. Reliability (prefer models with high historical reliability)
@@ -341,7 +341,7 @@ class PromptRouter:
 
         if "ICANS" in ae_set or "icans" in query.query_text.lower():
             return ClinicalDomain.NEUROTOXICITY
-        if "HLH" in ae_set or "hlh" in query.query_text.lower():
+        if "IEC-HS" in ae_set or "iechs" in query.query_text.lower() or "iec-hs" in query.query_text.lower():
             return ClinicalDomain.HEMOPHAGOCYTIC
         if "coagulopathy" in query.query_text.lower() or "dic" in query.query_text.lower():
             return ClinicalDomain.COAGULOPATHY

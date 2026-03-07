@@ -37,7 +37,7 @@ class AdverseEventType(Enum):
 
     CRS = "CRS"
     ICANS = "ICANS"
-    HLH = "HLH"
+    IECHS = "IEC-HS"
 
 
 @dataclass

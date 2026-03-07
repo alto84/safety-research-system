@@ -1,6 +1,6 @@
 """
 Tests for KnowledgeGraph — pathway queries, mechanism validation, and
-graph traversal for CRS/ICANS/HLH pathways.
+graph traversal for CRS/ICANS/IEC-HS pathways.
 
 The KnowledgeGraph is the institutional memory of the platform, encoding biological
 mechanisms, validated hypotheses, and observed relationships.

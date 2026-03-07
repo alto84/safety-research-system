@@ -144,10 +144,10 @@ class SafetyEngine:
         Must be called before ``process_patient()``.
 
         Args:
-            load_default_pathways: Whether to load CRS/ICANS/HLH pathways
+            load_default_pathways: Whether to load CRS/ICANS/IEC-HS pathways
                 into the knowledge graph.
             alert_configs: Alert threshold configurations. Defaults to
-                standard thresholds for CRS, ICANS, and HLH.
+                standard thresholds for CRS, ICANS, and IEC-HS.
         """
         logger.info("Initializing SafetyEngine...")
 
@@ -194,7 +194,7 @@ class SafetyEngine:
         Args:
             patient: The patient data snapshot.
             adverse_events: Which adverse events to assess. Defaults to
-                CRS, ICANS, and HLH.
+                CRS, ICANS, and IEC-HS.
             generate_hypotheses: Whether to generate mechanistic hypotheses.
             validate_predictions: Whether to run mechanistic validation.
 
@@ -213,7 +213,7 @@ class SafetyEngine:
             adverse_events = [
                 AdverseEventType.CRS,
                 AdverseEventType.ICANS,
-                AdverseEventType.HLH,
+                AdverseEventType.IECHS,
             ]
 
         # Start audit session
@@ -508,7 +508,7 @@ class SafetyEngine:
     # ------------------------------------------------------------------
 
     def _configure_default_alerts(self) -> None:
-        """Set up default alert thresholds for CRS, ICANS, and HLH."""
+        """Set up default alert thresholds for CRS, ICANS, and IEC-HS."""
         defaults = [
             AlertThresholdConfig(
                 adverse_event=AdverseEventType.CRS,
@@ -525,7 +525,7 @@ class SafetyEngine:
                 rate_of_change_threshold=0.04,
             ),
             AlertThresholdConfig(
-                adverse_event=AdverseEventType.HLH,
+                adverse_event=AdverseEventType.IECHS,
                 warning_threshold=0.3,
                 urgent_threshold=0.5,
                 critical_threshold=0.7,

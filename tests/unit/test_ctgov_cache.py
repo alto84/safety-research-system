@@ -36,8 +36,8 @@ class TestAETermMap:
     def test_has_infections_category(self):
         assert "infections" in AE_TERM_MAP
 
-    def test_has_hlh_category(self):
-        assert "hlh" in AE_TERM_MAP
+    def test_has_iechs_category(self):
+        assert "iechs" in AE_TERM_MAP
 
     def test_all_categories_have_patterns(self):
         for cat, patterns in AE_TERM_MAP.items():
@@ -102,14 +102,14 @@ class TestNormalizeAETerm:
     def test_infections_general(self):
         assert normalize_ae_term("Infection") == "infections"
 
-    def test_hlh_full_name(self):
-        assert normalize_ae_term("Hemophagocytic lymphohistiocytosis") == "hlh"
+    def test_iechs_full_name(self):
+        assert normalize_ae_term("Hemophagocytic lymphohistiocytosis") == "iechs"
 
-    def test_hlh_abbreviation(self):
-        assert normalize_ae_term("HLH") == "hlh"
+    def test_iechs_abbreviation(self):
+        assert normalize_ae_term("HLH") == "iechs"
 
-    def test_hlh_mas(self):
-        assert normalize_ae_term("Macrophage Activation Syndrome") == "hlh"
+    def test_iechs_mas(self):
+        assert normalize_ae_term("Macrophage Activation Syndrome") == "iechs"
 
     def test_unknown_term_returns_none(self):
         assert normalize_ae_term("Headache") is None
@@ -314,6 +314,6 @@ class TestGetTrialAERates:
         result = get_trial_ae_rates("infections")
         assert len(result) > 0
 
-    def test_hlh_category(self):
-        result = get_trial_ae_rates("hlh")
+    def test_iechs_category(self):
+        result = get_trial_ae_rates("iechs")
         assert isinstance(result, list)

@@ -41,7 +41,7 @@ class FakeEmbeddings:
         "icans": 1,
         "cytopenias": 2,
         "infections": 3,
-        "hlh": 4,
+        "iechs": 4,
         "secondary_malignancies": 5,
         "cardiac": 6,
         "neurological": 7,
@@ -74,9 +74,9 @@ class FakeEmbeddings:
         "sepsis": "infections",
         "bacterial infection": "infections",
         "fungal infection": "infections",
-        "hemophagocytic lymphohistiocytosis": "hlh",
-        "macrophage activation syndrome": "hlh",
-        "hlh": "hlh",
+        "hemophagocytic lymphohistiocytosis": "iechs",
+        "macrophage activation syndrome": "iechs",
+        "hlh": "iechs",
         "secondary malignancy": "secondary_malignancies",
         "t-cell lymphoma": "secondary_malignancies",
         "myelodysplastic syndrome": "secondary_malignancies",
@@ -250,7 +250,7 @@ class TestMedDRAReferenceTerms:
     def test_all_categories_present(self):
         """Verify all 13 AE categories exist."""
         expected = {
-            "crs", "icans", "cytopenias", "infections", "hlh",
+            "crs", "icans", "cytopenias", "infections", "iechs",
             "secondary_malignancies", "cardiac", "neurological",
             "gi", "hepatic", "renal", "pulmonary", "dermatological",
         }
@@ -304,8 +304,8 @@ class TestClassifyAETerm:
             ("low platelet count", "cytopenias"),
             ("pneumonia", "infections"),
             ("sepsis", "infections"),
-            ("hemophagocytic lymphohistiocytosis", "hlh"),
-            ("macrophage activation syndrome", "hlh"),
+            ("hemophagocytic lymphohistiocytosis", "iechs"),
+            ("macrophage activation syndrome", "iechs"),
             ("secondary malignancy", "secondary_malignancies"),
             ("cardiomyopathy", "cardiac"),
             ("peripheral neuropathy", "neurological"),
@@ -712,7 +712,7 @@ class TestCodebaseAlignment:
 
     def test_ctgov_categories_covered(self):
         """All categories from ctgov_cache.py AE_TERM_MAP should be present."""
-        ctgov_categories = {"crs", "icans", "cytopenias", "infections", "hlh"}
+        ctgov_categories = {"crs", "icans", "cytopenias", "infections", "iechs"}
         for cat in ctgov_categories:
             assert cat in MEDDRA_REFERENCE_TERMS, (
                 f"ctgov_cache category '{cat}' missing from classifier"
@@ -726,7 +726,7 @@ class TestCodebaseAlignment:
             "ICANS": "icans",
             "Prolonged Cytopenia": "cytopenias",
             "Infection": "infections",
-            "HLH/MAS": "hlh",
+            "IEC-HS": "iechs",
         }
         for _label, cat_key in mechanism_categories.items():
             assert cat_key in MEDDRA_REFERENCE_TERMS, (

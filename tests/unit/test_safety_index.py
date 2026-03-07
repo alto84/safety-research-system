@@ -47,7 +47,7 @@ class SafetyIndexCalculator:
         self,
         crs_agg: AggregatedRisk,
         icans_agg: AggregatedRisk,
-        hlh_agg: AggregatedRisk,
+        iechs_agg: AggregatedRisk,
         model_agreement: float,
         pathways: list,
         biomarkers: list,
@@ -57,13 +57,13 @@ class SafetyIndexCalculator:
     ) -> SafetyIndex:
         """Compute the SafetyIndex from per-event aggregated risks."""
         # Overall risk: max of individual event risks (conservative)
-        overall = max(crs_agg.risk_score, icans_agg.risk_score, hlh_agg.risk_score)
+        overall = max(crs_agg.risk_score, icans_agg.risk_score, iechs_agg.risk_score)
         overall = max(0.0, min(1.0, overall))
 
         # Event-specific risks
         crs_risk = self._build_event_risk(crs_agg, "crs")
         icans_risk = self._build_event_risk(icans_agg, "icans")
-        hlh_risk = self._build_event_risk(hlh_agg, "hlh")
+        iechs_risk = self._build_event_risk(iechs_agg, "iechs")
 
         # Risk trajectory (simplified: linear interpolation toward peak)
         peak_time = self._estimate_peak_time(overall)
@@ -85,7 +85,7 @@ class SafetyIndexCalculator:
             overall_risk=overall,
             crs_risk=crs_risk,
             icans_risk=icans_risk,
-            hlh_risk=hlh_risk,
+            iechs_risk=iechs_risk,
             risk_trajectory=trajectory,
             peak_risk_time=peak_time,
             primary_mechanism=primary_mechanism,
@@ -108,10 +108,10 @@ class SafetyIndexCalculator:
         default_severity = {
             "crs": {"grade_1": 0.40, "grade_2": 0.30, "grade_3": 0.20, "grade_4": 0.10},
             "icans": {"grade_1": 0.35, "grade_2": 0.30, "grade_3": 0.25, "grade_4": 0.10},
-            "hlh": {"grade_1": 0.0, "grade_2": 0.0, "grade_3": 0.55, "grade_4": 0.45},
+            "iechs": {"grade_1": 0.0, "grade_2": 0.0, "grade_3": 0.55, "grade_4": 0.45},
         }
         # Default onset times (hours)
-        default_onset = {"crs": 48, "icans": 120, "hlh": 168}
+        default_onset = {"crs": 48, "icans": 120, "iechs": 168}
 
         onset_hours = default_onset.get(event_type, 72)
         onset = timedelta(hours=onset_hours)
@@ -193,7 +193,7 @@ def low_icans_agg():
 
 
 @pytest.fixture
-def low_hlh_agg():
+def low_iechs_agg():
     return AggregatedRisk(risk_score=0.02, confidence_interval=(0.01, 0.05), disagreement_score=0.01)
 
 
@@ -208,16 +208,16 @@ def high_icans_agg():
 
 
 @pytest.fixture
-def high_hlh_agg():
+def high_iechs_agg():
     return AggregatedRisk(risk_score=0.25, confidence_interval=(0.15, 0.38), disagreement_score=0.05)
 
 
 class TestOverallRiskComputation:
     """Tests for the overall_risk field (max of event-specific risks)."""
 
-    def test_overall_risk_is_max_of_events(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_overall_risk_is_max_of_events(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.92,
             pathways=["pathway:crs_grade1_self_limiting"],
             biomarkers=["il6_normal"],
@@ -226,9 +226,9 @@ class TestOverallRiskComputation:
         )
         assert si.overall_risk == pytest.approx(0.10)  # Max of 0.10, 0.05, 0.02
 
-    def test_high_risk_overall(self, calculator, high_crs_agg, high_icans_agg, high_hlh_agg):
+    def test_high_risk_overall(self, calculator, high_crs_agg, high_icans_agg, high_iechs_agg):
         si = calculator.compute(
-            high_crs_agg, high_icans_agg, high_hlh_agg,
+            high_crs_agg, high_icans_agg, high_iechs_agg,
             model_agreement=0.88,
             pathways=["pathway:il6_trans_signaling"],
             biomarkers=["il6_critical"],
@@ -252,26 +252,26 @@ class TestOverallRiskComputation:
 class TestRiskTrajectory:
     """Tests for the risk_trajectory field."""
 
-    def test_trajectory_has_correct_length(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_trajectory_has_correct_length(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.9, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
         assert len(si.risk_trajectory) == len(SafetyIndexCalculator.TRAJECTORY_HOURS)
 
-    def test_trajectory_values_in_valid_range(self, calculator, high_crs_agg, high_icans_agg, high_hlh_agg):
+    def test_trajectory_values_in_valid_range(self, calculator, high_crs_agg, high_icans_agg, high_iechs_agg):
         si = calculator.compute(
-            high_crs_agg, high_icans_agg, high_hlh_agg,
+            high_crs_agg, high_icans_agg, high_iechs_agg,
             model_agreement=0.88, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
         for val in si.risk_trajectory:
             assert 0.0 <= val <= 1.0
 
-    def test_high_risk_peaks_early(self, calculator, high_crs_agg, high_icans_agg, high_hlh_agg):
+    def test_high_risk_peaks_early(self, calculator, high_crs_agg, high_icans_agg, high_iechs_agg):
         si = calculator.compute(
-            high_crs_agg, high_icans_agg, high_hlh_agg,
+            high_crs_agg, high_icans_agg, high_iechs_agg,
             model_agreement=0.88, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
@@ -279,9 +279,9 @@ class TestRiskTrajectory:
         # Values should rise then fall
         assert si.peak_risk_time == timedelta(hours=24)
 
-    def test_low_risk_peaks_late(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_low_risk_peaks_late(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.9, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
@@ -291,25 +291,25 @@ class TestRiskTrajectory:
 class TestEvidenceStrength:
     """Tests for evidence_strength classification."""
 
-    def test_high_agreement_strong(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_high_agreement_strong(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.92, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
         assert si.evidence_strength == "strong"
 
-    def test_medium_agreement_moderate(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_medium_agreement_moderate(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.75, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
         assert si.evidence_strength == "moderate"
 
-    def test_low_agreement_limited(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_low_agreement_limited(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.55, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
@@ -319,17 +319,17 @@ class TestEvidenceStrength:
 class TestMonitoringProtocol:
     """Tests for monitoring protocol selection based on risk level."""
 
-    def test_low_risk_standard_monitoring(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_low_risk_standard_monitoring(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.9, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
         assert "q12h" in si.monitoring_protocol.lower() or "standard" in si.monitoring_protocol.lower()
 
-    def test_high_risk_intensive_monitoring(self, calculator, high_crs_agg, high_icans_agg, high_hlh_agg):
+    def test_high_risk_intensive_monitoring(self, calculator, high_crs_agg, high_icans_agg, high_iechs_agg):
         si = calculator.compute(
-            high_crs_agg, high_icans_agg, high_hlh_agg,
+            high_crs_agg, high_icans_agg, high_iechs_agg,
             model_agreement=0.88, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
@@ -339,9 +339,9 @@ class TestMonitoringProtocol:
 class TestMechanisticConsistency:
     """Tests ensuring mechanistic fields are populated correctly."""
 
-    def test_primary_mechanism_from_pathways(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_primary_mechanism_from_pathways(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.9,
             pathways=["pathway:crs_grade1_self_limiting", "pathway:mild_inflammation"],
             biomarkers=["il6_normal"],
@@ -349,19 +349,19 @@ class TestMechanisticConsistency:
         )
         assert si.primary_mechanism == "pathway:crs_grade1_self_limiting"
 
-    def test_empty_pathways_unknown_mechanism(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_empty_pathways_unknown_mechanism(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.9,
             pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
         assert si.primary_mechanism == "Unknown"
 
-    def test_biomarkers_limited_to_top5(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_biomarkers_limited_to_top5(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         many_biomarkers = [f"biomarker_{i}" for i in range(10)]
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.9,
             pathways=["p1"], biomarkers=many_biomarkers,
             model_versions={}, graph_version="test",
@@ -372,9 +372,9 @@ class TestMechanisticConsistency:
 class TestStructuralValidity:
     """Tests that the SafetyIndex structure is complete and valid."""
 
-    def test_all_required_fields_present(self, calculator, low_crs_agg, low_icans_agg, low_hlh_agg):
+    def test_all_required_fields_present(self, calculator, low_crs_agg, low_icans_agg, low_iechs_agg):
         si = calculator.compute(
-            low_crs_agg, low_icans_agg, low_hlh_agg,
+            low_crs_agg, low_icans_agg, low_iechs_agg,
             model_agreement=0.9, pathways=["p1"], biomarkers=["b1"],
             model_versions={"claude": "4.0"}, graph_version="kg-v1.0",
         )
@@ -382,17 +382,17 @@ class TestStructuralValidity:
         assert si.timestamp is not None
         assert si.crs_risk is not None
         assert si.icans_risk is not None
-        assert si.hlh_risk is not None
+        assert si.iechs_risk is not None
         assert isinstance(si.confidence_interval, tuple)
         assert len(si.confidence_interval) == 2
 
-    def test_event_risk_probabilities_valid(self, calculator, high_crs_agg, high_icans_agg, high_hlh_agg):
+    def test_event_risk_probabilities_valid(self, calculator, high_crs_agg, high_icans_agg, high_iechs_agg):
         si = calculator.compute(
-            high_crs_agg, high_icans_agg, high_hlh_agg,
+            high_crs_agg, high_icans_agg, high_iechs_agg,
             model_agreement=0.88, pathways=[], biomarkers=[],
             model_versions={}, graph_version="test",
         )
-        for event_risk in [si.crs_risk, si.icans_risk, si.hlh_risk]:
+        for event_risk in [si.crs_risk, si.icans_risk, si.iechs_risk]:
             assert 0.0 <= event_risk.probability <= 1.0
             assert sum(event_risk.severity_distribution.values()) == pytest.approx(1.0, abs=0.01)
             assert event_risk.expected_onset.total_seconds() > 0

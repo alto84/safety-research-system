@@ -60,7 +60,7 @@ class InputValidator:
         "wbc_k_ul": (0.0, 500.0),
         "hemoglobin_g_dl": (0.0, 25.0),
         "crp_mg_l": (0.0, 500.0),
-        "ferritin_ng_ml": (0.0, 200000.0),  # Can be >100k in HLH
+        "ferritin_ng_ml": (0.0, 200000.0),  # Can be >100k in IEC-HS
         "il6_pg_ml": (0.0, 1000000.0),
         "ifn_gamma_pg_ml": (0.0, 1000000.0),
         "ldh_u_l": (0.0, 50000.0),
@@ -82,7 +82,7 @@ class InputValidator:
 
     # Warning thresholds: unusual but physiologically possible
     WARNING_THRESHOLDS = {
-        "ferritin_ng_ml": 100000.0,      # Extreme HLH
+        "ferritin_ng_ml": 100000.0,      # Extreme IEC-HS
         "il6_pg_ml": 100000.0,           # Extreme CRS
         "temperature_c": 42.0,           # Hyperpyrexia
         "creatinine_mg_dl": 15.0,        # Severe renal failure
@@ -310,12 +310,12 @@ class TestExtremeButValidValues:
     """Tests that extreme but physiologically possible values are accepted."""
 
     def test_ferritin_100000_valid_with_warning(self, validator):
-        """Ferritin 100,000 ng/mL is seen in HLH - should be valid with warning."""
+        """Ferritin 100,000 ng/mL is seen in IEC-HS - should be valid with warning."""
         errors, warnings = validator.validate_lab_value("ferritin_ng_ml", 100000.0)
         assert len(errors) == 0
 
     def test_ferritin_150000_valid_with_warning(self, validator):
-        """Ferritin 150,000 ng/mL is extreme HLH - still valid."""
+        """Ferritin 150,000 ng/mL is extreme IEC-HS - still valid."""
         errors, warnings = validator.validate_lab_value("ferritin_ng_ml", 150000.0)
         assert len(errors) == 0
         assert len(warnings) > 0
@@ -342,7 +342,7 @@ class TestExtremeButValidValues:
         assert len(errors) == 0
 
     def test_ldh_10000_valid(self, validator):
-        """LDH 10,000 U/L is seen in massive hemolysis/HLH."""
+        """LDH 10,000 U/L is seen in massive hemolysis/IEC-HS."""
         errors, _ = validator.validate_lab_value("ldh_u_l", 10000.0)
         assert len(errors) == 0
 

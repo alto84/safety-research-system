@@ -43,7 +43,7 @@ class AECategory(Enum):
 
     CRS = "Cytokine Release Syndrome"
     ICANS = "ICANS"
-    HLH_MAS = "HLH/MAS"
+    IECHS = "IEC-HS"
     B_CELL_APLASIA = "B-Cell Aplasia"
     ON_TARGET_OFF_TUMOR = "On-Target/Off-Tumor Toxicity"
     CROSS_REACTIVITY = "Cross-Reactivity Toxicity"
@@ -154,7 +154,7 @@ CART_CD19_CRS = MechanismChain(
         MechanismStep(9, "STAT3", "drives IL-6 gene transcription", "POSITIVE FEEDBACK: IL-6 -> gp130 -> JAK1 -> STAT3 -> IL-6 gene -> more IL-6", "24-72h"),
         MechanismStep(10, "endothelial activation", "vascular leak", "Activated endothelium expresses tissue factor, releases Ang-2/vWF, loses barrier function", "48-120h",
                       biomarkers=("Ang-2", "vWF", "EASIX"),
-                      is_branching_point=True, branches=("CRS_resolution", "ICANS_progression", "HLH_progression")),
+                      is_branching_point=True, branches=("CRS_resolution", "ICANS_progression", "IECHS_progression")),
         MechanismStep(11, "CRS", "clinical syndrome", "Fever (PGE2), hypotension (vascular leak + NO), hypoxia (pulmonary capillary leak)", "24-168h",
                       biomarkers=("CRP", "ferritin", "IL-6"),
                       is_intervention_point=True, interventions=("tocilizumab", "dexamethasone", "supportive_care")),
@@ -240,7 +240,170 @@ CART_CD19_ICANS = MechanismChain(
 
 
 # ---------------------------------------------------------------------------
-# Mechanism 3: TCR-T -> Cross-Reactivity Toxicity
+# Mechanism 3: CAR-T CD19 -> IEC-HS
+# ---------------------------------------------------------------------------
+
+CART_CD19_IECHS = MechanismChain(
+    mechanism_id="MECH:CART_CD19_IECHS",
+    therapy_modality=TherapyModality.CAR_T_CD19,
+    ae_category=AECategory.IECHS,
+    name="CD19 CAR-T Induced IEC-HS",
+    description=(
+        "IEC-HS (Immune Effector Cell-Associated HLH-like Syndrome) is a distinct "
+        "hyperinflammatory syndrome that emerges AFTER CRS resolution (median onset "
+        "day 10-14). Unlike CRS, it is driven by an IFN-gamma/IL-18 positive "
+        "feedback loop sustaining uncontrolled macrophage activation and "
+        "hemophagocytosis. The ASTCT consensus term was proposed by Hines et al. "
+        "2023 (PMID:36906275). Diagnostic hallmarks: ferritin >10,000 ng/mL "
+        "with >= 2 of grade >= 3 transaminase/creatinine/bilirubin elevation or "
+        "DIC. Tocilizumab is NOT effective; first-line is anakinra + "
+        "corticosteroids, with ruxolitinib or emapalumab for refractory cases. "
+        "5-tier ASTCT grading based on organ involvement and need for ICU care."
+    ),
+    steps=[
+        MechanismStep(
+            1, "CD19 CAR-T cell",
+            "sustained IFN-gamma production",
+            "Persistent CAR-T activation produces high-level IFN-gamma for days "
+            "beyond the initial CRS window. Unlike CRS (driven by IL-6), IEC-HS "
+            "is driven by IFN-gamma and downstream IFN-gamma-induced chemokines "
+            "(CXCL9, CXCL10).",
+            "day_7-14",
+            biomarkers=("IFN-gamma", "CXCL9", "CXCL10"),
+        ),
+        MechanismStep(
+            2, "IFN-gamma",
+            "drives macrophage hyperactivation",
+            "IFNGR/JAK1/JAK2/STAT1 signaling transitions macrophages from "
+            "classical activation to hemophagocytic phenotype. CD163 shedding "
+            "(sCD163) marks this transition.",
+            "day_7-14",
+            biomarkers=("sCD163", "sCD25"),
+        ),
+        MechanismStep(
+            3, "macrophage",
+            "produces IL-18 via inflammasome",
+            "NLRP3 inflammasome activation in hyperactivated macrophages cleaves "
+            "pro-IL-18 to active IL-18. IL-18 is the key differentiating "
+            "biomarker between CRS and IEC-HS.",
+            "day_10-14",
+            biomarkers=("IL-18",),
+            is_branching_point=True,
+            branches=("CRS_resolution_normal_recovery", "IECHS_progression"),
+        ),
+        MechanismStep(
+            4, "IL-18",
+            "amplifies IFN-gamma (positive feedback)",
+            "IL-18 potently stimulates IFN-gamma from T cells and NK cells, "
+            "creating the critical IFN-gamma/IL-18 amplification loop that "
+            "sustains hyperinflammation beyond CRS.",
+            "day_10-21",
+        ),
+        MechanismStep(
+            5, "macrophage",
+            "hemophagocytosis",
+            "Hyperactivated macrophages engulf blood cells (erythrocytes, "
+            "platelets, leukocytes) in bone marrow and liver sinusoids. "
+            "This drives the characteristic cytopenias of IEC-HS.",
+            "day_10-21",
+            biomarkers=("ferritin", "triglycerides", "fibrinogen"),
+        ),
+        MechanismStep(
+            6, "NK cell dysfunction",
+            "failure to clear hyperactivated macrophages",
+            "Impaired NK cell perforin/granzyme pathway (functional or "
+            "absolute NK deficiency) prevents normal homeostatic elimination "
+            "of hyperactivated macrophages, sustaining the syndrome.",
+            "day_10-21",
+            biomarkers=("NK_cell_count", "sCD25"),
+        ),
+        MechanismStep(
+            7, "ferritin",
+            "rises above diagnostic threshold",
+            "Ferritin >10,000 ng/mL (or >7,470 ng/mL per Hines 2023 "
+            "sensitivity threshold) reflects massive macrophage activation. "
+            "Ferritin is the central biomarker for IEC-HS diagnosis.",
+            "day_10-21",
+            biomarkers=("ferritin",),
+        ),
+        MechanismStep(
+            8, "hepatic dysfunction",
+            "transaminase and bilirubin elevation",
+            "Kupffer cell (liver macrophage) hyperactivation drives "
+            "hepatic inflammation. Grade >= 3 transaminase or bilirubin "
+            "elevation is a diagnostic criterion.",
+            "day_10-21",
+            biomarkers=("AST", "ALT", "bilirubin"),
+        ),
+        MechanismStep(
+            9, "coagulopathy",
+            "DIC with falling fibrinogen",
+            "Tissue factor expression on activated macrophages plus platelet "
+            "consumption by hemophagocytosis drives DIC. Fibrinogen <150 mg/dL "
+            "and rising D-dimer are characteristic.",
+            "day_10-21",
+            biomarkers=("fibrinogen", "D-dimer", "PT", "aPTT"),
+        ),
+        MechanismStep(
+            10, "renal dysfunction",
+            "creatinine elevation",
+            "Cytokine-mediated renal injury and hemodynamic compromise. "
+            "Grade >= 3 creatinine elevation is a diagnostic criterion.",
+            "day_10-21",
+            biomarkers=("creatinine",),
+        ),
+        MechanismStep(
+            11, "IEC-HS",
+            "multi-organ failure",
+            "Full syndrome: ferritin >10,000 + >= 2 organ dysfunction criteria. "
+            "ASTCT 5-tier grading: Grade 1 (ferritin rise, no organ dysfunction) "
+            "to Grade 5 (life-threatening multi-organ failure). Mortality 20-61% "
+            "depending on severity and treatment timing.",
+            "day_10-21",
+            biomarkers=("ferritin", "AST", "creatinine", "bilirubin", "fibrinogen"),
+            is_intervention_point=True,
+            interventions=(
+                "anakinra_plus_corticosteroids",
+                "ruxolitinib",
+                "emapalumab_anti-IFN-gamma",
+                "etoposide_last_resort",
+            ),
+        ),
+    ],
+    risk_factors=[
+        "Prior or concurrent CRS (IEC-HS emerges after CRS resolves)",
+        "High tumor burden / antigen load",
+        "High peak ferritin during CRS (>5,000 ng/mL)",
+        "Elevated baseline ferritin",
+        "Pre-existing hepatic dysfunction",
+        "Prior hemophagocytic episodes",
+        "High-dose CAR-T product",
+        "CD28 costimulatory domain (faster expansion kinetics)",
+    ],
+    severity_determinants=[
+        "Peak ferritin level (>10,000 strongly predictive)",
+        "IL-18 level (differentiates from CRS)",
+        "Number of organ dysfunction criteria met",
+        "Speed of ferritin rise (doubling time <24h = poor prognosis)",
+        "Fibrinogen nadir (DIC severity)",
+        "NK cell count and function",
+    ],
+    typical_onset="Day 7-21 post-infusion (median day 10-14, AFTER CRS resolution)",
+    typical_duration="7-28 days (longer than CRS)",
+    incidence_range="0-6% in clinical trials; up to 15% with strict diagnostic criteria",
+    mortality_rate="20-61% (61% in FAERS data; lower with early anakinra)",
+    key_references=[
+        "PMID:36906275",  # Hines 2023 - ASTCT consensus, IEC-HS term
+        "PMID:34263927",  # Lichtenstein 2021 - carHLH characterization
+        "PMID:39134524",  # Khurana 2024 - IFN-gamma/IL-18 mechanism
+        "PMID:34265098",  # Sandler 2021 - anakinra/ruxolitinib management
+        "PMID:37958323",  # Fugere 2023 - systematic review
+    ],
+)
+
+
+# ---------------------------------------------------------------------------
+# Mechanism 4: TCR-T -> Cross-Reactivity Toxicity
 # ---------------------------------------------------------------------------
 
 TCRT_CROSS_REACTIVITY = MechanismChain(
@@ -625,6 +788,7 @@ MECHANISM_REGISTRY: dict[str, MechanismChain] = {
     m.mechanism_id: m for m in [
         CART_CD19_CRS,
         CART_CD19_ICANS,
+        CART_CD19_IECHS,
         TCRT_CROSS_REACTIVITY,
         CARNK_REDUCED_CRS,
         GENE_THERAPY_INSERTIONAL,

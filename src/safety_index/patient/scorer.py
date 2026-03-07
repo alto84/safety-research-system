@@ -71,7 +71,7 @@ ICANS_BIOMARKER_THRESHOLDS: list[BiomarkerThreshold] = [
     BiomarkerThreshold("PROTEIN:VWF", "%", 150.0, 250.0, 400.0, 600.0, 30.0),
 ]
 
-HLH_BIOMARKER_THRESHOLDS: list[BiomarkerThreshold] = [
+IECHS_BIOMARKER_THRESHOLDS: list[BiomarkerThreshold] = [
     BiomarkerThreshold("BIOMARKER:FERRITIN", "ng/mL", 300.0, 3000.0, 10000.0, 50000.0, 1000.0),
     BiomarkerThreshold("BIOMARKER:D_DIMER", "mg/L", 0.5, 2.0, 5.0, 10.0, 1.0),
     BiomarkerThreshold("BIOMARKER:FIBRINOGEN", "mg/dL", 200.0, 150.0, 100.0, 50.0, -20.0),
@@ -82,7 +82,7 @@ HLH_BIOMARKER_THRESHOLDS: list[BiomarkerThreshold] = [
 _THRESHOLDS_BY_AE: dict[AdverseEventType, list[BiomarkerThreshold]] = {
     AdverseEventType.CRS: CRS_BIOMARKER_THRESHOLDS,
     AdverseEventType.ICANS: ICANS_BIOMARKER_THRESHOLDS,
-    AdverseEventType.HLH: HLH_BIOMARKER_THRESHOLDS,
+    AdverseEventType.IECHS: IECHS_BIOMARKER_THRESHOLDS,
 }
 
 
@@ -474,7 +474,7 @@ class PatientRiskScorer:
         peak_windows = {
             AdverseEventType.CRS: (24.0, 168.0),      # Day 1-7
             AdverseEventType.ICANS: (72.0, 240.0),     # Day 3-10
-            AdverseEventType.HLH: (72.0, 336.0),       # Day 3-14
+            AdverseEventType.IECHS: (72.0, 336.0),      # Day 3-14
         }
         peak_start, peak_end = peak_windows.get(adverse_event, (24.0, 168.0))
 

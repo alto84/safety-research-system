@@ -33,9 +33,9 @@ class PromptRouter:
     # Domain benchmark scores: (model_id -> domain -> score)
     # Higher is better. Updated from evaluation framework.
     DEFAULT_BENCHMARKS = {
-        "claude-opus-4": {"crs": 0.92, "icans": 0.88, "hlh": 0.85},
-        "gpt-5.2": {"crs": 0.87, "icans": 0.84, "hlh": 0.82},
-        "gemini-3": {"crs": 0.83, "icans": 0.80, "hlh": 0.78},
+        "claude-opus-4": {"crs": 0.92, "icans": 0.88, "iechs": 0.85},
+        "gpt-5.2": {"crs": 0.87, "icans": 0.84, "iechs": 0.82},
+        "gemini-3": {"crs": 0.83, "icans": 0.80, "iechs": 0.78},
     }
 
     # Complexity thresholds
@@ -305,16 +305,16 @@ class TestEndToEndRouting:
         result = router.route(query)
         assert result.model_id == "claude-opus-4"
 
-    def test_hlh_domain_routing(self, all_endpoints):
+    def test_iechs_domain_routing(self, all_endpoints):
         """Verify routing works for non-CRS domains."""
         query = SafetyQuery(
             patient_id="TEST",
-            domain="hlh",
-            query_text="Assess HLH risk based on ferritin trajectory.",
+            domain="iechs",
+            query_text="Assess IEC-HS risk based on ferritin trajectory.",
             urgency=Urgency.BATCH,
             cost_tier=CostTier.MEDIUM,
         )
         router = PromptRouter(all_endpoints)
         result = router.route(query)
-        # Claude has highest HLH score (0.85)
+        # Claude has highest IEC-HS score (0.85)
         assert result.model_id == "claude-opus-4"

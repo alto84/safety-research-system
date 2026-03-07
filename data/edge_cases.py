@@ -6,7 +6,7 @@ Generates 45 carefully constructed edge-case patients:
   - 10 patients with significant missing data (50%+ labs missing)
   - 5 patients with late-onset CRS (Day 14+)
   - 5 patients with concurrent CRS + ICANS
-  - 5 patients who develop IEC-HS / HLH from CRS
+  - 5 patients who develop IEC-HS from CRS
 
 All patients use fixed seeds for reproducibility and are biologically
 plausible even at extremes.
@@ -593,7 +593,7 @@ def _generate_concurrent_crs_icans_patients(rng: np.random.Generator) -> List[Pa
 
 
 # ============================================================================
-# 5. IEC-HS / HLH patients (5)
+# 5. IEC-HS patients (5)
 # ============================================================================
 
 def _generate_iec_hs_patients(rng: np.random.Generator) -> List[PatientRecord]:
@@ -621,7 +621,7 @@ def _generate_iec_hs_patients(rng: np.random.Generator) -> List[PatientRecord]:
 
     for i, (crs_onset, crs_g, pk_fer, nad_fib, pk_tg) in enumerate(hs_configs):
         p = _make_base_patient(rng, base_idx + i, "IEC-HS")
-        p.edge_case_type = "IEC-HS-HLH"
+        p.edge_case_type = "IEC-HS"
 
         # High-risk profile
         p.tumor_burden_spd = rng.uniform(60, 130)
@@ -682,7 +682,7 @@ def generate_edge_cases() -> CohortData:
           - 10 missing-data patients
           - 5 late-onset CRS patients
           - 5 concurrent CRS+ICANS patients
-          - 5 IEC-HS/HLH patients
+          - 5 IEC-HS patients
     """
     rng = np.random.default_rng(EDGE_SEED)
 
@@ -748,13 +748,13 @@ def print_edge_case_summary(cohort: CohortData) -> None:
     for t, c in sorted(type_counts.items()):
         print(f"{t:<25} {c:>6}")
 
-    print(f"\n{'Patient ID':<22} {'Type':<28} {'CRS':>4} {'ICANS':>6} {'HLH':>4} {'Missing':>8}")
+    print(f"\n{'Patient ID':<22} {'Type':<28} {'CRS':>4} {'ICANS':>6} {'IECHS':>5} {'Missing':>8}")
     print("-" * 80)
     for p in cohort.patients:
         print(f"{p.patient_id:<22} {p.edge_case_type:<28} "
               f"{'G' + str(p.crs.max_grade) if p.crs.occurred else '-':>4} "
               f"{'G' + str(p.icans.max_grade) if p.icans.occurred else '-':>6} "
-              f"{'Yes' if p.iec_hs.occurred else '-':>4} "
+              f"{'Yes' if p.iec_hs.occurred else '-':>5} "
               f"{'Yes' if p.has_missing_data else '-':>8}")
 
 

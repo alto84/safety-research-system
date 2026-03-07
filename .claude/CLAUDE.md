@@ -10,8 +10,8 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 - **Frontend:** Single-page HTML dashboard in `src/api/static/index.html` (vanilla JS, no build tools, ~8400+ lines)
 - **Models:** `src/models/` — 7-model risk registry, Bayesian risk, correlated mitigation, FAERS signal detection, ensemble scoring, model validation, AE classifier (SapBERT), secondary malignancy detection
 - **Data:** `data/sle_cart_studies.py` — curated clinical data; `data/cell_therapy_registry.py` — 12 therapy types, 21 AE profiles
-- **Knowledge Graph:** `src/data/knowledge/` — 4 signaling pathways, 47 directed steps, 15 molecular targets, 9 cell types, 22 PubMed references, 8 mechanism chains
-- **Tests:** `tests/` — pytest, 2241+ tests, run with `python -m pytest tests/ -q`
+- **Knowledge Graph:** `src/data/knowledge/` — 4 signaling pathways, 47 directed steps, 15 molecular targets, 9 cell types, 25 PubMed references, 9 mechanism chains
+- **Tests:** `tests/` — pytest, 2242+ tests, run with `python -m pytest tests/ -q`
 - **API:** `src/api/` — FastAPI app with 40+ endpoints, Pydantic schemas, rate-limiting middleware
 - **Analysis:** `analysis/` — Publication-ready risk model analyses
 
@@ -52,16 +52,16 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 ## Knowledge Graph (`src/data/knowledge/`)
 | Module | Content |
 |--------|---------|
-| `references.py` | 22 publications with PubMed IDs, evidence grades |
+| `references.py` | 25 publications with PubMed IDs, evidence grades |
 | `cell_types.py` | 9 cell populations with markers, activation states, AE roles |
 | `molecular_targets.py` | 15 druggable targets with modulators, pathway membership |
-| `pathways.py` | 4 cascades: CRS IL-6 trans-signaling, ICANS BBB disruption, HLH IFN-γ feedback, general |
-| `mechanisms.py` | 8 therapy-to-AE chains (CAR-T CD19, TCR-T, CAR-NK, gene therapy, secondary malignancy) |
+| `pathways.py` | 4 cascades: CRS IL-6 trans-signaling, ICANS BBB disruption, IEC-HS IFN-γ/IL-18 feedback, TNF/NF-kB amplification |
+| `mechanisms.py` | 9 therapy-to-AE chains (CAR-T CD19 CRS/ICANS/IEC-HS, TCR-T, CAR-NK, gene therapy, secondary malignancy) |
 | `graph_queries.py` | Query API: `get_pathway_for_ae()`, `get_intervention_points()`, `get_mechanism_chain()` |
 | `integration.py` | Knowledge-to-model bridge: `get_mechanistic_context()`, `get_narrative_context()` |
 
 ## Dashboard (26 tabs)
-- **Patient-level (9):** Overview, Pre-Infusion, Day 1 Monitor, CRS Monitor, ICANS, HLH Screen, Hematologic, Discharge, Clinical Visit
+- **Patient-level (9):** Overview, Pre-Infusion, Day 1 Monitor, CRS Monitor, ICANS, IEC-HS Monitor, Hematologic, Discharge, Clinical Visit
 - **Population-level (10):** Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, Clinical Safety Plan, System Architecture, Scientific Basis, Publication Analysis, Knowledge Graph, Signal Timeline
 - Therapy type selector at top (8 therapy types)
 - All charts: vanilla SVG, data from API via `fetch()`
@@ -86,14 +86,35 @@ Five integration paths planned:
 5. **Agent SDK** — Autonomous safety monitoring, FAERS surveillance, clinical Q&A agents
 
 ## Agent Team Delegation Pattern
-When delegating to agent teams:
+
+**Default approach: Use agent teams aggressively.** When a task has multiple independent parts, spin up a team with `TeamCreate` and launch parallel agents via `Task` with `team_name` and `run_in_background: true`. This applies to:
+- **Research & exploration** — Multiple agents reading different parts of the codebase simultaneously
+- **Implementation** — Parallel agents working on independent modules (models, tests, frontend, data)
+- **Review & validation** — Critic agents examining different aspects in parallel
+- **Creative brainstorming** — Each agent explores a different angle, reports findings back
+
+### Agent Role Templates
 - **Visualization agents**: Build SVG dashboards, read existing `index.html` patterns first
 - **Model agents**: Work in `src/models/`, run tests after changes
 - **Knowledge agents**: Update `src/data/knowledge/`, link everything to PubMed IDs
 - **gpuserver1 agents**: SSH to `alton@192.168.1.100`, pull repo, run heavy computation, save results to `analysis/`
 - **Critic agents**: Read actual code before reviewing, be specific (file:line references)
+- **Research agents**: Deep-dive into specific modules, report findings via `SendMessage`
+- **Test agents**: Write and run tests for specific modules independently
+
+### Team Workflow
+1. `TeamCreate` with descriptive name
+2. `TaskCreate` for each independent work item
+3. Launch agents in parallel with `Task` (set `team_name`, `run_in_background: true`)
+4. Agents report back via `SendMessage` to team lead
+5. Team lead synthesizes findings, assigns follow-up tasks
+6. `SendMessage` type `shutdown_request` when done, then `TeamDelete`
+
+### Rules
 - Always run `python -m pytest tests/ -q` after code changes
 - Commit and push frequently from Rocinante
+- Agents should read actual code before making changes or recommendations
+- Push agents to their limits — use the full context window, read deeply, be thorough
 
 ## Git & Deployment
 - **Repo:** https://github.com/alto84/safety-research-system.git

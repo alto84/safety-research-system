@@ -164,7 +164,7 @@ class ICANSOutcome:
 
 @dataclass
 class IECHSOutcome:
-    """IEC-HS (HLH-like) event details."""
+    """IEC-HS event details."""
     occurred: bool = False
     onset_day: float = 0.0
     peak_ferritin: float = 0.0
@@ -466,7 +466,7 @@ def _assign_outcomes(
         patient.icans.peak_day = round(patient.icans.onset_day + peak_delay_icans, 1)
         patient.icans.resolution_day = round(patient.icans.peak_day + resolution_delay_icans, 1)
 
-    # --- IEC-HS (HLH-like) ---
+    # --- IEC-HS ---
     if patient.crs.occurred and patient.crs.max_grade >= 3:
         # IEC-HS develops from severe CRS
         effective_hs_rate = _clamp(cfg.iec_hs_rate * 5.0, 0.0, 0.50)

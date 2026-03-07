@@ -145,10 +145,10 @@ class TestCellTypes:
         assert "Macrophage" in cell_names
         assert "Endothelial Cell" in cell_names
 
-    def test_get_cells_involved_in_hlh(self):
+    def test_get_cells_involved_in_iechs(self):
         from src.data.knowledge.cell_types import get_cells_involved_in_ae
-        hlh_cells = get_cells_involved_in_ae("HLH")
-        cell_names = [c.name for c in hlh_cells]
+        iechs_cells = get_cells_involved_in_ae("IEC-HS")
+        cell_names = [c.name for c in iechs_cells]
         assert "Macrophage" in cell_names
         assert "Natural Killer Cell" in cell_names
 
@@ -283,11 +283,11 @@ class TestPathways:
         step_entities = [s.source for s in pw.steps] + [s.target for s in pw.steps]
         assert any("pericyte" in e.lower() for e in step_entities)
 
-    def test_hlh_pathway(self):
+    def test_iechs_pathway(self):
         from src.data.knowledge.pathways import get_pathway
-        pw = get_pathway("PW:HLH_MAS")
+        pw = get_pathway("PW:IECHS")
         assert pw is not None
-        assert "HLH/MAS" in pw.ae_outcomes
+        assert "IEC-HS" in pw.ae_outcomes
 
     def test_il6_pathway_has_feedback_loops(self):
         from src.data.knowledge.pathways import get_pathway
@@ -296,9 +296,9 @@ class TestPathways:
         assert len(pw.feedback_loops) >= 2
         assert any("STAT3" in loop for loop in pw.feedback_loops)
 
-    def test_hlh_pathway_has_ifn_il18_loop(self):
+    def test_iechs_pathway_has_ifn_il18_loop(self):
         from src.data.knowledge.pathways import get_pathway
-        pw = get_pathway("PW:HLH_MAS")
+        pw = get_pathway("PW:IECHS")
         assert pw is not None
         feedback_steps = [s for s in pw.steps if s.is_feedback_loop]
         assert len(feedback_steps) >= 1
@@ -452,9 +452,9 @@ class TestGraphQueries:
         result = get_pathway_for_ae("ICANS")
         assert len(result.pathways) >= 1
 
-    def test_get_pathway_for_hlh(self):
+    def test_get_pathway_for_iechs(self):
         from src.data.knowledge.graph_queries import get_pathway_for_ae
-        result = get_pathway_for_ae("HLH/MAS")
+        result = get_pathway_for_ae("IEC-HS")
         assert len(result.pathways) >= 1
 
     def test_get_intervention_points_crs(self):
@@ -570,7 +570,7 @@ class TestScientificAccuracy:
         assert ang2 is not None
         assert "Ang-1" in ang2.biomarker_utility or "ratio" in ang2.biomarker_utility
 
-    def test_ferritin_10000_hlh_threshold(self):
+    def test_ferritin_10000_iechs_threshold(self):
         """Ferritin >10,000 ng/mL is diagnostic for IEC-HS."""
         from src.data.knowledge.molecular_targets import get_target
         ferritin = get_target("TARGET:FERRITIN")

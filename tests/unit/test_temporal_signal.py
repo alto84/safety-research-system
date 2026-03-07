@@ -422,9 +422,9 @@ class TestTemporalProfileGeneration:
     """Verify generated temporal profiles are complete and realistic."""
 
     def test_all_profiles_generated(self):
-        """24 profiles generated: 6 products x 4 AE categories."""
+        """30 profiles generated: 6 products x 5 AE categories."""
         profiles = get_all_temporal_profiles()
-        assert len(profiles) == 24
+        assert len(profiles) == 30
 
     def test_profiles_for_every_product(self):
         """Every product has profiles."""
@@ -632,7 +632,7 @@ class TestGetProductProfiles:
     def test_returns_all_ae_categories(self):
         """Returns profiles for all AE categories for a product."""
         profiles = get_product_profiles("Kymriah")
-        assert len(profiles) == 4
+        assert len(profiles) == 5
         categories = {p.ae_category for p in profiles}
         assert categories == set(AE_CATEGORIES)
 
@@ -669,9 +669,9 @@ class TestSignalSummary:
             assert key in summary, f"Summary missing key: {key}"
 
     def test_summary_total_profiles(self):
-        """Total profiles should be 24."""
+        """Total profiles should be 30."""
         summary = get_signal_summary()
-        assert summary["total_profiles"] == 24
+        assert summary["total_profiles"] == 30
 
     def test_summary_total_products(self):
         """Total products should be 6."""
@@ -801,7 +801,7 @@ class TestAPIEndpoints:
         assert "profiles" in data
         assert "milestones" in data
         assert "summary" in data
-        assert len(data["profiles"]) == 24
+        assert len(data["profiles"]) == 30
 
     def test_temporal_evolution_filter_crs(self, client):
         """GET /api/v1/signals/temporal-evolution?ae_category=CRS returns 6 profiles."""
@@ -830,7 +830,7 @@ class TestAPIEndpoints:
         assert resp.status_code == 200
         data = resp.json()
         assert data["product_name"] == "Kymriah"
-        assert len(data["profiles"]) == 4
+        assert len(data["profiles"]) == 5
 
     def test_temporal_evolution_product_case_insensitive(self, client):
         """Product name is case-insensitive."""

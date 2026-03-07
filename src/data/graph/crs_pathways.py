@@ -1,5 +1,5 @@
 """
-Pre-built CRS, ICANS, and HLH mechanism definitions.
+Pre-built CRS, ICANS, and IEC-HS mechanism definitions.
 
 Contains curated pathway definitions based on published literature describing
 the mechanistic biology of cell therapy toxicities. These pathways can be
@@ -338,13 +338,16 @@ _ICANS_EVENT = GraphNode(
         "assessment_tool": "ICE score",
     },
 )
-_HLH_EVENT = GraphNode(
-    node_id="AE:HLH",
+_IECHS_EVENT = GraphNode(
+    node_id="AE:IECHS",
     node_type=NodeType.ADVERSE_EVENT,
-    name="Hemophagocytic Lymphohistiocytosis (HLH/MAS)",
+    name="Immune Effector Cell-Associated HLH-like Syndrome (IEC-HS)",
     properties={
-        "typical_onset_days": (3, 14),
-        "also_known_as": "Macrophage Activation Syndrome",
+        "typical_onset_days": (7, 21),
+        "peak_onset_days": (10, 14),
+        "also_known_as": ["HLH/MAS", "carHLH", "MAS"],
+        "grading_system": "ASTCT 5-tier (Hines 2023)",
+        "key_biomarker": "ferritin (threshold ~7,470 ng/mL)",
     },
 )
 
@@ -690,19 +693,22 @@ def build_endothelial_activation_pathway() -> PathwayDefinition:
 # Pathway 3: Macrophage Activation (HLH/MAS)
 # ---------------------------------------------------------------------------
 
-def build_macrophage_activation_pathway() -> PathwayDefinition:
-    """Macrophage activation syndrome (HLH/MAS) following CAR-T therapy.
+def build_iechs_pathway() -> PathwayDefinition:
+    """IEC-HS (Immune Effector Cell-Associated HLH-like Syndrome) following CAR-T therapy.
 
     Uncontrolled macrophage activation leads to hemophagocytosis, extreme
-    ferritin elevation, coagulopathy, and multi-organ failure. Shares
-    mechanisms with CRS but represents a distinct, more severe entity.
+    ferritin elevation, coagulopathy, and multi-organ failure. Distinct from
+    CRS: onset AFTER CRS resolves (median day 10-14). Tocilizumab NOT effective.
+    First-line treatment: anakinra + corticosteroids.
+    ASTCT consensus term per Hines et al. 2023 (PMID:36906275).
     """
     pathway_node = GraphNode(
         node_id="PATHWAY:MACROPHAGE_ACTIVATION",
         node_type=NodeType.PATHWAY,
-        name="Macrophage Activation (HLH/MAS)",
+        name="Macrophage Activation (IEC-HS)",
         properties={
-            "reference": "Giavridis et al., Nature Medicine, 2018",
+            "reference": "Hines et al., Transplant Cell Ther, 2023",
+            "also_known_as": ["HLH/MAS", "carHLH"],
         },
     )
 
@@ -711,7 +717,7 @@ def build_macrophage_activation_pathway() -> PathwayDefinition:
         _IFN_GAMMA, _TNF_ALPHA, _IL6, _IL18, _IL1_BETA, _GM_CSF,
         _PERFORIN, _GRANZYME_B,
         _FERRITIN, _D_DIMER, _FIBRINOGEN, _LDH, _SOLUBLE_CD25,
-        _HLH_EVENT, _COAGULOPATHY, _LIVER,
+        _IECHS_EVENT, _COAGULOPATHY, _LIVER,
         _ANAKINRA, _RUXOLITINIB, _DEXAMETHASONE,
         pathway_node,
     ]
@@ -741,19 +747,19 @@ def build_macrophage_activation_pathway() -> PathwayDefinition:
         GraphEdge("CELL:NK", "PROTEIN:GRANZYME_B", EdgeType.SECRETES, 0.85),
 
         # Hemophagocytosis and tissue damage
-        GraphEdge("CELL:MACROPHAGE", "AE:HLH", EdgeType.TRIGGERS, 0.85),
-        GraphEdge("CYTOKINE:IL18", "AE:HLH", EdgeType.TRIGGERS, 0.75),
-        GraphEdge("AE:HLH", "ORGAN:LIVER", EdgeType.AFFECTS, 0.80),
-        GraphEdge("AE:HLH", "SIGN:COAGULOPATHY", EdgeType.MANIFESTS_AS, 0.85),
+        GraphEdge("CELL:MACROPHAGE", "AE:IECHS", EdgeType.TRIGGERS, 0.85),
+        GraphEdge("CYTOKINE:IL18", "AE:IECHS", EdgeType.TRIGGERS, 0.75),
+        GraphEdge("AE:IECHS", "ORGAN:LIVER", EdgeType.AFFECTS, 0.80),
+        GraphEdge("AE:IECHS", "SIGN:COAGULOPATHY", EdgeType.MANIFESTS_AS, 0.85),
 
         # Biomarkers
-        GraphEdge("BIOMARKER:FERRITIN", "AE:HLH", EdgeType.INDICATES, 0.90,
+        GraphEdge("BIOMARKER:FERRITIN", "AE:IECHS", EdgeType.INDICATES, 0.90,
                   {"threshold": ">10,000 ng/mL highly suggestive"}),
-        GraphEdge("BIOMARKER:D_DIMER", "AE:HLH", EdgeType.INDICATES, 0.75),
-        GraphEdge("BIOMARKER:FIBRINOGEN", "AE:HLH", EdgeType.INDICATES, 0.70,
+        GraphEdge("BIOMARKER:D_DIMER", "AE:IECHS", EdgeType.INDICATES, 0.75),
+        GraphEdge("BIOMARKER:FIBRINOGEN", "AE:IECHS", EdgeType.INDICATES, 0.70,
                   {"pattern": "consumptive -- falling fibrinogen"}),
-        GraphEdge("BIOMARKER:LDH", "AE:HLH", EdgeType.INDICATES, 0.70),
-        GraphEdge("BIOMARKER:SCD25", "AE:HLH", EdgeType.INDICATES, 0.80),
+        GraphEdge("BIOMARKER:LDH", "AE:IECHS", EdgeType.INDICATES, 0.70),
+        GraphEdge("BIOMARKER:SCD25", "AE:IECHS", EdgeType.INDICATES, 0.80),
 
         # Amplification loop
         GraphEdge("CYTOKINE:IFN_GAMMA", "CYTOKINE:IL18", EdgeType.AMPLIFIES, 0.70,
@@ -762,12 +768,12 @@ def build_macrophage_activation_pathway() -> PathwayDefinition:
 
         # Drug interventions
         GraphEdge("DRUG:ANAKINRA", "CYTOKINE:IL1_BETA", EdgeType.INHIBITS, 0.85),
-        GraphEdge("DRUG:ANAKINRA", "AE:HLH", EdgeType.TREATS, 0.75,
+        GraphEdge("DRUG:ANAKINRA", "AE:IECHS", EdgeType.TREATS, 0.75,
                   {"evidence": "emerging data for CAR-T HLH"}),
         GraphEdge("DRUG:RUXOLITINIB", "PROTEIN:JAK1", EdgeType.INHIBITS, 0.90),
         GraphEdge("DRUG:RUXOLITINIB", "PROTEIN:JAK2", EdgeType.INHIBITS, 0.90),
-        GraphEdge("DRUG:RUXOLITINIB", "AE:HLH", EdgeType.TREATS, 0.70),
-        GraphEdge("DRUG:DEXAMETHASONE", "AE:HLH", EdgeType.TREATS, 0.65),
+        GraphEdge("DRUG:RUXOLITINIB", "AE:IECHS", EdgeType.TREATS, 0.70),
+        GraphEdge("DRUG:DEXAMETHASONE", "AE:IECHS", EdgeType.TREATS, 0.65),
 
         # Pathway linkages
         GraphEdge("PATHWAY:IL6_SIGNALING", "PATHWAY:MACROPHAGE_ACTIVATION",
@@ -784,17 +790,18 @@ def build_macrophage_activation_pathway() -> PathwayDefinition:
 
     return PathwayDefinition(
         pathway_id="PATHWAY:MACROPHAGE_ACTIVATION",
-        name="Macrophage Activation (HLH/MAS)",
+        name="Macrophage Activation (IEC-HS)",
         description=(
             "IFN-gamma-driven uncontrolled macrophage activation leads to "
             "hemophagocytosis, extreme ferritin elevation (>10,000 ng/mL), "
             "consumptive coagulopathy, and multi-organ damage. An IFN-g/IL-18 "
-            "positive feedback loop sustains the hyperinflammatory state."
+            "positive feedback loop sustains the hyperinflammatory state. "
+            "Onset typically AFTER CRS resolves (median day 10-14)."
         ),
         nodes=nodes,
         edges=edges,
         temporal_phase=TemporalPhase.PEAK_PHASE,
-        adverse_events=["AE:HLH"],
+        adverse_events=["AE:IECHS"],
     )
 
 
@@ -945,7 +952,7 @@ def build_ifn_gamma_pathway() -> PathwayDefinition:
 # ---------------------------------------------------------------------------
 
 def get_all_pathways() -> list[PathwayDefinition]:
-    """Return all pre-built CRS/ICANS/HLH pathway definitions.
+    """Return all pre-built CRS/ICANS/IEC-HS pathway definitions.
 
     Returns:
         A list of PathwayDefinition objects ready to be loaded into the
@@ -954,7 +961,7 @@ def get_all_pathways() -> list[PathwayDefinition]:
     return [
         build_il6_signaling_pathway(),
         build_endothelial_activation_pathway(),
-        build_macrophage_activation_pathway(),
+        build_iechs_pathway(),
         build_tnf_nfkb_pathway(),
         build_ifn_gamma_pathway(),
     ]

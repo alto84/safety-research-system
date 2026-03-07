@@ -111,7 +111,7 @@ class SafetyAPITestClient:
                 "overall_risk": risk_score,
                 "crs_risk": risk_score * 0.9,
                 "icans_risk": risk_score * 0.5,
-                "hlh_risk": risk_score * 0.3,
+                "iechs_risk": risk_score * 0.3,
             },
             "alerts": [],
         })

@@ -54,17 +54,20 @@ _AE_ALIASES: dict[str, str] = {
     "CYTOKINE RELEASE SYNDROME": "CRS",
     "ICANS": "ICANS",
     "NEUROTOXICITY": "ICANS",
-    "HLH": "HLH/MAS",
-    "HLH/MAS": "HLH/MAS",
-    "MAS": "HLH/MAS",
-    "HEMOPHAGOCYTIC LYMPHOHISTIOCYTOSIS": "HLH/MAS",
+    "IEC-HS": "IEC-HS",
+    "IECHS": "IEC-HS",
+    "HLH": "IEC-HS",
+    "HLH/MAS": "IEC-HS",
+    "MAS": "IEC-HS",
+    "CARHLH": "IEC-HS",
+    "HEMOPHAGOCYTIC LYMPHOHISTIOCYTOSIS": "IEC-HS",
     "ICAHS": "CRS",  # ICAHS shares CRS cytokine biology
 }
 
 _AE_TO_CATEGORY: dict[str, str] = {
     "CRS": "Cytokine Release Syndrome",
     "ICANS": "ICANS",
-    "HLH/MAS": "HLH/MAS",
+    "IEC-HS": "IEC-HS",
 }
 
 

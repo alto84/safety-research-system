@@ -626,7 +626,7 @@ class AlertEngine:
                 actions.append("Consider brain imaging")
             actions.append("Neurological checks q2h")
 
-        elif adverse_event == AdverseEventType.HLH:
+        elif adverse_event == AdverseEventType.IECHS:
             if severity >= AlertSeverity.URGENT:
                 actions.append("Stat ferritin, D-dimer, fibrinogen, LDH")
                 actions.append("Consider anakinra per protocol")

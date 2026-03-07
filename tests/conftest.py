@@ -61,7 +61,7 @@ class TokenCount:
 @dataclass
 class SafetyQuery:
     patient_id: str
-    domain: str  # "crs", "icans", "hlh"
+    domain: str  # "crs", "icans", "iechs"
     query_text: str
     urgency: Urgency = Urgency.BATCH
     cost_tier: CostTier = CostTier.MEDIUM
@@ -115,7 +115,7 @@ class SafetyIndex:
     overall_risk: float
     crs_risk: EventRisk
     icans_risk: EventRisk
-    hlh_risk: EventRisk
+    iechs_risk: EventRisk
     risk_trajectory: list
     peak_risk_time: timedelta
     primary_mechanism: str
@@ -775,12 +775,12 @@ def low_risk_safety_index():
             onset_ci=(timedelta(hours=72), timedelta(hours=168)),
             mechanistic_path=["node:bbb_disruption"],
         ),
-        hlh_risk=EventRisk(
+        iechs_risk=EventRisk(
             probability=0.02,
             severity_distribution={"grade_1": 0.0, "grade_2": 0.0, "grade_3": 0.60, "grade_4": 0.40},
             expected_onset=timedelta(hours=168),
             onset_ci=(timedelta(hours=96), timedelta(hours=240)),
-            mechanistic_path=["node:macrophage_activation", "node:hlh_cascade"],
+            mechanistic_path=["node:macrophage_activation", "node:iechs_cascade"],
         ),
         risk_trajectory=[0.08, 0.10, 0.12, 0.11, 0.09, 0.07],
         peak_risk_time=timedelta(hours=48),
@@ -827,12 +827,12 @@ def high_risk_safety_index():
             onset_ci=(timedelta(hours=48), timedelta(hours=168)),
             mechanistic_path=["node:bbb_disruption", "node:neurotoxicity_cascade"],
         ),
-        hlh_risk=EventRisk(
+        iechs_risk=EventRisk(
             probability=0.25,
             severity_distribution={"grade_1": 0.0, "grade_2": 0.0, "grade_3": 0.55, "grade_4": 0.45},
             expected_onset=timedelta(hours=72),
             onset_ci=(timedelta(hours=48), timedelta(hours=120)),
-            mechanistic_path=["node:macrophage_activation", "node:hlh_cascade"],
+            mechanistic_path=["node:macrophage_activation", "node:iechs_cascade"],
         ),
         risk_trajectory=[0.45, 0.62, 0.78, 0.85, 0.82, 0.75],
         peak_risk_time=timedelta(hours=36),

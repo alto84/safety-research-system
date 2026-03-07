@@ -2,7 +2,7 @@
 Cell populations involved in cell therapy adverse event pathogenesis.
 
 Defines the key cell types, their activation states, surface markers, secreted
-factors, and roles in CRS, ICANS, and HLH/MAS. Each cell type records its
+factors, and roles in CRS, ICANS, and IEC-HS. Each cell type records its
 tissue of origin, lineage, known activation triggers, and downstream effects.
 
 Data sourced from:
@@ -102,7 +102,7 @@ CAR_T_CELL = CellTypeDefinition(
     roles_in_ae={
         "CRS": "Initiates the cascade by releasing IFN-gamma and TNF-alpha upon antigen engagement; IFN-gamma activates bystander monocytes/macrophages which produce IL-6.",
         "ICANS": "Indirect role via cytokine production that activates endothelium and disrupts BBB; possible direct CNS infiltration.",
-        "HLH": "Sustained IFN-gamma production drives uncontrolled macrophage activation.",
+        "IEC-HS": "Sustained IFN-gamma production drives uncontrolled macrophage activation.",
     },
     secreted_factors_baseline=(),
     references=("PMID:27455965", "PMID:29643512", "PMID:37828045"),
@@ -128,7 +128,7 @@ MONOCYTE = CellTypeDefinition(
     ),
     roles_in_ae={
         "CRS": "Primary source of IL-6 production in CRS (Norelli et al., 2018); also produces IL-1beta which is upstream of IL-6.",
-        "HLH": "Differentiates into tissue macrophages that become hyperactivated hemophagocytes.",
+        "IEC-HS": "Differentiates into tissue macrophages that become hyperactivated hemophagocytes.",
     },
     secreted_factors_baseline=("IL-10",),
     references=("PMID:29643512", "PMID:29643511"),
@@ -163,7 +163,7 @@ MACROPHAGE = CellTypeDefinition(
     ),
     roles_in_ae={
         "CRS": "Major amplifier of cytokine storm; recipient macrophages (not CAR-T cells) mediate CRS (Giavridis et al., 2018).",
-        "HLH": "Central effector cell; hyperactivated macrophages perform hemophagocytosis and produce extreme ferritin, driving multi-organ failure.",
+        "IEC-HS": "Central effector cell; hyperactivated macrophages perform hemophagocytosis and produce extreme ferritin, driving multi-organ failure.",
         "ICANS": "Tissue-resident CNS macrophages (microglia) contribute to neuroinflammation.",
     },
     secreted_factors_baseline=("IL-10", "TGF-beta"),
@@ -225,7 +225,7 @@ NK_CELL = CellTypeDefinition(
     ),
     roles_in_ae={
         "CRS": "In CAR-NK therapy, lower CRS risk due to shorter persistence and different cytokine profile; IFN-gamma production is less sustained.",
-        "HLH": "Impaired NK cytotoxicity (defective perforin pathway) is a central mechanism in familial HLH and contributes to CAR-T-associated HLH.",
+        "IEC-HS": "Impaired NK cytotoxicity (defective perforin pathway) is a central mechanism in familial HLH and contributes to CAR-T-associated HLH.",
     },
     secreted_factors_baseline=(),
     references=("PMID:32433173", "PMID:39338775"),

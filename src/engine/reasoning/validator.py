@@ -91,7 +91,7 @@ class ValidationReport:
 _TEMPORAL_WINDOWS: dict[AdverseEventType, tuple[float, float]] = {
     AdverseEventType.CRS: (6.0, 336.0),       # 6h to 14 days
     AdverseEventType.ICANS: (24.0, 504.0),     # 1 day to 21 days
-    AdverseEventType.HLH: (48.0, 504.0),       # 2 days to 21 days
+    AdverseEventType.IECHS: (48.0, 504.0),      # 2 days to 21 days
 }
 
 # Biomarkers that must be elevated for a high-risk prediction to be plausible
@@ -107,7 +107,7 @@ _REQUIRED_BIOMARKER_PATTERNS: dict[AdverseEventType, list[list[str]]] = {
         ["PROTEIN:ANG2"],
         ["PROTEIN:VWF"],
     ],
-    AdverseEventType.HLH: [
+    AdverseEventType.IECHS: [
         ["BIOMARKER:FERRITIN"],
         ["CYTOKINE:IL18"],
         ["BIOMARKER:SCD25"],
@@ -511,7 +511,7 @@ class MechanisticValidator:
                 "PROTEIN:ANG2",
                 "PROTEIN:VWF",
             ],
-            AdverseEventType.HLH: [
+            AdverseEventType.IECHS: [
                 "CYTOKINE:IFN_GAMMA",
                 "CYTOKINE:IL18",
                 "BIOMARKER:FERRITIN",

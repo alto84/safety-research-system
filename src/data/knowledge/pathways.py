@@ -422,17 +422,19 @@ BBB_DISRUPTION_ICANS = SignalingPathway(
 # Pathway 3: HLH/MAS Hyperinflammation
 # ---------------------------------------------------------------------------
 
-HLH_MAS_PATHWAY = SignalingPathway(
-    pathway_id="PW:HLH_MAS",
-    name="Hemophagocytic Lymphohistiocytosis / Macrophage Activation Syndrome",
+IECHS_PATHWAY = SignalingPathway(
+    pathway_id="PW:IECHS",
+    name="Immune Effector Cell-Associated HLH-like Syndrome (IEC-HS)",
     description=(
-        "CAR-T-associated HLH (carHLH or IEC-HS) represents the extreme end of "
-        "macrophage hyperactivation. Sustained IFN-gamma from CAR-T cells drives "
-        "uncontrolled macrophage activation, hemophagocytosis, and an IFN-gamma/IL-18 "
-        "positive feedback loop. Distinct from CRS: HLH features ferritin >10,000, "
-        "cytopenias, hepatic dysfunction, and coagulopathy that persist AFTER CRS "
-        "resolution. Impaired NK cell perforin/granzyme function (failure to eliminate "
-        "hyperactivated macrophages) sustains the syndrome."
+        "IEC-HS (formerly HLH/MAS or carHLH) represents the extreme end of "
+        "macrophage hyperactivation following immune effector cell therapy. "
+        "Sustained IFN-gamma from CAR-T cells drives uncontrolled macrophage "
+        "activation, hemophagocytosis, and an IFN-gamma/IL-18 positive feedback "
+        "loop. Distinct from CRS: IEC-HS features ferritin >10,000, cytopenias, "
+        "hepatic dysfunction, and coagulopathy that persist AFTER CRS resolution "
+        "(median onset day 10-14). Impaired NK cell perforin/granzyme function "
+        "(failure to eliminate hyperactivated macrophages) sustains the syndrome. "
+        "ASTCT consensus term per Hines et al. 2023 (PMID:36906275)."
     ),
     steps=[
         PathwayStep(
@@ -519,9 +521,9 @@ HLH_MAS_PATHWAY = SignalingPathway(
         ),
         PathwayStep(
             source="macrophage_activation",
-            target="HLH/MAS",
+            target="IEC-HS",
             relation=Relation.LEADS_TO,
-            mechanism="Multi-organ failure from cytokine storm, hemophagocytosis, coagulopathy, and hepatic dysfunction. Mortality 20-50% if untreated.",
+            mechanism="Multi-organ failure from cytokine storm, hemophagocytosis, coagulopathy, and hepatic dysfunction. Mortality 20-50% if untreated. Tocilizumab NOT effective (unlike CRS).",
             confidence=0.85,
             temporal_window=TemporalWindow.SUSTAINED,
             intervention_point=True,
@@ -530,19 +532,18 @@ HLH_MAS_PATHWAY = SignalingPathway(
         ),
     ],
     entry_points=["CAR-T_cell", "IFN-gamma"],
-    exit_points=["HLH/MAS"],
+    exit_points=["IEC-HS"],
     feedback_loops=[
         "IFN-gamma/IL-18 amplification loop: IFN-gamma -> macrophage -> IL-18 -> IFN-gamma (positive feedback sustaining hyperinflammation)",
         "CXCL9/CXCL10 chemokine loop: IFN-gamma -> CXCL9/CXCL10 -> T-cell/NK-cell recruitment -> more IFN-gamma",
     ],
     intervention_summary=(
-        "Anakinra (IL-1Ra): blocks upstream IL-1beta and may interrupt macrophage activation. "
+        "Anakinra (IL-1Ra) + corticosteroids: first-line for IEC-HS (tocilizumab NOT effective). "
         "Ruxolitinib (JAK1/2i): blocks IFN-gamma and IL-6 downstream signaling. "
         "Emapalumab (anti-IFN-gamma): directly neutralizes the primary driver. "
-        "Etoposide: cytotoxic elimination of hyperactivated macrophages (last resort). "
-        "Corticosteroids: broad immunosuppression but less effective alone."
+        "Etoposide: cytotoxic elimination of hyperactivated macrophages (last resort)."
     ),
-    ae_outcomes=["HLH/MAS"],
+    ae_outcomes=["IEC-HS"],
     key_references=["PMID:36906275", "PMID:34263927", "PMID:39134524", "PMID:39338775"],
 )
 
@@ -651,7 +652,7 @@ PATHWAY_REGISTRY: dict[str, SignalingPathway] = {
     pw.pathway_id: pw for pw in [
         IL6_TRANS_SIGNALING,
         BBB_DISRUPTION_ICANS,
-        HLH_MAS_PATHWAY,
+        IECHS_PATHWAY,
         TNF_NFKB_AMPLIFICATION,
     ]
 }

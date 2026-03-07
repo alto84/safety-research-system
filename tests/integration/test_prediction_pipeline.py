@@ -207,7 +207,7 @@ class TestCompleteDataPipeline:
         # All event risks populated
         assert si.crs_risk is not None
         assert si.icans_risk is not None
-        assert si.hlh_risk is not None
+        assert si.iechs_risk is not None
 
         # Trajectory populated
         assert len(si.risk_trajectory) > 0

@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 # H3 fix: Unified AE validation set across all schemas
 # ---------------------------------------------------------------------------
 
-VALID_ADVERSE_EVENTS = {"CRS", "ICANS", "HLH", "ICAHS", "LICATS"}
+VALID_ADVERSE_EVENTS = {"CRS", "ICANS", "IECHS", "IEC-HS", "HLH", "ICAHS", "LICATS"}
 
 
 # ---------------------------------------------------------------------------
@@ -41,7 +41,7 @@ class LabValues(BaseModel):
     crp: float | None = Field(None, description="C-reactive protein (mg/L)", ge=0)
     ferritin: float | None = Field(None, description="Serum ferritin (ng/mL)", ge=0)
 
-    # Inflammatory / HLH
+    # Inflammatory / IEC-HS
     triglycerides: float | None = Field(None, description="Fasting triglycerides (mmol/L)", ge=0)
     fibrinogen: float | None = Field(None, description="Fibrinogen (g/L)", ge=0)
     ast: float | None = Field(None, description="Aspartate aminotransferase (U/L)", ge=0)
@@ -125,7 +125,7 @@ class PatientDataRequest(BaseModel):
     product: ProductInfo = Field(default_factory=ProductInfo)
     adverse_events: list[str] | None = Field(
         None,
-        description="Which adverse events to assess (CRS, ICANS, HLH). Defaults to all.",
+        description="Which adverse events to assess (CRS, ICANS, IEC-HS). Defaults to all.",
     )
 
     @field_validator("adverse_events")

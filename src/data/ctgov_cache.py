@@ -2,7 +2,7 @@
 
 Loads pre-extracted adverse event data from ``analysis/results/ct_gov_ae_data.json``
 and provides normalized trial summaries with computed AE rates for CRS, ICANS,
-cytopenias, infections, and HLH.
+cytopenias, infections, and IEC-HS (HLH).
 """
 
 from __future__ import annotations
@@ -59,11 +59,13 @@ AE_TERM_MAP: dict[str, list[str]] = {
         "fungal infection",
         "viral infection",
     ],
-    "hlh": [
+    "iechs": [
         "hemophagocytic lymphohistiocytosis",
         "macrophage activation syndrome",
         "hlh",
         "mas",
+        "iec-hs",
+        "immune effector cell-associated hlh",
     ],
 }
 

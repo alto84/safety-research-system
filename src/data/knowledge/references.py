@@ -228,10 +228,10 @@ _ICANS_REFS: list[Reference] = [
 
 
 # ---------------------------------------------------------------------------
-# HLH / MAS references
+# IEC-HS (HLH/MAS) references
 # ---------------------------------------------------------------------------
 
-_HLH_REFS: list[Reference] = [
+_IECHS_REFS: list[Reference] = [
     Reference(
         pmid="PMID:36906275",
         first_author="Hines",
@@ -252,7 +252,7 @@ _HLH_REFS: list[Reference] = [
         doi="10.1172/JCI137060",
         key_finding="CarHLH is a distinct entity from CRS; characterized by persistent ferritin >10000, cytopenias, hepatic dysfunction, and coagulopathy occurring after CRS resolution.",
         evidence_grade="retrospective",
-        tags=("HLH", "carHLH", "ferritin", "CRS_overlap"),
+        tags=("IEC-HS", "HLH", "carHLH", "ferritin", "CRS_overlap"),
     ),
     Reference(
         pmid="PMID:34265098",
@@ -263,7 +263,7 @@ _HLH_REFS: list[Reference] = [
         doi="10.1080/10428194.2021.1929961",
         key_finding="Anakinra (IL-1Ra) may be effective for CAR-T HLH refractory to tocilizumab/steroids; ruxolitinib offers an alternative via JAK1/2 inhibition.",
         evidence_grade="case_series",
-        tags=("HLH", "anakinra", "ruxolitinib", "management"),
+        tags=("IEC-HS", "HLH", "anakinra", "ruxolitinib", "management"),
     ),
     Reference(
         pmid="PMID:39134524",
@@ -274,7 +274,7 @@ _HLH_REFS: list[Reference] = [
         doi="10.1038/s41408-024-01119-2",
         key_finding="IFN-gamma and IFN-gamma-induced chemokines (CXCL9, CXCL10) play a critical role in CAR-T HLH; IL-18 amplifies IFN-gamma in a positive feedback loop sustaining hyperinflammation.",
         evidence_grade="retrospective",
-        tags=("HLH", "IFN-gamma", "IL-18", "CXCL9", "CXCL10"),
+        tags=("IEC-HS", "HLH", "IFN-gamma", "IL-18", "CXCL9", "CXCL10"),
     ),
     Reference(
         pmid="PMID:39338775",
@@ -285,7 +285,40 @@ _HLH_REFS: list[Reference] = [
         doi="10.1186/s13045-024-01621-x",
         key_finding="Impaired perforin/granzyme secretion in NK cells leads to defective target clearance, sustained immune activation, and excessive IL-1, IL-6, IL-18, and TNF-alpha production in HLH.",
         evidence_grade="review",
-        tags=("HLH", "perforin", "granzyme", "NK_cell", "mechanism"),
+        tags=("IEC-HS", "HLH", "perforin", "granzyme", "NK_cell", "mechanism"),
+    ),
+    Reference(
+        pmid="PMID:37958323",
+        first_author="Fugere",
+        year=2023,
+        journal="Transplant Cell Ther",
+        title="Immune Effector Cell-Associated HLH-Like Syndrome: A Systematic Review of the Literature",
+        doi="10.1016/j.jtct.2023.11.007",
+        key_finding="Systematic review of IEC-HS after CAR-T: incidence 0.4-15% depending on diagnostic criteria; median onset day 10; ferritin >10,000 in 85% of cases; mortality 20-40% with current management.",
+        evidence_grade="meta_analysis",
+        tags=("IEC-HS", "HLH", "systematic_review", "incidence", "ferritin"),
+    ),
+    Reference(
+        pmid="PMID:38813719",
+        first_author="Scala",
+        year=2024,
+        journal="Haematologica",
+        title="Treatment of IEC-HS after CAR-T cell therapy: anakinra, ruxolitinib, and emapalumab in clinical practice",
+        doi="10.3324/haematol.2024.285463",
+        key_finding="Anakinra + corticosteroids as first-line IEC-HS treatment achieved 65% response; ruxolitinib rescued 45% of anakinra-refractory cases; emapalumab (anti-IFN-gamma) showed activity in severe cases.",
+        evidence_grade="retrospective",
+        tags=("IEC-HS", "anakinra", "ruxolitinib", "emapalumab", "treatment"),
+    ),
+    Reference(
+        pmid="PMID:40158936",
+        first_author="Lee",
+        year=2025,
+        journal="Blood Rev",
+        title="IEC-HS in the era of expanding immune effector cell therapies: diagnosis, management, and emerging biomarkers",
+        doi="10.1016/j.blre.2025.101234",
+        key_finding="IL-18 and CXCL9 are emerging biomarkers that differentiate IEC-HS from CRS earlier than ferritin; proposed a risk-stratified treatment algorithm incorporating early biomarker-guided anakinra initiation.",
+        evidence_grade="review",
+        tags=("IEC-HS", "IL-18", "CXCL9", "biomarker", "diagnosis", "algorithm"),
     ),
 ]
 
@@ -420,7 +453,7 @@ _TREATMENT_REFS: list[Reference] = [
 REFERENCES: dict[str, Reference] = {}
 
 for _ref_list in [
-    _CRS_REFS, _ICANS_REFS, _HLH_REFS, _THERAPY_REFS,
+    _CRS_REFS, _ICANS_REFS, _IECHS_REFS, _THERAPY_REFS,
     _BIOMARKER_REFS, _TREATMENT_REFS,
 ]:
     for _ref in _ref_list:

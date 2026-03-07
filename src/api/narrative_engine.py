@@ -48,8 +48,10 @@ logger = logging.getLogger(__name__)
 _AE_DISPLAY_MAP: dict[str, str] = {
     "CRS": "Cytokine Release Syndrome",
     "ICANS": "ICANS",
-    "HLH": "HLH/MAS",
-    "HLH/MAS": "HLH/MAS",
+    "IECHS": "IEC-HS",
+    "IEC-HS": "IEC-HS",
+    "HLH": "IEC-HS",
+    "HLH/MAS": "IEC-HS",
     "B_CELL_APLASIA": "B-Cell Aplasia",
 }
 
@@ -318,10 +320,10 @@ def _interpret_score(model_name: str, score: float, risk_level: str) -> str:
         if score > 169:
             return (
                 "HScore exceeds 169, the threshold with >93% sensitivity for "
-                "hemophagocytic lymphohistiocytosis (HLH). Close monitoring for "
-                "HLH/MAS is warranted."
+                "IEC-HS (immune effector cell-associated HLH-like syndrome). Close monitoring for "
+                "IEC-HS is warranted."
             )
-        return "HScore below the HLH diagnostic threshold."
+        return "HScore below the IEC-HS diagnostic threshold."
 
     if "car" in name_lower and "hematotox" in name_lower:
         if risk_level in ("high", "critical"):

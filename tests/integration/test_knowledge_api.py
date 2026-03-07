@@ -59,9 +59,9 @@ class TestKnowledgeOverview:
         # Use >= to allow for future additions
         assert data["total_pathway_steps"] >= 40
 
-    def test_mechanism_count_is_8(self, client):
+    def test_mechanism_count_is_9(self, client):
         data = client.get("/api/v1/knowledge/overview").json()
-        assert data["mechanism_count"] == 8
+        assert data["mechanism_count"] == 9
 
     def test_target_count_is_15(self, client):
         data = client.get("/api/v1/knowledge/overview").json()
@@ -212,12 +212,12 @@ class TestKnowledgePathwayDetail:
         assert data["pathway_id"] == "PW:BBB_DISRUPTION_ICANS"
         assert "ICANS" in data["ae_outcomes"]
 
-    def test_hlh_pathway(self, client):
+    def test_iechs_pathway(self, client):
         data = client.get(
-            "/api/v1/knowledge/pathways/PW:HLH_MAS",
+            "/api/v1/knowledge/pathways/PW:IECHS",
         ).json()
-        assert data["pathway_id"] == "PW:HLH_MAS"
-        assert "HLH/MAS" in data["ae_outcomes"]
+        assert data["pathway_id"] == "PW:IECHS"
+        assert "IEC-HS" in data["ae_outcomes"]
 
 
 # ===========================================================================
@@ -232,10 +232,10 @@ class TestKnowledgeMechanisms:
         response = client.get("/api/v1/knowledge/mechanisms")
         assert response.status_code == 200
 
-    def test_returns_8_mechanisms(self, client):
+    def test_returns_9_mechanisms(self, client):
         data = client.get("/api/v1/knowledge/mechanisms").json()
-        assert data["total"] == 8
-        assert len(data["mechanisms"]) == 8
+        assert data["total"] == 9
+        assert len(data["mechanisms"]) == 9
 
     def test_mechanism_has_required_fields(self, client):
         data = client.get("/api/v1/knowledge/mechanisms").json()
@@ -258,6 +258,22 @@ class TestKnowledgeMechanisms:
         assert len(cart_crs["steps"]) >= 10
         assert cart_crs["therapy_modality"] == "CAR-T (CD19)"
         assert cart_crs["ae_category"] == "Cytokine Release Syndrome"
+
+    def test_cart_iechs_mechanism(self, client):
+        data = client.get("/api/v1/knowledge/mechanisms").json()
+        cart_iechs = next(
+            (m for m in data["mechanisms"]
+             if m["mechanism_id"] == "MECH:CART_CD19_IECHS"),
+            None,
+        )
+        assert cart_iechs is not None
+        assert len(cart_iechs["steps"]) >= 10
+        assert cart_iechs["therapy_modality"] == "CAR-T (CD19)"
+        assert cart_iechs["ae_category"] == "IEC-HS"
+        assert "anakinra" in cart_iechs["steps"][-1]["detail"].lower() or any(
+            "anakinra" in str(s.get("interventions", "")).lower()
+            for s in cart_iechs["steps"]
+        )
 
     def test_mechanism_steps_have_fields(self, client):
         data = client.get("/api/v1/knowledge/mechanisms").json()
@@ -384,7 +400,7 @@ class TestKnowledgeCells:
             None,
         )
         assert "CRS" in mac["roles_in_ae"]
-        assert "HLH" in mac["roles_in_ae"]
+        assert "IEC-HS" in mac["roles_in_ae"]
 
 
 # ===========================================================================
@@ -434,7 +450,7 @@ class TestKnowledgeReferences:
             all_tags.update(ref["tags"])
         assert "CRS" in all_tags
         assert "ICANS" in all_tags
-        assert "HLH" in all_tags
+        assert "IEC-HS" in all_tags
 
     def test_references_have_evidence_grades(self, client):
         data = client.get("/api/v1/knowledge/references").json()

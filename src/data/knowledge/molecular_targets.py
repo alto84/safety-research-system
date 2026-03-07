@@ -2,7 +2,7 @@
 Molecular targets and their relationships in cell therapy AE biology.
 
 Defines druggable targets, signaling molecules, receptors, and biomarkers
-involved in CRS, ICANS, and HLH pathways. Each target records its pathway
+involved in CRS, ICANS, and IEC-HS pathways. Each target records its pathway
 membership, known modulators (drugs), clinical relevance, and evidence level.
 
 Data sourced from:
@@ -149,7 +149,7 @@ IL1_BETA = MolecularTarget(
             mechanism="Recombinant IL-1 receptor antagonist (IL-1Ra); competitively blocks IL-1alpha and IL-1beta binding to IL-1R1",
             status=DrugStatus.APPROVED_OTHER,
             route="SC/IV",
-            dose="100 mg SC daily or higher doses IV for severe CRS/HLH",
+            dose="100 mg SC daily or higher doses IV for severe CRS/IEC-HS",
             evidence_refs=("PMID:29643512", "PMID:37271625"),
         ),
         Modulator(
@@ -175,7 +175,7 @@ IFN_GAMMA = MolecularTarget(
     pathways=("IFN-gamma_signaling", "JAK/STAT", "macrophage_activation"),
     normal_range="0-15.6 pg/mL",
     ae_range="500-50,000 pg/mL; peaks earliest among CRS cytokines (24-72h)",
-    clinical_relevance="The earliest and most proximal signal in CRS. Released by activated CAR-T cells within hours. Primary bridge between adaptive (T-cell) and innate (monocyte/macrophage) immune activation. Key driver of HLH via uncontrolled macrophage activation.",
+    clinical_relevance="The earliest and most proximal signal in CRS. Released by activated CAR-T cells within hours. Primary bridge between adaptive (T-cell) and innate (monocyte/macrophage) immune activation. Key driver of IEC-HS via uncontrolled macrophage activation.",
     modulators=(
         Modulator(
             name="Emapalumab",
@@ -215,8 +215,8 @@ IL18 = MolecularTarget(
     category=TargetCategory.CYTOKINE,
     pathways=("inflammasome", "IFN-gamma_amplification", "macrophage_activation"),
     normal_range="0-400 pg/mL",
-    ae_range=">1000 pg/mL in HLH",
-    clinical_relevance="Forms a positive feedback loop with IFN-gamma: IL-18 stimulates IFN-gamma production, which in turn drives IL-18 secretion from macrophages. Key differentiator of HLH from CRS.",
+    ae_range=">1000 pg/mL in IEC-HS",
+    clinical_relevance="Forms a positive feedback loop with IFN-gamma: IL-18 stimulates IFN-gamma production, which in turn drives IL-18 secretion from macrophages. Key differentiator of IEC-HS from CRS.",
     modulators=(
         Modulator(
             name="Tadekinig alfa",
@@ -229,7 +229,7 @@ IL18 = MolecularTarget(
     ),
     upstream_of=("IFN-gamma", "NK_cell_activation"),
     downstream_of=("inflammasome_NLRP3", "macrophage_activation"),
-    biomarker_utility="Elevated IL-18 distinguishes HLH from CRS; free IL-18 (unbound by IL-18BP) is more specific.",
+    biomarker_utility="Elevated IL-18 distinguishes IEC-HS from CRS; free IL-18 (unbound by IL-18BP) is more specific.",
     references=("PMID:39134524", "PMID:39338775"),
 )
 
@@ -398,12 +398,12 @@ FERRITIN = MolecularTarget(
     category=TargetCategory.BIOMARKER,
     pathways=("acute_phase_response", "macrophage_activation", "iron_metabolism"),
     normal_range="12-300 ng/mL",
-    ae_range="1000-100,000 ng/mL; >10,000 ng/mL highly suggestive of HLH",
+    ae_range="1000-100,000 ng/mL; >10,000 ng/mL highly suggestive of IEC-HS",
     clinical_relevance="Both a biomarker and potential mediator. IL-6-driven hepatic production AND direct macrophage secretion. Ferritin >10,000 ng/mL is a diagnostic criterion for IEC-HS (CAR-T HLH). Extreme levels reflect macrophage hyperactivation rather than just acute phase response.",
     modulators=(),
     upstream_of=(),
     downstream_of=("IL-6", "macrophage_activation", "STAT3"),
-    biomarker_utility="Dual role: (1) CRS severity marker when 1000-5000 ng/mL; (2) HLH diagnostic criterion when >10,000 ng/mL. Serial ferritin trajectory distinguishes CRS (peaks and resolves) from HLH (sustained or rising).",
+    biomarker_utility="Dual role: (1) CRS severity marker when 1000-5000 ng/mL; (2) IEC-HS diagnostic criterion when >10,000 ng/mL (threshold ~7,470 ng/mL per Hines 2023). Serial ferritin trajectory distinguishes CRS (peaks and resolves) from IEC-HS (sustained or rising).",
     references=("PMID:28854140", "PMID:36906275"),
 )
 

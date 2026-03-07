@@ -578,9 +578,10 @@ class HScore:
     """Hemophagocytic Syndrome Score.
 
     A validated weighted scoring system for the diagnosis of reactive
-    hemophagocytic lymphohistiocytosis (HLH).  Relevant to CAR-T safety
-    because IEC-associated HLH / macrophage activation syndrome is a
-    recognised life-threatening complication.
+    hemophagocytic lymphohistiocytosis (HLH), now referred to as IEC-HS
+    (immune effector cell-associated HLH-like syndrome) in the CAR-T
+    context.  Relevant to CAR-T safety because IEC-HS is a recognised
+    life-threatening complication.
 
     Published:
         Fardet L et al. Development and validation of the HScore, a score
@@ -617,12 +618,12 @@ class HScore:
                                  Yes                   18
     ===========================  ====================  ======
 
-    Score range: 0-337.  Score >169 => >93% probability of HLH.
+    Score range: 0-337.  Score >169 => >93% probability of HLH/IEC-HS.
 
     Risk stratification:
         - Low:      HScore < 90
         - Moderate: 90 <= HScore < 169
-        - High:     HScore >= 169  (>93% HLH probability)
+        - High:     HScore >= 169  (>93% HLH/IEC-HS probability)
 
     Required patient data keys:
         - ``temperature_c``              : float
@@ -840,6 +841,7 @@ class HScore:
             metadata={
                 "max_possible_score": self.MAX_SCORE,
                 "hlh_probability_estimate": round(hlh_probability, 4),
+                "iechs_probability_estimate": round(hlh_probability, 4),
                 "variables_available": variables_available,
                 "variables_total": total_variables,
             },
@@ -855,13 +857,13 @@ class HScore:
 
     @staticmethod
     def _approximate_probability(hscore: int) -> float:
-        """Approximate HLH probability from the HScore.
+        """Approximate HLH/IEC-HS probability from the HScore.
 
         The original Fardet 2014 paper provides a probability curve.  We
         approximate it with a logistic function fitted to the published data
         points::
 
-            P(HLH) ~ 1 / (1 + exp(-0.04 * (HScore - 168)))
+            P(HLH/IEC-HS) ~ 1 / (1 + exp(-0.04 * (HScore - 168)))
 
         At HScore = 169, P ~ 0.52; at HScore = 250, P ~ 0.96.
         """

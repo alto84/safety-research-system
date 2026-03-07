@@ -78,17 +78,17 @@ AE_TAXONOMY: dict[str, dict] = {
         "biomarkers": ["IL-6", "IL-1", "MCP-1", "quinolinic acid"],
         "applicable_therapies": ["CAR-T", "TCR-T"],
     },
-    "hlh_mas": {
-        "name": "Hemophagocytic Lymphohistiocytosis / Macrophage Activation Syndrome (HLH/MAS)",
+    "iechs": {
+        "name": "Immune Effector Cell-Associated HLH-like Syndrome (IEC-HS)",
         "description": (
             "Severe hyperinflammatory syndrome with uncontrolled macrophage and T-cell "
-            "activation leading to hemophagocytosis, multi-organ failure. Also termed "
-            "immune effector cell-associated HLH-like syndrome (IEC-HS)."
+            "activation leading to hemophagocytosis, multi-organ failure. Previously "
+            "referred to as HLH/MAS in the context of cell therapy."
         ),
-        "grading_system": "HLH-2004 criteria / IEC-HS consensus",
+        "grading_system": "IEC-HS consensus grading",
         "grade_1": "Not applicable — typically grade 3+ at presentation",
         "grade_2": "Not applicable",
-        "grade_3": "Meets HLH criteria, organ dysfunction manageable",
+        "grade_3": "Meets IEC-HS criteria, organ dysfunction manageable",
         "grade_4": "Life-threatening multi-organ failure",
         "grade_5": "Death",
         "management": "Anakinra (IL-1 blockade), ruxolitinib, etoposide, emapalumab",
@@ -426,7 +426,7 @@ THERAPY_TYPES: dict[str, TherapyType] = {
         applicable_aes=[
             "cytokine_release_syndrome",
             "icans",
-            "hlh_mas",
+            "iechs",
             "prolonged_cytopenias",
             "b_cell_aplasia",
             "infections",
@@ -507,12 +507,12 @@ THERAPY_TYPES: dict[str, TherapyType] = {
                     "Breyanzi ~16%, grade3+ ~10%"
                 ),
             },
-            "hlh_mas": {
+            "iechs": {
                 "any_grade": 0.01,
                 "grade3_plus": 0.008,
                 "onset_days": "5-30 (typically overlaps severe CRS)",
                 "duration": "Variable, weeks if untreated",
-                "notes": "Incidence 0.87% across 6,234 recipients. Higher with axi-cel (0.79%), tisa-cel (1.91%)",
+                "notes": "IEC-HS incidence 0.87% across 6,234 recipients. Higher with axi-cel (0.79%), tisa-cel (1.91%)",
             },
             "prolonged_cytopenias": {
                 "any_grade": 0.58,
@@ -602,7 +602,7 @@ THERAPY_TYPES: dict[str, TherapyType] = {
         applicable_aes=[
             "cytokine_release_syndrome",
             "icans",
-            "hlh_mas",
+            "iechs",
             "prolonged_cytopenias",
             "infections",
             "secondary_malignancy",
@@ -673,12 +673,12 @@ THERAPY_TYPES: dict[str, TherapyType] = {
                     "Carries boxed warning for Parkinsonism and Guillain-Barre syndrome"
                 ),
             },
-            "hlh_mas": {
+            "iechs": {
                 "any_grade": 0.02,
                 "grade3_plus": 0.015,
                 "onset_days": "7-30",
                 "duration": "Variable",
-                "notes": "ide-cel highest HLH incidence at 2.01% across products",
+                "notes": "ide-cel highest IEC-HS incidence at 2.01% across products",
             },
             "prolonged_cytopenias": {
                 "any_grade": 0.65,

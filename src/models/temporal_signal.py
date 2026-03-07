@@ -19,6 +19,7 @@ Products covered (all FDA-approved CAR-T therapies as of 2025):
 
 Adverse event categories:
     - CRS (cytokine release syndrome)
+    - IEC-HS (immune effector cell-associated HLH-like syndrome)
     - Secondary malignancy (T-cell lymphoma/leukemia, MDS/AML)
     - Neurotoxicity (ICANS)
     - Cytopenias
@@ -744,6 +745,141 @@ def _generate_cytopenias_profile(
     )
 
 
+def _generate_iechs_profile(
+    product: str,
+    meta: dict,
+) -> TemporalSignalProfile:
+    """Generate an IEC-HS temporal signal profile.
+
+    IEC-HS (immune effector cell-associated HLH-like syndrome) is a delayed
+    hyperinflammatory complication of CAR-T therapy characterised by features
+    overlapping with hemophagocytic lymphohistiocytosis (HLH) and macrophage
+    activation syndrome (MAS).
+
+    Key clinical characteristics:
+        - Delayed onset: Day 7-21 post-infusion (typically after CRS resolves)
+        - Peak incidence window: Day 10-14
+        - Incidence: 0-6% in pivotal trials, up to 15% with strict criteria
+        - Often preceded by CRS; may be misclassified as refractory CRS
+
+    Modeling approach:
+        - Cases start accumulating after a latency of ~2 quarters (delayed onset)
+        - Signal emerges gradually as recognition improves
+        - Lower absolute case counts than CRS but clinically significant
+        - PRR moderate (some overlap with CRS coding confounds early detection)
+        - Reporting increases after 2023 as IEC-HS gains recognition as distinct entity
+    """
+    approval = meta["approval_date"]
+    end_date = date(2025, 9, 30)
+    quarters = _quarters_between(approval, end_date)
+
+    # Product-specific parameters
+    # CD19 products generally show higher IEC-HS rates than BCMA products
+    _iechs_params = {
+        "Kymriah":  {"latency_q": 2, "base_cases": 0.5, "growth": 1.15, "prr_base": 3.0, "ebgm_base": 1.8},
+        "Yescarta": {"latency_q": 2, "base_cases": 0.7, "growth": 1.18, "prr_base": 4.0, "ebgm_base": 2.5},
+        "Tecartus": {"latency_q": 2, "base_cases": 0.4, "growth": 1.12, "prr_base": 3.2, "ebgm_base": 1.9},
+        "Breyanzi": {"latency_q": 2, "base_cases": 0.4, "growth": 1.13, "prr_base": 2.8, "ebgm_base": 1.6},
+        "Abecma":   {"latency_q": 2, "base_cases": 0.3, "growth": 1.10, "prr_base": 2.5, "ebgm_base": 1.4},
+        "Carvykti": {"latency_q": 2, "base_cases": 0.35, "growth": 1.11, "prr_base": 2.7, "ebgm_base": 1.5},
+    }
+
+    params = _iechs_params.get(product, {"latency_q": 2, "base_cases": 0.4, "growth": 1.12, "prr_base": 3.0, "ebgm_base": 1.8})
+
+    # Recognition of IEC-HS as a distinct entity increased around 2023
+    recognition_boost_date = date(2023, 1, 1)
+
+    timepoints: list[SignalTimepoint] = []
+    cumulative = 0
+    first_signal: Optional[date] = None
+    threshold_crossed: Optional[date] = None
+
+    for i, (y, q) in enumerate(quarters):
+        qdate = _quarter_end_date(y, q)
+
+        # Latency: very few cases in early quarters (delayed onset pattern)
+        if i < params["latency_q"]:
+            case_count = 0
+        else:
+            effective_q = i - params["latency_q"]
+            raw = params["base_cases"] * (params["growth"] ** effective_q)
+
+            # Recognition boost: increased reporting as IEC-HS is recognised
+            if qdate > recognition_boost_date:
+                quarters_post_recog = max(1, (qdate - recognition_boost_date).days / 90)
+                recog_factor = 1.0 + 1.5 / (1.0 + 0.4 * quarters_post_recog)
+                raw *= recog_factor
+
+            case_count = max(0, int(round(raw)))
+            # Ensure occasional cases after latency
+            if effective_q > 3 and case_count == 0:
+                case_count = 1 if (effective_q % 2 == 0) else 0
+
+        cumulative += case_count
+
+        # Disproportionality metrics
+        if cumulative == 0:
+            prr = 0.0
+            ror = 0.0
+            ebgm = 0.0
+            ic025 = -2.0
+        else:
+            # PRR evolves with case accumulation
+            prr = params["prr_base"] * (0.5 + 0.5 * math.log1p(cumulative))
+            # After recognition boost, coding improves and signal strengthens
+            if qdate > recognition_boost_date:
+                prr *= 1.2
+
+            ror = prr * 1.15
+            # EBGM: Bayesian shrinkage with small counts
+            ebgm = params["ebgm_base"] * min(1.0, cumulative / 10.0) * (1.0 + 0.1 * math.log1p(cumulative))
+            # IC025: conservative lower bound
+            if cumulative >= 3:
+                ic025 = math.log2(max(0.1, ebgm)) - 1.8 / math.sqrt(max(1, cumulative))
+            else:
+                ic025 = -2.0 + cumulative * 0.4
+
+        # Track threshold crossings
+        if first_signal is None and (prr > 2.0 or ebgm > 2.0 or ic025 > 0):
+            first_signal = qdate
+        if threshold_crossed is None and prr > 2.0 and ebgm > 2.0 and ic025 > 0:
+            threshold_crossed = qdate
+
+        timepoints.append(SignalTimepoint(
+            date=qdate,
+            reporting_quarter=_quarter_label(y, q),
+            case_count=case_count,
+            cumulative_cases=cumulative,
+            prr=round(prr, 2),
+            ror=round(ror, 2),
+            ebgm=round(ebgm, 2),
+            ic025=round(ic025, 3),
+            data_source="FAERS_modeled",
+        ))
+
+    # Determine status: IEC-HS is an emerging/under-review signal
+    if threshold_crossed:
+        status = SignalStatus.CONFIRMED
+    elif first_signal:
+        status = SignalStatus.UNDER_REVIEW
+    else:
+        status = SignalStatus.EMERGING
+
+    return TemporalSignalProfile(
+        product_name=product,
+        generic_name=meta["generic_name"],
+        ae_category="IECHS",
+        timepoints=timepoints,
+        milestones=[m for m in REGULATORY_MILESTONES
+                    if product in m.products_affected],
+        first_signal_date=first_signal,
+        threshold_crossed_date=threshold_crossed,
+        current_status=status,
+        approval_date=approval,
+        target_antigen=meta["target_antigen"],
+    )
+
+
 # ---------------------------------------------------------------------------
 # Profile cache and generator
 # ---------------------------------------------------------------------------
@@ -758,6 +894,7 @@ def _build_all_profiles() -> None:
 
     generators = {
         "CRS": _generate_crs_profile,
+        "IECHS": _generate_iechs_profile,
         "secondary_malignancy": _generate_secondary_malignancy_profile,
         "neurotoxicity": _generate_neurotoxicity_profile,
         "cytopenias": _generate_cytopenias_profile,
@@ -777,6 +914,15 @@ _AE_ALIASES: dict[str, str] = {
     "crs": "CRS",
     "cytokine release syndrome": "CRS",
     "cytokine_release_syndrome": "CRS",
+    "iechs": "IECHS",
+    "iec-hs": "IECHS",
+    "iec_hs": "IECHS",
+    "hlh": "IECHS",
+    "hlh/mas": "IECHS",
+    "mas": "IECHS",
+    "carhlh": "IECHS",
+    "hemophagocytic lymphohistiocytosis": "IECHS",
+    "macrophage activation syndrome": "IECHS",
     "secondary_malignancy": "secondary_malignancy",
     "secondary malignancy": "secondary_malignancy",
     "t-cell malignancy": "secondary_malignancy",
@@ -789,7 +935,7 @@ _AE_ALIASES: dict[str, str] = {
     "hematologic": "cytopenias",
 }
 
-AE_CATEGORIES: list[str] = ["CRS", "secondary_malignancy", "neurotoxicity", "cytopenias"]
+AE_CATEGORIES: list[str] = ["CRS", "IECHS", "neurotoxicity", "secondary_malignancy", "cytopenias"]
 
 
 def _normalize_ae_category(ae_category: str) -> str | None:

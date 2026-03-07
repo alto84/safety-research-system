@@ -385,8 +385,10 @@ def get_ae_overview(ae_type: str) -> dict[str, Any]:
     ae_map = {
         "CRS": "Cytokine Release Syndrome",
         "ICANS": "ICANS",
-        "HLH": "HLH/MAS",
-        "HLH/MAS": "HLH/MAS",
+        "IEC-HS": "IEC-HS",
+        "IECHS": "IEC-HS",
+        "HLH": "IEC-HS",
+        "HLH/MAS": "IEC-HS",
     }
     ae_full = ae_map.get(ae_type, ae_type)
 

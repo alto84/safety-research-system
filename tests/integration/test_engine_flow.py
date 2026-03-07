@@ -94,7 +94,7 @@ class SafetyEngine:
         # 4. Compute Safety Index
         crs_agg = event_aggregations.get("crs", AggregatedRisk(risk_score=0.0, confidence_interval=(0, 0)))
         icans_agg = event_aggregations.get("icans", AggregatedRisk(risk_score=0.0, confidence_interval=(0, 0)))
-        hlh_agg = event_aggregations.get("hlh", AggregatedRisk(risk_score=0.0, confidence_interval=(0, 0)))
+        iechs_agg = event_aggregations.get("iechs", AggregatedRisk(risk_score=0.0, confidence_interval=(0, 0)))
 
         model_agreements = [1.0 - agg.disagreement_score for agg in event_aggregations.values()]
         avg_agreement = sum(model_agreements) / len(model_agreements) if model_agreements else 0.5
@@ -104,7 +104,7 @@ class SafetyEngine:
         safety_index = self.safety_calculator.compute(
             crs_agg=crs_agg,
             icans_agg=icans_agg,
-            hlh_agg=hlh_agg,
+            iechs_agg=iechs_agg,
             model_agreement=avg_agreement,
             pathways=pathways,
             biomarkers=biomarkers,
@@ -123,7 +123,7 @@ class SafetyEngine:
 
     def _build_queries(self, patient: PatientData, domain: str) -> dict[str, SafetyQuery]:
         """Build SafetyQueries for each event type."""
-        event_types = ["crs", "icans", "hlh"]
+        event_types = ["crs", "icans", "iechs"]
         queries = {}
         for et in event_types:
             queries[et] = SafetyQuery(
@@ -323,7 +323,7 @@ class TestLowRiskPatientFlow:
         si, _ = engine_low_risk.predict(low_risk_patient)
         assert si.crs_risk is not None
         assert si.icans_risk is not None
-        assert si.hlh_risk is not None
+        assert si.iechs_risk is not None
 
     def test_trajectory_populated(self, engine_low_risk, low_risk_patient):
         si, _ = engine_low_risk.predict(low_risk_patient)
