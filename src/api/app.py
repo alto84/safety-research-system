@@ -69,6 +69,7 @@ from src.models.biomarker_scores import (
 )
 from src.models.ensemble_runner import BiomarkerEnsembleRunner
 from src.api.population_routes import router as population_router
+from src.api.patient_safety_routes import router as patient_safety_router
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +132,7 @@ app = FastAPI(
         "Clinical decision support for cell therapy adverse event risk assessment. "
         "Provides deterministic biomarker scoring based on published formulas (EASIX, "
         "HScore, CAR-HEMATOTOX, Teachey, Hay) and ensemble risk stratification for "
-        "CRS, ICANS, and HLH. Not a substitute for clinical judgment."
+        "CRS, ICANS, and IEC-HS. Not a substitute for clinical judgment."
     ),
     version="0.1.0",
     lifespan=lifespan,
@@ -176,6 +177,12 @@ app = FastAPI(
             "name": "Pharma",
             "description": "Pharmaceutical company simulation: org hierarchy, clinical pipeline, "
             "regulatory frameworks, quality metrics, and role management.",
+        },
+        {
+            "name": "Patient Safety Dashboard",
+            "description": "Comprehensive pharmacovigilance and patient safety endpoints for Prosinertimib, "
+            "including ICSR metrics, signal detection, aggregate reporting, risk management, "
+            "compliance, quality systems, clinical trial safety, KPIs, and benefit-risk assessment.",
         },
     ],
 )
@@ -235,6 +242,13 @@ app.add_middleware(RequestTimingMiddleware)
 # ---------------------------------------------------------------------------
 
 app.include_router(population_router)
+
+
+# ---------------------------------------------------------------------------
+# Patient Safety Dashboard routes
+# ---------------------------------------------------------------------------
+
+app.include_router(patient_safety_router)
 
 
 # ---------------------------------------------------------------------------
@@ -771,7 +785,7 @@ async def get_model_status() -> ModelStatusResponse:
             version="1.0.0",
             status="available",
             last_run=_model_last_run.get("HScore"),
-            description="Hemophagocytic Syndrome Score for HLH probability",
+            description="Hemophagocytic Syndrome Score for IEC-HS probability",
             required_inputs=[
                 "temperature_c", "organomegaly", "cytopenias_lineages",
                 "ferritin_ng_ml", "triglycerides_mmol_l", "fibrinogen_g_l",
@@ -893,7 +907,7 @@ async def compute_easix(
     summary="Compute HScore",
     description=(
         "Compute the Hemophagocytic Syndrome Score. Returns the HScore "
-        "and the HLH probability. Reference: Fardet et al. 2014."
+        "and the IEC-HS probability. Reference: Fardet et al. 2014."
     ),
     responses={
         400: {"model": ErrorResponse, "description": "Invalid input parameters"},

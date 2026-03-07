@@ -1087,6 +1087,7 @@ body {
     <span id="clockDisplay" style="font-size:13px; color:var(--text-secondary); font-family:var(--mono);"></span>
     <button class="btn btn-secondary btn-sm" onclick="openArchDiagram()" title="System Architecture">&#9881; Architecture</button>
     <button class="theme-toggle" onclick="toggleTheme()">Theme</button>
+    <a href="/static/patient_safety_dashboard.html" class="btn btn-sm" style="background:var(--primary);color:#fff;text-decoration:none;padding:6px 14px;border-radius:var(--radius);font-size:13px;font-weight:600;">&#9878; Patient Safety Dashboard</a>
     <button class="btn btn-secondary btn-sm" onclick="window.print()">Print</button>
   </div>
 </header>
@@ -1125,7 +1126,7 @@ body {
     <button class="task-btn" data-task="day1" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9201;</span> Day 1 Monitor</button>
     <button class="task-btn" data-task="crs" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#127777;</span> CRS Monitor</button>
     <button class="task-btn" data-task="icans" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#129504;</span> ICANS</button>
-    <button class="task-btn" data-task="hlh" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9888;</span> HLH Screen</button>
+    <button class="task-btn" data-task="iechs" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#9888;</span> IEC-HS Monitor</button>
     <button class="task-btn" data-task="hematox" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#129656;</span> Hematologic</button>
     <button class="task-btn" data-task="discharge" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#127968;</span> Discharge</button>
     <button class="task-btn" data-task="visit" role="tab" aria-selected="false" tabindex="-1"><span class="task-icon">&#128105;&#8205;&#9877;</span> Clinical Visit</button>
@@ -1515,7 +1516,7 @@ function renderTaskContent() {
     case 'day1': container.innerHTML = renderDay1(); break;
     case 'crs': container.innerHTML = renderCRS(); break;
     case 'icans': container.innerHTML = renderICANS(); break;
-    case 'hlh': container.innerHTML = renderHLH(); break;
+    case 'iechs': container.innerHTML = renderIECHS(); break;
     case 'hematox': container.innerHTML = renderHematox(); break;
     case 'discharge': container.innerHTML = renderDischarge(); break;
     case 'visit': container.innerHTML = renderClinicalVisit(); break;
@@ -1872,7 +1873,7 @@ function renderPreInfusion() {
             ${renderLabRow('creatinine', tp.labs?.creatinine, 'Component of EASIX; renal baseline')}
             ${renderLabRow('platelets', tp.labs?.platelets, 'Component of EASIX and CAR-HEMATOTOX')}
             ${renderLabRow('crp', tp.labs?.crp, 'Component of modified EASIX and CAR-HEMATOTOX')}
-            ${renderLabRow('ferritin', tp.labs?.ferritin, 'HLH marker; component of HScore and CAR-HEMATOTOX')}
+            ${renderLabRow('ferritin', tp.labs?.ferritin, 'IEC-HS marker; component of HScore and CAR-HEMATOTOX')}
             ${renderLabRow('anc', tp.labs?.anc, 'Component of CAR-HEMATOTOX; neutropenia risk')}
             ${renderLabRow('hemoglobin', tp.labs?.hemoglobin, 'Component of CAR-HEMATOTOX')}
             ${renderLabRow('ast', tp.labs?.ast, 'Component of HScore; hepatic baseline')}
@@ -2276,28 +2277,53 @@ function renderICANS() {
 }
 
 // ============================================================================
-// HLH SCREENING VIEW
+// IEC-HS MONITOR VIEW (formerly HLH Screen)
+// IEC-HS = Immune Effector Cell-associated HLH-like Syndrome
+// ASTCT consensus term per Hines et al. 2023
 // ============================================================================
-function renderHLH() {
-  if (!currentPatient) return emptyState('HLH/IEC-HS Screening', 'Select a patient');
+function renderIECHS() {
+  if (!currentPatient) return emptyState('IEC-HS Monitor', 'Select a patient');
   const tp = currentPatient.timepoints[currentTimepoint];
   const pred = lastPrediction;
   const hscoreResult = pred?.individual_scores?.find(s => s.model_name === 'HScore');
   const ferritin = tp.labs?.ferritin || 0;
   const fibrinogen = tp.labs?.fibrinogen || 3;
-  const _hlhAlerts = generateAlerts(tp, pred);
+  const _iechsAlerts = generateAlerts(tp, pred);
 
   return `
-    ${_hlhAlerts.length > 0 ? renderAlertsHtml(_hlhAlerts) : ''}
+    ${_iechsAlerts.length > 0 ? renderAlertsHtml(_iechsAlerts) : ''}
     ${ferritin > 10000 || fibrinogen < 1.5 ? `
       <div class="alert alert-danger">
         <span class="alert-icon">&#9888;</span>
-        <div><strong>HLH/IEC-HS Warning</strong><br>
-        ${ferritin > 10000 ? `Ferritin ${ferritin} ng/mL (>10,000 is highly suggestive of HLH). ` : ''}
-        ${fibrinogen < 1.5 ? `Fibrinogen ${fibrinogen} g/L (<1.5 suggests consumptive coagulopathy/HLH). ` : ''}
+        <div><strong>IEC-HS Warning</strong><br>
+        ${ferritin > 10000 ? `Ferritin ${ferritin} ng/mL (>10,000 is highly suggestive of IEC-HS). ` : ''}
+        ${fibrinogen < 1.5 ? `Fibrinogen ${fibrinogen} g/L (<1.5 suggests consumptive coagulopathy/IEC-HS). ` : ''}
         Urgent evaluation recommended.</div>
       </div>
     ` : ''}
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">&#9888; IEC-HS Overview</div>
+        <span style="font-size:12px; color:var(--text-secondary);">ASTCT consensus: Hines et al. 2023</span>
+      </div>
+      <div class="card-body">
+        <div class="teaching-point" style="margin-bottom:12px;">
+          <span class="teaching-icon">&#128161;</span>
+          <div style="font-size:12px;"><strong>IEC-HS</strong> (Immune Effector Cell-associated HLH-like Syndrome) is the ASTCT consensus term (Hines et al. 2023) for the hyperinflammatory syndrome previously termed HLH/MAS in the CAR-T setting. Onset typically Day 7&ndash;21 after infusion, often after CRS resolves. FAERS mortality: 61%.</div>
+        </div>
+        <table class="data-table" style="margin-bottom:12px;">
+          <thead><tr><th>Parameter</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Key Biomarker</td><td>Ferritin &ge;7,470 ng/mL (diagnostic threshold per ASTCT consensus)</td></tr>
+            <tr><td>Onset Window</td><td>Day 7&ndash;21 post-infusion (typically after CRS resolves)</td></tr>
+            <tr><td>Peak</td><td>Day 10&ndash;14</td></tr>
+            <tr><td>First-line Treatment</td><td>Anakinra + corticosteroids (NOT tocilizumab; tocilizumab is often refractory)</td></tr>
+            <tr><td>Mortality (FAERS)</td><td>61%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
     <div class="card">
       <div class="card-header">
@@ -2310,11 +2336,11 @@ function renderHLH() {
             <div style="font-size:48px; font-weight:700; font-family:var(--mono); color:${hscoreResult.score >= 169 ? 'var(--danger)' : hscoreResult.score >= 100 ? 'var(--warning)' : 'var(--success)'};">${formatScore(hscoreResult.score)}</div>
             <div style="font-size:14px; color:var(--text-secondary);">/ 337 maximum</div>
             <div style="font-size:13px; margin-top:4px;">
-              HLH Probability: <strong>${hscoreResult.metadata?.hlh_probability_estimate ? (hscoreResult.metadata.hlh_probability_estimate * 100).toFixed(1) + '%' : 'N/A'}</strong>
+              IEC-HS Probability: <strong>${hscoreResult.metadata?.hlh_probability_estimate ? (hscoreResult.metadata.hlh_probability_estimate * 100).toFixed(1) + '%' : 'N/A'}</strong>
             </div>
             <div style="margin-top:8px;">
               <span class="pc-risk ${hscoreResult.score >= 169 ? 'risk-high' : hscoreResult.score >= 100 ? 'risk-moderate' : 'risk-low'}" style="font-size:14px; padding:6px 16px;">
-                ${hscoreResult.score >= 169 ? 'HIGH PROBABILITY HLH (>93%)' : hscoreResult.score >= 100 ? 'INTERMEDIATE - MONITOR CLOSELY' : 'LOW PROBABILITY'}
+                ${hscoreResult.score >= 169 ? 'HIGH PROBABILITY IEC-HS (>93%)' : hscoreResult.score >= 100 ? 'INTERMEDIATE - MONITOR CLOSELY' : 'LOW PROBABILITY'}
               </span>
             </div>
           </div>
@@ -2337,17 +2363,18 @@ function renderHLH() {
     </div>
 
     <div class="card">
-      <div class="card-header"><div class="card-title">Distinguishing CRS from IEC-HS/HLH</div></div>
+      <div class="card-header"><div class="card-title">Distinguishing CRS from IEC-HS</div></div>
       <div class="card-body">
         <table class="data-table">
-          <thead><tr><th>Feature</th><th>CRS</th><th>IEC-HS/HLH</th></tr></thead>
+          <thead><tr><th>Feature</th><th>CRS</th><th>IEC-HS</th></tr></thead>
           <tbody>
-            <tr><td>Ferritin</td><td>Elevated (500-5,000)</td><td class="cell-high">Markedly elevated (>10,000)</td></tr>
+            <tr><td>Ferritin</td><td>Elevated (500-5,000)</td><td class="cell-high">Markedly elevated (&ge;7,470 ng/mL)</td></tr>
             <tr><td>Fibrinogen</td><td>Normal or elevated</td><td class="cell-high">Decreased (<150 mg/dL or <1.5 g/L)</td></tr>
             <tr><td>Triglycerides</td><td>Normal</td><td class="cell-high">Elevated (>265 mg/dL or >3.0 mmol/L)</td></tr>
             <tr><td>Transaminases</td><td>Mildly elevated</td><td class="cell-high">Markedly elevated (>5x ULN)</td></tr>
             <tr><td>Response to tocilizumab</td><td>Usually responsive</td><td>Often refractory</td></tr>
-            <tr><td>Timing</td><td>Day 1-7</td><td>Day 5-14 (often later)</td></tr>
+            <tr><td>First-line treatment</td><td>Tocilizumab</td><td>Anakinra + corticosteroids</td></tr>
+            <tr><td>Timing</td><td>Day 1-7</td><td>Day 7-21 (after CRS resolves)</td></tr>
           </tbody>
         </table>
       </div>
@@ -2854,10 +2881,10 @@ function generateAlerts(tp, pred) {
     alerts.push({ type: 'warning', icon: '&#127777;', title: 'Fever', message: `Temperature ${vitals.temperature}C. CRS Grade >= 1 criteria met.` });
   }
   if (labs.ferritin > 10000) {
-    alerts.push({ type: 'danger', icon: '&#9888;', title: 'HLH Warning', message: `Ferritin ${labs.ferritin} ng/mL markedly elevated. Consider HScore assessment and HLH/IEC-HS evaluation.` });
+    alerts.push({ type: 'danger', icon: '&#9888;', title: 'IEC-HS Warning', message: `Ferritin ${labs.ferritin} ng/mL markedly elevated. Consider HScore assessment and IEC-HS evaluation.` });
   }
   if (labs.fibrinogen && labs.fibrinogen < 1.5) {
-    alerts.push({ type: 'danger', icon: '&#9888;', title: 'Low Fibrinogen', message: `Fibrinogen ${labs.fibrinogen} g/L. Suggests consumptive coagulopathy. Check for DIC/HLH.` });
+    alerts.push({ type: 'danger', icon: '&#9888;', title: 'Low Fibrinogen', message: `Fibrinogen ${labs.fibrinogen} g/L. Suggests consumptive coagulopathy. Check for DIC/IEC-HS.` });
   }
   if (labs.platelets && labs.platelets < 20) {
     alerts.push({ type: 'danger', icon: '&#129656;', title: 'Severe Thrombocytopenia', message: `Platelets ${labs.platelets}. Bleeding risk. Consider platelet transfusion.` });
@@ -2898,7 +2925,7 @@ function generateAlerts(tp, pred) {
   if (pred && pred.individual_scores) {
     const hscore = pred.individual_scores.find(s => s.model_name === 'HScore');
     if (hscore && hscore.score >= 169) {
-      alerts.push({ type: 'danger', icon: '&#9888;', title: 'HScore Critical', message: `HScore ${hscore.score.toFixed(0)} (>=169, >93% HLH probability). Evaluate for IEC-HS. Consider pulse methylprednisolone and hematology consultation.` });
+      alerts.push({ type: 'danger', icon: '&#9888;', title: 'HScore Critical', message: `HScore ${hscore.score.toFixed(0)} (>=169, >93% IEC-HS probability). Evaluate for IEC-HS. Consider anakinra + corticosteroids and hematology consultation.` });
     }
   }
   // T3: ICANS without CRS alert
@@ -3739,7 +3766,7 @@ async function loadPopulationRisk(containerId) {
     const aeTypes = [
       { key: 'crs_grade3_plus', label: 'CRS Grade 3+', icon: '&#127777;' },
       { key: 'icans_grade3_plus', label: 'ICANS Grade 3+', icon: '&#129504;' },
-      { key: 'icahs', label: 'ICAHS', icon: '&#9888;' },
+      { key: 'iechs', label: 'IEC-HS', icon: '&#9888;' },
       { key: 'licats', label: 'LICATS', icon: '&#128200;' },
     ];
     cardsHtml = '<div class="pop-grid">';
@@ -4965,7 +4992,7 @@ async function loadExecutiveSummary(containerId) {
   const aeTypes = [
     { key: 'crs_grade3_plus', label: 'CRS Grade 3+', icon: '&#127777;' },
     { key: 'icans_grade3_plus', label: 'ICANS Grade 3+', icon: '&#129504;' },
-    { key: 'icahs', label: 'ICAHS', icon: '&#9888;' },
+    { key: 'iechs', label: 'IEC-HS', icon: '&#9888;' },
     { key: 'licats', label: 'LICATS', icon: '&#128200;' },
   ];
 
@@ -5175,7 +5202,7 @@ async function loadClinicalSafetyPlan(containerId) {
     { key: 'crs_grade3_plus', label: 'CRS Grade 3+', onset: 'Day 1-5', peak: 'Day 3-4' },
     { key: 'icans_any', label: 'ICANS (Any Grade)', onset: 'Day 3-10', peak: 'Day 5-8' },
     { key: 'icans_grade3_plus', label: 'ICANS Grade 3+', onset: 'Day 4-10', peak: 'Day 5-8' },
-    { key: 'icahs', label: 'ICAHS/HLH', onset: 'Day 3-14', peak: 'Day 7-10' },
+    { key: 'iechs', label: 'IEC-HS', onset: 'Day 7-21', peak: 'Day 10-14' },
     { key: 'infection', label: 'Infection', onset: 'Day 7-90', peak: 'Day 14-30' },
     { key: 'cytopenias', label: 'Prolonged Cytopenias', onset: 'Day 7-28', peak: 'Day 14-21' },
   ];
@@ -5225,7 +5252,7 @@ async function loadClinicalSafetyPlan(containerId) {
     { window: 'Sub-acute (Day 4-14)', activities: [
       { activity: 'ICE assessment', freq: 'q12h', rationale: 'Peak ICANS incidence Day 5-8' },
       { activity: 'CBC with differential', freq: 'Daily', rationale: 'Monitor cytopenia onset and nadir' },
-      { activity: 'Ferritin, fibrinogen, triglycerides', freq: 'q48h', rationale: 'HLH/ICAHS surveillance' },
+      { activity: 'Ferritin, fibrinogen, triglycerides', freq: 'q48h', rationale: 'IEC-HS surveillance' },
     ]},
     { window: 'Recovery (Day 15-30)', activities: [
       { activity: 'CBC with differential', freq: '2x/week', rationale: 'Track hematopoietic recovery' },
@@ -6408,7 +6435,7 @@ function renderSciReferenceSection() {
 
   // Group by primary tag
   const grouped = {};
-  const tagOrder = ['CRS', 'ICANS', 'HLH', 'biomarker', 'tocilizumab', 'anakinra', 'CAR-NK', 'TCR-T', 'safety_switch', 'CAR-M'];
+  const tagOrder = ['CRS', 'ICANS', 'IEC-HS', 'biomarker', 'tocilizumab', 'anakinra', 'CAR-NK', 'TCR-T', 'safety_switch', 'CAR-M'];
   sciReferences.references.forEach(ref => {
     let group = 'Other';
     for (const tag of tagOrder) {
@@ -8451,6 +8478,7 @@ var ST_AE_LABELS = {
   'secondary_malignancy': 'Secondary Malignancy',
   'neurotoxicity': 'Neurotoxicity (ICANS)',
   'cytopenias': 'Cytopenias',
+  'iechs': 'IEC-HS (Immune Effector Cell-associated HLH-like Syndrome)',
 };
 
 var ST_METRIC_LABELS = {
@@ -8626,12 +8654,13 @@ function stRenderSummaryTable() {
 /* ---- Comparative Safety Heatmap ---- */
 
 var ST_HEATMAP_PRODUCTS = ['Kymriah', 'Yescarta', 'Tecartus', 'Breyanzi', 'Abecma', 'Carvykti'];
-var ST_HEATMAP_AE_KEYS = ['CRS', 'secondary_malignancy', 'neurotoxicity', 'cytopenias'];
+var ST_HEATMAP_AE_KEYS = ['CRS', 'secondary_malignancy', 'neurotoxicity', 'cytopenias', 'iechs'];
 var ST_HEATMAP_AE_COLS = {
   'CRS': 'CRS',
   'secondary_malignancy': 'Secondary Malignancy',
   'neurotoxicity': 'ICANS',
-  'cytopenias': 'Cytopenias'
+  'cytopenias': 'Cytopenias',
+  'iechs': 'IEC-HS'
 };
 
 function stHeatmapColor(prr) {
