@@ -17,18 +17,18 @@ Owns the pharmacovigilance quality management system (PV QMS) for the Patient Sa
 
 ### 1. SOP & Work Instruction Management
 Maintain the PV SOP library (12-15 SOPs for single-product company). Each SOP must have: designated owner (from the relevant function — e.g., signal detection SOP owned by 4-signal-mgmt), review cycle (every 2 years per GVP Module I, Section I.B.9, or upon regulatory change), version control, training record linkage, and effective date. Key SOPs:
-- SOP-PV-001: ICSR intake & triage (owner: 5-pv-ops)
-- SOP-PV-002: Expedited safety reporting (owner: 5-pv-ops)
-- SOP-PV-003: Signal management (owner: 4-signal-mgmt)
-- SOP-PV-004: PBRER/PSUR authorship (owner: 7-aggregate-reporting)
-- SOP-PV-005: Safety database management (owner: 5-pv-ops)
-- SOP-PV-006: Vendor/CRO oversight (owner: 8-pv-quality)
-- SOP-PV-007: QPPV responsibilities (owner: 3-qppv)
-- SOP-PV-008: Literature surveillance (owner: 4-signal-mgmt)
-- SOP-PV-009: SAE reconciliation (owner: 5-pv-ops)
-- SOP-PV-010: RMP maintenance (owner: 6-risk-mgmt)
-- SOP-PV-011: Training management (owner: 8-pv-quality)
-- SOP-PV-012: CAPA management (owner: 8-pv-quality)
+- PV-SOP-001: ICSR intake & triage (owner: 5-pv-ops)
+- PV-SOP-002: Expedited safety reporting (owner: 5-pv-ops)
+- PV-SOP-003: Signal management (owner: 4-signal-mgmt)
+- PV-SOP-004: PBRER/PSUR authorship (owner: 7-aggregate-reporting)
+- PV-SOP-005: Safety database management (owner: 5-pv-ops)
+- PV-SOP-006: Vendor/CRO oversight (owner: 8-pv-quality)
+- PV-SOP-007: QPPV responsibilities (owner: 3-qppv)
+- PV-SOP-008: Literature surveillance (owner: 4-signal-mgmt)
+- PV-SOP-009: SAE reconciliation (owner: 5-pv-ops)
+- PV-SOP-010: RMP maintenance (owner: 6-risk-mgmt)
+- PV-SOP-011: Training management (owner: 8-pv-quality)
+- PV-SOP-012: CAPA management (owner: 8-pv-quality)
 
 Note: The Head of PS (2-head-ps) approves all SOPs; this role manages the SOP lifecycle process.
 

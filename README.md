@@ -2,7 +2,7 @@
 
 **Cell therapy adverse event risk estimation using public clinical data.**
 
-A working demo with 17-tab clinical dashboard, 36 API endpoints, 7 risk models, and a knowledge graph covering 4 signaling pathways across CRS, ICANS, HLH, and hematologic toxicities.
+A working demo with a 26-tab clinical dashboard, 66 API endpoints, 7 risk models, and a knowledge graph covering 4 signaling pathways across CRS, ICANS, IEC-HS, and hematologic toxicities.
 
 ---
 
@@ -28,7 +28,7 @@ Open **http://localhost:8000/clinical** in your browser. Done.
 
 ## What You'll See
 
-### Dashboard (17 tabs)
+### Dashboard (26 tabs)
 
 **Patient-Level (9 tabs)** -- Select a demo patient from the sidebar:
 
@@ -39,12 +39,12 @@ Open **http://localhost:8000/clinical** in your browser. Done.
 | Day 1 Monitor | Post-infusion vital signs, early warning indicators |
 | CRS Monitor | Cytokine release syndrome grading and trajectory |
 | ICANS | Immune effector cell neurotoxicity assessment |
-| HLH Screen | Hemophagocytic lymphohistiocytosis screening score |
+| IEC-HS Monitor | IEC-associated hemophagocytic syndrome screening score |
 | Hematologic | Cytopenia monitoring, CAR-HEMATOTOX score |
 | Discharge | Readiness assessment, follow-up recommendations |
 | Clinical Visit | Longitudinal follow-up tracking |
 
-**Population-Level (8 tabs)** -- No patient selection needed:
+**Population-Level (11 tabs)** -- No patient selection needed:
 
 | Tab | What it shows |
 |-----|--------------|
@@ -56,8 +56,25 @@ Open **http://localhost:8000/clinical** in your browser. Done.
 | System Architecture | Interactive architecture diagram |
 | Scientific Basis | Knowledge graph: signaling pathways, molecular targets, cell types, PubMed references |
 | Publication Analysis | Forest plots, evidence accrual, model calibration, prior comparison |
+| Knowledge Graph | Interactive pathway visualization with mechanism chains |
+| Signal Timeline | FAERS temporal signal evolution across products and AE categories |
 
-### API (36 endpoints)
+**Pharma Simulation (6 tabs)** -- Simulated pharmaceutical company agent hierarchy:
+
+| Tab | What it shows |
+|-----|--------------|
+| Org Chart | Interactive agent role hierarchy with status and tasks |
+| Regulatory Map | Regulation-to-activity mapping (ICH, FDA, EMA) |
+| Clinical Pipeline | IND through BLA timeline |
+| PV Dashboard | Pharmacovigilance signal detection, ICSR tracking, PSUR status |
+| Quality Metrics | GxP compliance, CAPA tracking, audit readiness |
+| Simulation | Agent team simulation runner |
+
+### Patient Safety Dashboard (15 sections)
+
+A separate dashboard at **/api/v1/psd/overview** with 15 sections covering US/EU regulatory compliance, ICH guidelines, ICSR management, signal detection, aggregate reporting, risk management, quality systems, clinical trial safety, benefit-risk assessment, technology landscape, KPIs, geographic expansion, and implementation roadmap.
+
+### API (66 endpoints)
 
 Full Swagger docs at **http://localhost:8000/docs**
 
@@ -86,6 +103,12 @@ curl http://localhost:8000/api/v1/signals/triangulation
 
 # Knowledge graph overview
 curl http://localhost:8000/api/v1/knowledge/overview
+
+# Secondary malignancy risk (FDA boxed warning tracker)
+curl http://localhost:8000/api/v1/signals/secondary-malignancy
+
+# Temporal signal evolution
+curl http://localhost:8000/api/v1/signals/temporal-evolution
 ```
 
 ---
@@ -96,11 +119,11 @@ curl http://localhost:8000/api/v1/knowledge/overview
 # Install test runner
 pip install pytest pytest-cov
 
-# Run all 1608 tests
+# Run all 2279 tests
 python -m pytest tests/ -q
 ```
 
-Expected output: `1608 passed in ~10-30s` (depending on hardware).
+Expected output: `2279 passed in ~30-60s` (depending on hardware).
 
 ---
 
@@ -111,12 +134,15 @@ safety-research-system/
 ├── run_server.py                 # Start here
 ├── src/
 │   ├── api/
-│   │   ├── app.py                # FastAPI application
-│   │   ├── population_routes.py  # All API endpoints
+│   │   ├── app.py                # FastAPI application, patient-level endpoints
+│   │   ├── population_routes.py  # Population, CDP, knowledge, signal, publication, narrative endpoints
+│   │   ├── patient_safety_routes.py  # Patient safety dashboard endpoints (15 sections)
 │   │   ├── schemas.py            # Pydantic request/response models
+│   │   ├── middleware.py         # Request timing, rate limiting, error handling
 │   │   ├── narrative_engine.py   # Clinical narrative generation
 │   │   └── static/
-│   │       └── index.html        # Dashboard (single-page, vanilla JS)
+│   │       ├── index.html        # Main dashboard (single-page, vanilla JS, 26 tabs)
+│   │       └── patient_safety_dashboard.html  # PV/safety dashboard (15 sections)
 │   ├── models/
 │   │   ├── bayesian_risk.py      # Beta-Binomial posteriors
 │   │   ├── mitigation_model.py   # Correlated risk reduction
@@ -124,14 +150,19 @@ safety-research-system/
 │   │   ├── model_registry.py     # 7-model risk registry
 │   │   ├── model_validation.py   # Calibration, Brier scores, coverage
 │   │   ├── ensemble_runner.py    # Two-layer biomarker ensemble
+│   │   ├── biomarker_scores.py   # EASIX, HScore, CAR-HEMATOTOX scoring
+│   │   ├── ae_classifier.py      # SapBERT-based AE term classification
+│   │   ├── secondary_malignancy.py  # FDA boxed warning tracker
+│   │   ├── temporal_signal.py    # FAERS temporal signal evolution
 │   │   └── signal_triangulation.py # FAERS vs ClinicalTrials.gov comparison
 │   └── data/
 │       ├── knowledge/            # Cell therapy knowledge graph
 │       │   ├── pathways.py       # 4 signaling cascades (47 directed steps)
-│       │   ├── mechanisms.py     # 6 therapy-to-AE mechanism chains
+│       │   ├── mechanisms.py     # 9 therapy-to-AE mechanism chains
 │       │   ├── molecular_targets.py  # 15 druggable targets
 │       │   ├── cell_types.py     # 9 cell populations
-│       │   ├── references.py     # 29 PubMed-linked references
+│       │   ├── references.py     # 25 PubMed-linked references
+│       │   ├── integration.py    # Knowledge-to-model bridge
 │       │   └── graph_queries.py  # Query API for pathways and targets
 │       ├── faers_cache.py        # Pre-computed FAERS product comparison
 │       └── ctgov_cache.py        # ClinicalTrials.gov AE data loader
@@ -145,7 +176,10 @@ safety-research-system/
 │   └── results/                  # Extracted data files
 ├── tests/
 │   ├── unit/                     # Unit tests
-│   └── integration/              # API integration tests
+│   ├── integration/              # API integration tests
+│   ├── validation/               # Calibration and statistical validation tests
+│   ├── safety/                   # Regulatory compliance tests
+│   └── stress/                   # Stress and battle tests
 └── docs/
     ├── qa-report.md              # Comprehensive QA report
     └── claude-integration-options.md  # AI integration roadmap
@@ -162,7 +196,7 @@ All data is public. No proprietary data, no credentials, no API keys required.
 | Published literature | SLE CAR-T trial results (7 studies, 47 patients) | Baseline risk estimates, evidence accrual |
 | ClinicalTrials.gov | 47 completed CAR-T trials with AE data | Trial-level AE rates, cross-trial comparison |
 | openFDA (FAERS) | 16,432 spontaneous AE reports across 6 CAR-T products | Signal detection, product comparison, triangulation |
-| PubMed | 29 referenced publications | Knowledge graph evidence grading |
+| PubMed | 25 referenced publications | Knowledge graph evidence grading |
 
 ---
 
