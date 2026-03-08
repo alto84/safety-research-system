@@ -978,6 +978,104 @@ a:hover { text-decoration: underline; }
   .psd-card { box-shadow: none !important; border: 1px solid #ddd; page-break-inside: avoid; }
   body { background: #fff !important; color: #000 !important; }
 }
+
+/* Chat panel */
+.psd-chat-toggle {
+  position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
+  border-radius: 50%; background: var(--primary, #1565c0); color: #fff; border: none;
+  cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000;
+  font-size: 24px; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+}
+.psd-chat-toggle:hover { transform: scale(1.1); background: var(--primary-accent, #0d47a1); }
+.psd-chat-panel {
+  position: fixed; bottom: 90px; right: 24px; width: 400px; height: 520px;
+  background: var(--surface, #fff); border: 1px solid var(--border, #e0e0e0);
+  border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); z-index: 1000;
+  display: none; flex-direction: column; overflow: hidden;
+}
+.psd-chat-panel.open { display: flex; }
+.psd-chat-header {
+  padding: 14px 16px; background: var(--primary, #1565c0); color: #fff;
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: 14px;
+}
+.psd-chat-close {
+  background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;
+  opacity: 0.8; padding: 0 4px;
+}
+.psd-chat-close:hover { opacity: 1; }
+.psd-chat-messages {
+  flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+}
+.psd-chat-msg {
+  max-width: 90%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5;
+  word-wrap: break-word;
+}
+.psd-chat-msg.user {
+  align-self: flex-end; background: var(--primary, #1565c0); color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.psd-chat-msg.assistant {
+  align-self: flex-start; background: var(--background, #f5f5f5); color: var(--text, #212121);
+  border: 1px solid var(--border, #e0e0e0); border-bottom-left-radius: 4px;
+}
+.psd-chat-msg.assistant p { margin: 0 0 8px 0; }
+.psd-chat-msg.assistant p:last-child { margin-bottom: 0; }
+.psd-chat-msg.assistant strong { color: var(--primary, #1565c0); }
+.psd-chat-sources {
+  margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border, #e0e0e0);
+  font-size: 11px;
+}
+.psd-chat-source-item {
+  display: inline-block; background: var(--primary-light, #e3f2fd); color: var(--primary, #1565c0);
+  padding: 2px 8px; border-radius: 10px; margin: 2px 4px 2px 0; font-size: 10px; font-weight: 600;
+}
+.psd-chat-followups {
+  margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;
+}
+.psd-chat-followup {
+  background: var(--surface, #fff); border: 1px solid var(--primary, #1565c0);
+  color: var(--primary, #1565c0); padding: 4px 10px; border-radius: 14px;
+  font-size: 11px; cursor: pointer; transition: background 0.2s;
+}
+.psd-chat-followup:hover {
+  background: var(--primary, #1565c0); color: #fff;
+}
+.psd-chat-input-row {
+  display: flex; border-top: 1px solid var(--border, #e0e0e0); padding: 8px;
+  background: var(--surface, #fff);
+}
+.psd-chat-input {
+  flex: 1; border: 1px solid var(--border, #e0e0e0); border-radius: 20px;
+  padding: 8px 14px; font-size: 13px; outline: none;
+  background: var(--background, #f5f5f5); color: var(--text, #212121);
+}
+.psd-chat-input:focus { border-color: var(--primary, #1565c0); }
+.psd-chat-send {
+  background: var(--primary, #1565c0); color: #fff; border: none; border-radius: 50%;
+  width: 36px; height: 36px; margin-left: 8px; cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.psd-chat-send:hover { background: var(--primary-accent, #0d47a1); }
+.psd-chat-suggestions {
+  padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 6px;
+  border-bottom: 1px solid var(--border, #e0e0e0);
+}
+.psd-chat-suggestion {
+  background: var(--surface, #fff); border: 1px solid var(--border, #e0e0e0);
+  color: var(--text-secondary, #666); padding: 6px 12px; border-radius: 14px;
+  font-size: 11px; cursor: pointer; transition: all 0.2s;
+}
+.psd-chat-suggestion:hover {
+  border-color: var(--primary, #1565c0); color: var(--primary, #1565c0);
+  background: var(--primary-light, #e3f2fd);
+}
+.psd-chat-typing {
+  align-self: flex-start; background: var(--background, #f5f5f5);
+  border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;
+  font-size: 13px; color: var(--text-secondary); font-style: italic;
+}
 </style>
 </head>
 <body>
@@ -1190,6 +1288,13 @@ a:hover { text-decoration: underline; }
                 <div class="org-node">
                   <div class="org-name">Manager, PV Quality &amp; Compliance</div>
                   <div class="org-title">SOPs, CAPA, training, audits, PSMF</div>
+                </div>
+              </div>
+              <div class="org-branch-item">
+                <div class="org-connector"></div>
+                <div class="org-node" style="border-left:3px solid var(--teal);">
+                  <div class="org-name">Therapeutic Area Head, Oncology</div>
+                  <div class="org-title">NSCLC/EGFR medical expertise, mechanistic plausibility, drug class intelligence</div>
                 </div>
               </div>
             </div>
@@ -6384,25 +6489,29 @@ a:hover { text-decoration: underline; }
 
   <h2 class="psd-section-title">AI Safety Intelligence</h2>
 
+<div style="background:var(--primary-light, #e3f2fd); border-left:4px solid var(--primary, #1565c0); padding:12px 16px; border-radius:0 6px 6px 0; margin-bottom:20px; font-size:13px; line-height:1.5;">
+  <strong>Domain-Agnostic Architecture</strong> &mdash; This AI safety intelligence pipeline is not specific to EGFR inhibitors or oncology. The same 6-stage architecture (LLM &rarr; Agent Harness &rarr; Governance &rarr; Data &rarr; Workflow &rarr; Validation) applies equally to <strong>cell therapy toxicity prediction</strong>, <strong>PV signal detection</strong>, <strong>clinical trial safety monitoring</strong>, and <strong>benefit-risk assessment</strong> across any therapeutic area. Investment in the architecture compounds with each new application.
+</div>
+
   <!-- Card 6: AI Insights Summary (stat cards at top) -->
   <div class="psd-card" style="margin-bottom:24px;">
     <div class="psd-card-header">AI Insights Summary</div>
     <div style="padding:24px;">
       <div class="psd-stat-grid">
         <div class="psd-stat-card">
-          <div style="font-size:28px;font-weight:800;color:var(--primary-accent);">3</div>
+          <div id="s16-stat-hypotheses" style="font-size:28px;font-weight:800;color:var(--primary-accent);">3</div>
           <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Active Hypotheses</div>
         </div>
         <div class="psd-stat-card">
-          <div style="font-size:28px;font-weight:800;color:var(--success-accent);">847</div>
+          <div id="s16-stat-literature" style="font-size:28px;font-weight:800;color:var(--success-accent);">847</div>
           <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Literature References Analyzed</div>
         </div>
         <div class="psd-stat-card">
-          <div style="font-size:28px;font-weight:800;color:var(--warning-dark);">6</div>
+          <div id="s16-stat-signals" style="font-size:28px;font-weight:800;color:var(--warning-dark);">6</div>
           <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Class-Effect Signals Monitored</div>
         </div>
         <div class="psd-stat-card">
-          <div style="font-size:28px;font-weight:800;color:var(--purple);">72%</div>
+          <div id="s16-stat-confidence" style="font-size:28px;font-weight:800;color:var(--purple);">72%</div>
           <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Average Confidence Score</div>
         </div>
       </div>
@@ -6487,7 +6596,7 @@ a:hover { text-decoration: underline; }
             <th>Mechanism Summary</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="s16-hyp-tbody">
           <tr>
             <td style="font-weight:700;white-space:nowrap;">HYP-2026-001</td>
             <td>HER2/ErbB2 off-target inhibition driving cardiac failure</td>
@@ -6672,7 +6781,7 @@ a:hover { text-decoration: underline; }
             <th>Hepatotox</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="s16-class-tbody">
           <tr>
             <td style="font-weight:600;">Erlotinib</td>
             <td>1st</td>
@@ -6776,6 +6885,34 @@ a:hover { text-decoration: underline; }
   <p>Data as of 2026-03-05 | Regulatory references per US FDA, EU EMA, ICH guidelines</p>
 </footer>
 
+<!-- AI Safety Assistant Chat Panel -->
+<button class="psd-chat-toggle" onclick="toggleChat()" title="AI Safety Assistant" id="chatToggleBtn">
+  &#x1f4ac;
+</button>
+<div class="psd-chat-panel" id="chatPanel">
+  <div class="psd-chat-header">
+    <span>&#x1f9e0; Safety Intelligence Assistant</span>
+    <button class="psd-chat-close" onclick="toggleChat()">&times;</button>
+  </div>
+  <div class="psd-chat-suggestions" id="chatSuggestions">
+    <span class="psd-chat-suggestion" onclick="askChat('Why might Prosinertimib cause cardiac failure?')">Cardiac failure mechanism</span>
+    <span class="psd-chat-suggestion" onclick="askChat('How does the cardiac risk compare to osimertinib?')">Compare to osimertinib</span>
+    <span class="psd-chat-suggestion" onclick="askChat('What is the ILD mechanism?')">ILD mechanism</span>
+    <span class="psd-chat-suggestion" onclick="askChat('What is the current benefit-risk assessment?')">Benefit-risk assessment</span>
+    <span class="psd-chat-suggestion" onclick="askChat('What monitoring protocol is recommended?')">Monitoring protocol</span>
+  </div>
+  <div class="psd-chat-messages" id="chatMessages">
+    <div class="psd-chat-msg assistant">
+      <p>Welcome to the Safety Intelligence Assistant. I can help you explore Prosinertimib's safety profile, signal mechanisms, class comparisons, and benefit-risk assessment.</p>
+      <p>Try one of the suggestions above, or ask your own question.</p>
+    </div>
+  </div>
+  <div class="psd-chat-input-row">
+    <input type="text" class="psd-chat-input" id="chatInput" placeholder="Ask about safety signals, mechanisms, or risk..." onkeydown="if(event.key==='Enter')sendChat()">
+    <button class="psd-chat-send" onclick="sendChat()" title="Send">&#x27A4;</button>
+  </div>
+</div>
+
 <!-- ============================================================
      JAVASCRIPT
      ============================================================ -->
@@ -6804,9 +6941,105 @@ function showSection(sectionId) {
       navItems[j].classList.add('active');
     }
   }
+  // Lazy-load Section 16 data from API
+  if (sectionId === 'section-16' && !window._s16Loaded) {
+    window._s16Loaded = true;
+    loadSection16();
+  }
   // Scroll main content to top
   var mainEl = document.getElementById('psdMain');
   if (mainEl) mainEl.scrollTop = 0;
+}
+
+/**
+ * Fetch data from the PSD API with error handling
+ * @param {string} endpoint - API path relative to /api/v1/psd
+ * @param {Object} [options] - Fetch options (method, body)
+ * @returns {Object|null} JSON response or null on error
+ */
+async function psdApiFetch(endpoint, options) {
+  try {
+    var opts = options || {};
+    var method = opts.method || 'GET';
+    var fetchOpts = { method: method, headers: { 'Content-Type': 'application/json' } };
+    if (opts.body) fetchOpts.body = typeof opts.body === 'string' ? opts.body : JSON.stringify(opts.body);
+    var resp = await fetch('/api/v1/psd' + endpoint, fetchOpts);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return await resp.json();
+  } catch (e) {
+    console.error('PSD API fetch error: ' + endpoint, e);
+    return null;
+  }
+}
+
+/**
+ * Load Section 16 data from the AI Intelligence API endpoint
+ * Falls back to hardcoded HTML if API is unavailable
+ */
+async function loadSection16() {
+  var data = await psdApiFetch('/ai-intelligence');
+  if (!data) return;
+
+  // Update stat cards
+  var stats = data.ai_insights_summary;
+  var el;
+  el = document.getElementById('s16-stat-hypotheses');
+  if (el) el.textContent = stats.total_hypotheses;
+  el = document.getElementById('s16-stat-literature');
+  if (el) el.textContent = stats.literature_references_analyzed;
+  el = document.getElementById('s16-stat-signals');
+  if (el) el.textContent = stats.class_effect_signals_monitored;
+  el = document.getElementById('s16-stat-confidence');
+  if (el) el.textContent = Math.round(stats.avg_confidence * 100) + '%';
+
+  // Update hypothesis table
+  var hypTbody = document.getElementById('s16-hyp-tbody');
+  if (hypTbody && data.active_hypotheses) {
+    hypTbody.innerHTML = '';
+    data.active_hypotheses.forEach(function(h) {
+      var confPct = Math.round(h.confidence * 100);
+      var confClass = confPct >= 70 ? 's16-conf-green' : confPct >= 50 ? 's16-conf-amber' : 's16-conf-red';
+      var plaClass = h.biological_plausibility === 'High' ? 'psd-badge-green' : h.biological_plausibility === 'Medium' ? 'psd-badge-amber' : 'psd-badge-red';
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td style="font-weight:700;white-space:nowrap;">' + h.id + '</td>' +
+        '<td>' + h.title + '</td>' +
+        '<td>' + h.signal_ref + '</td>' +
+        '<td style="min-width:120px;"><div class="s16-confidence-bar-bg"><div class="s16-confidence-bar ' + confClass + '" style="width:' + confPct + '%;">' + confPct + '%</div></div></td>' +
+        '<td><span class="' + plaClass + '">' + h.biological_plausibility + '</span></td>' +
+        '<td><span class="psd-badge-amber">' + h.status + '</span></td>' +
+        '<td style="font-size:11px;color:var(--text-secondary);max-width:200px;">' + h.mechanism.substring(0, 80) + '&hellip;</td>';
+      hypTbody.appendChild(tr);
+    });
+  }
+
+  // Update class comparison table
+  var classTbody = document.getElementById('s16-class-tbody');
+  if (classTbody && data.drug_class_comparison) {
+    classTbody.innerHTML = '';
+    data.drug_class_comparison.forEach(function(drug) {
+      var isProsinertimib = drug.drug === 'Prosinertimib';
+      var tr = document.createElement('tr');
+      if (isProsinertimib) tr.className = 's16-highlight-row';
+
+      function riskCell(val) {
+        var lower = val.toLowerCase();
+        var cls = 's16-risk-low';
+        if (lower.indexOf('moderate') >= 0 || lower.indexOf('mod') >= 0) cls = 's16-risk-mod';
+        if (lower.indexOf('high') >= 0) cls = 's16-risk-high';
+        if (lower.indexOf('eval') >= 0 || lower.indexOf('under') >= 0) cls = 's16-risk-eval';
+        return '<span class="s16-risk-cell ' + cls + '">' + val + '</span>';
+      }
+
+      tr.innerHTML = '<td>' + (isProsinertimib ? '<strong>' + drug.drug + '</strong>' : drug.drug) + '</td>' +
+        '<td>' + drug.generation + '</td>' +
+        '<td>' + riskCell(drug.cardiac_risk) + '</td>' +
+        '<td>' + drug.ild_risk + '</td>' +
+        '<td>' + drug.skin_rash + '</td>' +
+        '<td>' + drug.diarrhea + '</td>' +
+        '<td>' + drug.hepatotox + '</td>';
+      classTbody.appendChild(tr);
+    });
+  }
 }
 
 /**
@@ -7006,6 +7239,102 @@ document.addEventListener('DOMContentLoaded', function() {
   enhanceSparklines();
   enhanceRAGBadges();
 });
+
+/* ---- AI Chat Panel ---- */
+function toggleChat() {
+  var panel = document.getElementById('chatPanel');
+  panel.classList.toggle('open');
+}
+
+function askChat(question) {
+  document.getElementById('chatInput').value = question;
+  sendChat();
+}
+
+async function sendChat() {
+  var input = document.getElementById('chatInput');
+  var question = input.value.trim();
+  if (!question) return;
+
+  var messages = document.getElementById('chatMessages');
+
+  // Add user message
+  var userMsg = document.createElement('div');
+  userMsg.className = 'psd-chat-msg user';
+  userMsg.textContent = question;
+  messages.appendChild(userMsg);
+  input.value = '';
+
+  // Hide suggestions after first question
+  var suggestions = document.getElementById('chatSuggestions');
+  if (suggestions) suggestions.style.display = 'none';
+
+  // Add typing indicator
+  var typing = document.createElement('div');
+  typing.className = 'psd-chat-typing';
+  typing.textContent = 'Analyzing safety data...';
+  typing.id = 'chatTyping';
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+
+  // Call API
+  var data = await psdApiFetch('/chat', { method: 'POST', body: { question: question } });
+
+  // Remove typing indicator
+  var typingEl = document.getElementById('chatTyping');
+  if (typingEl) typingEl.remove();
+
+  if (!data) {
+    var errMsg = document.createElement('div');
+    errMsg.className = 'psd-chat-msg assistant';
+    errMsg.innerHTML = '<p>Sorry, I encountered an error connecting to the safety database. Please try again.</p>';
+    messages.appendChild(errMsg);
+    messages.scrollTop = messages.scrollHeight;
+    return;
+  }
+
+  // Build assistant message
+  var assistMsg = document.createElement('div');
+  assistMsg.className = 'psd-chat-msg assistant';
+
+  // Format answer - convert newlines to paragraphs, bold markers
+  var answerHtml = data.answer
+    .split('\n\n').map(function(p) { return '<p>' + p + '</p>'; }).join('')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n•/g, '<br>•')
+    .replace(/\n/g, '<br>');
+
+  var html = answerHtml;
+
+  // Add sources
+  if (data.sources && data.sources.length > 0) {
+    html += '<div class="psd-chat-sources"><strong>Sources:</strong><br>';
+    data.sources.forEach(function(s) {
+      html += '<span class="psd-chat-source-item">' + s.type + ': ' + s.reference + '</span> ';
+    });
+    html += '</div>';
+  }
+
+  assistMsg.innerHTML = html;
+  messages.appendChild(assistMsg);
+
+  // Add follow-up suggestions
+  if (data.follow_up_questions && data.follow_up_questions.length > 0) {
+    var followDiv = document.createElement('div');
+    followDiv.className = 'psd-chat-followups';
+    followDiv.style.alignSelf = 'flex-start';
+    data.follow_up_questions.forEach(function(q) {
+      var btn = document.createElement('span');
+      btn.className = 'psd-chat-followup';
+      btn.textContent = q;
+      btn.onclick = function() { askChat(q); };
+      followDiv.appendChild(btn);
+    });
+    messages.appendChild(followDiv);
+  }
+
+  messages.scrollTop = messages.scrollHeight;
+}
 </script>
 </body>
 </html>

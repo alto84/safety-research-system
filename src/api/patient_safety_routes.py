@@ -9,6 +9,7 @@ All data is fictional and for demonstration purposes only.
 
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import datetime, timezone
 from enum import Enum
@@ -482,7 +483,7 @@ async def get_overview() -> OverviewResponse:
             "reports_to": "Chief Medical Officer",
             "department": "Patient Safety",
             "location": "Basel, Switzerland",
-            "fte_direct_reports": 6,
+            "fte_direct_reports": 7,
         },
         {
             "role": "QPPV (EU)",
@@ -531,6 +532,14 @@ async def get_overview() -> OverviewResponse:
             "department": "PV Quality & Compliance",
             "location": "Dublin, Ireland",
             "fte_direct_reports": 5,
+        },
+        {
+            "role": "Therapeutic Area Head, Oncology",
+            "name": "Therapeutic Area Head, Oncology",
+            "reports_to": "Head of Patient Safety / Pharmacovigilance",
+            "department": "Patient Safety — Oncology",
+            "location": "Cambridge, MA",
+            "fte_direct_reports": 3,
         },
         {
             "role": "VP Regulatory Affairs",
@@ -2875,4 +2884,261 @@ async def get_ai_intelligence() -> AIIntelligenceResponse:
         mechanistic_analysis=mechanistic_analysis,
         drug_class_comparison=drug_class_comparison,
         ai_insights_summary=ai_insights_summary,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Chat endpoint — models
+# ---------------------------------------------------------------------------
+
+class ChatRequest(BaseModel):
+    question: str
+    context: Optional[str] = None
+
+
+class ChatSource(BaseModel):
+    type: str  # "knowledge_graph", "signal_data", "literature", "clinical_data", "regulatory"
+    reference: str
+    detail: str
+
+
+class ChatResponse(BaseModel):
+    request_id: str
+    timestamp: str
+    question: str
+    answer: str
+    sources: list[ChatSource]
+    confidence: float
+    follow_up_questions: list[str]
+
+
+# ---------------------------------------------------------------------------
+# Chat endpoint — response logic
+# ---------------------------------------------------------------------------
+
+def _chat_respond(question: str) -> tuple[str, list[dict], float, list[str]]:
+    """Return (answer, sources, confidence, follow_ups) based on keyword matching."""
+
+    q = question
+
+    # Pattern 1: cardiac / heart failure / cardiac failure / HER2
+    if re.search(r"cardiac|heart\s*failure|cardiac\s*failure|HER2", q, re.IGNORECASE):
+        answer = (
+            "The cardiac failure cluster (SIG-2026-001, 14 cases) has high biological "
+            "plausibility for an off-target HER2/ErbB2 mechanism. Prosinertimib\u2019s "
+            "selectivity profile shows an IC50 of 84\u202fnM for ErbB2 \u2014 70x less potent "
+            "than its EGFR binding (1.2\u202fnM), but potentially clinically relevant at "
+            "steady-state therapeutic concentrations.\n\n"
+            "The proposed mechanism: EGFR/HER2 heterodimerization in cardiomyocytes "
+            "activates neuregulin-1 (NRG-1) signaling through the PI3K/Akt survival "
+            "pathway. Inhibition of this pathway impairs the heart\u2019s stress-response "
+            "cardioprotection, potentially leading to myocardial dysfunction under "
+            "hemodynamic stress.\n\n"
+            "This is consistent with class precedent: lapatinib (dual EGFR/HER2 "
+            "inhibitor) shows 1.6% cardiac events; osimertinib causes QTc prolongation "
+            "and LVEF decrease of 3-4%; trastuzumab (pure HER2) causes cardiomyopathy "
+            "in 2-7% of patients.\n\n"
+            "Next steps: retrospective echocardiography analysis across PROSPER trials, "
+            "troponin T substudy in PROSPER-3, and FAERS deep-dive on cardiac events by "
+            "EGFR TKI generation."
+        )
+        sources = [
+            {"type": "knowledge_graph", "reference": "EGFR/HER2 pathway", "detail": "NRG-1 \u2192 ErbB2/ErbB4 \u2192 PI3K/Akt cardioprotection"},
+            {"type": "signal_data", "reference": "SIG-2026-001", "detail": "14 cases, 3 Grade 3+, PRR 2.34"},
+            {"type": "literature", "reference": "PMID:12015981 (Crone et al., 2002)", "detail": "ErbB2 knockout mice develop dilated cardiomyopathy"},
+            {"type": "literature", "reference": "PMID:28841389", "detail": "Osimertinib cardiac safety: QTc and LVEF data"},
+        ]
+        confidence = 0.82
+        follow_ups = [
+            "How does the cardiac risk compare to osimertinib?",
+            "What monitoring protocol is recommended?",
+            "Should we update the Risk Management Plan?",
+        ]
+        return answer, sources, confidence, follow_ups
+
+    # Pattern 2: compare.*osimertinib / osimertinib.*compare / class comparison
+    if re.search(r"compare.*osimertinib|osimertinib.*compare|class\s*comparison", q, re.IGNORECASE):
+        answer = (
+            "Prosinertimib\u2019s safety profile is broadly consistent with the "
+            "3rd-generation EGFR TKI class, with some notable differences compared "
+            "to osimertinib:\n\n"
+            "**Cardiac risk:** Osimertinib has established QTc prolongation (mean "
+            "16ms) and LVEF decrease (3-4%). Prosinertimib\u2019s cardiac signal (14 "
+            "cases, 1.7% incidence) is under active evaluation \u2014 the mechanism may "
+            "differ (heart failure vs conduction abnormality).\n\n"
+            "**ILD/Pneumonitis:** Prosinertimib 2.8% vs osimertinib 3-4%. Within "
+            "expected class range.\n\n"
+            "**Skin rash:** Prosinertimib 45% vs osimertinib 40%. Class effect "
+            "correlated with efficacy.\n\n"
+            "**Diarrhea:** Prosinertimib 42% vs osimertinib 48%. Lower rate may "
+            "reflect selectivity profile.\n\n"
+            "**Hepatotoxicity:** Prosinertimib 22% vs osimertinib 25%. Both within "
+            "class norms, but 3 Hy\u2019s Law cases with Prosinertimib warrant monitoring.\n\n"
+            "Overall, Prosinertimib\u2019s benefit-risk remains favorable in its approved "
+            "2L+ setting where osimertinib has already failed."
+        )
+        sources = [
+            {"type": "clinical_data", "reference": "PROSPER-1 trial", "detail": "Phase III safety data, N=412"},
+            {"type": "clinical_data", "reference": "FLAURA trial (osimertinib)", "detail": "Comparator safety reference"},
+            {"type": "signal_data", "reference": "Drug class comparison", "detail": "5-drug EGFR TKI safety matrix"},
+        ]
+        confidence = 0.88
+        follow_ups = [
+            "What about the cardiac mechanism difference?",
+            "How does ILD compare across the class?",
+            "What\u2019s Prosinertimib\u2019s efficacy advantage?",
+        ]
+        return answer, sources, confidence, follow_ups
+
+    # Pattern 3: ILD / pneumonitis / interstitial lung
+    if re.search(r"ILD|pneumonitis|interstitial\s*lung", q, re.IGNORECASE):
+        answer = (
+            "ILD/pneumonitis is a well-characterized EGFR TKI class effect. "
+            "Prosinertimib\u2019s ILD rate of 2.8% (PROSPER-1) is within the expected "
+            "range for 3rd-generation agents.\n\n"
+            "The proposed mechanism (HYP-2026-002, confidence 81%): EGFR signaling "
+            "is critical for type II pneumocyte proliferation and alveolar epithelial "
+            "repair. Potent EGFR inhibition impairs the lung\u2019s ability to repair "
+            "subclinical injury, leading to progressive interstitial inflammation "
+            "and fibrosis.\n\n"
+            "Key evidence: Suzuki et al. (2003, PMID:12626338) demonstrated that "
+            "EGFR ligands promote type II pneumocyte proliferation, and EGFR "
+            "inhibition delays alveolar repair in animal models. Japanese "
+            "post-marketing surveillance data shows higher ILD rates (5-10%) in "
+            "the Japanese population, suggesting genetic susceptibility factors.\n\n"
+            "Class comparison: erlotinib 1-3%, gefitinib 1-4% (up to 10% in Japan), "
+            "afatinib 1%, osimertinib 3-4%. Prosinertimib appears to sit within the "
+            "3rd-generation range.\n\n"
+            "Monitoring: HRCT at baseline, respiratory symptom questionnaire at each "
+            "visit, immediate drug hold and pulmonology referral for any suspected ILD."
+        )
+        sources = [
+            {"type": "knowledge_graph", "reference": "EGFR/Type II pneumocyte pathway", "detail": "EGFR \u2192 alveolar repair \u2192 TGF-\u03b2 modulation"},
+            {"type": "literature", "reference": "PMID:12626338 (Suzuki et al., 2003)", "detail": "EGFR ligands promote pneumocyte proliferation"},
+            {"type": "literature", "reference": "PMID:15818571", "detail": "Japanese post-marketing ILD surveillance data"},
+            {"type": "signal_data", "reference": "SIG-2026-002", "detail": "ILD signal, 23 cases, PRR 1.89"},
+        ]
+        confidence = 0.85
+        follow_ups = [
+            "Are there genetic risk factors for ILD?",
+            "How does the ILD compare to gefitinib in Japan?",
+            "What\u2019s the ILD management protocol?",
+        ]
+        return answer, sources, confidence, follow_ups
+
+    # Pattern 4: benefit-risk / risk-benefit
+    if re.search(r"benefit.?risk|risk.?benefit", q, re.IGNORECASE):
+        answer = (
+            "The integrated benefit-risk assessment for Prosinertimib remains "
+            "**favorable** in its approved indication (2L+ EGFR-mutant NSCLC after "
+            "prior EGFR TKI).\n\n"
+            "**Benefits:**\n"
+            "\u2022 ORR 58% vs 22% with chemotherapy (PROSPER-1)\n"
+            "\u2022 Median PFS 11.2 months vs 5.4 months (HR 0.46, p<0.001)\n"
+            "\u2022 CNS response rate 42% in patients with brain metastases\n"
+            "\u2022 Addresses C797S resistance mutation \u2014 no other approved targeted therapy\n\n"
+            "**Risks:**\n"
+            "\u2022 Cardiac failure signal (1.7%, under evaluation \u2014 SIG-2026-001)\n"
+            "\u2022 ILD/pneumonitis (2.8%, within class range)\n"
+            "\u2022 Hepatotoxicity (22%, 3 Hy\u2019s Law cases \u2014 CYP3A4 interaction suspected)\n"
+            "\u2022 Class effects: rash 45%, diarrhea 42%\n\n"
+            "**Risk management:**\n"
+            "\u2022 REMS program with cardiac monitoring requirements\n"
+            "\u2022 RMP with ILD as important identified risk\n"
+            "\u2022 Hepatic monitoring protocol with CYP3A4 inhibitor contraindication\n\n"
+            "**Unmet need context:** For patients progressing on osimertinib with "
+            "C797S mutation, no approved targeted therapy exists. The alternative is "
+            "cytotoxic chemotherapy with significantly inferior outcomes. This "
+            "substantial unmet need supports a favorable benefit-risk conclusion with "
+            "appropriate risk mitigation."
+        )
+        sources = [
+            {"type": "clinical_data", "reference": "PROSPER-1 trial", "detail": "ORR 58%, mPFS 11.2 months, HR 0.46"},
+            {"type": "regulatory", "reference": "ICH E2C(R2) Section 18", "detail": "Integrated benefit-risk methodology"},
+            {"type": "signal_data", "reference": "Cumulative safety data", "detail": "N=1,247 patients exposed across development program"},
+            {"type": "knowledge_graph", "reference": "NSCLC treatment landscape", "detail": "No approved C797S-targeting therapy available"},
+        ]
+        confidence = 0.90
+        follow_ups = [
+            "What would change the benefit-risk assessment?",
+            "How does the cardiac signal affect the profile?",
+            "What are the REMS requirements?",
+        ]
+        return answer, sources, confidence, follow_ups
+
+    # Pattern 5: monitoring / protocol / what should we monitor
+    if re.search(r"monitoring|protocol|what\s+should\s+we\s+monitor", q, re.IGNORECASE):
+        answer = (
+            "Based on the current safety profile and active signals, the recommended "
+            "monitoring protocol for Prosinertimib includes:\n\n"
+            "**Cardiac (per SIG-2026-001):**\n"
+            "\u2022 Baseline ECG and echocardiography (LVEF) before treatment initiation\n"
+            "\u2022 ECG at Day 14 and monthly for first 3 months\n"
+            "\u2022 LVEF assessment at 3 and 6 months, then every 6 months\n"
+            "\u2022 Troponin monitoring if cardiac symptoms develop\n"
+            "\u2022 Hold therapy for LVEF decrease >10% from baseline or below 50%\n\n"
+            "**Pulmonary (ILD risk):**\n"
+            "\u2022 Baseline HRCT\n"
+            "\u2022 Respiratory symptom assessment at each visit\n"
+            "\u2022 Immediate drug hold for any new/worsening respiratory symptoms\n"
+            "\u2022 Urgent pulmonology referral for suspected ILD\n\n"
+            "**Hepatic (per SIG-2025-019):**\n"
+            "\u2022 LFTs at baseline, every 2 weeks for first 2 months, then monthly\n"
+            "\u2022 Contraindicate concomitant strong CYP3A4 inhibitors\n"
+            "\u2022 Hold for ALT/AST >5x ULN; discontinue for Hy\u2019s Law criteria\n\n"
+            "**Standard EGFR TKI monitoring:**\n"
+            "\u2022 Dermatologic assessment (rash management per MASCC guidelines)\n"
+            "\u2022 GI symptom management (diarrhea protocol with loperamide)\n"
+            "\u2022 Ophthalmologic referral if visual changes"
+        )
+        sources = [
+            {"type": "regulatory", "reference": "REMS protocol", "detail": "Cardiac monitoring requirements"},
+            {"type": "signal_data", "reference": "SIG-2026-001, SIG-2026-002, SIG-2025-019", "detail": "Active signals driving monitoring requirements"},
+            {"type": "clinical_data", "reference": "PROSPER-1 protocol", "detail": "Baseline and on-treatment assessment schedule"},
+        ]
+        confidence = 0.87
+        follow_ups = [
+            "What triggers a dose modification?",
+            "How does this compare to osimertinib\u2019s monitoring?",
+            "What biomarkers should we track?",
+        ]
+        return answer, sources, confidence, follow_ups
+
+    # Default fallback
+    answer = (
+        "I can help with questions about Prosinertimib\u2019s safety profile, including:\n\n"
+        "\u2022 **Signal analysis** \u2014 cardiac failure mechanism, ILD, hepatotoxicity\n"
+        "\u2022 **Class comparison** \u2014 how Prosinertimib compares to other EGFR TKIs\n"
+        "\u2022 **Benefit-risk** \u2014 current assessment with efficacy and safety data\n"
+        "\u2022 **Monitoring** \u2014 recommended protocols for active safety signals\n"
+        "\u2022 **Mechanisms** \u2014 biological pathways connecting drug action to adverse events\n\n"
+        "Try asking: \"Why might Prosinertimib cause cardiac failure?\" or "
+        "\"How does the cardiac risk compare to osimertinib?\""
+    )
+    sources: list[dict] = []
+    confidence = 0.5
+    follow_ups = [
+        "What is the cardiac failure mechanism?",
+        "How does Prosinertimib compare to osimertinib?",
+        "What is the current benefit-risk assessment?",
+        "What monitoring protocol is recommended?",
+    ]
+    return answer, sources, confidence, follow_ups
+
+
+# ---------------------------------------------------------------------------
+# Chat endpoint
+# ---------------------------------------------------------------------------
+
+@router.post("/chat", response_model=ChatResponse)
+async def chat(request: ChatRequest) -> ChatResponse:
+    answer, sources, confidence, follow_ups = _chat_respond(request.question)
+    return ChatResponse(
+        request_id=_make_request_id(),
+        timestamp=_now().isoformat(),
+        question=request.question,
+        answer=answer,
+        sources=[ChatSource(**s) for s in sources],
+        confidence=confidence,
+        follow_up_questions=follow_ups,
     )
