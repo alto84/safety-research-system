@@ -203,6 +203,12 @@ async def clinical_dashboard():
     return RedirectResponse(url="/static/index.html")
 
 
+@app.get("/psd", include_in_schema=False)
+async def psd_dashboard():
+    """Redirect to the Patient Safety Dashboard."""
+    return RedirectResponse(url="/static/patient_safety_dashboard.html")
+
+
 @app.get("/", include_in_schema=False)
 async def root_redirect():
     """Redirect root to clinical dashboard."""
