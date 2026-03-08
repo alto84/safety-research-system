@@ -1,7 +1,7 @@
-# 9. Therapeutic Area Head — Oncology (NSCLC/EGFR)
+# 9. Therapeutic Area Head -- Oncology (NSCLC/EGFR)
 > Parent: 2-head-ps | Cross-ref: 1-cmo, 4-signal-mgmt, 6-risk-mgmt, 7-aggregate-reporting
 
-## Role Description
+## Role
 The Therapeutic Area Head, Oncology provides medical and scientific subject matter expertise for safety evaluation of Prosinertimib, a 3rd-generation EGFR tyrosine kinase inhibitor approved for 2nd-line and subsequent therapy of EGFR-mutant non-small cell lung cancer (NSCLC). This role bridges clinical pharmacology, disease biology, and safety science. The TA Head is the internal authority on EGFR TKI class effects, the NSCLC treatment landscape, and mechanistic plausibility of safety signals. Key responsibilities include biological plausibility assessment for signal evaluation (per GVP Module IX, Section IX.I.4), clinical context for benefit-risk assessments (per ICH E2C(R2) Sections 17-18), and advisory input on risk management measures (per GVP Module V).
 
 ## Regulatory Grounding

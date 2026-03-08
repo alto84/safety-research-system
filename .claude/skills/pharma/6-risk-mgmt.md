@@ -29,7 +29,7 @@ Based on FAERS disproportionality analyses and meta-analyses of EGFR-TKI class (
 
 ## Sub-Processes
 
-### 1. EU RMP Authorship & Maintenance [NEEDS SUB-SKILL]
+### 1. EU RMP Authorship & Maintenance
 Author and maintain the EU RMP per GVP Module V template (Part I: Product Overview, Part II: Safety Specification, Part III: Pharmacovigilance Plan, Part IV: Plans for Post-Authorization Efficacy Studies, Part V: Risk Minimization Measures, Part VI: Summary, Part VII: Annexes). Submit RMP updates with every Type II variation, new safety concern, or at PRAC request.
 
 **RMP Update Triggers (GVP Module V, Section V.B.8):**
@@ -42,11 +42,15 @@ Author and maintain the EU RMP per GVP Module V template (Part I: Product Overvi
 - Reclassification of safety concern (IPR to IIR, or removal of MI)
 - Periodic update aligned with PBRER submission (if requested by authority)
 
+[NEEDS SUB-SKILL] EU RMP authoring and lifecycle maintenance.
+
 ### 2. Safety Specification Management
 Maintain the Safety Specification (RMP Part II) including: identified risks, potential risks, missing information, and populations not studied. Update when signals are validated, new clinical data emerges, or epidemiological study results become available. Cross-reference with CCSI/RSI.
 
-### 3. Risk Minimization Measure Design [NEEDS SUB-SKILL]
+### 3. Risk Minimization Measure Design
 For each important identified or potential risk, assess whether routine risk minimization (SmPC/PIL) is sufficient or additional measures are needed (DHPC, educational materials, controlled distribution, pregnancy prevention program). Document rationale per GVP XVI effectiveness evaluation criteria.
+
+[NEEDS SUB-SKILL] Risk minimization measure design and effectiveness evaluation.
 
 ### 4. REMS Assessment (US)
 Evaluate whether FDA REMS is required based on safety profile. If REMS is mandated: design Elements to Assure Safe Use (ETASU), draft REMS materials, define REMS assessment timeline. For Prosinertimib (EGFR inhibitor): assess need for dermatologic monitoring program and hepatotoxicity risk communication.
@@ -98,6 +102,7 @@ Reports to: 2-head-ps (Head of Patient Safety / Pharmacovigilance)
 Escalate if: new important identified risk requiring additional RMM, PRAC-imposed PASS, REMS modification request from FDA
 
 ## References
-- See references/gvp_module_summaries.md (Modules V, XVI)
-- See references/ich_fda_summaries.md (E2E, FDA REMS)
-- See references/literature_review.md (Section 6: Benefit-Risk Frameworks, Section 7: EGFR Inhibitor Safety)
+
+- references/gvp_module_summaries.md -- GVP Modules V, XVI
+- references/ich_fda_summaries.md -- ICH E2E; FDA REMS
+- references/literature_review.md -- Section 6: Benefit-Risk Frameworks, Section 7: EGFR Inhibitor Safety

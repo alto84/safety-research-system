@@ -16,7 +16,7 @@ Owns the pharmacovigilance quality management system (PV QMS) for the Patient Sa
 ## Sub-Processes
 
 ### 1. SOP & Work Instruction Management
-Maintain the PV SOP library (12-15 SOPs for single-product company). Each SOP must have: designated owner (from the relevant function — e.g., signal detection SOP owned by 4-signal-mgmt), review cycle (every 2 years per GVP Module I, Section I.B.9, or upon regulatory change), version control, training record linkage, and effective date. Key SOPs:
+Maintain the PV SOP library (12-15 SOPs for single-product company). Each SOP must have: designated owner (from the relevant function -- e.g., signal detection SOP owned by 4-signal-mgmt), review cycle (every 2 years per GVP Module I, Section I.B.9, or upon regulatory change), version control, training record linkage, and effective date. Key SOPs:
 - PV-SOP-001: ICSR intake & triage (owner: 5-pv-ops)
 - PV-SOP-002: Expedited safety reporting (owner: 5-pv-ops)
 - PV-SOP-003: Signal management (owner: 4-signal-mgmt)
@@ -32,7 +32,7 @@ Maintain the PV SOP library (12-15 SOPs for single-product company). Each SOP mu
 
 Note: The Head of PS (2-head-ps) approves all SOPs; this role manages the SOP lifecycle process.
 
-### 2. CAPA Management [NEEDS SUB-SKILL]
+### 2. CAPA Management
 Manage the PV CAPA system per ICH Q10 principles: identification (from audits, deviations, inspections, complaints), root cause analysis, corrective action implementation, effectiveness check (30-90 days post-implementation), and closure. Track CAPA aging (target: close within 90 days per GVP Module I). Escalate overdue CAPAs (>120 days) to Head of PV. Current tracker: 7 open CAPAs.
 
 **Root Cause Analysis Methodology:**
@@ -44,7 +44,9 @@ Manage the PV CAPA system per ICH Q10 principles: identification (from audits, d
 
 CAPA workflow: (1) Identify deviation and classify severity, (2) Document immediate containment action, (3) Perform root cause analysis (5-Why minimum; Ishikawa mandatory for critical/major), (4) Define corrective action with owner and due date, (5) Implement, (6) Effectiveness check at 30-90 days post-implementation, (7) Close with documented evidence of sustained correction.
 
-Common CAPA triggers (from GVP inspection findings — see references/literature_review.md):
+[NEEDS SUB-SKILL] CAPA management lifecycle and root cause analysis procedures.
+
+Common CAPA triggers (from GVP inspection findings -- see references/literature_review.md):
 - Late expedited report submissions
 - Incomplete ICSR data elements
 - Missing or inadequate medical review documentation
@@ -110,7 +112,7 @@ Qualify and oversee PV service providers per GVP Module I, Section I.C.1 (MAH re
 Conduct quarterly business reviews. Annual on-site audits for SafetyFirst Ltd and MedSearch Global. Maintain vendor CAPA tracker.
 
 ### 7. Inspection Readiness & Response
-Maintain perpetual inspection readiness for GVP inspections (EMA per GVP Module III), MHRA pharmacovigilance inspections, and FDA 314.80 compliance inspections. **Common GVP Inspection Findings — Ranked (EMA/MHRA 2018-2023, literature_review.md Section 5):**
+Maintain perpetual inspection readiness for GVP inspections (EMA per GVP Module III), MHRA pharmacovigilance inspections, and FDA 314.80 compliance inspections. **Common GVP Inspection Findings -- Ranked (EMA/MHRA 2018-2023, literature_review.md Section 5):**
 
 | Rank | Finding Category | Typical Deficiencies |
 |------|-----------------|---------------------|
@@ -142,7 +144,7 @@ Present quarterly PV quality review to Head of PV (2-head-ps) and senior managem
 - SOP currency rate (% of SOPs within review cycle)
 - CAPA closure rate within 90 days (target: >90%)
 - Training compliance rate (target: >95%)
-- Expedited reporting compliance rate (15-day / 7-day) — sourced from 5-pv-ops
+- Expedited reporting compliance rate (15-day / 7-day) -- sourced from 5-pv-ops
 - Internal audit finding closure rate
 - Inspection readiness score (self-assessment, quarterly)
 - Vendor KPI adherence rates
@@ -161,7 +163,8 @@ Reports to: 2-head-ps (Head of Patient Safety / Pharmacovigilance)
 Escalate if: critical audit finding, inspection notification received, systemic compliance failure (e.g., expedited reporting rate <90%), CAPA requiring process redesign, vendor performance critically below KPIs
 
 ## References
-- See references/gvp_module_summaries.md (Modules I, II, III)
-- See references/ich_fda_summaries.md (21 CFR 314.80, Part 11)
-- See references/literature_review.md (Section 5: PV Quality Systems, Common Inspection Findings)
-- See references/operational_improvement_plan.md (CRO oversight KPI framework)
+
+- references/gvp_module_summaries.md -- GVP Modules I, II, III
+- references/ich_fda_summaries.md -- 21 CFR 314.80, Part 11
+- references/literature_review.md -- Section 5: PV Quality Systems, Common Inspection Findings
+- references/operational_improvement_plan.md -- CRO oversight KPI framework

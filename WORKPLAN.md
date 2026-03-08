@@ -4,7 +4,7 @@
 **Goal**: Updated architecture visualization + knowledge graph pathway visualization
 - Update System Architecture tab with richer interactive dependency graph
 - New "Knowledge Graph" tab (Tab 16) showing:
-  - Interactive signaling pathway diagrams (CRS IL-6 cascade, ICANS BBB disruption, HLH)
+  - Interactive signaling pathway diagrams (CRS IL-6 cascade, ICANS BBB disruption, IEC-HS)
   - Molecular target network with intervention points
   - Mechanism chains from therapy → AE with branching
   - Cell type interaction maps

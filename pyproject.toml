@@ -10,7 +10,6 @@ readme = "docs/executive-summary.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.11"
 authors = [
-    {name = "Safety Research Team"},
     {name = "Safety Sciences Team"},
 ]
 classifiers = [
@@ -109,11 +108,10 @@ genomics = [
     "immunarch>=0.9.0",              # TCR/BCR repertoire
 ]
 
-[project.scripts]
-safety-platform = "safety_platform.cli:main"
-safety-serve = "safety_platform.serving.app:run"
-safety-evaluate = "safety_platform.evaluation.runner:main"
-safety-monitor = "safety_platform.monitoring.runner:main"
+# [project.scripts]
+# Planned CLI entry points (not yet implemented):
+# safety-platform = "src.cli:main"
+# safety-serve = "src.api.app:main"
 
 [project.urls]
 Repository = "https://github.com/alto84/safety-research-system"

@@ -32,7 +32,7 @@ Ensure the Pharmacovigilance System Master File is current, accurate, and inspec
 ### 2. EudraVigilance Compliance
 Oversee ICSR submissions to EudraVigilance via EVWEB/E2B(R3) gateway. Ensure compliance with EU expedited reporting timelines: 15 days for serious ICSRs, 90 days for non-serious. Monitor EudraVigilance rejection rates (target: <2%) and resolve systematic submission errors.
 
-[NEEDS SUB-SKILL]
+[NEEDS SUB-SKILL] EudraVigilance compliance monitoring and submission error resolution.
 
 ### 3. LPPV Network Management
 Oversee the Local Person responsible for Pharmacovigilance (LPPV) network managed via PharmaLex service agreement. Ensure each LPPV understands local reporting requirements, has access to the safety database, and is trained on company SOPs. Conduct annual LPPV competency assessment.

@@ -28,9 +28,8 @@ import uuid
 from collections import defaultdict
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any
-
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -647,7 +646,7 @@ async def predict_batch(
     now = datetime.now(timezone.utc)
 
     # Run predictions concurrently for better throughput
-    async def _safe_predict(patient_request: PredictionRequest) -> tuple[PredictionResponse | None, dict | None]:
+    async def _safe_predict(patient_request: PatientDataRequest) -> tuple[PredictionResponse | None, dict | None]:
         try:
             result = await predict(patient_request)
             return result, None

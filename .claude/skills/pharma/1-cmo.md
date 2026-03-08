@@ -1,7 +1,7 @@
-# 1. Chief Medical Officer — Safety Oversight
+# 1. Chief Medical Officer -- Safety Oversight
 > Parent: Board/CEO | Children: 2-head-ps | Cross-ref: 3-qppv (independence assurance)
 
-## Role Summary
+## Role
 
 The Chief Medical Officer (CMO) holds ultimate accountability for patient safety within the organization, second only to the CEO/Board. The CMO provides strategic medical oversight of all pharmacovigilance activities, chairs the highest-level safety governance body (Safety Review Committee), and serves as the final decision-maker for benefit-risk determinations that affect patients. The CMO ensures the Patient Safety function operates with adequate independence, resources, and regulatory compliance per ICH E2E, GVP Module I, and 21 CFR 314.80/312.32.
 
@@ -24,7 +24,7 @@ The CMO receives escalated safety issues from the Head of Patient Safety and QPP
 - Escalate to regulators: per timelines above; coordinate with QPPV for EU (see 3-qppv, Sub-process 4) and Regulatory Affairs for FDA
 - Escalate to SRC (ad hoc): any validated signal classified HIGH priority (see 4-signal-mgmt, Sub-process d)
 
-[NEEDS SUB-SKILL] -- Detailed escalation triage algorithm with decision tree and timeline requirements per region (FDA 15-day/7-day, EMA urgent safety restriction, PMDA).
+[NEEDS SUB-SKILL] Detailed escalation triage algorithm with decision tree and timeline requirements per region (FDA 15-day/7-day, EMA urgent safety restriction, PMDA).
 
 ### 2. Benefit-Risk Decision-Making
 
@@ -32,7 +32,7 @@ The CMO is the final internal decision-maker on benefit-risk conclusions that wi
 
 **Output:** Documented benefit-risk position statement with supporting evidence, approved by CMO, filed in PSMF and shared with Regulatory Affairs for submission.
 
-[NEEDS SUB-SKILL] -- Structured benefit-risk assessment methodology skill with PrOACT-URL/BRAT framework implementation, effects table construction, and quantitative B-R scoring.
+[NEEDS SUB-SKILL] Structured benefit-risk assessment methodology skill with PrOACT-URL/BRAT framework implementation, effects table construction, and quantitative B-R scoring.
 
 #### Benefit-Risk Assessment Framework (Merged from CMO Benefit-Risk Skill)
 
@@ -51,7 +51,7 @@ Evaluates the overall benefit-risk profile based on available clinical data, pre
 - Population context (disease severity, unmet medical need)
 - Risk mitigation measures in place
 
-**Output — Structured benefit-risk assessment using the FDA's five dimensions:**
+**Output -- Structured benefit-risk assessment using the FDA's five dimensions:**
 1. **Analysis of Condition** -- disease severity, natural history, current treatment landscape
 2. **Current Treatment Options** -- available alternatives, their benefits, risks, and limitations
 3. **Benefit** -- clinical benefit evidence with effect sizes, NNT, uncertainty bounds
@@ -73,7 +73,7 @@ The CMO leads or participates in all high-level regulatory authority interaction
 
 **Preparation requirement:** Briefing document review at least 48 hours before the meeting. Pre-meeting alignment call with Head of PS, VP Regulatory, and Product Safety Physician.
 
-[NEEDS SUB-SKILL] -- Regulatory meeting preparation checklist and response strategy framework for safety-specific interactions (FDA, EMA/PRAC, PMDA, MHRA).
+[NEEDS SUB-SKILL] Regulatory meeting preparation checklist and response strategy framework for safety-specific interactions (FDA, EMA/PRAC, PMDA, MHRA).
 
 ### 4. Governance Chairing -- Safety Review Committee
 
@@ -100,7 +100,7 @@ For any SUSAR that meets criteria for expedited reporting (21 CFR 312.32: 7 cale
 - Recommendation to modify (dose, eligibility, monitoring): convene internal review within 48 hours; implement or provide rationale for deviation within 10 business days
 - Recommendation to pause/stop: implement immediately; notify QPPV within 24 hours (see 3-qppv, Sub-process 5); file clinical hold notification if applicable per 21 CFR 312.42
 
-[NEEDS SUB-SKILL] -- DSMB recommendation response framework and IB safety update process skill.
+[NEEDS SUB-SKILL] DSMB recommendation response framework and IB safety update process skill.
 
 ### 7. Safety Communication Approval
 

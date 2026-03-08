@@ -6,13 +6,13 @@ It is **fully independent** — no proprietary data, no personal references, no 
 All data comes from published literature, public registries (ClinicalTrials.gov), and public APIs (openFDA).
 
 ## Architecture
-- **Backend:** Python 3.13 + FastAPI (single server, three route groups: patient-level, population-level, system)
+- **Backend:** Python 3.13 + FastAPI (single server, four route groups: patient-level, population-level, patient-safety/PSD, system)
 - **Frontend:** Single-page HTML dashboard in `src/api/static/index.html` (vanilla JS, no build tools, ~8400+ lines)
 - **Models:** `src/models/` — 7-model risk registry, Bayesian risk, correlated mitigation, FAERS signal detection, ensemble scoring, model validation, AE classifier (SapBERT), secondary malignancy detection
 - **Data:** `data/sle_cart_studies.py` — curated clinical data; `data/cell_therapy_registry.py` — 12 therapy types, 21 AE profiles
 - **Knowledge Graph:** `src/data/knowledge/` — 4 signaling pathways, 47 directed steps, 15 molecular targets, 9 cell types, 25 PubMed references, 9 mechanism chains
-- **Tests:** `tests/` — pytest, 2242+ tests, run with `python -m pytest tests/ -q`
-- **API:** `src/api/` — FastAPI app with 40+ endpoints, Pydantic schemas, rate-limiting middleware
+- **Tests:** `tests/` — pytest, 2293+ tests, run with `python -m pytest tests/ -q`
+- **API:** `src/api/` — FastAPI app with 71+ endpoints, Pydantic schemas, rate-limiting middleware
 - **Analysis:** `analysis/` — Publication-ready risk model analyses
 
 ## Design Principles
@@ -48,6 +48,7 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 | `ae_classifier.py` | SapBERT-based AE term classification, 13 MedDRA categories, 470 terms | `classify_ae_term()`, `embed_ae_terms()`, `get_model_status()` |
 | `secondary_malignancy.py` | FDA boxed warning tracker, 10 signals, 6 CAR-T products | `assess_secondary_malignancy_risk()`, `get_monitoring_protocol()` |
 | `temporal_signal.py` | FAERS temporal signal evolution, 6 products x 4 AE categories, regulatory milestones | `get_temporal_profile()`, `get_all_temporal_profiles()`, `get_regulatory_timeline()` |
+| `patient_safety_routes.py` | PSD (Prosinertimib) — 13 endpoints for Head of Patient Safety dashboard | org roles, signals, compliance, KPIs, AI intelligence, chat |
 
 ## Knowledge Graph (`src/data/knowledge/`)
 | Module | Content |
@@ -60,13 +61,11 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 | `graph_queries.py` | Query API: `get_pathway_for_ae()`, `get_intervention_points()`, `get_mechanism_chain()` |
 | `integration.py` | Knowledge-to-model bridge: `get_mechanistic_context()`, `get_narrative_context()` |
 
-## Dashboard (26 tabs)
-- **Patient-level (9):** Overview, Pre-Infusion, Day 1 Monitor, CRS Monitor, ICANS, IEC-HS Monitor, Hematologic, Discharge, Clinical Visit
-- **Population-level (10):** Population Risk, Mitigation Explorer, Signal Detection, Executive Summary, Clinical Safety Plan, System Architecture, Scientific Basis, Publication Analysis, Knowledge Graph, Signal Timeline
-- Therapy type selector at top (8 therapy types)
-- All charts: vanilla SVG, data from API via `fetch()`
+## Dashboards
+- **Clinical Dashboard** (`/clinical`, 26 tabs): Patient-level (9) + Population-level (10) + Pharma simulation tabs. Vanilla JS + SVG.
+- **Patient Safety Dashboard** (`/psd`, 16 sections): Head of Patient Safety view for Prosinertimib (EGFR TKI, NSCLC). Org chart, signals, compliance, KPIs, AI intelligence, chat panel.
 
-## API Endpoints (40+)
+## API Endpoints (71+)
 - Patient: `/api/v1/predict`, `/api/v1/predict/batch`, `/api/v1/scores/easix`, `/api/v1/scores/hscore`, `/api/v1/scores/car-hematotox`, `/api/v1/patient/{patient_id}/timeline`, `/api/v1/models/status`
 - Population: `/api/v1/population/risk`, `/api/v1/population/bayesian`, `/api/v1/population/mitigations`, `/api/v1/population/mitigations/strategies`, `/api/v1/population/evidence-accrual`, `/api/v1/population/trials`, `/api/v1/population/comparison`
 - Signals: `/api/v1/signals/faers`, `/api/v1/signals/secondary-malignancy`, `/api/v1/signals/secondary-malignancy/monitoring-protocol`, `/api/v1/signals/secondary-malignancy/{product_name}`, `/api/v1/signals/temporal-evolution`, `/api/v1/signals/temporal-evolution/{product_name}`, `/api/v1/signals/regulatory-timeline`
@@ -75,6 +74,7 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 - Knowledge: `/api/v1/knowledge/pathways`, `/api/v1/knowledge/pathways/{pathway_id}`, `/api/v1/knowledge/mechanisms`, `/api/v1/knowledge/targets`, `/api/v1/knowledge/cells`, `/api/v1/knowledge/references`, `/api/v1/knowledge/overview`, `/api/v1/knowledge/graph`
 - Publication: `/api/v1/publication/analysis`, `/api/v1/publication/figures/{figure_name}`
 - Narratives: `/api/v1/narratives/generate`, `/api/v1/narratives/patient/{patient_id}/briefing`
+- PSD: `/api/v1/psd/overview`, `/api/v1/psd/org-roles`, `/api/v1/psd/signal-portfolio`, `/api/v1/psd/regulatory-compliance`, `/api/v1/psd/risk-actions`, `/api/v1/psd/meeting-tracker`, `/api/v1/psd/kpis`, `/api/v1/psd/inspection-readiness`, `/api/v1/psd/resource-budget`, `/api/v1/psd/product-lifecycle`, `/api/v1/psd/vendor-oversight`, `/api/v1/psd/ai-intelligence`, `POST /api/v1/psd/chat`
 - System: `/api/v1/system/architecture`, `/api/v1/therapies`, `/api/v1/health`
 
 ## Claude AI Integration (see `docs/claude-integration-options.md`)
@@ -121,8 +121,8 @@ Five integration paths planned:
 - **Branch:** master
 - Push from Rocinante (has credentials). gpuserver1 pulls.
 - **gpuserver1:** `ssh alton@192.168.1.100` — RTX 5090, 128GB RAM, runs tests, heavy computation
-- **Server:** `python run_server.py` → http://localhost:8000/clinical
-- Commit and push frequently. Document state in SESSION-STATE.md.
+- **Server:** `python run_server.py` or `start.bat` → http://localhost:8000 (Clinical: `/clinical`, PSD: `/psd`)
+- Commit and push frequently.
 
 ## Pharma Company Simulation (CEO Mission)
 
@@ -137,6 +137,7 @@ CEO
 │   ├── VP Clinical Operations
 │   ├── VP Medical Affairs
 │   ├── Head of Patient Safety / Pharmacovigilance
+│   ├── Therapeutic Area Head, Oncology (NSCLC/EGFR)
 │   ├── VP Regulatory Affairs
 │   ├── Head of Biostatistics
 │   └── Head of Clinical Development

@@ -533,8 +533,8 @@ def kaplan_meier(data: dict[str, Any]) -> dict[str, Any]:
         # At-risk recomputed per event time: O(n) per distinct time, giving
         # O(n*k) total where k = number of distinct event times.  Acceptable
         # for current dataset sizes (n < 1000).
-        # TODO: Optimise for larger datasets by maintaining a running at-risk
-        # count decremented at each step, achieving O(n log n) overall.
+        # NOTE: Could be optimised to O(n log n) with a running at-risk count,
+        # but current O(n*k) is fine for dataset sizes under ~1000 records.
         at_risk = sum(1 for ti, _ in records if ti >= t)
         events_at_t = sum(1 for ti, ei in records if ti == t and ei)
 

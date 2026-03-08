@@ -15,7 +15,7 @@ Owns the day-to-day ICSR case processing pipeline for Prosinertimib: intake from
 
 ## Sub-Processes
 
-### 1. Case Intake & Triage [NEEDS SUB-SKILL]
+### 1. Case Intake & Triage
 Receive adverse event reports from all sources: clinical trial sites (via CRO/EDC), spontaneous reports (HCPs, patients, call center), literature, regulatory authorities, and solicited programs. Triage within 24 hours: confirm minimum criteria, classify as serious/non-serious, and assign regulatory clock start date (Day 0).
 
 **Day 0 Rules (GVP Module VI, Section VI.B.2):**
@@ -26,6 +26,8 @@ Day 0 is the date the MAH first possesses all four minimum valid ICSR criteria s
 4. A **suspected adverse reaction** (verbatim term from reporter)
 
 All four are non-negotiable for validity. If received across multiple contacts, Day 0 = date all four are available. Clock starts regardless of seriousness classification. For solicited reports (e.g., patient support programs), Day 0 = date information reaches PV-qualified personnel.
+
+[NEEDS SUB-SKILL] Case intake and triage workflow with decision tree.
 
 ### 2. Data Entry & Narrative Writing
 Enter case data into the safety database per E2B(R3) data elements. Write concise clinical narratives following the company narrative template: patient demographics, medical history, suspect product details (dose, indication, dates), event description (onset, course, outcome), relevant lab/diagnostic data, and reporter causality assessment. Target: data entry complete within 3 calendar days of receipt.
@@ -45,17 +47,23 @@ Enter case data into the safety database per E2B(R3) data elements. Write concis
 
 Null Flavor values (ASKU, MASK, NI) permitted per E2B(R3) to explain absent mandatory fields.
 
-### 3. MedDRA Coding [NEEDS SUB-SKILL]
+### 3. MedDRA Coding
 Code all adverse events using current MedDRA version at the Lowest Level Term (LLT) level; system auto-maps to PT and SOC. Apply MedDRA Points to Consider for consistent term selection. For Prosinertimib EGFR-inhibitor AEs: ensure correct coding of dermatologic toxicities (acneiform rash vs. maculopapular rash), diarrhea grading, and ILD/pneumonitis distinction.
 
-### 4. Medical Review & Causality Assessment [NEEDS SUB-SKILL]
+[NEEDS SUB-SKILL] MedDRA coding quality and consistency procedures.
+
+### 4. Medical Review & Causality Assessment
 Route all serious cases and cases of special interest to the designated medical reviewer. Medical reviewer assesses: company causality (using WHO-UMC criteria), seriousness criteria confirmation, expectedness against RSI/CCSI, and listedness against SmPC. Document medical reviewer comments and any case reclassification.
+
+[NEEDS SUB-SKILL] Medical review and causality assessment protocol.
 
 ### 5. Quality Control (QC)
 Perform QC on all cases before submission. QC checklist: narrative accuracy, MedDRA coding correctness, E2B data element completeness, regulatory timeline compliance, causality consistency, and duplicate check. Two-tier QC: 100% QC on expedited cases, statistical sampling (10-20%) on non-expedited. Track error rates by error category.
 
-### 6. Regulatory Submission [NEEDS SUB-SKILL]
-Submit ICSRs to regulatory authorities per applicable timelines: 15-day (FDA IND safety reports for unexpected serious), 15-day (EudraVigilance SUSARs), 7-day (fatal/life-threatening unexpected), 90-day (non-expedited). Transmit via FDA ESG (E2B R3) and EudraVigilance gateway (EVWEB/E2B R3). Archive submission acknowledgments.
+### 6. Regulatory Submission
+Submit ICSRs to regulatory authorities per applicable timelines: 15-day (FDA IND safety reports for unexpected serious), 15-day (EudraVigilance SUSARs), 7-day (fatal/life-threatening unexpected), 90-day (non-expedited). Transmit via FDA ESG (E2B(R3)) and EudraVigilance gateway (EVWEB/E2B(R3)). Archive submission acknowledgments.
+
+[NEEDS SUB-SKILL] Regulatory submission workflow and E2B(R3) transmission procedures.
 
 ### 7. Reconciliation & Duplicate Management
 Perform reconciliation of safety data between: safety database and clinical trial EDC, safety database and CRO case tracker, FAERS/EudraVigilance and company database. Identify and merge duplicate cases per documented duplicate detection algorithm. Report reconciliation discrepancies and resolution.
@@ -108,6 +116,7 @@ Reports to: 2-head-ps (Head of Patient Safety / Pharmacovigilance)
 Escalate if: case processing backlog exceeding 48 hours, expedited case at risk of late submission, safety database system outage, CRO performance below KPI thresholds
 
 ## References
-- See references/gvp_module_summaries.md (Module VI)
-- See references/ich_fda_summaries.md (E2B(R3), 21 CFR 312.32, 314.80)
-- See references/literature_review.md (Section 4: PV Outsourcing)
+
+- references/gvp_module_summaries.md -- GVP Module VI
+- references/ich_fda_summaries.md -- ICH E2B(R3); 21 CFR 312.32, 314.80
+- references/literature_review.md -- Section 4: PV Outsourcing

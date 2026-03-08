@@ -747,9 +747,9 @@ async def _get_total_ae_reports(adverse_event: str) -> int:
 # comprising ~10% of all FAERS reports as of Q4 2024 (~3M nausea / ~30M total).
 # The 20M fallback is a conservative lower bound.
 # Source: openFDA FAERS database quarterly snapshots (https://open.fda.gov/data/faers/).
-# TODO: Replace with direct total query (unrestricted search with limit=1 and
-# reading meta.results.total) for more reliable estimates. The NAUSEA proportion
-# may shift as reporting patterns change, especially for cell therapy products.
+# NOTE: A direct total query (unrestricted search, limit=1, read
+# meta.results.total) would be more reliable but is not currently available via
+# the openFDA API without a search parameter.  See docstring below for details.
 _FAERS_NAUSEA_MULTIPLIER: int = 10
 _FAERS_FALLBACK_TOTAL: int = 20_000_000
 

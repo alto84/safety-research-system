@@ -21,7 +21,7 @@ The Predictive Safety Platform (PSP) is an open-source, data-agnostic system for
 ### 2.1 Data Agnosticism
 The platform accepts **any structured safety data** without hardcoded assumptions about specific adverse events, treatments, or data sources. Core analytical modules operate on generic interfaces:
 
-- **Bayesian risk module:** Accepts any `(prior, events, n)` tuple — works for CRS, ICANS, ICAHS, cardiac toxicity, secondary malignancy, or any future AE type
+- **Bayesian risk module:** Accepts any `(prior, events, n)` tuple — works for CRS, ICANS, IEC-HS, cardiac toxicity, secondary malignancy, or any future AE type
 - **Mitigation module:** Accepts any `(strategy_id, relative_risk, target_aes, correlation_matrix)` — works for tocilizumab, corticosteroids, or any future intervention
 - **Signal detection:** Accepts any `(product, adverse_event, reporting_database)` — works for FAERS, EudraVigilance, VigiBase, or internal safety databases
 - **Evidence accrual:** Accepts any `(timeline_of_studies, event_counts)` — works for any trial program or pooled analysis
@@ -156,7 +156,7 @@ Every output carries:
 |---------|-------|--------|-----------|
 | CRS G3+ | Beta(0.21, 1.29) | Discounted ~14% oncology | 85% discount for lower-dose autoimmune context |
 | ICANS G3+ | Beta(0.14, 1.03) | Discounted ~12% oncology | 88% discount |
-| ICAHS | Beta(0.5, 0.5) | Jeffreys non-informative | Novel AE, no prior data |
+| IEC-HS | Beta(0.5, 0.5) | Jeffreys non-informative | Novel AE, no prior data |
 
 **Evidence accrual:** Sequential posterior updates across 7 timepoints (4 observed, 3 projected) showing CI narrowing from n=5 to n=200.
 
@@ -189,7 +189,7 @@ Where:
 | Tocilizumab | 0.45 | Strong (oncology-derived) | CRS |
 | Corticosteroids | 0.55 | Moderate (oncology-derived) | ICANS |
 | Anakinra | 0.65 | Limited (preclinical) | CRS, ICANS |
-| Dose reduction | 0.15 | Strong | CRS, ICANS, ICAHS |
+| Dose reduction | 0.15 | Strong | CRS, ICANS, IEC-HS |
 | Lymphodepletion mod | 0.85 | Limited | CRS |
 
 **Correlation matrix:**
@@ -270,7 +270,7 @@ Where:
 **Structure:** Directed graph of safety-relevant entities and relationships.
 - **Node types:** AdverseEvent, Biomarker, Pathway, Intervention, CellType, Cytokine
 - **Edge types:** causes, indicates, treats, correlates_with, part_of
-- **Key pathways:** CRS (IL-6 amplification loop), ICANS (BBB disruption), ICAHS (macrophage activation)
+- **Key pathways:** CRS (IL-6 amplification loop), ICANS (BBB disruption), IEC-HS (macrophage activation)
 
 ---
 

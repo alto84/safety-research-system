@@ -4,7 +4,7 @@
 
 For decades, drug safety has been fundamentally backward-looking. A patient experiences an adverse event. It gets reported. Patterns emerge — sometimes months or years later. Regulatory action follows. By then, patients have been harmed, programs have been delayed, and billions have been lost.
 
-Cell therapy makes this problem acute. CRS, ICANS, and HLH are not edge cases — they are the defining safety challenge. CGT trials represent 40% of all FDA clinical holds. The question is not whether immune-mediated events will occur, but *which patients*, *when*, and *how severely*.
+Cell therapy makes this problem acute. CRS, ICANS, and IEC-HS are not edge cases — they are the defining safety challenge. CGT trials represent 40% of all FDA clinical holds. The question is not whether immune-mediated events will occur, but *which patients*, *when*, and *how severely*.
 
 The Predictive Safety Platform answers that question before it's asked.
 

@@ -13,7 +13,7 @@ Cell and gene therapy (CGT) represents one of the highest-value frontiers in onc
 ### Current State
 
 - **40% of FDA clinical holds** are attributable to CGT programs, despite CGT representing a fraction of the overall clinical portfolio.
-- **Immune-mediated serious adverse events** --- cytokine release syndrome (CRS), immune effector cell-associated neurotoxicity syndrome (ICANS), and hemophagocytic lymphohistiocytosis / macrophage activation syndrome (HLH/MAS) --- are the primary drivers of regulatory holds, treatment discontinuations, and patient harm.
+- **Immune-mediated serious adverse events** -- cytokine release syndrome (CRS), immune effector cell-associated neurotoxicity syndrome (ICANS), and immune effector cell-associated hemophagocytic lymphohistiocytosis-like syndrome (IEC-HS) -- are the primary drivers of regulatory holds, treatment discontinuations, and patient harm.
 - The onset of these events is often rapid (hours to days post-infusion), with narrow intervention windows. Current pharmacovigilance approaches detect signals **after** harm has occurred.
 - A single 6-month clinical hold costs an estimated **$50-80M** in direct costs (operational, manufacturing idle time, regulatory remediation) and **$200M+** in risk-adjusted NPV erosion from delayed commercialization.
 
@@ -34,10 +34,10 @@ The Predictive Safety Platform is an AI-powered platform that predicts immune-me
 
 ### Core Capabilities
 
-1. **Multi-Modal Risk Prediction** --- Integrates clinical labs, cytokine kinetics, genomics, vitals, and manufacturing batch data into patient-level risk trajectories.
-2. **Temporal Modeling** --- Predicts not just whether an event will occur, but **when** and at what **severity grade**, enabling time-sensitive clinical decisions.
-3. **Mechanistic Interpretability** --- Model outputs are grounded in known immunological pathways (IL-6/JAK-STAT, endothelial activation, myeloid hyperactivation), enabling regulatory defensibility and clinician trust.
-4. **Continuous Learning** --- Multi-model AI architecture absorbs capability improvements from frontier models (Claude, GPT, Gemini) automatically through standardized evaluation and routing.
+1. **Multi-Modal Risk Prediction** -- Integrates clinical labs, cytokine kinetics, genomics, vitals, and manufacturing batch data into patient-level risk trajectories.
+2. **Temporal Modeling** -- Predicts not just whether an event will occur, but **when** and at what **severity grade**, enabling time-sensitive clinical decisions.
+3. **Mechanistic Interpretability** -- Model outputs are grounded in known immunological pathways (IL-6/JAK-STAT, endothelial activation, myeloid hyperactivation), enabling regulatory defensibility and clinician trust.
+4. **Continuous Learning** -- Multi-model AI architecture absorbs capability improvements from frontier models (Claude, GPT, Gemini) automatically through standardized evaluation and routing.
 
 ### Platform Architecture (Summary)
 

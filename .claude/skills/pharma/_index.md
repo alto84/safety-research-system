@@ -12,7 +12,7 @@
 │   │   └── [NEEDS SUB-SKILL] Label Impact Assessment
 │   ├── 5-pv-ops.md — Associate Director, PV Operations (ICSR Case Processing)
 │   │   └── [NEEDS SUB-SKILL] Case Intake & Triage
-│   │   └── [NEEDS SUB-SKILL] Regulatory Submission (E2B R3)
+│   │   └── [NEEDS SUB-SKILL] Regulatory Submission (E2B(R3))
 │   │   └── [NEEDS SUB-SKILL] Literature Surveillance & Case Extraction
 │   │   └── [NEEDS SUB-SKILL] MedDRA Coding & Data Entry Quality
 │   │   └── [NEEDS SUB-SKILL] Medical Review & Causality Assessment Protocol
@@ -36,7 +36,7 @@
 | 4 | 4-signal-mgmt.md | Director, Signal Management & Safety Science | 2-head-ps | -- | 3, 5, 6, 7, 8 |
 | 5 | 5-pv-ops.md | Associate Director, PV Operations | 2-head-ps | -- | 4, 7, 8 |
 | 6 | 6-risk-mgmt.md | Director, Risk Management & Epidemiology | 2-head-ps | -- | 4, 5, 7, 8 |
-| 7 | 7-aggregate-reporting.md | Associate Director, Aggregate Reporting | 2-head-ps | -- | 4, 5, 6 |
+| 7 | 7-aggregate-reporting.md | Associate Director, Aggregate Reporting | 2-head-ps | -- | 3, 4, 5, 6, 8 |
 | 8 | 8-pv-quality.md | Manager, PV Quality & Compliance | 2-head-ps | -- | 3, 4, 5, 6, 7 |
 
 ## Cross-Functional Skills (outside PV org)

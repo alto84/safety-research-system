@@ -18,7 +18,7 @@ Director, Signal Management & Safety Science. Owns the end-to-end signal managem
 
 ## Sub-Processes
 
-### a. Routine Signal Detection Screening [NEEDS SUB-SKILL]
+### a. Routine Signal Detection Screening
 Run monthly disproportionality analysis against FAERS (openFDA) and perform quarterly EVDAS eRMR review. Apply four statistical methods in parallel: PRR, ROR, EBGM (MGPS), and BCPNN (IC). Document all outputs with data lock point, run date, software version, and database vintage. Per GVP Module IX, Section IX.I.3 (Rev 1, EMA/827661/2011), signal detection must be performed at defined intervals with pre-specified methods and documented thresholds.
 
 **Screening frequency summary:**
@@ -51,11 +51,15 @@ Run monthly disproportionality analysis against FAERS (openFDA) and perform quar
 
 **Cross-references:** Validated signals feed into: benefit-risk assessment (see 1-cmo, Sub-process 2), RMP updates (see 6-risk-mgmt), PBRER Section 16.3 (see 7-aggregate-reporting), and QPPV notification (see 3-qppv, Sub-process 5).
 
+[NEEDS SUB-SKILL] Routine signal detection screening automation and workflow.
+
 ### b. Signal Validation
 For each statistical signal or clinical concern flagged by any source, assemble a signal validation package within 15 business days. The validation assessment must include: (1) biological plausibility based on EGFR mechanism and known pharmacology, (2) temporal relationship analysis (time-to-onset distribution), (3) dose-response evaluation from clinical trial dose-finding data, (4) dechallenge/rechallenge evidence, (5) comparator drug context (osimertinib, erlotinib, gefitinib class data), and (6) confounding factor assessment. Classify as validated signal, refuted signal, or under evaluation per GVP IX.I.4 criteria. A signal is validated when clinical review confirms a new causal association or a new aspect of a known association (per GVP Module IX, Section IX.I.4, three evaluation elements: previous awareness, strength of evidence, clinical relevance).
 
-### c. Signal Evaluation (Full Clinical Assessment) [NEEDS SUB-SKILL]
+### c. Signal Evaluation (Full Clinical Assessment)
 For each validated signal, complete a Signal Assessment Report (SAR) within 30 calendar days of validation. The SAR must include: cumulative case review with line listing, disproportionality analysis with trend over time, clinical trial incidence comparison, mechanistic assessment referencing the knowledge graph pathways, benefit-risk impact analysis, and regulatory action recommendation. Use the CIOMS VIII framework: seriousness, frequency, preventability, reversibility, and public health impact. The SAR is the primary input to the Safety Management Team (SMT) for decision-making.
+
+[NEEDS SUB-SKILL] Signal evaluation full clinical assessment and SAR authoring.
 
 ### d. Signal Prioritization & Classification
 Assign every signal a priority level using a structured 2x2 impact-likelihood matrix:
@@ -90,8 +94,10 @@ Include the signal summary, supporting data, and proposed action in all notifica
 ### f. Signal Committee Preparation & Presentation
 Prepare the monthly Safety Management Team (SMT) meeting package including: (1) signal pipeline dashboard showing all active signals with status and priority, (2) new signals detected since last meeting with preliminary assessment, (3) signals requiring SMT decision (validation outcome, proposed action), (4) closed signals with final disposition rationale, (5) detection method performance metrics (false positive rate, detection-to-decision cycle time). The SMT comprises: Head of Patient Safety (chair), QPPV, Director Signal Management, Director Risk Management, Medical Advisor (oncology), Regulatory Affairs representative, and Biostatistician. Quorum requires QPPV + 3 members. All decisions documented in minutes with action items, owners, and due dates.
 
-### g. Label Impact Assessment [NEEDS SUB-SKILL]
+### g. Label Impact Assessment
 For each validated signal, perform a structured label impact assessment within 15 business days. Determine whether the signal warrants: (1) new addition to the product label (SmPC Section 4.4/4.8 or USPI Sections 5/6), (2) modification of existing labeling language (frequency upgrade, severity reclassification), (3) new contraindication or warning, (4) dose modification recommendation, (5) Risk Management Plan update (new important identified risk, removal of important potential risk), or (6) no label change with documented justification. Cross-reference the Company Core Safety Information (CCSI) and Company Core Data Sheet (CCDS) to ensure global consistency. Coordinate with Regulatory Affairs for variation/supplement submission timeline.
+
+[NEEDS SUB-SKILL] Label impact assessment methodology and CCSI/CCDS cross-referencing.
 
 ### h. Signal Tracking & Closure
 Maintain the signal tracking system (currently: dashboard Section 6 + API endpoint /api/v1/psd/signals) with lifecycle dates for each signal: detection date, validation date, evaluation completion date, SMT decision date, regulatory notification date (if applicable), label update effective date (if applicable), and closure date.

@@ -25,7 +25,7 @@ For each: key AEs, incidence rates, risk factors, approved products, pipeline.
 Build comprehensive AE registry across all cell therapies:
 - CRS (all grades, onset timing, duration)
 - ICANS/neurotoxicity
-- ICAHS (hemophagocytic lymphohistiocytosis-like)
+- IEC-HS (immune effector cell-associated hemophagocytic lymphohistiocytosis-like syndrome)
 - LICATS (liver toxicity)
 - Cytopenias (neutropenia, thrombocytopenia, anemia — timing, duration)
 - Infections (bacterial, viral, fungal — by time window)
@@ -178,7 +178,6 @@ Based on risk model outputs:
 
 ## Context Preservation
 - This file: `EXPANSION-PLAN.md`
-- Session state: `SESSION-STATE.md`
 - Agent instructions: `.claude/CLAUDE.md`
 - System spec: `SPECIFICATION.md`
 - All pushed to GitHub for any agent to read

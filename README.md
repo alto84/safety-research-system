@@ -2,7 +2,7 @@
 
 **Cell therapy adverse event risk estimation using public clinical data.**
 
-A working demo with a 26-tab clinical dashboard, 66 API endpoints, 7 risk models, and a knowledge graph covering 4 signaling pathways across CRS, ICANS, IEC-HS, and hematologic toxicities.
+A working demo with a 26-tab clinical dashboard, a 16-section Patient Safety Dashboard, 71 API endpoints, 7 risk models, and a knowledge graph covering 4 signaling pathways across CRS, ICANS, IEC-HS, and hematologic toxicities.
 
 ---
 
@@ -15,14 +15,16 @@ A working demo with a 26-tab clinical dashboard, 66 API endpoints, 7 risk models
 git clone https://github.com/alto84/safety-research-system.git
 cd safety-research-system
 
-# 2. Install (only 5 lightweight dependencies)
-pip install fastapi uvicorn[standard] pydantic httpx scipy
+# 2. Install (only 4 lightweight dependencies)
+pip install -r requirements-server.txt
 
-# 3. Run
-python run_server.py
+# 3. Run (auto-opens browser)
+python run_server.py --open
 ```
 
-Open **http://localhost:8000/clinical** in your browser. Done.
+Or use the one-liner: `start.bat` (Windows) / `./start.sh` (Linux/Mac).
+
+Open **http://localhost:8000/psd** for the Patient Safety Dashboard, or **/clinical** for the Clinical Dashboard.
 
 ---
 
@@ -70,11 +72,11 @@ Open **http://localhost:8000/clinical** in your browser. Done.
 | Quality Metrics | GxP compliance, CAPA tracking, audit readiness |
 | Simulation | Agent team simulation runner |
 
-### Patient Safety Dashboard (15 sections)
+### Patient Safety Dashboard (16 sections)
 
-A separate dashboard at **/api/v1/psd/overview** with 15 sections covering US/EU regulatory compliance, ICH guidelines, ICSR management, signal detection, aggregate reporting, risk management, quality systems, clinical trial safety, benefit-risk assessment, technology landscape, KPIs, geographic expansion, and implementation roadmap.
+A dedicated dashboard at **/psd** for the Head of Patient Safety role. 16 sections covering organizational structure, signal portfolio, regulatory compliance, risk actions, meeting cadence, KPIs, inspection readiness, resource planning, product lifecycle, vendor oversight, AI safety intelligence (6-stage pipeline, mechanistic hypotheses, drug class comparison), and an AI chat panel.
 
-### API (66 endpoints)
+### API (71 endpoints)
 
 Full Swagger docs at **http://localhost:8000/docs**
 
@@ -119,11 +121,11 @@ curl http://localhost:8000/api/v1/signals/temporal-evolution
 # Install test runner
 pip install pytest pytest-cov
 
-# Run all 2279 tests
+# Run all 2293 tests
 python -m pytest tests/ -q
 ```
 
-Expected output: `2279 passed in ~30-60s` (depending on hardware).
+Expected output: `2293 passed in ~30-60s` (depending on hardware).
 
 ---
 
@@ -131,18 +133,20 @@ Expected output: `2279 passed in ~30-60s` (depending on hardware).
 
 ```
 safety-research-system/
-├── run_server.py                 # Start here
+├── run_server.py                 # Start here (port detection, --open flag)
+├── start.bat / start.sh          # One-command quick start
+├── requirements-server.txt       # Minimal 4-dependency install
 ├── src/
 │   ├── api/
 │   │   ├── app.py                # FastAPI application, patient-level endpoints
 │   │   ├── population_routes.py  # Population, CDP, knowledge, signal, publication, narrative endpoints
-│   │   ├── patient_safety_routes.py  # Patient safety dashboard endpoints (15 sections)
+│   │   ├── patient_safety_routes.py  # Patient safety dashboard endpoints (16 sections)
 │   │   ├── schemas.py            # Pydantic request/response models
 │   │   ├── middleware.py         # Request timing, rate limiting, error handling
 │   │   ├── narrative_engine.py   # Clinical narrative generation
 │   │   └── static/
 │   │       ├── index.html        # Main dashboard (single-page, vanilla JS, 26 tabs)
-│   │       └── patient_safety_dashboard.html  # PV/safety dashboard (15 sections)
+│   │       └── patient_safety_dashboard.html  # PV/safety dashboard (16 sections)
 │   ├── models/
 │   │   ├── bayesian_risk.py      # Beta-Binomial posteriors
 │   │   ├── mitigation_model.py   # Correlated risk reduction
@@ -218,6 +222,7 @@ python run_server.py                    # Default: 0.0.0.0:8000
 python run_server.py --port 9000        # Custom port
 python run_server.py --host 127.0.0.1   # Localhost only
 python run_server.py --reload           # Auto-reload on code changes (dev mode)
+python run_server.py --open             # Auto-open browser to PSD dashboard
 ```
 
 ---

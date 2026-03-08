@@ -31,8 +31,10 @@ Per GVP Module VII, the DLP is determined by the EURD list based on EU reference
 - MAH must track EURD list updates monthly and adjust report calendar accordingly
 - For Prosinertimib: monitor EURD list for initial entry post-authorization and any frequency changes
 
-### 2. PBRER/PSUR Authorship [NEEDS SUB-SKILL]
+### 2. PBRER/PSUR Authorship
 Author PBRER per ICH E2C(R2) template. Integrate RMP safety specification, signal tracking outputs, and clinical study data. For Prosinertimib: current DIBD is 2024-08-15, annual reporting cycle.
+
+[NEEDS SUB-SKILL] PBRER/PSUR authoring cycle and quality review.
 
 **PBRER Section Structure (ICH E2C(R2), 19 sections + appendices):**
 
@@ -59,8 +61,10 @@ Author PBRER per ICH E2C(R2) template. Integrate RMP safety specification, signa
 | 19 | Conclusions and Actions |
 | -- | Appendices (line listings, detailed analyses) |
 
-### 3. DSUR Authorship [NEEDS SUB-SKILL]
+### 3. DSUR Authorship
 Author DSUR per ICH E2F template for each active IND/CTA. Align DIBD across all Prosinertimib protocols (PROSPER-1, -2, -3). Submission deadline: within 60 days of DIBD anniversary (DLP).
+
+[NEEDS SUB-SKILL] DSUR authoring cycle and cross-protocol data integration.
 
 **DSUR Section Structure (ICH E2F, 18 sections + front matter):**
 
@@ -131,5 +135,6 @@ Reports to: 2-head-ps (Head of Patient Safety / Pharmacovigilance)
 Escalate if: report submission delay risk (>5 business days behind schedule), significant new safety finding identified during authoring, HA query requiring urgent response
 
 ## References
-- See references/ich_fda_summaries.md (E2C(R2), E2F, 21 CFR 312.33, 314.80)
-- See references/gvp_module_summaries.md (Module VII)
+
+- references/gvp_module_summaries.md -- GVP Module VII
+- references/ich_fda_summaries.md -- ICH E2C(R2), E2F; 21 CFR 312.33, 314.80

@@ -3,7 +3,7 @@
 
 **Version:** 1.0.0
 **Date:** 2026-02-07
-**Purpose:** Comprehensive inventory of publicly available databases, APIs, and data resources for building a predictive safety system for CRS, ICANS, and IEC-HS/HLH in cell therapy.
+**Purpose:** Comprehensive inventory of publicly available databases, APIs, and data resources for building a predictive safety system for CRS, ICANS, and IEC-HS in cell therapy.
 
 ---
 
