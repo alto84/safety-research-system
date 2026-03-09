@@ -11,8 +11,8 @@ All data comes from published literature, public registries (ClinicalTrials.gov)
 - **Models:** `src/models/` — 7-model risk registry, Bayesian risk, correlated mitigation, FAERS signal detection, ensemble scoring, model validation, AE classifier (SapBERT), secondary malignancy detection
 - **Data:** `data/sle_cart_studies.py` — curated clinical data; `data/cell_therapy_registry.py` — 12 therapy types, 21 AE profiles
 - **Knowledge Graph:** `src/data/knowledge/` — 4 signaling pathways, 47 directed steps, 15 molecular targets, 9 cell types, 25 PubMed references, 9 mechanism chains
-- **Tests:** `tests/` — pytest, 2293+ tests, run with `python -m pytest tests/ -q`
-- **API:** `src/api/` — FastAPI app with 71+ endpoints, Pydantic schemas, rate-limiting middleware
+- **Tests:** `tests/` — pytest, 2313+ tests, run with `python -m pytest tests/ -q`
+- **API:** `src/api/` — FastAPI app with 76+ endpoints, Pydantic schemas, rate-limiting middleware
 - **Analysis:** `analysis/` — Publication-ready risk model analyses
 
 ## Design Principles

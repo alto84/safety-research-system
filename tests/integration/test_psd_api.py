@@ -387,3 +387,150 @@ class TestPSDChat:
         data = client.post("/api/v1/psd/chat", json={"question": "cardiac"}).json()
         assert isinstance(data["follow_up_questions"], list)
         assert len(data["follow_up_questions"]) >= 2
+
+
+# ===========================================================================
+# GET /api/v1/psd/detail/{item_type}/{item_id}
+# ===========================================================================
+
+@pytest.mark.integration
+class TestPSDDetail:
+    """Tests for the PSD detail drill-down endpoint."""
+
+    # -- signal detail --
+
+    def test_detail_signal_valid(self, client):
+        resp = client.get("/api/v1/psd/detail/signal/SIG-2026-001")
+        assert resp.status_code == 200
+        data = resp.json()
+        for key in ("title", "summary", "sections", "regulatory_references", "related_items"):
+            assert key in data, f"Missing key '{key}'"
+        assert isinstance(data["sections"], list)
+        assert isinstance(data["regulatory_references"], list)
+        assert isinstance(data["related_items"], list)
+
+    def test_detail_signal_sections(self, client):
+        data = client.get("/api/v1/psd/detail/signal/SIG-2026-001").json()
+        assert len(data["sections"]) > 0
+        for section in data["sections"]:
+            assert "heading" in section
+            assert "content" in section
+            assert "detail_type" in section
+
+    # -- role detail --
+
+    def test_detail_role_head_ps(self, client):
+        resp = client.get("/api/v1/psd/detail/role/head-ps")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "Head of Patient Safety" in data["title"]
+
+    def test_detail_role_qppv(self, client):
+        resp = client.get("/api/v1/psd/detail/role/qppv")
+        assert resp.status_code == 200
+        data = resp.json()
+        refs_text = " ".join(str(r) for r in data["regulatory_references"])
+        assert "Directive 2001/83/EC" in refs_text
+
+    # -- committee detail --
+
+    def test_detail_committee_smt(self, client):
+        resp = client.get("/api/v1/psd/detail/committee/smt")
+        assert resp.status_code == 200
+
+    def test_detail_committee_dsmb(self, client):
+        resp = client.get("/api/v1/psd/detail/committee/dsmb")
+        assert resp.status_code == 200
+        data = resp.json()
+        all_text = str(data)
+        assert "FDA" in all_text or "ICH" in all_text
+
+    # -- regulation detail --
+
+    def test_detail_regulation(self, client):
+        resp = client.get("/api/v1/psd/detail/regulation/21-cfr-312-32")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "IND" in data["title"] or "312.32" in data["title"]
+
+    def test_detail_regulation_gvp(self, client):
+        resp = client.get("/api/v1/psd/detail/regulation/gvp-module-ix")
+        assert resp.status_code == 200
+
+    # -- report detail --
+
+    def test_detail_report_dsur(self, client):
+        resp = client.get("/api/v1/psd/detail/report/dsur")
+        assert resp.status_code == 200
+        data = resp.json()
+        all_text = str(data)
+        assert "ICH E2F" in all_text or "E2F" in all_text
+
+    def test_detail_report_pbrer(self, client):
+        resp = client.get("/api/v1/psd/detail/report/pbrer")
+        assert resp.status_code == 200
+        data = resp.json()
+        all_text = str(data)
+        assert "ICH E2C" in all_text or "E2C" in all_text
+
+    # -- risk detail --
+
+    def test_detail_risk_ild(self, client):
+        resp = client.get("/api/v1/psd/detail/risk/ild")
+        assert resp.status_code == 200
+        data = resp.json()
+        sections_text = " ".join(str(s) for s in data["sections"])
+        assert "EGFR" in sections_text or "TKI" in sections_text
+
+    def test_detail_risk_hepatotox(self, client):
+        resp = client.get("/api/v1/psd/detail/risk/hepatotox")
+        assert resp.status_code == 200
+
+    # -- kpi detail --
+
+    def test_detail_kpi(self, client):
+        resp = client.get("/api/v1/psd/detail/kpi/case-processing-time")
+        assert resp.status_code == 200
+
+    # -- drug_class detail --
+
+    def test_detail_drug_class(self, client):
+        resp = client.get("/api/v1/psd/detail/drug_class/egfr-tki")
+        assert resp.status_code == 200
+        data = resp.json()
+        all_text = str(data).lower()
+        assert "osimertinib" in all_text
+
+    # -- market detail --
+
+    def test_detail_market_us(self, client):
+        resp = client.get("/api/v1/psd/detail/market/us")
+        assert resp.status_code == 200
+
+    def test_detail_market_eu(self, client):
+        resp = client.get("/api/v1/psd/detail/market/eu")
+        assert resp.status_code == 200
+
+    # -- error cases --
+
+    def test_detail_invalid_type(self, client):
+        resp = client.get("/api/v1/psd/detail/invalid_type/foo")
+        assert resp.status_code == 404
+
+    def test_detail_invalid_id(self, client):
+        resp = client.get("/api/v1/psd/detail/signal/NONEXISTENT")
+        assert resp.status_code == 404
+
+    # -- cross-references & metadata --
+
+    def test_detail_cross_references(self, client):
+        data = client.get("/api/v1/psd/detail/signal/SIG-2026-001").json()
+        assert len(data["related_items"]) > 0
+        for item in data["related_items"]:
+            assert "item_type" in item
+            assert "item_id" in item
+            assert "label" in item
+
+    def test_detail_has_request_id(self, client):
+        data = client.get("/api/v1/psd/detail/signal/SIG-2026-001").json()
+        _assert_common(data)

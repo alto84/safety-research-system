@@ -1076,6 +1076,297 @@ a:hover { text-decoration: underline; }
   border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;
   font-size: 13px; color: var(--text-secondary); font-style: italic;
 }
+
+/* ============================================================
+   DEEPENING PANELS — Expandable detail overlays
+   ============================================================ */
+.deep-trigger {
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition);
+}
+.deep-trigger:hover {
+  background: var(--surface-hover);
+  border-radius: 4px;
+}
+.deep-trigger::after {
+  content: '\25B8';  /* right-pointing triangle */
+  font-size: 10px;
+  color: var(--primary);
+  margin-left: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.deep-trigger:hover::after {
+  opacity: 1;
+}
+
+/* The slide-out detail panel */
+.deep-panel {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(680px, 90vw);
+  height: 100vh;
+  background: var(--surface);
+  border-left: 3px solid var(--primary);
+  box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+  z-index: 2000;
+  overflow-y: auto;
+  animation: slideInRight 0.25s ease-out;
+  padding: 0;
+}
+.deep-panel.active {
+  display: block;
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.deep-panel-header {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1;
+}
+.deep-panel-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+.deep-panel-close {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+.deep-panel-close:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.deep-panel-body {
+  padding: 24px;
+}
+.deep-panel-summary {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--info-light);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--info);
+}
+
+.deep-section {
+  margin-bottom: 24px;
+}
+.deep-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.deep-section-content {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.deep-section-content ul {
+  list-style: none;
+  padding: 0;
+}
+.deep-section-content ul li {
+  padding: 6px 0 6px 20px;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.deep-section-content ul li:last-child {
+  border-bottom: none;
+}
+.deep-section-content ul li::before {
+  content: '\25AA';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+}
+
+/* Key-value pairs layout */
+.deep-kv {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 8px 16px;
+  font-size: 13px;
+}
+.deep-kv-key {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.deep-kv-val {
+  color: var(--text);
+}
+
+/* Regulatory references */
+.deep-ref {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--surface-hover);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.deep-ref-source {
+  font-weight: 700;
+  color: var(--primary);
+  white-space: nowrap;
+  min-width: 80px;
+}
+.deep-ref-citation {
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Related items / cross-links */
+.deep-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.deep-related-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.deep-related-chip:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* Timeline layout for detail sections */
+.deep-timeline {
+  position: relative;
+  padding-left: 24px;
+}
+.deep-timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+.deep-timeline-item {
+  position: relative;
+  padding: 8px 0 16px 16px;
+  font-size: 13px;
+}
+.deep-timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 12px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--surface);
+}
+.deep-timeline-date {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+/* Table inside detail panel */
+.deep-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.deep-table th {
+  background: var(--surface-hover);
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.deep-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.deep-table tr:hover td {
+  background: var(--surface-hover);
+}
+
+/* Overlay behind panel */
+.deep-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 1999;
+}
+.deep-overlay.active {
+  display: block;
+}
+
+/* Loading state */
+.deep-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+.deep-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>
 </head>
 <body>
@@ -1089,7 +1380,7 @@ a:hover { text-decoration: underline; }
       <div class="logo-icon">PS</div>
       Head of Patient Safety Dashboard
     </div>
-    <span class="psd-header-subtitle">Prosinertimib (PSN-4427) &bull; EGFR TKI &bull; Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitor &bull; NSCLC</span>
+    <span class="psd-header-subtitle">Prosinertimib (PSN-4427) &bull; <span class="deep-trigger" onclick="openDeepPanel('drug_class','egfr-tki')">EGFR TKI</span> &bull; Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitor &bull; NSCLC</span>
   </div>
   <div class="psd-header-right">
     <a href="/clinical" class="psd-back-link">&#8592; Back to Clinical Dashboard</a>
@@ -1240,7 +1531,7 @@ a:hover { text-decoration: underline; }
             </div>
             <div class="org-connector"></div>
             <!-- Head of Patient Safety -->
-            <div class="org-node org-head">
+            <div class="org-node org-head deep-trigger" onclick="openDeepPanel('role','head-ps')">
               <div class="org-name">Head of Patient Safety / Pharmacovigilance</div>
               <div class="org-title">Global safety lead</div>
               <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">&#9733; Product Safety Physician &mdash; Prosinertimib</div>
@@ -1250,49 +1541,49 @@ a:hover { text-decoration: underline; }
             <div class="org-branch">
               <div class="org-branch-item">
                 <div class="org-connector"></div>
-                <div class="org-node" style="border-style:dashed; border-color:var(--primary);">
+                <div class="org-node deep-trigger" style="border-style:dashed; border-color:var(--primary);" onclick="openDeepPanel('role','qppv')">
                   <div class="org-name">QPPV (EU)</div>
                   <div class="org-title">Qualified Person for Pharmacovigilance (dotted-line to CMO)</div>
                 </div>
               </div>
               <div class="org-branch-item">
                 <div class="org-connector"></div>
-                <div class="org-node">
+                <div class="org-node deep-trigger" onclick="openDeepPanel('role','signal-director')">
                   <div class="org-name">Director, Signal Management &amp; Safety Science</div>
                   <div class="org-title">Signal detection, validation, benefit-risk</div>
                 </div>
               </div>
               <div class="org-branch-item">
                 <div class="org-connector"></div>
-                <div class="org-node">
+                <div class="org-node deep-trigger" onclick="openDeepPanel('role','pv-ops-director')">
                   <div class="org-name">Associate Director, PV Operations</div>
                   <div class="org-title">ICSR processing, CRO oversight, medical review</div>
                 </div>
               </div>
               <div class="org-branch-item">
                 <div class="org-connector"></div>
-                <div class="org-node">
+                <div class="org-node deep-trigger" onclick="openDeepPanel('role','risk-director')">
                   <div class="org-name">Director, Risk Management &amp; Epidemiology</div>
                   <div class="org-title">EU RMP, REMS, epi studies</div>
                 </div>
               </div>
               <div class="org-branch-item">
                 <div class="org-connector"></div>
-                <div class="org-node">
+                <div class="org-node deep-trigger" onclick="openDeepPanel('role','agg-reporting-director')">
                   <div class="org-name">Associate Director, Aggregate Reporting</div>
                   <div class="org-title">PBRER/PSUR, DSUR, PADER</div>
                 </div>
               </div>
               <div class="org-branch-item">
                 <div class="org-connector"></div>
-                <div class="org-node">
+                <div class="org-node deep-trigger" onclick="openDeepPanel('role','pv-quality-manager')">
                   <div class="org-name">Manager, PV Quality &amp; Compliance</div>
                   <div class="org-title">SOPs, CAPA, training, audits, PSMF</div>
                 </div>
               </div>
               <div class="org-branch-item">
                 <div class="org-connector"></div>
-                <div class="org-node" style="border-left:3px solid var(--teal);">
+                <div class="org-node deep-trigger" style="border-left:3px solid var(--teal);" onclick="openDeepPanel('role','ta-head')">
                   <div class="org-name">Therapeutic Area Head, Oncology</div>
                   <div class="org-title">NSCLC/EGFR medical expertise, mechanistic plausibility, drug class intelligence</div>
                 </div>
@@ -1323,7 +1614,7 @@ a:hover { text-decoration: underline; }
             </thead>
             <tbody>
               <tr>
-                <td><strong>Safety Management Team (SMT)</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('committee','smt')"><strong>Safety Management Team (SMT)</strong></td>
                 <td>Monthly</td>
                 <td>Head of Patient Safety</td>
                 <td>QPPV, Dir. Signal Mgmt &amp; Safety Science, AD PV Operations, Dir. Risk Mgmt &amp; Epi, AD Aggregate Reporting, Mgr PV Quality &amp; Compliance, Regulatory Affairs liaison</td>
@@ -1332,7 +1623,7 @@ a:hover { text-decoration: underline; }
                 <td><span class="badge badge-success">On Track</span></td>
               </tr>
               <tr>
-                <td><strong>Safety Review Committee (SRC)</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('committee','src')"><strong>Safety Review Committee (SRC)</strong></td>
                 <td>Quarterly</td>
                 <td>Chief Medical Officer (CMO)</td>
                 <td>Head of PS, QPPV, VP Regulatory, VP Clinical Ops, Medical Affairs, Biostatistics</td>
@@ -1341,7 +1632,7 @@ a:hover { text-decoration: underline; }
                 <td><span class="badge badge-success">On Track</span></td>
               </tr>
               <tr>
-                <td><strong>Risk Management Committee (RMC)</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('committee','rmc')"><strong>Risk Management Committee (RMC)</strong></td>
                 <td>Quarterly</td>
                 <td>Director, Risk Management &amp; Epidemiology</td>
                 <td>CMO, QPPV, Safety Science, Regulatory, Clinical, Medical Affairs, Quality</td>
@@ -1350,7 +1641,7 @@ a:hover { text-decoration: underline; }
                 <td><span class="badge badge-success">On Track</span></td>
               </tr>
               <tr>
-                <td><strong>Data Safety Monitoring Board (DSMB)</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('committee','dsmb')"><strong>Data Safety Monitoring Board (DSMB)</strong></td>
                 <td>Per protocol</td>
                 <td>External (Independent Chair)</td>
                 <td>3 independent members (statistician, clinician, ethicist)</td>
@@ -1424,7 +1715,7 @@ a:hover { text-decoration: underline; }
       <div class="grid-3 mb-16">
         <div class="stat-card">
           <div class="flex items-center justify-between mb-8">
-            <div class="stat-label">21 CFR 312.32</div>
+            <div class="stat-label deep-trigger" onclick="openDeepPanel('regulation','21-cfr-312-32')">21 CFR 312.32</div>
             <span class="badge badge-success">Compliant</span>
           </div>
           <div style="font-size:14px; font-weight:600;">IND Safety Reporting</div>
@@ -1433,7 +1724,7 @@ a:hover { text-decoration: underline; }
         </div>
         <div class="stat-card">
           <div class="flex items-center justify-between mb-8">
-            <div class="stat-label">21 CFR 314.80</div>
+            <div class="stat-label deep-trigger" onclick="openDeepPanel('regulation','21-cfr-314-80')">21 CFR 314.80</div>
             <span class="badge badge-success">Compliant</span>
           </div>
           <div style="font-size:14px; font-weight:600;">Post-Marketing Safety (NDA)</div>
@@ -1442,7 +1733,7 @@ a:hover { text-decoration: underline; }
         </div>
         <div class="stat-card">
           <div class="flex items-center justify-between mb-8">
-            <div class="stat-label">21 CFR Part 11</div>
+            <div class="stat-label deep-trigger" onclick="openDeepPanel('regulation','21-cfr-part-11')">21 CFR Part 11</div>
             <span class="badge badge-warning">Partial</span>
           </div>
           <div style="font-size:14px; font-weight:600;">Electronic Records &amp; Signatures</div>
@@ -1471,7 +1762,7 @@ a:hover { text-decoration: underline; }
             <tbody>
               <tr>
                 <td><strong>7-Day IND Alert</strong> (Fatal / Life-threatening)</td>
-                <td>21 CFR 312.32(c)(2)</td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','21-cfr-312-32')">21 CFR 312.32(c)(2)</td>
                 <td>7 calendar days</td>
                 <td>14</td>
                 <td>14</td>
@@ -1484,7 +1775,7 @@ a:hover { text-decoration: underline; }
               </tr>
               <tr>
                 <td><strong>15-Day IND Alert</strong> (Serious, unexpected, suspected)</td>
-                <td>21 CFR 312.32(c)(1)</td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','21-cfr-312-32')">21 CFR 312.32(c)(1)</td>
                 <td>15 calendar days</td>
                 <td>89</td>
                 <td>87</td>
@@ -1497,7 +1788,7 @@ a:hover { text-decoration: underline; }
               </tr>
               <tr>
                 <td><strong>15-Day Post-Marketing Alert</strong></td>
-                <td>21 CFR 314.80(c)(1)</td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','21-cfr-314-80')">21 CFR 314.80(c)(1)</td>
                 <td>15 calendar days</td>
                 <td>42</td>
                 <td>41</td>
@@ -1510,7 +1801,7 @@ a:hover { text-decoration: underline; }
               </tr>
               <tr>
                 <td><strong>IND Annual Report</strong></td>
-                <td>21 CFR 312.33</td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','21-cfr-312-33')">21 CFR 312.33</td>
                 <td>Within 60 days of anniversary</td>
                 <td>1</td>
                 <td>1</td>
@@ -1523,7 +1814,7 @@ a:hover { text-decoration: underline; }
               </tr>
               <tr>
                 <td><strong>Periodic Safety Report (NDA/BLA)</strong></td>
-                <td>21 CFR 314.80(c)(2)</td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','21-cfr-314-80')">21 CFR 314.80(c)(2)</td>
                 <td>Quarterly (Yr 1-3) / Annually</td>
                 <td>1</td>
                 <td>1</td>
@@ -1655,49 +1946,49 @@ a:hover { text-decoration: underline; }
         <div class="card-body">
           <div class="compliance-grid">
             <div class="compliance-cell">
-              <div class="cc-module">Module I</div>
+              <div class="cc-module deep-trigger" onclick="openDeepPanel('regulation','gvp-module-i')">Module I</div>
               <div class="cc-name">PV Systems &amp; Quality Systems</div>
               <span class="badge badge-success">Compliant</span>
               <div class="text-xs text-muted mt-8">Assessed 2026-01-10</div>
             </div>
             <div class="compliance-cell">
-              <div class="cc-module">Module II</div>
+              <div class="cc-module deep-trigger" onclick="openDeepPanel('regulation','gvp-module-ii')">Module II</div>
               <div class="cc-name">PSMF</div>
               <span class="badge badge-success">Compliant</span>
               <div class="text-xs text-muted mt-8">Assessed 2026-01-10</div>
             </div>
             <div class="compliance-cell">
-              <div class="cc-module">Module V</div>
+              <div class="cc-module deep-trigger" onclick="openDeepPanel('regulation','gvp-module-v')">Module V</div>
               <div class="cc-name">Risk Management Systems</div>
               <span class="badge badge-success">Compliant</span>
               <div class="text-xs text-muted mt-8">Assessed 2025-12-15</div>
             </div>
             <div class="compliance-cell">
-              <div class="cc-module">Module VI</div>
+              <div class="cc-module deep-trigger" onclick="openDeepPanel('regulation','gvp-module-vi')">Module VI</div>
               <div class="cc-name">ICSRs Collection &amp; Reporting</div>
               <span class="badge badge-success">Compliant</span>
               <div class="text-xs text-muted mt-8">Assessed 2026-01-10</div>
             </div>
             <div class="compliance-cell">
-              <div class="cc-module">Module VII</div>
+              <div class="cc-module deep-trigger" onclick="openDeepPanel('regulation','gvp-module-vii')">Module VII</div>
               <div class="cc-name">Periodic Safety Update Reports</div>
               <span class="badge badge-success">Compliant</span>
               <div class="text-xs text-muted mt-8">Assessed 2025-11-20</div>
             </div>
             <div class="compliance-cell">
-              <div class="cc-module">Module IX</div>
+              <div class="cc-module deep-trigger" onclick="openDeepPanel('regulation','gvp-module-ix')">Module IX</div>
               <div class="cc-name">Signal Management</div>
               <span class="badge badge-warning">Partial</span>
               <div class="text-xs text-muted mt-8">Statistical signal tool upgrade pending (Q2 2026)</div>
             </div>
             <div class="compliance-cell">
-              <div class="cc-module">Module XV</div>
+              <div class="cc-module deep-trigger" onclick="openDeepPanel('regulation','gvp-module-xv')">Module XV</div>
               <div class="cc-name">Safety Communication</div>
               <span class="badge badge-success">Compliant</span>
               <div class="text-xs text-muted mt-8">Assessed 2025-12-15</div>
             </div>
             <div class="compliance-cell">
-              <div class="cc-module">Module XVI</div>
+              <div class="cc-module deep-trigger" onclick="openDeepPanel('regulation','gvp-module-xvi')">Module XVI</div>
               <div class="cc-name">Risk Minimisation Measures</div>
               <span class="badge badge-success">Compliant</span>
               <div class="text-xs text-muted mt-8">Assessed 2025-12-15</div>
@@ -1894,7 +2185,7 @@ a:hover { text-decoration: underline; }
             </thead>
             <tbody>
               <tr>
-                <td><strong>ICH E2A</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','ich-e2a')"><strong>ICH E2A</strong></td>
                 <td>Clinical Safety Data Management: Definitions and Standards for Expedited Reporting</td>
                 <td>Defines serious, unexpected, causality; basis for all expedited reporting</td>
                 <td><span class="badge badge-success">Implemented</span></td>
@@ -1909,7 +2200,7 @@ a:hover { text-decoration: underline; }
                 </td>
               </tr>
               <tr>
-                <td><strong>ICH E2B(R3)</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','ich-e2b-r3')"><strong>ICH E2B(R3)</strong></td>
                 <td>Electronic Transmission of ICSRs &mdash; Data Elements and Message Specification</td>
                 <td>Governs all electronic ICSR submissions to FDA (via ESG) and EMA (via EudraVigilance)</td>
                 <td><span class="badge badge-success">Implemented</span></td>
@@ -1923,7 +2214,7 @@ a:hover { text-decoration: underline; }
                 </td>
               </tr>
               <tr>
-                <td><strong>ICH E2C(R2)</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','ich-e2c-r2')"><strong>ICH E2C(R2)</strong></td>
                 <td>Periodic Benefit-Risk Evaluation Report (PBRER)</td>
                 <td>Template and content requirements for PBRER/PSUR preparation</td>
                 <td><span class="badge badge-success">Implemented</span></td>
@@ -1937,7 +2228,7 @@ a:hover { text-decoration: underline; }
                 </td>
               </tr>
               <tr>
-                <td><strong>ICH E2D</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','ich-e2d')"><strong>ICH E2D</strong></td>
                 <td>Post-Approval Safety Data Management</td>
                 <td>Standards for post-marketing expedited and periodic reporting</td>
                 <td><span class="badge badge-success">Implemented</span></td>
@@ -1951,7 +2242,7 @@ a:hover { text-decoration: underline; }
                 </td>
               </tr>
               <tr>
-                <td><strong>ICH E2E</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','ich-e2e')"><strong>ICH E2E</strong></td>
                 <td>Pharmacovigilance Planning</td>
                 <td>Risk specification and PV plan for Prosinertimib development program</td>
                 <td><span class="badge badge-success">Implemented</span></td>
@@ -1965,7 +2256,7 @@ a:hover { text-decoration: underline; }
                 </td>
               </tr>
               <tr>
-                <td><strong>ICH E2F</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','ich-e2f')"><strong>ICH E2F</strong></td>
                 <td>Development Safety Update Report (DSUR)</td>
                 <td>Annual safety reporting for ongoing clinical trials PROSPER-1, PROSPER-2, PROSPER-3</td>
                 <td><span class="badge badge-success">Implemented</span></td>
@@ -1979,7 +2270,7 @@ a:hover { text-decoration: underline; }
                 </td>
               </tr>
               <tr>
-                <td><strong>ICH E6(R3)</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','ich-e6-r3')"><strong>ICH E6(R3)</strong></td>
                 <td>Good Clinical Practice (R3 revision)</td>
                 <td>Updated GCP framework governing safety data collection in clinical trials</td>
                 <td><span class="badge badge-warning">In Progress</span></td>
@@ -1993,7 +2284,7 @@ a:hover { text-decoration: underline; }
                 </td>
               </tr>
               <tr>
-                <td><strong>ICH M1 (MedDRA)</strong></td>
+                <td class="deep-trigger" onclick="openDeepPanel('regulation','ich-m1-meddra')"><strong>ICH M1 (MedDRA)</strong></td>
                 <td>Medical Dictionary for Regulatory Activities</td>
                 <td>Standardized medical terminology for all safety reporting and signal detection</td>
                 <td><span class="badge badge-success">Implemented</span></td>
@@ -2323,7 +2614,7 @@ a:hover { text-decoration: underline; }
         </div>
         <div class="card-body">
           <div class="grid-3">
-            <div class="stat-card" style="border-top: 4px solid var(--success);">
+            <div class="stat-card deep-trigger" style="border-top: 4px solid var(--success);cursor:pointer;" onclick="openDeepPanel('kpi','7-day-compliance')">
               <div class="stat-label">7-Day Fatal/Life-Threatening</div>
               <div class="stat-value text-success">100%</div>
               <div class="stat-sub">14 / 14 cases on time</div>
@@ -2455,42 +2746,42 @@ a:hover { text-decoration: underline; }
     <div class="psd-collapse-body" style="padding:24px;">
       <div style="display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;">
         <!-- Stage 1: Detection -->
-        <div style="background:var(--info-light);border:2px solid var(--primary-accent);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;">
+        <div class="deep-trigger" style="background:var(--info-light);border:2px solid var(--primary-accent);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;" onclick="openDeepPanel('regulation','gvp-module-ix')">
           <div style="font-size:22px;margin-bottom:6px;">&#128270;</div>
           <div style="font-weight:700;color:var(--primary-accent);font-size:14px;">Detection</div>
           <div style="font-size:11px;color:var(--text);margin-top:4px;">Screening &amp;<br>identification</div>
         </div>
         <div style="font-size:24px;color:var(--text-muted);padding:0 4px;">&#9654;</div>
         <!-- Stage 2: Validation -->
-        <div style="background:var(--success-light);border:2px solid var(--success-accent);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;">
+        <div class="deep-trigger" style="background:var(--success-light);border:2px solid var(--success-accent);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;" onclick="openDeepPanel('regulation','gvp-module-ix')">
           <div style="font-size:22px;margin-bottom:6px;">&#9989;</div>
           <div style="font-weight:700;color:var(--success-accent);font-size:14px;">Validation</div>
           <div style="font-size:11px;color:var(--text);margin-top:4px;">Clinical review &amp;<br>confirmation</div>
         </div>
         <div style="font-size:24px;color:var(--text-muted);padding:0 4px;">&#9654;</div>
         <!-- Stage 3: Analysis -->
-        <div style="background:var(--warning-light);border:2px solid var(--warning-dark);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;">
+        <div class="deep-trigger" style="background:var(--warning-light);border:2px solid var(--warning-dark);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;" onclick="openDeepPanel('regulation','gvp-module-ix')">
           <div style="font-size:22px;margin-bottom:6px;">&#128202;</div>
           <div style="font-weight:700;color:var(--warning-dark);font-size:14px;">Analysis</div>
           <div style="font-size:11px;color:var(--text);margin-top:4px;">In-depth data<br>evaluation</div>
         </div>
         <div style="font-size:24px;color:var(--text-muted);padding:0 4px;">&#9654;</div>
         <!-- Stage 4: Assessment -->
-        <div style="background:var(--danger-light);border:2px solid var(--danger-dark);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;">
+        <div class="deep-trigger" style="background:var(--danger-light);border:2px solid var(--danger-dark);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;" onclick="openDeepPanel('regulation','gvp-module-ix')">
           <div style="font-size:22px;margin-bottom:6px;">&#9878;</div>
           <div style="font-weight:700;color:var(--danger-dark);font-size:14px;">Assessment</div>
           <div style="font-size:11px;color:var(--text);margin-top:4px;">Benefit-risk<br>evaluation</div>
         </div>
         <div style="font-size:24px;color:var(--text-muted);padding:0 4px;">&#9654;</div>
         <!-- Stage 5: Recommendation -->
-        <div style="background:var(--purple-light);border:2px solid var(--purple);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;">
+        <div class="deep-trigger" style="background:var(--purple-light);border:2px solid var(--purple);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;" onclick="openDeepPanel('regulation','gvp-module-ix')">
           <div style="font-size:22px;margin-bottom:6px;">&#128221;</div>
           <div style="font-weight:700;color:var(--purple);font-size:14px;">Recommendation</div>
           <div style="font-size:11px;color:var(--text);margin-top:4px;">Proposed risk<br>minimisation</div>
         </div>
         <div style="font-size:24px;color:var(--text-muted);padding:0 4px;">&#9654;</div>
         <!-- Stage 6: Action -->
-        <div style="background:var(--teal-light);border:2px solid var(--teal);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;">
+        <div class="deep-trigger" style="background:var(--teal-light);border:2px solid var(--teal);border-radius:8px;padding:16px 20px;text-align:center;min-width:130px;" onclick="openDeepPanel('regulation','gvp-module-ix')">
           <div style="font-size:22px;margin-bottom:6px;">&#9889;</div>
           <div style="font-weight:700;color:var(--teal);font-size:14px;">Action</div>
           <div style="font-size:11px;color:var(--text);margin-top:4px;">Implementation<br>&amp; tracking</div>
@@ -2518,7 +2809,7 @@ a:hover { text-decoration: underline; }
         </thead>
         <tbody>
           <tr>
-            <td><strong>SIG-2026-001</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('signal','SIG-2026-001')"><strong>SIG-2026-001</strong></td>
             <td>Prosinertimib &ndash; Cardiac failure</td>
             <td>Post-marketing</td>
             <td><span class="psd-badge-amber">Under evaluation</span></td>
@@ -2528,7 +2819,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-red">HIGH</span></td>
           </tr>
           <tr>
-            <td><strong>SIG-2025-019</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('signal','SIG-2025-019')"><strong>SIG-2025-019</strong></td>
             <td>Prosinertimib &ndash; Hepatotoxicity</td>
             <td>Post-marketing + trial</td>
             <td><span class="psd-badge-amber">Monitoring</span></td>
@@ -2538,7 +2829,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-amber">MEDIUM</span></td>
           </tr>
           <tr>
-            <td><strong>SIG-2025-014</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('signal','SIG-2025-014')"><strong>SIG-2025-014</strong></td>
             <td>Prosinertimib &ndash; Interstitial lung disease</td>
             <td>Clinical trial + spontaneous</td>
             <td><span class="psd-badge-amber">Ongoing monitoring (labeled risk)</span></td>
@@ -2548,7 +2839,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-amber">MEDIUM</span></td>
           </tr>
           <tr>
-            <td><strong>SIG-2025-008</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('signal','SIG-2025-008')"><strong>SIG-2025-008</strong></td>
             <td>Prosinertimib &ndash; Severe cutaneous reactions</td>
             <td>Post-marketing</td>
             <td><span class="psd-badge-green">Closed (added to label)</span></td>
@@ -2558,7 +2849,7 @@ a:hover { text-decoration: underline; }
             <td><span style="background:var(--text-muted);color:var(--surface);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;">CLOSED</span></td>
           </tr>
           <tr>
-            <td><strong>SIG-2026-003</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('signal','SIG-2026-003')"><strong>SIG-2026-003</strong></td>
             <td>Prosinertimib &ndash; QT prolongation</td>
             <td>Clinical trial ECG sub-study</td>
             <td><span class="psd-badge-amber">Under evaluation</span></td>
@@ -2568,7 +2859,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-amber">MEDIUM</span></td>
           </tr>
           <tr>
-            <td><strong>SIG-2025-022</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('signal','SIG-2025-022')"><strong>SIG-2025-022</strong></td>
             <td>Prosinertimib &ndash; Severe cutaneous adverse reaction</td>
             <td>Spontaneous reports</td>
             <td><span class="psd-badge-green">Closed &mdash; Refuted</span></td>
@@ -2718,7 +3009,7 @@ a:hover { text-decoration: underline; }
         </thead>
         <tbody>
           <tr>
-            <td><strong>PBRER #3</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('report','pbrer')"><strong>PBRER #3</strong></td>
             <td>Prosinertimib</td>
             <td>2026-09-22</td>
             <td>2026-06-22</td>
@@ -2733,7 +3024,7 @@ a:hover { text-decoration: underline; }
             </td>
           </tr>
           <tr>
-            <td><strong>DSUR</strong> &mdash; PROSPER-1</td>
+            <td class="deep-trigger" onclick="openDeepPanel('report','dsur')"><strong>DSUR</strong> &mdash; PROSPER-1</td>
             <td>Prosinertimib</td>
             <td>2026-05-15</td>
             <td>2026-03-15</td>
@@ -2748,7 +3039,7 @@ a:hover { text-decoration: underline; }
             </td>
           </tr>
           <tr>
-            <td><strong>DSUR</strong> &mdash; PROSPER-2</td>
+            <td class="deep-trigger" onclick="openDeepPanel('report','dsur')"><strong>DSUR</strong> &mdash; PROSPER-2</td>
             <td>Prosinertimib</td>
             <td>2026-07-01</td>
             <td>2026-05-01</td>
@@ -2763,7 +3054,7 @@ a:hover { text-decoration: underline; }
             </td>
           </tr>
           <tr>
-            <td><strong>DSUR</strong> &mdash; PROSPER-3</td>
+            <td class="deep-trigger" onclick="openDeepPanel('report','dsur')"><strong>DSUR</strong> &mdash; PROSPER-3</td>
             <td>Prosinertimib</td>
             <td>2026-10-10</td>
             <td>2026-08-10</td>
@@ -2778,7 +3069,7 @@ a:hover { text-decoration: underline; }
             </td>
           </tr>
           <tr>
-            <td><strong>PBRER #2</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('report','pbrer')"><strong>PBRER #2</strong></td>
             <td>Prosinertimib</td>
             <td>2026-03-22</td>
             <td>2025-12-22</td>
@@ -2793,7 +3084,7 @@ a:hover { text-decoration: underline; }
             </td>
           </tr>
           <tr>
-            <td><strong>PADER</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('report','pader')"><strong>PADER</strong></td>
             <td>Prosinertimib</td>
             <td>2026-06-15</td>
             <td>2026-03-15</td>
@@ -2998,7 +3289,7 @@ a:hover { text-decoration: underline; }
 
   <!-- PBRER/PSUR Status -->
   <div class="psd-card" style="margin-bottom:24px;">
-    <div class="psd-card-header">PBRER / PSUR Status</div>
+    <div class="psd-card-header deep-trigger" onclick="openDeepPanel('report','psur')">PBRER / PSUR Status</div>
     <div style="padding:24px;">
       <div class="psd-alert-info" style="margin-bottom:20px;">
         <strong>Current PBRER Cycle:</strong> DLP 2025-12-22. Submission due: 2026-03-22 (EU), 2026-06-22 (US).
@@ -3042,7 +3333,7 @@ a:hover { text-decoration: underline; }
           </thead>
           <tbody>
             <tr>
-              <td><strong>PBRER #2</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('report','pbrer')"><strong>PBRER #2</strong></td>
               <td>EU (EMA)</td>
               <td>2025-12-22</td>
               <td>2026-03-22</td>
@@ -3050,7 +3341,7 @@ a:hover { text-decoration: underline; }
               <td>Head of Patient Safety</td>
             </tr>
             <tr>
-              <td><strong>DSUR Year 2</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('report','dsur')"><strong>DSUR Year 2</strong></td>
               <td>US (FDA)</td>
               <td>2025-06-01</td>
               <td>2026-08-28</td>
@@ -3058,7 +3349,7 @@ a:hover { text-decoration: underline; }
               <td>QPPV</td>
             </tr>
             <tr>
-              <td><strong>PADER</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('report','pader')"><strong>PADER</strong></td>
               <td>US (FDA)</td>
               <td>2026-01-31</td>
               <td>2026-04-30</td>
@@ -3090,7 +3381,7 @@ a:hover { text-decoration: underline; }
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-        <div style="background:var(--surface-hover);border-radius:8px;padding:16px;">
+        <div class="deep-trigger" style="background:var(--surface-hover);border-radius:8px;padding:16px;cursor:pointer;" onclick="openDeepPanel('kpi','e2b-acceptance')">
           <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">E2B(R3) Submission Success Rate</div>
           <div style="display:flex;align-items:baseline;gap:8px;">
             <span style="font-size:28px;font-weight:800;color:var(--warning-accent);">98.7%</span>
@@ -3150,15 +3441,15 @@ a:hover { text-decoration: underline; }
             <td rowspan="3" style="vertical-align:top;">
               <span class="psd-badge-red" style="white-space:nowrap;">Important Identified Risks</span>
             </td>
-            <td>Interstitial Lung Disease (ILD) / Pneumonitis</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','ild')">Interstitial Lung Disease (ILD) / Pneumonitis</td>
             <td>SmPC 4.4, 4.8</td>
           </tr>
           <tr>
-            <td>Severe Diarrhea (Grade 3+)</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','severe-diarrhea')">Severe Diarrhea (Grade 3+)</td>
             <td>SmPC 4.4, 4.8</td>
           </tr>
           <tr>
-            <td>Rash / Dermatitis acneiform (Grade 3+)</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','skin-tox')">Rash / Dermatitis acneiform (Grade 3+)</td>
             <td>SmPC 4.4, 4.8</td>
           </tr>
           <!-- Important Potential Risks -->
@@ -3166,15 +3457,15 @@ a:hover { text-decoration: underline; }
             <td rowspan="3" style="vertical-align:top;">
               <span class="psd-badge-amber" style="white-space:nowrap;">Important Potential Risks</span>
             </td>
-            <td>Hepatotoxicity (Drug-induced liver injury)</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','hepatotox')">Hepatotoxicity (Drug-induced liver injury)</td>
             <td>SmPC 4.4</td>
           </tr>
           <tr>
-            <td>QT Prolongation / Cardiac events</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','qt-prolongation')">QT Prolongation / Cardiac events</td>
             <td>SmPC 4.4</td>
           </tr>
           <tr>
-            <td>Hypertension (Grade 3+)</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','hypertension')">Hypertension (Grade 3+)</td>
             <td>SmPC 4.4, 4.8</td>
           </tr>
           <!-- Missing Information -->
@@ -3214,7 +3505,7 @@ a:hover { text-decoration: underline; }
         </thead>
         <tbody>
           <tr>
-            <td><strong>ILD incidence study</strong><br><span style="font-size:12px;color:var(--text-secondary);">PASS &mdash; Non-interventional post-auth study</span></td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','ild')"><strong>ILD incidence study</strong><br><span style="font-size:12px;color:var(--text-secondary);">PASS &mdash; Non-interventional post-auth study</span></td>
             <td><span class="psd-badge-red">PASS</span></td>
             <td>2027-06-30</td>
             <td><span class="psd-badge-amber">In progress</span></td>
@@ -3228,7 +3519,7 @@ a:hover { text-decoration: underline; }
             </td>
           </tr>
           <tr>
-            <td><strong>Cardiac safety study</strong><br><span style="font-size:12px;color:var(--text-secondary);">PASS &mdash; Prospective cohort design</span></td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','qt-prolongation')"><strong>Cardiac safety study</strong><br><span style="font-size:12px;color:var(--text-secondary);">PASS &mdash; Prospective cohort design</span></td>
             <td><span class="psd-badge-red">PASS</span></td>
             <td>2028-12-31</td>
             <td><span class="psd-badge-amber">Planning</span></td>
@@ -3355,21 +3646,21 @@ a:hover { text-decoration: underline; }
         </thead>
         <tbody>
           <tr>
-            <td>SmPC Section 4.4 &mdash; ILD warnings</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','ild')">SmPC Section 4.4 &mdash; ILD warnings</td>
             <td>% prescribers aware of ILD risk</td>
             <td>&ge; 85%</td>
             <td>91%</td>
             <td><span class="psd-badge-green">Met</span></td>
           </tr>
           <tr>
-            <td>HCP educational materials (ILD)</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','ild')">HCP educational materials (ILD)</td>
             <td>Material distribution to oncologists</td>
             <td>&ge; 80%</td>
             <td>87%</td>
             <td><span class="psd-badge-green">Met</span></td>
           </tr>
           <tr>
-            <td>Patient alert card (skin reactions)</td>
+            <td class="deep-trigger" onclick="openDeepPanel('risk','skin-tox')">Patient alert card (skin reactions)</td>
             <td>% patients reporting card receipt</td>
             <td>&ge; 75%</td>
             <td>72%</td>
@@ -3428,7 +3719,7 @@ a:hover { text-decoration: underline; }
         </thead>
         <tbody>
           <tr>
-            <td>PV-SOP-001</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-001')">PV-SOP-001</td>
             <td>ICSR Intake and Triage</td>
             <td>v3.0</td>
             <td>2025-08-15</td>
@@ -3437,7 +3728,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-002</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-002')">PV-SOP-002</td>
             <td>AE Data Entry and QC</td>
             <td>v2.1</td>
             <td>2025-06-01</td>
@@ -3446,7 +3737,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-003</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-003')">PV-SOP-003</td>
             <td>Seriousness Assessment</td>
             <td>v2.0</td>
             <td>2025-03-20</td>
@@ -3455,7 +3746,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-004</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-004')">PV-SOP-004</td>
             <td>Causality Assessment</td>
             <td>v2.0</td>
             <td>2025-03-20</td>
@@ -3464,7 +3755,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-005</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-005')">PV-SOP-005</td>
             <td>MedDRA Coding</td>
             <td>v3.1</td>
             <td>2025-11-01</td>
@@ -3473,7 +3764,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-006</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-006')">PV-SOP-006</td>
             <td>Case Follow-up</td>
             <td>v1.2</td>
             <td>2024-12-10</td>
@@ -3482,7 +3773,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-007</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-007')">PV-SOP-007</td>
             <td>Signal Detection and Screening</td>
             <td>v2.0</td>
             <td>2025-07-15</td>
@@ -3491,7 +3782,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-008</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-008')">PV-SOP-008</td>
             <td>PBRER / PSUR Preparation</td>
             <td>v1.1</td>
             <td>2025-01-20</td>
@@ -3500,7 +3791,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-009</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-009')">PV-SOP-009</td>
             <td>RMP Management</td>
             <td>v1.0</td>
             <td>2024-04-01</td>
@@ -3509,7 +3800,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-amber">Due for review</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-010</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-010')">PV-SOP-010</td>
             <td>PSMF Maintenance</td>
             <td>v2.0</td>
             <td>2025-09-10</td>
@@ -3518,7 +3809,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-011</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-011')">PV-SOP-011</td>
             <td>PV Training and Competency</td>
             <td>v1.1</td>
             <td>2025-02-01</td>
@@ -3527,7 +3818,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">Current</span></td>
           </tr>
           <tr>
-            <td>PV-SOP-012</td>
+            <td class="deep-trigger" onclick="openDeepPanel('sop','PV-SOP-012')">PV-SOP-012</td>
             <td>SDEA Management</td>
             <td>v1.0</td>
             <td>2025-05-15</td>
@@ -3582,7 +3873,7 @@ a:hover { text-decoration: underline; }
           </thead>
           <tbody>
             <tr>
-              <td><strong>CAPA-2026-001</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('capa','CAPA-2026-001')"><strong>CAPA-2026-001</strong></td>
               <td>KPI deviation</td>
               <td>Late submission of 2 expedited cases (Day 16 instead of Day 15)</td>
               <td><span class="psd-badge-red">Major</span></td>
@@ -3591,7 +3882,7 @@ a:hover { text-decoration: underline; }
               <td>48</td>
             </tr>
             <tr>
-              <td><strong>CAPA-2026-002</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('capa','CAPA-2026-002')"><strong>CAPA-2026-002</strong></td>
               <td>Internal audit</td>
               <td>Signal detection process audit finding: gap in literature screening documentation</td>
               <td><span class="psd-badge-red">Major</span></td>
@@ -3600,7 +3891,7 @@ a:hover { text-decoration: underline; }
               <td>32</td>
             </tr>
             <tr>
-              <td><strong>CAPA-2026-003</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('capa','CAPA-2026-003')"><strong>CAPA-2026-003</strong></td>
               <td>Training review</td>
               <td>Training gap identified for 2 new case processors on MedDRA coding SOP</td>
               <td><span style="background:var(--muted);color:#fff;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;">Minor</span></td>
@@ -3609,7 +3900,7 @@ a:hover { text-decoration: underline; }
               <td>21</td>
             </tr>
             <tr>
-              <td><strong>CAPA-2025-018</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('capa','CAPA-2025-018')"><strong>CAPA-2025-018</strong></td>
               <td>Quality review</td>
               <td>MedDRA miscoding trend: 4 cases with incorrect PT selection in Q3 2025</td>
               <td><span style="background:var(--muted);color:#fff;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;">Minor</span></td>
@@ -3751,7 +4042,7 @@ a:hover { text-decoration: underline; }
         </thead>
         <tbody>
           <tr style="background:var(--warning-light);">
-            <td><strong>GCP Inspection</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('audit','gcp-mhra-2026')"><strong>GCP Inspection</strong></td>
             <td>MHRA</td>
             <td>2026-04-22 &ndash; 24</td>
             <td>PV system &amp; PROSPER-1 trial safety</td>
@@ -3783,7 +4074,7 @@ a:hover { text-decoration: underline; }
             <td><span class="psd-badge-green">CAPA in progress</span></td>
           </tr>
           <tr>
-            <td><strong>GVP Inspection</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('audit','gvp-ema-2025')"><strong>GVP Inspection</strong></td>
             <td>EMA (PRAC)</td>
             <td>2025-05-14 &ndash; 16</td>
             <td>Full PV system inspection</td>
@@ -3816,7 +4107,7 @@ a:hover { text-decoration: underline; }
         </thead>
         <tbody>
           <tr>
-            <td><strong>GVP Internal Audit</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('audit','gvp-internal-2026')"><strong>GVP Internal Audit</strong></td>
             <td>Internal</td>
             <td>2026-01-15</td>
             <td>QA Team</td>
@@ -3824,7 +4115,7 @@ a:hover { text-decoration: underline; }
             <td>2 minor, 0 critical</td>
           </tr>
           <tr style="background:var(--warning-light);">
-            <td><strong>FDA Pre-Approval Inspection</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('audit','fda-pai-2026')"><strong>FDA Pre-Approval Inspection</strong></td>
             <td>Regulatory</td>
             <td>2026-05-TBD</td>
             <td>FDA CBER</td>
@@ -3840,7 +4131,7 @@ a:hover { text-decoration: underline; }
             <td>&mdash;</td>
           </tr>
           <tr style="background:var(--warning-light);">
-            <td><strong>EMA GVP Inspection</strong></td>
+            <td class="deep-trigger" onclick="openDeepPanel('audit','ema-gvp-2026')"><strong>EMA GVP Inspection</strong></td>
             <td>Regulatory</td>
             <td>2026-H2</td>
             <td>EMA Inspector</td>
@@ -3922,7 +4213,7 @@ a:hover { text-decoration: underline; }
 
     <!-- PROSPER-1 -->
     <div class="psd-card">
-      <div class="psd-card-header" style="background:linear-gradient(135deg,var(--primary-accent),#1976d2);color:#fff;border:none;">
+      <div class="psd-card-header deep-trigger" style="background:linear-gradient(135deg,var(--primary-accent),#1976d2);color:#fff;border:none;" onclick="openDeepPanel('trial','PROSPER-1')">
         PROSPER-1 &mdash; Phase III
       </div>
       <div style="padding:24px;">
@@ -3959,7 +4250,7 @@ a:hover { text-decoration: underline; }
 
     <!-- PROSPER-2 -->
     <div class="psd-card">
-      <div class="psd-card-header" style="background:linear-gradient(135deg,var(--success-accent),#388e3c);color:#fff;border:none;">
+      <div class="psd-card-header deep-trigger" style="background:linear-gradient(135deg,var(--success-accent),#388e3c);color:#fff;border:none;" onclick="openDeepPanel('trial','PROSPER-2')">
         PROSPER-2 &mdash; Phase II
       </div>
       <div style="padding:24px;">
@@ -3996,7 +4287,7 @@ a:hover { text-decoration: underline; }
 
     <!-- PROSPER-3 -->
     <div class="psd-card">
-      <div class="psd-card-header" style="background:linear-gradient(135deg,var(--warning-dark),#f57c00);color:#fff;border:none;">
+      <div class="psd-card-header deep-trigger" style="background:linear-gradient(135deg,var(--warning-dark),#f57c00);color:#fff;border:none;" onclick="openDeepPanel('trial','PROSPER-3')">
         PROSPER-3 &mdash; Phase I
       </div>
       <div style="padding:24px;">
@@ -5189,7 +5480,7 @@ a:hover { text-decoration: underline; }
               <td colspan="5"><strong>Compliance KPIs</strong></td>
             </tr>
             <tr>
-              <td>15-Day US Expedited Reporting</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','serious-15-day')">15-Day US Expedited Reporting</td>
               <td>97.8%</td>
               <td>100%</td>
               <td><span class="psd-badge-amber">AMBER</span></td>
@@ -5206,7 +5497,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>7-Day US Expedited Reporting</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','serious-7-day')">7-Day US Expedited Reporting</td>
               <td>100%</td>
               <td>100%</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5223,7 +5514,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>EudraVigilance Reporting Compliance</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','ev-reporting')">EudraVigilance Reporting Compliance</td>
               <td>99.6%</td>
               <td>&ge;98%</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5240,7 +5531,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Aggregate Report Submissions (PBRER/DSUR)</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','aggregate-submissions')">Aggregate Report Submissions (PBRER/DSUR)</td>
               <td>100%</td>
               <td>100%</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5257,7 +5548,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>REMS Distribution Compliance</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','rems-compliance')">REMS Distribution Compliance</td>
               <td>94.2%</td>
               <td>&ge;98%</td>
               <td><span class="psd-badge-amber">AMBER</span></td>
@@ -5274,7 +5565,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>SDEA Partner Reporting</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','sdea-reporting')">SDEA Partner Reporting</td>
               <td>98.5%</td>
               <td>&ge;95%</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5296,7 +5587,7 @@ a:hover { text-decoration: underline; }
               <td colspan="5"><strong>Quality KPIs</strong></td>
             </tr>
             <tr>
-              <td>Case Data Accuracy Rate</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','data-accuracy')">Case Data Accuracy Rate</td>
               <td>99.1%</td>
               <td>&ge;98%</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5313,7 +5604,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Median Case Processing Time</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','case-processing-time')">Median Case Processing Time</td>
               <td>3.2 days</td>
               <td>&le;5 days</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5330,7 +5621,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>SOP Currency Rate</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','sop-currency')">SOP Currency Rate</td>
               <td>91.7%</td>
               <td>&ge;95%</td>
               <td><span class="psd-badge-amber">AMBER</span></td>
@@ -5347,7 +5638,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Training Compliance</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','training-compliance')">Training Compliance</td>
               <td>94.8%</td>
               <td>&ge;95%</td>
               <td><span class="psd-badge-amber">AMBER</span></td>
@@ -5364,7 +5655,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>CAPA Closure On Time</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','capa-closure')">CAPA Closure On Time</td>
               <td>75%</td>
               <td>&ge;90%</td>
               <td><span class="psd-badge-red">RED</span></td>
@@ -5386,7 +5677,7 @@ a:hover { text-decoration: underline; }
               <td colspan="5"><strong>Signal KPIs</strong></td>
             </tr>
             <tr>
-              <td>Signal Detection Review Cycle</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','signal-detection-cycle')">Signal Detection Review Cycle</td>
               <td>Monthly</td>
               <td>Monthly</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5403,7 +5694,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Signal Evaluation Timeliness</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','signal-eval-timeliness')">Signal Evaluation Timeliness</td>
               <td>28 days median</td>
               <td>&le;30 days</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5420,7 +5711,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Open Validated Signals</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','open-signals')">Open Validated Signals</td>
               <td>3</td>
               <td>&le;5</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5437,7 +5728,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Signal Closure Rate (&le;90 days)</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','signal-closure-rate')">Signal Closure Rate (&le;90 days)</td>
               <td>88%</td>
               <td>&ge;80%</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5459,7 +5750,7 @@ a:hover { text-decoration: underline; }
               <td colspan="5"><strong>Portfolio Health KPIs</strong></td>
             </tr>
             <tr>
-              <td>Benefit-Risk Balance</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','benefit-risk')">Benefit-Risk Balance</td>
               <td>Favorable</td>
               <td>Favorable</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5476,7 +5767,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Labeling Alignment (Global)</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','labeling-alignment')">Labeling Alignment (Global)</td>
               <td>95% (36/38)</td>
               <td>&ge;90%</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5493,7 +5784,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>RMP Implementation Rate</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','rmp-implementation')">RMP Implementation Rate</td>
               <td>100%</td>
               <td>100%</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5510,7 +5801,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Inspection Readiness Score</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','inspection-readiness')">Inspection Readiness Score</td>
               <td>87/100</td>
               <td>&ge;90</td>
               <td><span class="psd-badge-amber">AMBER</span></td>
@@ -5527,7 +5818,7 @@ a:hover { text-decoration: underline; }
               </td>
             </tr>
             <tr>
-              <td>Post-Marketing Commitment Completion</td>
+              <td class="deep-trigger" onclick="openDeepPanel('kpi','pm-commitments')">Post-Marketing Commitment Completion</td>
               <td>4 of 6 (67%)</td>
               <td>On schedule</td>
               <td><span class="psd-badge-green">GREEN</span></td>
@@ -5559,7 +5850,7 @@ a:hover { text-decoration: underline; }
       <div class="psd-alert-red">
         <div class="psd-alert-icon">&#9679;</div>
         <div class="psd-alert-content">
-          <strong>RED &mdash; CAPA Closure On Time: 75% (Target: 90%)</strong>
+          <strong class="deep-trigger" onclick="openDeepPanel('kpi','capa-closure-rate')">RED &mdash; CAPA Closure On Time: 75% (Target: 90%)</strong>
           <p>
             6 of 8 CAPAs closed on time in the current period. Two overdue CAPAs relate to (1) training material
             update for new ILD management algorithm and (2) process change for duplicate detection workflow. Root cause:
@@ -5748,7 +6039,7 @@ a:hover { text-decoration: underline; }
           </thead>
           <tbody>
             <tr>
-              <td><span class="psd-geo-flag-inline">&#127482;&#127480;</span> <strong>United States</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('market','us')"><span class="psd-geo-flag-inline">&#127482;&#127480;</span> <strong>United States</strong></td>
               <td>FDA (CDER)</td>
               <td>2023-11-15</td>
               <td><span class="psd-badge-green">Approved</span></td>
@@ -5756,7 +6047,7 @@ a:hover { text-decoration: underline; }
               <td>REMS (prescriber certification, patient enrollment); PMR: cardiac safety study (3,000 pts); PMC: hepatotoxicity registry</td>
             </tr>
             <tr>
-              <td><span class="psd-geo-flag-inline">&#127466;&#127482;</span> <strong>European Union</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('market','eu')"><span class="psd-geo-flag-inline">&#127466;&#127482;</span> <strong>European Union</strong></td>
               <td>EMA (CHMP)</td>
               <td>2024-01-10</td>
               <td><span class="psd-badge-green">Approved</span></td>
@@ -5764,7 +6055,7 @@ a:hover { text-decoration: underline; }
               <td>RMP v3.1; PASS for ILD characterization; pregnancy prevention program; additional efficacy study in CNS metastases</td>
             </tr>
             <tr>
-              <td><span class="psd-geo-flag-inline">&#127471;&#127477;</span> <strong>Japan</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('market','japan')"><span class="psd-geo-flag-inline">&#127471;&#127477;</span> <strong>Japan</strong></td>
               <td>PMDA</td>
               <td>2024-06-01</td>
               <td><span class="psd-badge-amber">Under Review</span></td>
@@ -5780,7 +6071,7 @@ a:hover { text-decoration: underline; }
               <td>RMP equivalent; enhanced ADR reporting for first 2 years; bilingual product monograph</td>
             </tr>
             <tr>
-              <td><span class="psd-geo-flag-inline">&#127464;&#127475;</span> <strong>China</strong></td>
+              <td class="deep-trigger" onclick="openDeepPanel('market','china')"><span class="psd-geo-flag-inline">&#127464;&#127475;</span> <strong>China</strong></td>
               <td>NMPA / CDE</td>
               <td>&mdash;</td>
               <td><span class="psd-badge-red">Pre-IND Meeting</span></td>
@@ -7335,6 +7626,143 @@ async function sendChat() {
 
   messages.scrollTop = messages.scrollHeight;
 }
+
+// ============================================================
+// DEEPENING PANEL — Expandable detail system
+// ============================================================
+
+function openDeepPanel(itemType, itemId) {
+  var panel = document.getElementById('deepPanel');
+  var overlay = document.getElementById('deepOverlay');
+  var title = document.getElementById('deepPanelTitle');
+  var body = document.getElementById('deepPanelBody');
+
+  // Show loading state
+  panel.classList.add('active');
+  overlay.classList.add('active');
+  title.textContent = 'Loading...';
+  body.innerHTML = '<div class="deep-loading"><div class="deep-loading-spinner"></div>Loading detail...</div>';
+  document.body.style.overflow = 'hidden';
+
+  // Fetch detail from API
+  psdApiFetch('/detail/' + itemType + '/' + itemId)
+    .then(function(data) {
+      if (!data) throw new Error('No data returned');
+      title.textContent = data.title || 'Detail';
+      body.innerHTML = renderDeepPanel(data);
+    })
+    .catch(function(err) {
+      title.textContent = 'Error';
+      body.innerHTML = '<div style="color:var(--danger);padding:20px;">Failed to load detail: ' + (err.message || err) + '</div>';
+    });
+}
+
+function closeDeepPanel() {
+  document.getElementById('deepPanel').classList.remove('active');
+  document.getElementById('deepOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDeepPanel();
+});
+
+function renderDeepPanel(data) {
+  var html = '';
+
+  // Summary
+  if (data.summary) {
+    html += '<div class="deep-panel-summary">' + data.summary + '</div>';
+  }
+
+  // Sections
+  if (data.sections && data.sections.length) {
+    data.sections.forEach(function(sec) {
+      html += '<div class="deep-section">';
+      html += '<div class="deep-section-title">' + sec.heading + '</div>';
+      html += '<div class="deep-section-content">';
+
+      if (sec.detail_type === 'key_value_pairs' && typeof sec.content === 'object' && !Array.isArray(sec.content)) {
+        html += '<div class="deep-kv">';
+        Object.entries(sec.content).forEach(function(entry) {
+          html += '<div class="deep-kv-key">' + entry[0] + '</div><div class="deep-kv-val">' + entry[1] + '</div>';
+        });
+        html += '</div>';
+      } else if (sec.detail_type === 'table' && Array.isArray(sec.content) && sec.content.length) {
+        var headers = Object.keys(sec.content[0]);
+        html += '<table class="deep-table"><thead><tr>';
+        headers.forEach(function(h) { html += '<th>' + h + '</th>'; });
+        html += '</tr></thead><tbody>';
+        sec.content.forEach(function(row) {
+          html += '<tr>';
+          headers.forEach(function(h) { html += '<td>' + (row[h] || '') + '</td>'; });
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+      } else if (sec.detail_type === 'timeline' && Array.isArray(sec.content)) {
+        html += '<div class="deep-timeline">';
+        sec.content.forEach(function(item) {
+          html += '<div class="deep-timeline-item">';
+          if (item.date) html += '<div class="deep-timeline-date">' + item.date + '</div>';
+          html += '<div>' + (item.event || item.text || item) + '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      } else if (Array.isArray(sec.content)) {
+        html += '<ul>';
+        sec.content.forEach(function(item) {
+          html += '<li>' + (typeof item === 'object' ? (item.text || JSON.stringify(item)) : item) + '</li>';
+        });
+        html += '</ul>';
+      } else {
+        html += sec.content;
+      }
+
+      html += '</div></div>';
+    });
+  }
+
+  // Regulatory References
+  if (data.regulatory_references && data.regulatory_references.length) {
+    html += '<div class="deep-section"><div class="deep-section-title">Regulatory References</div><div class="deep-section-content">';
+    data.regulatory_references.forEach(function(ref) {
+      html += '<div class="deep-ref">';
+      html += '<div class="deep-ref-source">' + (ref.source || '') + '</div>';
+      html += '<div class="deep-ref-citation">' + (ref.citation || '') + '</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Related Items
+  if (data.related_items && data.related_items.length) {
+    html += '<div class="deep-section"><div class="deep-section-title">Related</div>';
+    html += '<div class="deep-related">';
+    data.related_items.forEach(function(item) {
+      html += '<span class="deep-related-chip" onclick="openDeepPanel(\'' + item.item_type + '\',\'' + item.item_id + '\')">' + item.label + '</span>';
+    });
+    html += '</div></div>';
+  }
+
+  return html;
+}
 </script>
+
+<!-- Deepening Panel (slide-in detail overlay) -->
+<div class="deep-overlay" id="deepOverlay" onclick="closeDeepPanel()"></div>
+<div class="deep-panel" id="deepPanel">
+  <div class="deep-panel-header">
+    <div class="deep-panel-title" id="deepPanelTitle">Detail</div>
+    <button class="deep-panel-close" onclick="closeDeepPanel()">Close &times;</button>
+  </div>
+  <div class="deep-panel-body" id="deepPanelBody">
+    <div class="deep-loading">
+      <div class="deep-loading-spinner"></div>
+      Loading detail...
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
