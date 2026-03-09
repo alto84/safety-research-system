@@ -1,4 +1,4 @@
-# Biostatistical Review: Predictive Safety Platform Merge
+# Biostatistical Review: Simulated Patient Safety Merge
 **Reviewer Role:** PhD Biostatistician (Clinical Trial Design, Bayesian Methods, Adaptive Trials)
 **Review Date:** 2026-02-07
 **Documents Reviewed:**

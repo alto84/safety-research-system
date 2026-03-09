@@ -1,5 +1,5 @@
 """
-Predictive Safety Platform
+Simulated Patient Safety
 
 A research AI platform for predicting adverse events in cell therapy,
 including Cytokine Release Syndrome (CRS), Immune effector Cell-Associated
@@ -12,4 +12,4 @@ Architecture:
 """
 
 __version__ = "0.1.0"
-__author__ = "Predictive Safety Platform Team"
+__author__ = "Simulated Patient Safety Team"

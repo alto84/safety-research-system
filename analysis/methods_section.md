@@ -77,7 +77,7 @@ Pairwise comparisons of SLE vs each oncology indication used two-proportion z-te
 Sequential Bayesian updating was performed using the study timeline (Q4 2022 through projected Q1 2028), applying cumulative data to the informative CRS prior (Beta(0.21, 1.29)) at each timepoint. This demonstrates how credible intervals narrow as additional trial data accrue.
 
 ### Software and Reproducibility
-All analyses were performed using the Predictive Safety Platform (v0.1.0), implemented in Python 3.11+. Statistical computations used SciPy (scipy.stats), NumPy, and custom implementations of the 7-model registry. All code is publicly available at https://github.com/alto84/safety-research-system. The complete analysis is reproducible by running:
+All analyses were performed using the Simulated Patient Safety platform (v0.1.0), implemented in Python 3.11+. Statistical computations used SciPy (scipy.stats), NumPy, and custom implementations of the 7-model registry. All code is publicly available at https://github.com/alto84/safety-research-system. The complete analysis is reproducible by running:
 ```
 PYTHONPATH=. python analysis/publication_analysis.py
 ```

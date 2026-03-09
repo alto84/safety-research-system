@@ -1,4 +1,4 @@
-# Predictive Safety Platform - Executive Summary
+# Simulated Patient Safety - Executive Summary
 
 **Version:** 1.0 | **Date:** 2026-02-06
 **Author:** Cell Therapy Safety Sciences / Safety Research Team
@@ -28,9 +28,9 @@ Cell and gene therapy (CGT) represents one of the highest-value frontiers in onc
 
 ---
 
-## The Solution: Predictive Safety Platform
+## The Solution: Simulated Patient Safety
 
-The Predictive Safety Platform is an AI-powered platform that predicts immune-mediated adverse events **before clinical manifestation**, enabling preemptive intervention and proactive regulatory engagement.
+The Simulated Patient Safety is an AI-powered platform that predicts immune-mediated adverse events **before clinical manifestation**, enabling preemptive intervention and proactive regulatory engagement.
 
 ### Core Capabilities
 

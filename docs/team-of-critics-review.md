@@ -1,4 +1,4 @@
-# Team of Critics Review: Predictive Safety Platform
+# Team of Critics Review: Simulated Patient Safety
 
 **Date:** 2026-02-08
 **System Version:** Commit `5ffa2f8` (master)
@@ -434,4 +434,4 @@ Pathway step confidence weights range from 0.70 to 0.95, but there is no documen
 
 ---
 
-*This review was conducted by adopting 5 expert personas to provide diverse, specific, and actionable feedback on the Predictive Safety Platform codebase. All file references, line numbers, and data values are based on the codebase at commit `5ffa2f8` on the `master` branch.*
+*This review was conducted by adopting 5 expert personas to provide diverse, specific, and actionable feedback on the Simulated Patient Safety codebase. All file references, line numbers, and data values are based on the codebase at commit `5ffa2f8` on the `master` branch.*

@@ -1,4 +1,4 @@
-# Predictive Safety Platform
+# Simulated Patient Safety
 
 **Cell therapy adverse event risk estimation using public clinical data.**
 

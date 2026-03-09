@@ -1,4 +1,4 @@
-# GPU Server Work Plan — Predictive Safety Platform
+# GPU Server Work Plan — Simulated Patient Safety
 
 > **For:** Claude Code instance on gpuserver1 (192.168.1.100)
 > **Repo:** https://github.com/alto84/safety-research-system.git
@@ -8,7 +8,7 @@
 
 ## Context
 
-We are building a Predictive Safety Platform (PSP) for CAR-T cell therapy safety in autoimmune indications. The platform combines:
+We are building a Simulated Patient Safety (SPS) for CAR-T cell therapy safety in autoimmune indications. The platform combines:
 - **Patient-level:** 7 deterministic biomarker scoring models (EASIX, HScore, CAR-HEMATOTOX, etc.)
 - **Population-level:** Bayesian risk estimation, correlated mitigation modeling, FAERS signal detection
 - **Safety Index:** Composite risk score from 4 domains (biomarker, pathway, model, clinical)

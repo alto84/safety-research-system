@@ -1,7 +1,7 @@
 # Safety Research System — Agent Instructions
 
 ## Project Identity
-This is an **open-source Predictive Safety Platform** for cell therapy adverse event risk estimation.
+This is an **open-source Simulated Patient Safety** for cell therapy adverse event risk estimation.
 It is **fully independent** — no proprietary data, no personal references, no company-internal information.
 All data comes from published literature, public registries (ClinicalTrials.gov), and public APIs (openFDA).
 
@@ -82,7 +82,7 @@ Five integration paths planned:
 1. **API Narratives** — `?include_narrative=true` on endpoints for Claude-generated clinical interpretations
 2. **Dashboard Chat** — `POST /api/v1/chat` with collapsible AI panel, context-aware per active tab
 3. **Report Generation** — DSUR, IND narratives, periodic safety reports per ICH E2F
-4. **MCP Server** — Expose all PSP endpoints as MCP tools for Claude Desktop/Code
+4. **MCP Server** — Expose all SPS endpoints as MCP tools for Claude Desktop/Code
 5. **Agent SDK** — Autonomous safety monitoring, FAERS surveillance, clinical Q&A agents
 
 ## Agent Team Delegation Pattern

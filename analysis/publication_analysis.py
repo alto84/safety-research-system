@@ -3,7 +3,7 @@
 Publication-ready comparative analysis of cell therapy safety profiles.
 
 Compares autoimmune (SLE) vs oncology (DLBCL, ALL, MM) CAR-T safety using
-the Predictive Safety Platform's 7 risk estimation models, integrated with
+the Simulated Patient Safety platform's 7 risk estimation models, integrated with
 knowledge-graph mechanistic understanding.
 
 Target journal: Blood Advances / Molecular Therapy
@@ -1451,7 +1451,7 @@ def main() -> None:
     logger.info("=" * 70)
     logger.info("PUBLICATION-READY COMPARATIVE ANALYSIS")
     logger.info("Cell Therapy Safety Profiles: Autoimmune vs Oncology CAR-T")
-    logger.info("Predictive Safety Platform v0.1.0")
+    logger.info("Simulated Patient Safety v0.1.0")
     logger.info("=" * 70)
     logger.info("")
 

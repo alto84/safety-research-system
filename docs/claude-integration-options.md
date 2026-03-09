@@ -1,7 +1,7 @@
-# Claude AI Integration Options for the Predictive Safety Platform
+# Claude AI Integration Options for the Simulated Patient Safety
 
 **Document Type:** Technical Options Assessment
-**Prepared for:** PSP Development Team / Safety Sciences
+**Prepared for:** SPS Development Team / Safety Sciences
 **Date:** 2026-02-08
 **Status:** DRAFT — For Decision
 
@@ -26,7 +26,7 @@
 
 ## 1. Executive Summary
 
-The Predictive Safety Platform (PSP) currently provides deterministic biomarker scoring, Bayesian risk estimation, FAERS signal detection, and clinical safety plan generation through a FastAPI backend with a 14-tab vanilla JS dashboard. All outputs are numerical or tabular. There is no natural language interpretation, narrative generation, or interactive clinical reasoning capability.
+The Simulated Patient Safety (SPS) currently provides deterministic biomarker scoring, Bayesian risk estimation, FAERS signal detection, and clinical safety plan generation through a FastAPI backend with a 14-tab vanilla JS dashboard. All outputs are numerical or tabular. There is no natural language interpretation, narrative generation, or interactive clinical reasoning capability.
 
 Integrating Claude AI would add three capabilities that the current system cannot provide:
 
@@ -139,7 +139,7 @@ Add Claude API calls to the FastAPI backend to generate natural language interpr
 
 ```python
 # src/api/claude_narratives.py
-"""Claude-powered narrative generation for PSP API responses."""
+"""Claude-powered narrative generation for SPS API responses."""
 
 from __future__ import annotations
 
@@ -443,7 +443,7 @@ async def predict(
 
 ### Overview
 
-Build autonomous Claude agents that can reason across the PSP's data, run multi-step analyses, and produce comprehensive safety reports without human prompting for each step. The Agent SDK (`claude-agent-sdk` on PyPI) provides the `query()` function that creates an agentic loop with tool access.
+Build autonomous Claude agents that can reason across the SPS's data, run multi-step analyses, and produce comprehensive safety reports without human prompting for each step. The Agent SDK (`claude-agent-sdk` on PyPI) provides the `query()` function that creates an agentic loop with tool access.
 
 ### Architecture
 
@@ -461,14 +461,14 @@ Build autonomous Claude agents that can reason across the PSP's data, run multi-
          v                       v                    v
 +-------------------------------------------------------------+
 |              Claude Agent SDK (query loop)                    |
-|  Tools: PSP API calls, file read/write, web search           |
+|  Tools: SPS API calls, file read/write, web search           |
 |  System prompt: domain-specific safety science context        |
 |  Permission mode: per-task configuration                      |
 +-------------------------------------------------------------+
          |                       |                    |
          v                       v                    v
 +-------------------------------------------------------------+
-|                PSP FastAPI Backend (existing)                 |
+|                SPS FastAPI Backend (existing)                 |
 |  /api/v1/predict   /api/v1/population/*   /api/v1/signals/*  |
 +-------------------------------------------------------------+
 ```
@@ -513,7 +513,7 @@ Safety Platform. Your job is to:
 3. Identify NEW signals or signals that have STRENGTHENED since last check
 4. Generate a concise safety signal report
 
-Use the PSP API at http://localhost:8000 to query data.
+Use the SPS API at http://localhost:8000 to query data.
 
 Report format:
 - Date and time of analysis
@@ -582,7 +582,7 @@ async def ask_clinical_advisor(
     Args:
         question: The clinical question to answer.
         patient_data: Optional patient data for context.
-        api_base: Base URL for the PSP API.
+        api_base: Base URL for the SPS API.
 
     Returns:
         The agent's response with references.
@@ -593,7 +593,7 @@ async def ask_clinical_advisor(
 
     options = ClaudeAgentOptions(
         system_prompt=f"""You are a Clinical Safety Advisor with access to:
-- PSP API at {api_base} (Bayesian risk, mitigation analysis, FAERS signals)
+- SPS API at {api_base} (Bayesian risk, mitigation analysis, FAERS signals)
 - Cell therapy registry with 12 therapy types and 21 AE profiles
 - Knowledge graph with biological pathway data
 - Published literature on cell therapy safety
@@ -614,7 +614,7 @@ When answering questions:
 {question}
 {context}
 
-Use the PSP API at {api_base} to retrieve relevant data. Provide a thorough,
+Use the SPS API at {api_base} to retrieve relevant data. Provide a thorough,
 evidence-based response with specific citations.
 """
 
@@ -644,7 +644,7 @@ async def generate_dsur_section(
                  "signal_detection", "benefit_risk").
         therapy_type: The therapy being assessed.
         indication: Target indication.
-        api_base: PSP API base URL.
+        api_base: SPS API base URL.
 
     Returns:
         The generated DSUR section text.
@@ -653,7 +653,7 @@ async def generate_dsur_section(
         system_prompt=f"""You are a regulatory medical writer generating sections
 for a Development Safety Update Report (DSUR) per ICH E2F guidelines.
 
-You have access to the PSP API at {api_base} which provides:
+You have access to the SPS API at {api_base} which provides:
 - Population-level AE rates with Bayesian credible intervals
 - FAERS post-marketing signal detection
 - Mitigation strategy analysis with correlated risk reduction
@@ -693,7 +693,7 @@ Retrieve all relevant data from {api_base}/api/v1/population/* and
 - Agents can perform multi-step reasoning: query data, analyze, compare, report.
 - Autonomous monitoring reduces manual safety surveillance burden.
 - Agent SDK handles the tool-use loop — no manual orchestration needed.
-- Can access multiple data sources (PSP API, web search, file system) in one session.
+- Can access multiple data sources (SPS API, web search, file system) in one session.
 - Interactive advisor mode enables ad-hoc clinical queries.
 
 ### Cons
@@ -711,7 +711,7 @@ Retrieve all relevant data from {api_base}/api/v1/population/* and
 
 ### Overview
 
-Expose the PSP's data and models as an MCP (Model Context Protocol) server, allowing any MCP-compatible client (Claude Desktop, Claude Code, custom agents) to query risk models, access the cell therapy registry, and generate clinical documents from live data.
+Expose the SPS's data and models as an MCP (Model Context Protocol) server, allowing any MCP-compatible client (Claude Desktop, Claude Code, custom agents) to query risk models, access the cell therapy registry, and generate clinical documents from live data.
 
 ### Architecture
 
@@ -730,7 +730,7 @@ Expose the PSP's data and models as an MCP (Model Context Protocol) server, allo
               |
               v
 +-------------------------------------------------------------------+
-|                PSP MCP Server (FastMCP)                            |
+|                SPS MCP Server (FastMCP)                            |
 |                                                                   |
 |  Tools:                          Resources:                       |
 |  - predict_patient_risk()        - psp://registry/therapies       |
@@ -748,7 +748,7 @@ Expose the PSP's data and models as an MCP (Model Context Protocol) server, allo
               |
               v
 +-------------------------------------------------------------------+
-|                PSP FastAPI Backend (existing models)               |
+|                SPS FastAPI Backend (existing models)               |
 +-------------------------------------------------------------------+
 ```
 
@@ -761,14 +761,14 @@ Expose the PSP's data and models as an MCP (Model Context Protocol) server, allo
 | Dependency | Status | Notes |
 |------------|--------|-------|
 | `fastmcp` | New dependency | `pip install 'fastmcp<3'` (stable v2) or `mcp` SDK |
-| PSP server running | Required | MCP server calls PSP API internally |
+| SPS server running | Required | MCP server calls SPS API internally |
 | MCP client | Required | Claude Desktop, Claude Code, or custom |
 
 ### Code Sketch
 
 ```python
 # src/mcp/psp_server.py
-"""MCP Server exposing PSP data and models to Claude and other MCP clients."""
+"""MCP Server exposing SPS data and models to Claude and other MCP clients."""
 
 from __future__ import annotations
 
@@ -777,7 +777,7 @@ from fastmcp import FastMCP
 
 # Initialize the MCP server
 mcp = FastMCP(
-    name="predictive-safety-platform",
+    name="simulated-patient-safety",
     description=(
         "Cell therapy adverse event risk assessment platform. Provides Bayesian "
         "risk estimation, biomarker scoring, FAERS signal detection, mitigation "
@@ -785,7 +785,7 @@ mcp = FastMCP(
     ),
 )
 
-PSP_API_BASE = "http://localhost:8000"
+SPS_API_BASE = "http://localhost:8000"
 
 
 # ---------------------------------------------------------------------------
@@ -834,7 +834,7 @@ async def predict_patient_risk(
     }
 
     async with httpx.AsyncClient() as client:
-        resp = await client.post(f"{PSP_API_BASE}/api/v1/predict", json=payload)
+        resp = await client.post(f"{SPS_API_BASE}/api/v1/predict", json=payload)
         resp.raise_for_status()
         return resp.json()
 
@@ -866,7 +866,7 @@ async def compute_bayesian_posterior(
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(
-            f"{PSP_API_BASE}/api/v1/population/bayesian", json=payload
+            f"{SPS_API_BASE}/api/v1/population/bayesian", json=payload
         )
         resp.raise_for_status()
         return resp.json()
@@ -896,7 +896,7 @@ async def run_mitigation_analysis(
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(
-            f"{PSP_API_BASE}/api/v1/population/mitigations", json=payload
+            f"{SPS_API_BASE}/api/v1/population/mitigations", json=payload
         )
         resp.raise_for_status()
         return resp.json()
@@ -920,7 +920,7 @@ async def detect_faers_signals(
 
     async with httpx.AsyncClient(timeout=90.0) as client:
         resp = await client.get(
-            f"{PSP_API_BASE}/api/v1/signals/faers", params=params
+            f"{SPS_API_BASE}/api/v1/signals/faers", params=params
         )
         resp.raise_for_status()
         return resp.json()
@@ -940,7 +940,7 @@ async def get_monitoring_schedule(
     """
     async with httpx.AsyncClient() as client:
         resp = await client.get(
-            f"{PSP_API_BASE}/api/v1/cdp/monitoring-schedule",
+            f"{SPS_API_BASE}/api/v1/cdp/monitoring-schedule",
             params={"therapy_type": therapy_type},
         )
         resp.raise_for_status()
@@ -961,7 +961,7 @@ async def get_stopping_rules(
     """
     async with httpx.AsyncClient() as client:
         resp = await client.get(
-            f"{PSP_API_BASE}/api/v1/cdp/stopping-rules",
+            f"{SPS_API_BASE}/api/v1/cdp/stopping-rules",
             params={"therapy_type": therapy_type},
         )
         resp.raise_for_status()
@@ -977,7 +977,7 @@ async def list_available_mitigations() -> dict:
     """
     async with httpx.AsyncClient() as client:
         resp = await client.get(
-            f"{PSP_API_BASE}/api/v1/population/mitigations/strategies"
+            f"{SPS_API_BASE}/api/v1/population/mitigations/strategies"
         )
         resp.raise_for_status()
         return resp.json()
@@ -992,7 +992,7 @@ async def get_evidence_accrual() -> dict:
     """
     async with httpx.AsyncClient() as client:
         resp = await client.get(
-            f"{PSP_API_BASE}/api/v1/population/evidence-accrual"
+            f"{SPS_API_BASE}/api/v1/population/evidence-accrual"
         )
         resp.raise_for_status()
         return resp.json()
@@ -1006,7 +1006,7 @@ async def get_evidence_accrual() -> dict:
 async def therapy_registry() -> str:
     """Cell therapy registry with all therapy types and their AE profiles."""
     async with httpx.AsyncClient() as client:
-        resp = await client.get(f"{PSP_API_BASE}/api/v1/therapies")
+        resp = await client.get(f"{SPS_API_BASE}/api/v1/therapies")
         resp.raise_for_status()
         return resp.text
 
@@ -1015,7 +1015,7 @@ async def therapy_registry() -> str:
 async def baseline_risk() -> str:
     """Population-level baseline risk estimates for SLE CAR-T."""
     async with httpx.AsyncClient() as client:
-        resp = await client.get(f"{PSP_API_BASE}/api/v1/population/risk")
+        resp = await client.get(f"{SPS_API_BASE}/api/v1/population/risk")
         resp.raise_for_status()
         return resp.text
 
@@ -1024,7 +1024,7 @@ async def baseline_risk() -> str:
 async def model_status() -> str:
     """Status and availability of all scoring models."""
     async with httpx.AsyncClient() as client:
-        resp = await client.get(f"{PSP_API_BASE}/api/v1/models/status")
+        resp = await client.get(f"{SPS_API_BASE}/api/v1/models/status")
         resp.raise_for_status()
         return resp.text
 
@@ -1079,7 +1079,7 @@ if __name__ == "__main__":
 **Running the MCP server:**
 
 ```bash
-# Start the PSP FastAPI server first
+# Start the SPS FastAPI server first
 python run_server.py &
 
 # Start the MCP server
@@ -1093,7 +1093,7 @@ python -m src.mcp.psp_server
 ```json
 {
   "mcpServers": {
-    "predictive-safety-platform": {
+    "simulated-patient-safety": {
       "command": "python",
       "args": ["-m", "src.mcp.psp_server"],
       "cwd": "C:\\Users\\alto8\\safety-research-system"
@@ -1105,7 +1105,7 @@ python -m src.mcp.psp_server
 ### Pros
 
 - Standard protocol: works with Claude Desktop, Claude Code, and any future MCP client.
-- Clean separation of concerns: PSP stays a data/model layer; Claude is the intelligence layer.
+- Clean separation of concerns: SPS stays a data/model layer; Claude is the intelligence layer.
 - Tools are self-documenting: descriptions and schemas are part of the MCP protocol.
 - Resources provide read-only reference data without risk of modification.
 - Prompt templates standardize common analysis workflows.
@@ -1114,7 +1114,7 @@ python -m src.mcp.psp_server
 
 ### Cons
 
-- Requires running two processes (PSP FastAPI + MCP server) or embedding MCP within FastAPI.
+- Requires running two processes (SPS FastAPI + MCP server) or embedding MCP within FastAPI.
 - MCP is primarily designed for local/desktop use; deploying as a remote service requires additional infrastructure (SSE transport, authentication).
 - MCP protocol is still evolving; the 2025-11-25 specification added OAuth but the ecosystem is maturing.
 - Adds `fastmcp` or `mcp` as a new dependency.
@@ -1126,7 +1126,7 @@ python -m src.mcp.psp_server
 
 ### Overview
 
-Add a chat panel directly in the 14-tab clinical dashboard that allows users to ask natural language questions about the current view's data. The chat is context-aware: it knows which tab is active, what data is displayed, and can call PSP APIs on behalf of the user.
+Add a chat panel directly in the 14-tab clinical dashboard that allows users to ask natural language questions about the current view's data. The chat is context-aware: it knows which tab is active, what data is displayed, and can call SPS APIs on behalf of the user.
 
 ### Architecture
 
@@ -1452,7 +1452,7 @@ function updateChatMessage(id, content) {
 
 ### Overview
 
-Automate the generation of regulatory safety documents using Claude API with structured outputs. Produces IND safety narratives, DSUR sections, periodic safety reports, and regulatory submission safety sections from live PSP data.
+Automate the generation of regulatory safety documents using Claude API with structured outputs. Produces IND safety narratives, DSUR sections, periodic safety reports, and regulatory submission safety sections from live SPS data.
 
 ### Architecture
 
@@ -1462,7 +1462,7 @@ Automate the generation of regulatory safety documents using Claude API with str
 |                                                                    |
 |  1. Data Collection    2. Section Generation    3. Assembly        |
 |                                                                    |
-|  PSP API calls         Claude API calls         Document builder   |
+|  SPS API calls         Claude API calls         Document builder   |
 |  - Population risk     - Per-section prompts    - Markdown/DOCX    |
 |  - FAERS signals       - Structured outputs     - Version control  |
 |  - Evidence accrual    - Reference injection    - Review tracking  |
@@ -1494,7 +1494,7 @@ Automate the generation of regulatory safety documents using Claude API with str
 | `anthropic` Python SDK | Already in `pyproject.toml` | Version >=0.40.0 |
 | `ANTHROPIC_API_KEY` | Needed | Environment variable |
 | `python-docx` or `fpdf2` | Optional new dep | For DOCX/PDF export |
-| PSP server running | Required | Report pulls live data |
+| SPS server running | Required | Report pulls live data |
 
 ### Code Sketch
 
@@ -1516,7 +1516,7 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-PSP_API_BASE = os.environ.get("PSP_API_BASE", "http://localhost:8000")
+SPS_API_BASE = os.environ.get("SPS_API_BASE", "http://localhost:8000")
 
 
 @dataclass
@@ -1610,7 +1610,7 @@ Requirements:
 
 
 class SafetyReportGenerator:
-    """Generates regulatory safety reports using Claude API and PSP data."""
+    """Generates regulatory safety reports using Claude API and SPS data."""
 
     def __init__(self, api_key: str | None = None):
         self.client = anthropic.AsyncAnthropic(
@@ -1639,7 +1639,7 @@ class SafetyReportGenerator:
         if sections is None:
             sections = list(SECTION_PROMPTS.keys())
 
-        # Step 1: Collect all data from PSP
+        # Step 1: Collect all data from SPS
         data = await self._collect_report_data()
 
         # Step 2: Generate each section
@@ -1679,7 +1679,7 @@ class SafetyReportGenerator:
         return report
 
     async def _collect_report_data(self) -> dict[str, Any]:
-        """Collect all relevant data from PSP APIs."""
+        """Collect all relevant data from SPS APIs."""
         async with httpx.AsyncClient(timeout=90.0) as client:
             # Parallel data collection
             results = {}
@@ -1697,7 +1697,7 @@ class SafetyReportGenerator:
 
             for key, endpoint in endpoints.items():
                 try:
-                    resp = await client.get(f"{PSP_API_BASE}{endpoint}")
+                    resp = await client.get(f"{SPS_API_BASE}{endpoint}")
                     resp.raise_for_status()
                     results[key] = resp.json()
                 except Exception as exc:
@@ -1706,7 +1706,7 @@ class SafetyReportGenerator:
 
             # FAERS may take longer
             try:
-                resp = await client.get(f"{PSP_API_BASE}/api/v1/signals/faers")
+                resp = await client.get(f"{SPS_API_BASE}/api/v1/signals/faers")
                 resp.raise_for_status()
                 results["faers"] = resp.json()
             except Exception as exc:
@@ -1856,7 +1856,7 @@ Critical rules:
 
 - Directly addresses a time-consuming manual task (report writing takes days to weeks).
 - Structured prompts ensure regulatory formatting and style compliance.
-- Data-driven: every claim traces back to PSP API data (no hallucinated statistics).
+- Data-driven: every claim traces back to SPS API data (no hallucinated statistics).
 - Section-by-section generation allows parallel human review.
 - Export to Markdown enables easy conversion to DOCX/PDF.
 - Audit trail tracks which model and data were used for each section.
@@ -1922,7 +1922,7 @@ Based on current guidance (ESMO ELCAP, Frontiers in AI, npj Digital Medicine):
 1. **Human-in-the-loop:** All AI-generated content must be reviewed by a qualified safety scientist before clinical or regulatory use. The system should clearly label AI-generated content.
 2. **Validation framework:** Establish a validation protocol for AI-generated narratives against expert-written reference documents. Track concordance metrics.
 3. **Audit trail:** Log every AI interaction: input data, prompt used, model version, output, reviewer identity, and approval status.
-4. **Data privacy:** The PSP uses only published literature and public data — no PHI/PII concerns. If future versions integrate real patient data, HIPAA BAA with Anthropic would be required.
+4. **Data privacy:** The SPS uses only published literature and public data — no PHI/PII concerns. If future versions integrate real patient data, HIPAA BAA with Anthropic would be required.
 5. **Reproducibility:** Log the exact model version, temperature setting, and random seed (where applicable) for every generation. Use structured outputs to constrain response format.
 6. **Disclaimer labeling:** Every AI-generated output must carry a visible disclaimer. Regulatory submissions using AI-assisted content should disclose this in the methodology section.
 7. **Continuous monitoring:** Track AI output quality over time. Establish a feedback loop where safety scientists rate AI outputs, creating a dataset for future evaluation.
@@ -1966,13 +1966,13 @@ Start with the lowest-risk, highest-value combination:
 
 3. **Build the report generator** — this addresses the highest-effort manual task. Start with DSUR safety overview and signal detection sections. Validate against existing manually-written reports.
 
-**Deliverable:** One-click generation of draft DSUR sections from live PSP data.
+**Deliverable:** One-click generation of draft DSUR sections from live SPS data.
 
 ### Phase 3: MCP Server (Week 4) — Option 3
 
-4. **Expose PSP as an MCP server** — this makes the platform available to Claude Desktop and Claude Code users (including the development team itself). It also enables Option 2 agents to use PSP tools natively.
+4. **Expose SPS as an MCP server** — this makes the platform available to Claude Desktop and Claude Code users (including the development team itself). It also enables Option 2 agents to use SPS tools natively.
 
-**Deliverable:** Safety scientists can query PSP data conversationally through Claude Desktop.
+**Deliverable:** Safety scientists can query SPS data conversationally through Claude Desktop.
 
 ### Phase 4: Agents (Weeks 5-6) — Option 2
 
@@ -2016,7 +2016,7 @@ Before any phase:
 - [2025 Expert Consensus on LLM Evaluation in Clinical Scenarios (ScienceDirect)](https://www.sciencedirect.com/science/article/pii/S2667102625001044) — Retrospective evaluation framework
 - [LLMs in Healthcare (PMC Review)](https://pmc.ncbi.nlm.nih.gov/articles/PMC12189880/) — Comprehensive review of applications
 
-### PSP Internal
+### SPS Internal
 - `src/api/app.py` — FastAPI application with 13+ endpoints
 - `src/api/schemas.py` — Pydantic request/response schemas
 - `src/api/population_routes.py` — Population-level API routes

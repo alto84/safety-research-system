@@ -1,4 +1,4 @@
-# PSP Workplan — Visualization, Integration, Publication
+# SPS Workplan — Visualization, Integration, Publication
 
 ## Workstream 1: Dashboard Visualizations
 **Goal**: Updated architecture visualization + knowledge graph pathway visualization

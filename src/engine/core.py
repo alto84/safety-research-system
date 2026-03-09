@@ -1,5 +1,5 @@
 """
-SafetyEngine: top-level coordinator for the Predictive Safety Platform.
+SafetyEngine: top-level coordinator for the Simulated Patient Safety platform.
 
 Ties together all engine components -- orchestrator, reasoning, integration,
 knowledge graph, and Safety Index -- into a single cohesive API. The primary
@@ -82,7 +82,7 @@ class PredictionResult:
 # ---------------------------------------------------------------------------
 
 class SafetyEngine:
-    """Main entry point for the Predictive Safety Platform.
+    """Main entry point for the Simulated Patient Safety platform.
 
     Orchestrates the full prediction pipeline:
 

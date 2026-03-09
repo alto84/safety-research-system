@@ -1,4 +1,4 @@
-# Predictive Safety Platform Evaluation Framework
+# Simulated Patient Safety Evaluation Framework
 
 **Version:** 1.0 | **Date:** 2026-02-06
 **Owner:** Safety Research Team / Biostatistics / Safety Sciences

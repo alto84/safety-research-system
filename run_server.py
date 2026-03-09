@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Start the Predictive Safety Platform API server.
+Start the Simulated Patient Safety API server.
 
 Usage:
     python run_server.py                       # defaults: 0.0.0.0:8000
@@ -60,7 +60,7 @@ def _find_free_port(start: int = 8000) -> int:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Predictive Safety Platform API server",
+        description="Simulated Patient Safety API server",
     )
     parser.add_argument(
         "--host",
@@ -140,7 +140,7 @@ def main() -> None:
 
     print()
     print("=" * 60)
-    print("  Predictive Safety Platform")
+    print("  Simulated Patient Safety")
     print("=" * 60)
     print()
     print(f"  Clinical Dashboard:  {base}/clinical")

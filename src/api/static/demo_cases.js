@@ -1,5 +1,5 @@
 /**
- * Demo Clinical Cases for Predictive Safety Platform
+ * Demo Clinical Cases for Simulated Patient Safety
  *
  * 8 diverse CAR-T cell therapy cases with realistic lab values,
  * vitals, and clinical evolution over multiple timepoints.

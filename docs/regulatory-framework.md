@@ -1,4 +1,4 @@
-# Predictive Safety Platform Regulatory Compliance Framework
+# Simulated Patient Safety Regulatory Compliance Framework
 
 **Version:** 1.0 | **Date:** 2026-02-06
 **Owner:** Regulatory Affairs / Quality Assurance / Safety Research Team

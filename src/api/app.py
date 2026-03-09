@@ -1,5 +1,5 @@
 """
-FastAPI prediction server for the Predictive Safety Platform.
+FastAPI prediction server for the Simulated Patient Safety platform.
 
 Provides REST endpoints for:
     - Individual biomarker score computation (EASIX, HScore, CAR-HEMATOTOX)
@@ -126,7 +126,7 @@ async def lifespan(app: FastAPI):
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Predictive Safety Platform API",
+    title="Simulated Patient Safety API",
     description=(
         "Clinical decision support for cell therapy adverse event risk assessment. "
         "Provides deterministic biomarker scoring based on published formulas (EASIX, "

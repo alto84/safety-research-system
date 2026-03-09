@@ -6,7 +6,7 @@ For decades, drug safety has been fundamentally backward-looking. A patient expe
 
 Cell therapy makes this problem acute. CRS, ICANS, and IEC-HS are not edge cases — they are the defining safety challenge. CGT trials represent 40% of all FDA clinical holds. The question is not whether immune-mediated events will occur, but *which patients*, *when*, and *how severely*.
 
-The Predictive Safety Platform answers that question before it's asked.
+The Simulated Patient Safety answers that question before it's asked.
 
 ---
 

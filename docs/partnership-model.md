@@ -1,4 +1,4 @@
-# Predictive Safety Platform AI Partnership Model
+# Simulated Patient Safety AI Partnership Model
 
 **Version:** 1.0 | **Date:** 2026-02-06
 **Owner:** Safety Research Team / Strategic Partnerships

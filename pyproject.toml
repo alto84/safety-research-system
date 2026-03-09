@@ -3,7 +3,7 @@ requires = ["hatchling>=1.21.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "predictive-safety-platform"
+name = "simulated-patient-safety"
 version = "0.1.0"
 description = "AI-powered adverse event prediction for cell therapy clinical trials"
 readme = "docs/executive-summary.md"

@@ -1,8 +1,8 @@
-# Comprehensive Merge Plan: Predictive Safety Platform
+# Comprehensive Merge Plan: Simulated Patient Safety
 
 > **Status:** Draft | **Date:** 2026-02-07
 > **Scope:** Consolidation of population-level Bayesian analytics into the patient-level platform
-> **Objective:** Build a unified open-source Predictive Safety Platform for CAR-T safety in autoimmune indications
+> **Objective:** Build a unified open-source Simulated Patient Safety for CAR-T safety in autoimmune indications
 
 ---
 

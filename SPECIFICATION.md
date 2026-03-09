@@ -1,4 +1,4 @@
-# Predictive Safety Platform — System Specification
+# Simulated Patient Safety — System Specification
 
 > **Version:** 1.0 | **Date:** 2026-02-07
 > **Repository:** https://github.com/alto84/safety-research-system
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-The Predictive Safety Platform (PSP) is an open-source, data-agnostic system for estimating, monitoring, and mitigating adverse event risk in advanced cell therapies. Starting with CAR-T therapy in systemic lupus erythematosus (SLE), the platform is designed to extend to any cell therapy, any adverse event, any data source, and any timescale.
+The Simulated Patient Safety (SPS) is an open-source, data-agnostic system for estimating, monitoring, and mitigating adverse event risk in advanced cell therapies. Starting with CAR-T therapy in systemic lupus erythematosus (SLE), the platform is designed to extend to any cell therapy, any adverse event, any data source, and any timescale.
 
 **Core value proposition:** Transform fragmented safety data into unified, quantitative, evidence-graded risk assessments that evolve as new data accrues — from early development through post-marketing.
 
@@ -406,4 +406,4 @@ Where:
 
 ---
 
-*Generated 2026-02-07 by Predictive Safety Platform development system*
+*Generated 2026-02-07 by Simulated Patient Safety development system*

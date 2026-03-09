@@ -1,1 +1,1 @@
-"""Predictive Safety Platform evaluation framework — benchmarks, metrics, and synthetic datasets."""
+"""Simulated Patient Safety evaluation framework — benchmarks, metrics, and synthetic datasets."""

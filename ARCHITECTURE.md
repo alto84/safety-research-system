@@ -1,4 +1,4 @@
-# Predictive Safety Platform System Architecture
+# Simulated Patient Safety System Architecture
 
 ## High-Level Architecture
 

@@ -1,4 +1,4 @@
-# Predictive Safety Platform API - Battle Test Report
+# Simulated Patient Safety API - Battle Test Report
 
 **Date:** 2026-02-07
 **API Version:** 0.1.0
@@ -282,7 +282,7 @@ This is **correct behavior** -- EASIX correctly validates `platelets > 0` to pre
 ## Test Environment
 
 - **Server:** gpuserver1 (192.168.1.100), Ubuntu 22.04, RTX 5090, 128GB RAM
-- **API:** Predictive Safety Platform v0.1.0, running on port 5003
+- **API:** Simulated Patient Safety v0.1.0, running on port 5003
 - **Engine initialized:** false (rule-based scoring only, ML models not loaded)
 - **Test runner:** Python 3 with requests library
 - **Test duration:** ~2 seconds total for all 78 tests

@@ -1,4 +1,4 @@
-# Clinical Safety Physician Review: Predictive Safety Platform Merge Plan
+# Clinical Safety Physician Review: Simulated Patient Safety Merge Plan
 
 **Reviewer:** Dr. Elizabeth Chen, MD, PhD
 **Role:** Medical Monitor, CAR-T Clinical Development; Former Clinical Safety Lead, Autoimmune Cell Therapy Program
@@ -803,7 +803,7 @@ Add a section on long-term safety monitoring:
 
 ## 9. Conclusion
 
-This Predictive Safety Platform is a valuable **evidence synthesis tool** that consolidates the best available data on autoimmune CAR-T safety as of early 2026. The Bayesian framework is rigorous, the uncertainty is appropriately communicated, and the limitations are explicitly acknowledged. However, the platform has significant gaps in clinical decision support functionality, missing adverse event categories, and unvalidated mitigation strategies that prevent it from being used at the bedside.
+This Simulated Patient Safety is a valuable **evidence synthesis tool** that consolidates the best available data on autoimmune CAR-T safety as of early 2026. The Bayesian framework is rigorous, the uncertainty is appropriately communicated, and the limitations are explicitly acknowledged. However, the platform has significant gaps in clinical decision support functionality, missing adverse event categories, and unvalidated mitigation strategies that prevent it from being used at the bedside.
 
 **Primary Recommendation:**
 Position this platform as a **research and development tool** for clinical teams, not as a **clinical decision support system**. Address the must-fix issues (ICANS rate inconsistency, LICATS data source, tocilizumab/corticosteroid caveats) before any external dissemination. Add the missing AE categories (cardiac, GvHD-like, delayed CRS, fertility) to provide a comprehensive safety profile.
