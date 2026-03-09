@@ -7684,12 +7684,32 @@ function renderDeepPanel(data) {
       html += '<div class="deep-section-content">';
 
       if (sec.detail_type === 'key_value_pairs' && typeof sec.content === 'object' && !Array.isArray(sec.content)) {
+        // Dict-style key-value pairs: {"key1": "val1", ...}
         html += '<div class="deep-kv">';
         Object.entries(sec.content).forEach(function(entry) {
           html += '<div class="deep-kv-key">' + entry[0] + '</div><div class="deep-kv-val">' + entry[1] + '</div>';
         });
         html += '</div>';
+      } else if (Array.isArray(sec.content) && sec.content.length && typeof sec.content[0] === 'object' && sec.content[0].key && sec.content[0].value) {
+        // Array-of-objects key-value pairs: [{key, value}, ...]
+        html += '<div class="deep-kv">';
+        sec.content.forEach(function(kv) {
+          html += '<div class="deep-kv-key">' + kv.key + '</div><div class="deep-kv-val">' + kv.value + '</div>';
+        });
+        html += '</div>';
+      } else if (sec.detail_type === 'table' && typeof sec.content === 'object' && !Array.isArray(sec.content) && sec.content.columns) {
+        // Table with {columns, rows} format
+        html += '<table class="deep-table"><thead><tr>';
+        sec.content.columns.forEach(function(h) { html += '<th>' + h + '</th>'; });
+        html += '</tr></thead><tbody>';
+        sec.content.rows.forEach(function(row) {
+          html += '<tr>';
+          row.forEach(function(cell) { html += '<td>' + (cell || '') + '</td>'; });
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
       } else if (sec.detail_type === 'table' && Array.isArray(sec.content) && sec.content.length) {
+        // Table with array-of-objects format [{col1: val, col2: val}, ...]
         var headers = Object.keys(sec.content[0]);
         html += '<table class="deep-table"><thead><tr>';
         headers.forEach(function(h) { html += '<th>' + h + '</th>'; });
@@ -7705,7 +7725,8 @@ function renderDeepPanel(data) {
         sec.content.forEach(function(item) {
           html += '<div class="deep-timeline-item">';
           if (item.date) html += '<div class="deep-timeline-date">' + item.date + '</div>';
-          html += '<div>' + (item.event || item.text || item) + '</div>';
+          if (item.event) html += '<div><strong>' + item.event + '</strong></div>';
+          html += '<div>' + (item.description || item.text || (typeof item === 'string' ? item : '')) + '</div>';
           html += '</div>';
         });
         html += '</div>';
@@ -7728,8 +7749,21 @@ function renderDeepPanel(data) {
     html += '<div class="deep-section"><div class="deep-section-title">Regulatory References</div><div class="deep-section-content">';
     data.regulatory_references.forEach(function(ref) {
       html += '<div class="deep-ref">';
-      html += '<div class="deep-ref-source">' + (ref.source || '') + '</div>';
-      html += '<div class="deep-ref-citation">' + (ref.citation || '') + '</div>';
+      if (typeof ref === 'string') {
+        // Plain string reference
+        html += '<div class="deep-ref-citation">' + ref + '</div>';
+      } else if (ref.label) {
+        // {id, label} format (roles/committees)
+        html += '<div class="deep-ref-citation">' + ref.label + '</div>';
+      } else if (ref.code) {
+        // {code, title, description} format (signals)
+        html += '<div class="deep-ref-source">' + ref.code + '</div>';
+        html += '<div class="deep-ref-citation">' + (ref.title || '') + (ref.description ? ' — ' + ref.description : '') + '</div>';
+      } else {
+        // {source, citation} format
+        html += '<div class="deep-ref-source">' + (ref.source || '') + '</div>';
+        html += '<div class="deep-ref-citation">' + (ref.citation || '') + '</div>';
+      }
       html += '</div>';
     });
     html += '</div></div>';
@@ -7740,7 +7774,10 @@ function renderDeepPanel(data) {
     html += '<div class="deep-section"><div class="deep-section-title">Related</div>';
     html += '<div class="deep-related">';
     data.related_items.forEach(function(item) {
-      html += '<span class="deep-related-chip" onclick="openDeepPanel(\'' + item.item_type + '\',\'' + item.item_id + '\')">' + item.label + '</span>';
+      var itype = item.item_type || item.type || '';
+      var iid = item.item_id || item.id || '';
+      var ilabel = item.label || item.title || (itype + '/' + iid);
+      html += '<span class="deep-related-chip" onclick="openDeepPanel(\'' + itype + '\',\'' + iid + '\')">' + ilabel + '</span>';
     });
     html += '</div></div>';
   }
