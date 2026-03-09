@@ -7774,9 +7774,18 @@ function renderDeepPanel(data) {
     html += '<div class="deep-section"><div class="deep-section-title">Related</div>';
     html += '<div class="deep-related">';
     data.related_items.forEach(function(item) {
-      var itype = item.item_type || item.type || '';
-      var iid = item.item_id || item.id || '';
-      var ilabel = item.label || item.title || (itype + '/' + iid);
+      var itype, iid, ilabel;
+      if (typeof item === 'string') {
+        // String format: "type/id" e.g. "regulation/21-cfr-312-32"
+        var parts = item.split('/');
+        itype = parts[0] || '';
+        iid = parts.slice(1).join('/') || '';
+        ilabel = iid.replace(/-/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+      } else {
+        itype = item.item_type || item.type || '';
+        iid = item.item_id || item.id || '';
+        ilabel = item.label || item.title || (itype + '/' + iid);
+      }
       html += '<span class="deep-related-chip" onclick="openDeepPanel(\'' + itype + '\',\'' + iid + '\')">' + ilabel + '</span>';
     });
     html += '</div></div>';
