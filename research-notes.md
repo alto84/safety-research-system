@@ -117,7 +117,15 @@ Demonstrates real-world viability of multi-agent autonomous systems — the kind
 
 ## Next Steps
 
-- [ ] Design agentic memory architecture leveraging 1M context window
-- [ ] Evaluate shared vs. distributed memory paradigms (per arxiv paper)
-- [ ] Prototype multi-session memory persistence using Claude's memory tool patterns
-- [ ] Consider Autoresearch-style multi-agent setup for parallel experimentation
+- [x] Design agentic memory architecture leveraging 1M context window → `agentic-memory-architecture.md`
+- [x] Evaluate shared vs. distributed memory paradigms (per arxiv paper) → `shared-vs-distributed-memory-evaluation.md`
+- [x] Prototype multi-session memory persistence using Claude's memory tool patterns → `memory_store.py`, `memory-persistence-design.md`
+- [x] Consider Autoresearch-style multi-agent setup for parallel experimentation → `multi-agent-experimentation-framework.md`
+
+### Future Work
+
+- [ ] Implement semantic search for memory retrieval (vector embeddings)
+- [ ] Build orchestrator prototype from multi-agent framework design
+- [ ] Run end-to-end integration test of memory store across simulated sessions
+- [ ] Add SQLite backend to memory store for production use
+- [ ] Formalize safety invariants and write property-based tests
