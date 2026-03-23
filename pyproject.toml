@@ -108,10 +108,8 @@ genomics = [
     "immunarch>=0.9.0",              # TCR/BCR repertoire
 ]
 
-# [project.scripts]
-# Planned CLI entry points (not yet implemented):
-# safety-platform = "src.cli:main"
-# safety-serve = "src.api.app:main"
+[project.scripts]
+safety-platform = "src.cli:main"
 
 [project.urls]
 Repository = "https://github.com/alto84/safety-research-system"
